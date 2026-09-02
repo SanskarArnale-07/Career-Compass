@@ -4,16 +4,10 @@ import { CheckCircle2, ChevronRight, GraduationCap } from "lucide-react";
 import Link from "next/link";
 
 interface NextStepsProps {
-  steps?: string[];
+  steps: string[];
 }
 
 export function NextSteps({ steps }: NextStepsProps) {
-  
-  const defaultSteps = steps || [
-    "Select Science (PCM) for your 11th and 12th grade studies.",
-    "Enroll in a basic introductory course to Python or Web Development this summer.",
-    "Look into engineering entrance exams (like JEE) and their syllabus."
-  ];
 
   return (
     <div className="bg-gradient-to-br from-card to-muted border border-border shadow-md rounded-xl p-6 md:p-8 relative overflow-hidden">
@@ -31,7 +25,7 @@ export function NextSteps({ steps }: NextStepsProps) {
           </p>
           
           <ul className="space-y-4">
-            {defaultSteps.map((step, idx) => (
+            {steps.map((step, idx) => (
               <li key={idx} className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <span className="font-medium text-foreground">{step}</span>

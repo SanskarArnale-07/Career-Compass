@@ -3,7 +3,7 @@
 import { Target, AlertCircle } from "lucide-react";
 
 interface SkillGapsProps {
-  gaps?: Array<{
+  gaps: Array<{
     skill: string;
     level: string;
     action: string;
@@ -11,24 +11,6 @@ interface SkillGapsProps {
 }
 
 export function SkillGaps({ gaps }: SkillGapsProps) {
-  
-  const defaultGaps = gaps || [
-    {
-      skill: "Basic Programming Logic",
-      level: "Beginner",
-      action: "Start learning Python syntax and basic algorithms."
-    },
-    {
-      skill: "Advanced Mathematics",
-      level: "Intermediate",
-      action: "Focus heavily on Calculus and Algebra in 11th grade."
-    },
-    {
-      skill: "Structured Problem Solving",
-      level: "Beginner",
-      action: "Try competitive programming platforms for beginners."
-    }
-  ];
 
   return (
     <div className="w-full">
@@ -44,7 +26,7 @@ export function SkillGaps({ gaps }: SkillGapsProps) {
 
       <div className="bg-card border border-border shadow-sm rounded-xl overflow-hidden">
         <div className="divide-y divide-border">
-          {defaultGaps.map((gap, idx) => (
+          {gaps.map((gap, idx) => (
             <div key={idx} className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted/30 transition-colors">
               <div className="flex-1">
                 <h4 className="font-semibold text-lg flex items-center gap-2">

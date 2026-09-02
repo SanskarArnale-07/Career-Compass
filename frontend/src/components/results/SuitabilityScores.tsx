@@ -3,39 +3,43 @@
 import { BrainCircuit, Calculator, Palette } from "lucide-react";
 
 interface SuitabilityScoresProps {
-  scores?: {
+  scores: {
     science: number;
     commerce: number;
     arts: number;
   };
+  descriptions?: Record<string, string>;
 }
 
-export function SuitabilityScores({ scores = { science: 85, commerce: 60, arts: 40 } }: SuitabilityScoresProps) {
+export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScoresProps) {
   
   const streams = [
     {
       name: "Science (PCM/PCB)",
+      key: "science",
       score: scores.science,
       icon: <BrainCircuit className="h-6 w-6 text-blue-500" />,
       color: "bg-blue-500",
       bgClass: "bg-blue-500/10",
-      description: "Strong alignment based on your interest in problem-solving and technical challenges."
+      description: descriptions.science || "Alignment based on your analytical, technical, and scientific traits."
     },
     {
       name: "Commerce",
+      key: "commerce",
       score: scores.commerce,
       icon: <Calculator className="h-6 w-6 text-emerald-500" />,
       color: "bg-emerald-500",
       bgClass: "bg-emerald-500/10",
-      description: "Moderate alignment. You have some traits for business and finance."
+      description: descriptions.commerce || "Alignment based on your business, analytical, and leadership traits."
     },
     {
       name: "Arts & Humanities",
+      key: "arts",
       score: scores.arts,
       icon: <Palette className="h-6 w-6 text-purple-500" />,
       color: "bg-purple-500",
       bgClass: "bg-purple-500/10",
-      description: "Lower alignment relative to your technical and analytical interests."
+      description: descriptions.arts || "Alignment based on your creative, social, and exploratory traits."
     }
   ].sort((a, b) => b.score - a.score);
 
@@ -48,7 +52,7 @@ export function SuitabilityScores({ scores = { science: 85, commerce: 60, arts: 
 
       <div className="space-y-6">
         {streams.map((stream, index) => (
-          <div key={stream.name} className={`p-4 rounded-lg border ${index === 0 ? 'border-primary/50 bg-primary/5' : 'border-border bg-card'}`}>
+          <div key={stream.key} className={`p-4 rounded-lg border ${index === 0 ? 'border-primary/50 bg-primary/5' : 'border-border bg-card'}`}>
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-md ${stream.bgClass}`}>

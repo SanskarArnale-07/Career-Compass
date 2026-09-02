@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routes.assessment import router as assessment_router
+
 app = FastAPI(title="Career Compass API")
 
 # Configure CORS so the frontend can communicate with the backend
@@ -12,6 +14,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register routers
+app.include_router(assessment_router)
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Career Compass API"}
@@ -19,3 +24,4 @@ def read_root():
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy"}
+

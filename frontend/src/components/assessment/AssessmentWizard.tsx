@@ -129,7 +129,7 @@ export function AssessmentWizard() {
   };
 
   return (
-    <div className="relative w-full pb-4">
+    <div className="relative w-full pb-8">
       
       {/* Subtle Background */}
       <div className="fixed inset-0 z-0 bg-radial from-transparent to-background via-background/90 pointer-events-none" />
@@ -189,7 +189,7 @@ export function AssessmentWizard() {
         </div>
 
         {/* Footer Navigation */}
-        <div className="mt-2 pt-4 pb-4 border-t border-border/20 flex items-center justify-between w-full">
+        <div className="mt-2 pt-4 pb-8 sm:pb-10 border-t border-border/20 flex items-center justify-between w-full">
           <button
             onClick={handleBack}
             className="inline-flex h-10 sm:h-12 items-center justify-center rounded-lg px-4 sm:px-6 text-sm font-sans font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
