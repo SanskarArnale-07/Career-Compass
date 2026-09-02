@@ -38,3 +38,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# temp data extraction scripts
+jotform.html
+jotform_data.json
+questions.json
+extract.py
+generate_ts.py
