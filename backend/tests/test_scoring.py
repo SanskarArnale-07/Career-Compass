@@ -264,3 +264,37 @@ class TestEmptyBody:
             json={"answers": {}},
         )
         assert resp.status_code == 422
+
+
+# ═══════════════════════════════════════════════════════════════════
+# TEST 7: Perfect trait scores
+# ═══════════════════════════════════════════════════════════════════
+
+class TestPerfectTraitCeilings:
+    """
+    Tests that the per-trait normalization is correct.
+    For each trait, if the student picks the highest possible weighting
+    option for every question, their normalized score for that trait
+    must be EXACTLY 100.0.
+    """
+    def test_each_trait_can_reach_exactly_100(self):
+        from app.scoring.traits import TRAIT_WEIGHT_MAP, Trait
+        
+        for target_trait in Trait:
+            positions = {}
+            for qid, options in TRAIT_WEIGHT_MAP.items():
+                best_pos = 1
+                best_val = -1
+                for pos, weights in options.items():
+                    val = weights.get(target_trait, 0)
+                    if val > best_val:
+                        best_val = val
+                        best_pos = pos
+                positions[qid] = best_pos
+            
+            answers = _answers_from_positions(positions)
+            result = score_assessment(answers).model_dump()
+            score = result["trait_profile"][target_trait.value]
+            
+            assert score == 100.0, f"{target_trait.value} ceiling max is {score}, expected 100.0"
+

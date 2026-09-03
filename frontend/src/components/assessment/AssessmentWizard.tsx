@@ -6,6 +6,7 @@ import { assessmentQuestions } from "@/lib/assessment-data";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { SpotlightCard } from "@/components/interactive/SpotlightCard";
 import { BlurText } from "@/components/interactive/BlurText";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 
 export function AssessmentWizard() {
   const router = useRouter();
@@ -49,11 +50,6 @@ export function AssessmentWizard() {
         };
       }
       
-      // Limit to 3 for interests (based on data definition)
-      if (currentQuestion.id === "q3_interests" && currentSelection.length >= 3) {
-        return prev;
-      }
-
       return {
         ...prev,
         [currentQuestion.id]: [...currentSelection, value],
@@ -103,14 +99,16 @@ export function AssessmentWizard() {
     return (
       <button
         key={option.value}
+        role={isMulti ? "checkbox" : "radio"}
+        aria-checked={isSelected}
         onClick={() => isMulti ? handleMultiSelect(option.value) : handleSingleSelect(option.value)}
         className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
       >
         <SpotlightCard 
-          spotlightColor={isSelected ? "rgba(59, 130, 246, 0.25)" : "rgba(255, 255, 255, 0.05)"}
+          spotlightColor={isSelected ? "color-mix(in srgb, var(--primary) 25%, transparent)" : "color-mix(in srgb, var(--foreground) 5%, transparent)"}
           className={`transition-all duration-300 flex items-center justify-between py-2.5 px-3.5 sm:py-3 sm:px-4 border-2 ${
             isSelected 
-              ? "border-primary bg-primary/5 shadow-[0_0_15px_rgba(59,130,246,0.15)]" 
+              ? "border-primary bg-primary/5 shadow-lg shadow-primary/20" 
               : "border-border/40 bg-card/60 hover:border-primary/40 hover:bg-muted/40"
           }`}
         >
@@ -119,7 +117,7 @@ export function AssessmentWizard() {
           </span>
           
           <div className={`h-5 w-5 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-300 ml-4 ${
-            isSelected ? "border-primary bg-primary text-primary-foreground shadow-[0_0_10px_rgba(59,130,246,0.4)]" : "border-muted-foreground/30"
+            isSelected ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/40" : "border-muted-foreground/30"
           }`}>
             {isSelected && <Check className="h-3 w-3" />}
           </div>
@@ -156,9 +154,15 @@ export function AssessmentWizard() {
             <span className="text-muted-foreground">Question {currentStepIndex + 1} of {assessmentQuestions.length}</span>
             <span className="text-primary font-bold">{Math.round(progressPercentage)}%</span>
           </div>
-          <div className="h-2 w-full bg-muted/50 rounded-full overflow-hidden border border-border/40 p-0.5">
+          <div 
+            className="h-2 w-full bg-muted/50 rounded-full overflow-hidden border border-border/40 p-0.5"
+            role="progressbar"
+            aria-valuenow={Math.round(progressPercentage)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
             <div 
-              className="h-full bg-primary transition-all duration-700 ease-in-out rounded-full shadow-[0_0_10px_rgba(59,130,246,0.6)]"
+              className="h-full bg-primary transition-all duration-700 ease-in-out rounded-full shadow-sm shadow-primary/60"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
@@ -183,7 +187,11 @@ export function AssessmentWizard() {
             )}
           </div>
 
-          <div className="space-y-2 mb-4 animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div 
+            className="space-y-2 mb-4 animate-in fade-in slide-in-from-bottom-8 duration-700"
+            role={currentQuestion.type === "multiple-choice" ? "group" : "radiogroup"}
+            aria-label="Assessment options"
+          >
             {currentQuestion.options.map(renderOption)}
           </div>
         </div>
@@ -198,18 +206,17 @@ export function AssessmentWizard() {
             Back
           </button>
 
-          <button
+          <InteractiveHoverButton
             onClick={handleNext}
             disabled={!canContinue()}
-            className={`inline-flex h-10 sm:h-12 items-center justify-center rounded-lg px-5 sm:px-8 text-sm font-sans font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+            className={`h-10 sm:h-12 px-5 sm:px-8 text-sm font-sans font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               canContinue() 
-                ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)] hover:-translate-y-0.5" 
-                : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                ? "border-primary/30 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5" 
+                : "opacity-50 cursor-not-allowed pointer-events-none"
             }`}
           >
             {isLastQuestion ? "Discover My Career Path" : "Continue"}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </button>
+          </InteractiveHoverButton>
         </div>
 
       </div>

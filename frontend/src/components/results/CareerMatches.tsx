@@ -1,22 +1,7 @@
 "use client";
 
-import { ArrowRight, Cpu, Lightbulb, Briefcase, Heart, FlaskConical, DollarSign, Rocket, Users, Megaphone, Palette, Scale, Brain } from "lucide-react";
-
-// Icon map for career clusters
-const CAREER_ICONS: Record<string, React.ReactNode> = {
-  "Software / App Development": <Cpu className="h-8 w-8 text-indigo-500" />,
-  "AI / Machine Learning / Data Science": <Brain className="h-8 w-8 text-indigo-500" />,
-  "Engineering": <Lightbulb className="h-8 w-8 text-indigo-500" />,
-  "Medicine / Healthcare": <Heart className="h-8 w-8 text-indigo-500" />,
-  "Scientific Research": <FlaskConical className="h-8 w-8 text-indigo-500" />,
-  "Finance / Investment Banking": <DollarSign className="h-8 w-8 text-indigo-500" />,
-  "Entrepreneurship": <Rocket className="h-8 w-8 text-indigo-500" />,
-  "Management / Product Management": <Briefcase className="h-8 w-8 text-indigo-500" />,
-  "Marketing / Media / Communications": <Megaphone className="h-8 w-8 text-indigo-500" />,
-  "Design / Creative Arts": <Palette className="h-8 w-8 text-indigo-500" />,
-  "Law / Public Policy": <Scale className="h-8 w-8 text-indigo-500" />,
-  "Psychology / Social Impact": <Users className="h-8 w-8 text-indigo-500" />,
-};
+import { ArrowRight } from "lucide-react";
+import { getCareerIcon } from "@/lib/career-icons";
 
 interface CareerMatchData {
   career_name: string;
@@ -53,7 +38,10 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
 
             <div className="flex justify-between items-start mb-4 relative z-10">
               <div className="p-3 bg-primary/10 rounded-lg">
-                {CAREER_ICONS[career.career_name] || <Briefcase className="h-8 w-8 text-indigo-500" />}
+                {(() => {
+                  const Icon = getCareerIcon(career.career_name);
+                  return <Icon className="h-8 w-8 text-indigo-500" />;
+                })()}
               </div>
               <div className="inline-flex items-center bg-green-500/10 text-green-600 px-2.5 py-1 rounded-full text-sm font-semibold">
                 {career.match_percentage}% Match

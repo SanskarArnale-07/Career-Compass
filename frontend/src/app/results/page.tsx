@@ -8,6 +8,7 @@ import { CareerMatches } from "@/components/results/CareerMatches";
 import { CareerExplanation } from "@/components/results/CareerExplanation";
 import { SkillGaps } from "@/components/results/SkillGaps";
 import { NextSteps } from "@/components/results/NextSteps";
+import { CareerDiscoveryAnimation } from "@/components/interactive/CareerDiscoveryAnimation";
 
 // ── Types matching the backend response ─────────────────────────────
 
@@ -82,7 +83,7 @@ export default function ResultsPage() {
   > | null>(null);
   const [result, setResult] = useState<AssessmentResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [animationPhase, setAnimationPhase] = useState<"discovering" | "resolving" | "complete">("discovering");
 
   // 1. Read answers from sessionStorage
   useEffect(() => {
@@ -93,42 +94,51 @@ export default function ResultsPage() {
         setAssessmentData(JSON.parse(data));
       } catch (e) {
         console.error("Failed to parse assessment data", e);
-        setLoading(false);
+        setAnimationPhase("complete");
       }
     } else {
-      setLoading(false);
+      setAnimationPhase("complete");
     }
   }, []);
 
   // 2. Call backend scoring API when answers are available
   useEffect(() => {
     if (!assessmentData) return;
+    
+    const startTime = Date.now();
+    const MIN_DISCOVERY_TIME = 3000;
 
     scoreAssessment(assessmentData)
       .then((res) => {
-        setResult(res);
-        setError(null);
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, MIN_DISCOVERY_TIME - elapsed);
+        
+        setTimeout(() => {
+          setResult(res);
+          setError(null);
+          setAnimationPhase("resolving");
+        }, remaining);
       })
       .catch((err) => {
         console.error("Scoring API error:", err);
         setError(err.message || "Failed to score assessment.");
-      })
-      .finally(() => {
-        setLoading(false);
+        setAnimationPhase("complete");
       });
   }, [assessmentData]);
 
   // ── Loading state ─────────────────────────────────────────────
-  if (!isClient || loading) {
+  if (!isClient) return null;
+
+  if (animationPhase !== "complete" && !error && assessmentData) {
+    const topCareer = result?.top_careers?.[0];
+    const topCareerNames = result?.top_careers?.map((c) => c.career_name) ?? [];
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground font-medium">
-            Analyzing your career profile…
-          </p>
-        </div>
-      </div>
+      <CareerDiscoveryAnimation 
+        status={animationPhase}
+        topCareer={topCareer ? { name: topCareer.career_name, matchPercentage: topCareer.match_percentage } : undefined}
+        topCareerNames={topCareerNames}
+        onComplete={() => setAnimationPhase("complete")}
+      />
     );
   }
 
@@ -182,15 +192,25 @@ export default function ResultsPage() {
             <button
               onClick={() => {
                 setError(null);
-                setLoading(true);
+                setAnimationPhase("discovering");
                 if (assessmentData) {
+                  const startTime = Date.now();
+                  const MIN_DISCOVERY_TIME = 3000;
+                  
                   scoreAssessment(assessmentData)
                     .then((res) => {
-                      setResult(res);
-                      setError(null);
+                      const elapsed = Date.now() - startTime;
+                      const remaining = Math.max(0, MIN_DISCOVERY_TIME - elapsed);
+                      setTimeout(() => {
+                        setResult(res);
+                        setError(null);
+                        setAnimationPhase("resolving");
+                      }, remaining);
                     })
-                    .catch((err) => setError(err.message))
-                    .finally(() => setLoading(false));
+                    .catch((err) => {
+                      setError(err.message);
+                      setAnimationPhase("complete");
+                    });
                 }
               }}
               className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"

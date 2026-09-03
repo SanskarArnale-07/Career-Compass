@@ -57,9 +57,10 @@ def compute_trait_scores(answers: dict[str, str]) -> TraitProfile:
     # Normalise to 0-100
     normalised: dict[str, float] = {}
     for trait_code, score in raw.items():
-        if theoretical_max > 0:
+        t_max = theoretical_max.get(trait_code, 0.0)
+        if t_max > 0:
             normalised[trait_code] = round(
-                min((score / theoretical_max) * 100, 100), 1
+                min((score / t_max) * 100, 100), 1
             )
         else:
             normalised[trait_code] = 0.0
@@ -67,13 +68,13 @@ def compute_trait_scores(answers: dict[str, str]) -> TraitProfile:
     return TraitProfile(**normalised)
 
 
-def _compute_theoretical_max() -> float:
+def _compute_theoretical_max() -> dict[str, float]:
     """
     The theoretical max is the highest possible raw score a single trait
     could get if every question awarded it the maximum available weight.
     
     We compute: for each trait, sum the max weight it could receive from
-    each question.  Then take the overall max across traits.
+    each question.
     """
     trait_max_per_q: dict[str, list[float]] = {t.value: [] for t in Trait}
 
@@ -88,7 +89,7 @@ def _compute_theoretical_max() -> float:
 
     # Sum each trait's per-question maxima
     trait_totals = {tc: sum(vals) for tc, vals in trait_max_per_q.items()}
-    return max(trait_totals.values()) if trait_totals else 1.0
+    return trait_totals
 
 
 # ── 2. Stream Scoring ────────────────────────────────────────────────
@@ -192,12 +193,21 @@ def compute_career_matches(traits: TraitProfile) -> list[CareerMatch]:
 
     for cluster in CAREER_CLUSTERS:
         # Weighted sum of the student's traits for this cluster
-        raw_score = sum(
+        student_weighted_score = sum(
             trait_dict.get(tc, 0.0) * w
             for tc, w in cluster.trait_weights.items()
         )
-        # raw_score is already on a 0-100 scale because traits are normalised
-        match_pct = round(min(raw_score, 100), 1)
+        
+        # Calculate theoretical maximum assuming every relevant trait is 100
+        career_max = sum(
+            100.0 * w
+            for w in cluster.trait_weights.values()
+        )
+        
+        if career_max > 0:
+            match_pct = round(min((student_weighted_score / career_max) * 100, 100), 1)
+        else:
+            match_pct = 0.0
 
         # Identify the 2-3 strongest matching traits for this student
         trait_contributions = sorted(
