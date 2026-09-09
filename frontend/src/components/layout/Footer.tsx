@@ -3,15 +3,15 @@ import { Compass } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/40 bg-muted/10">
+    <footer className="border-t border-border bg-[#0F172A]/80">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           
           <div className="flex items-center gap-2">
-            <div className="flex h-5 w-5 items-center justify-center rounded bg-primary text-primary-foreground">
-              <Compass className="h-3 w-3" />
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-xs shadow-primary/25">
+              <Compass className="h-3.5 w-3.5" />
             </div>
-            <span className="font-heading text-sm font-bold tracking-tight">
+            <span className="font-heading text-sm font-bold tracking-tight text-foreground">
               Career<span className="text-primary">Compass</span>
             </span>
           </div>
@@ -23,7 +23,7 @@ export function Footer() {
           </nav>
           
           <div className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Career Compass
+            © {new Date().getFullYear()} Career Compass. All rights reserved.
           </div>
           
         </div>

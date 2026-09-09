@@ -29,19 +29,19 @@ export function Features() {
   ];
 
   return (
-    <section className="py-20 w-full bg-background border-t border-border/30">
+    <section className="py-20 w-full bg-[#0F172A] border-t border-border">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature) => (
             <div 
               key={feature.id} 
-              className="flex flex-col p-6 rounded-xl border border-border/60 bg-muted/10 hover:bg-muted/20 transition-colors"
+              className="flex flex-col p-6 rounded-xl border border-border bg-card hover:bg-card-hover hover:border-primary/40 transition-all duration-200 shadow-sm"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
                   <feature.icon className="h-5 w-5" />
                 </div>
-                <span className="text-xs font-mono font-medium text-muted-foreground">
+                <span className="text-xs font-mono font-medium text-primary/70">
                   {feature.id}
                 </span>
               </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CAREER_ICON_MAP } from "@/lib/career-icons";
 
@@ -101,33 +101,31 @@ export function CareerDiscoveryAnimation({
     }
   }, [status, loadingTexts.length]);
 
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
   useEffect(() => {
-    if (status === "resolving" && topCareer && !hasResolved) {
+    if (status === "resolving") {
       setHasResolved(true);
-      const t = setTimeout(() => onComplete?.(), 3800);
+      const t = setTimeout(() => {
+        onCompleteRef.current?.();
+      }, 1000);
       return () => clearTimeout(t);
     }
-  }, [status, topCareer, hasResolved, onComplete]);
+  }, [status]);
 
   // ── Rank helpers ──────────────────────────────────────────────────────────
   const getRank = (name: string) =>
     hasResolved ? topCareerNames.indexOf(name) : -1;
 
-  const orbitOpacity = (name: string): number => {
+  const orbitOpacity = (_name: string): number => {
     if (!hasResolved) return 1;
-    if (name === topCareer?.name) return 0;    // winner leaves orbit
-    const r = getRank(name);
-    if (r === 1 || r === 2) return 0.65;
-    if (r === 3 || r === 4) return 0.55;
-    return 0.40;
+    return 0.85; // All career directions stay active and bright
   };
 
-  const orbitScale = (name: string): number => {
+  const orbitScale = (_name: string): number => {
     if (!hasResolved) return 1;
-    if (name === topCareer?.name) return 0.4;
-    const r = getRank(name);
-    if (r === 1 || r === 2) return 0.85;
-    return 0.75;
+    return 1;
   };
 
   return (
@@ -136,17 +134,17 @@ export function CareerDiscoveryAnimation({
       aria-live="polite"
       aria-label={
         hasResolved
-          ? `Career result: ${topCareer?.name}`
-          : "Discovering career matches"
+          ? "Career directions mapped"
+          : "Discovering career directions"
       }
     >
       {/* Ambient glow */}
       <motion.div
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        animate={{ opacity: hasResolved ? 1 : 0.35 }}
+        animate={{ opacity: hasResolved ? 1 : 0.4 }}
         transition={{ duration: 1.2 }}
       >
-        <div className="w-72 h-72 sm:w-96 sm:h-96 bg-primary/8 rounded-full blur-3xl" />
+        <div className="w-72 h-72 sm:w-96 sm:h-96 bg-primary/15 rounded-full blur-3xl" />
       </motion.div>
 
       {/*
@@ -166,21 +164,7 @@ export function CareerDiscoveryAnimation({
         {iconEntries.map(([careerName, Icon], index) => {
           const [lPct, tPct] = ORBIT[index % ORBIT.length];
 
-          /*
-           * Architecture:
-           *   outer div  — static CSS position (left/top + negative margin)
-           *                completely separate from Framer Motion transforms
-           *   motion.div — handles opacity, scale, and subtle px float ONLY
-           *
-           * This avoids the Framer Motion "transform replacement" bug where
-           * setting transform in style gets overwritten by the animated transform.
-           *
-           * Icon container is ~44 px (p-2.5 × 2 = 20 px + icon 24 px).
-           * Negative margin of –22 px centres it on the coordinate.
-           */
           const HALF_ICON = 22; // px — half of ~44px container
-
-          const isWinner = topCareer?.name === careerName;
 
           const floatXKeys = prefersReducedMotion ? [0] : FLOAT_X[index % FLOAT_X.length];
           const floatYKeys = prefersReducedMotion ? [0] : FLOAT_Y[index % FLOAT_Y.length];
@@ -218,27 +202,25 @@ export function CareerDiscoveryAnimation({
                 }
                 transition={
                   hasResolved
-                    ? { duration: 0.8, ease: "easeOut" }
+                    ? { duration: 0.6, ease: "easeOut" }
                     : {
                         x: { duration: dur, repeat: Infinity, repeatType: "loop", ease: "easeInOut" },
                         y: { duration: dur * 0.88, repeat: Infinity, repeatType: "loop", ease: "easeInOut" },
-                        opacity: { duration: 0.8, delay: index * 0.07 },
-                        scale:   { duration: 0.8, delay: index * 0.07 },
+                        opacity: { duration: 0.8, delay: index * 0.05 },
+                        scale:   { duration: 0.8, delay: index * 0.05 },
                       }
                 }
               >
                 <div
-                  className={`rounded-xl border transition-all duration-700 ${
-                    hasResolved && !isWinner
-                      ? "p-2 sm:p-2.5 bg-card/90 border-primary/20 shadow-sm shadow-primary/10"
-                      : "p-2 sm:p-2.5 bg-card border-border/60 hover:border-primary/30"
+                  className={`rounded-xl border transition-all duration-500 ${
+                    hasResolved
+                      ? "p-2 sm:p-2.5 bg-card/95 border-primary/40 shadow-sm shadow-primary/20 text-primary"
+                      : "p-2 sm:p-2.5 bg-card border-border hover:border-primary/40 text-muted-foreground"
                   }`}
                 >
                   <Icon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-700 ${
-                      hasResolved && !isWinner
-                        ? "text-primary/60"
-                        : "text-muted-foreground"
+                    className={`w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-500 ${
+                      hasResolved ? "text-primary" : "text-muted-foreground"
                     }`}
                   />
                 </div>
@@ -253,11 +235,11 @@ export function CareerDiscoveryAnimation({
           {/* Discovery state */}
           <motion.div
             animate={{ opacity: hasResolved ? 0 : 1, scale: hasResolved ? 0.9 : 1 }}
-            transition={{ duration: 0.45 }}
+            transition={{ duration: 0.35 }}
             className="flex flex-col items-center text-center px-6"
           >
             <span className="font-heading text-lg sm:text-xl font-bold tracking-widest text-foreground mb-2">
-              CAREER ✦ COMPASS
+              CAREER <span className="text-primary">✦</span> COMPASS
             </span>
             <AnimatePresence mode="wait">
               <motion.p
@@ -271,39 +253,34 @@ export function CareerDiscoveryAnimation({
                 {loadingTexts[loadingTextIdx]}
               </motion.p>
             </AnimatePresence>
+            <button
+              type="button"
+              onClick={() => onCompleteRef.current?.()}
+              className="mt-4 pointer-events-auto text-[11px] text-muted-foreground/70 hover:text-primary transition-colors underline underline-offset-4 cursor-pointer"
+            >
+              Skip to results &rarr;
+            </button>
           </motion.div>
 
-          {/* Resolution state — winner card */}
+          {/* Resolution state — multiple directions ready */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: hasResolved ? 1 : 0, scale: hasResolved ? 1 : 0.8 }}
-            transition={{ delay: 0.35, duration: 0.7, type: "spring", stiffness: 80, damping: 16 }}
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: hasResolved ? 1 : 0, scale: hasResolved ? 1 : 0.85 }}
+            transition={{ delay: 0.1, duration: 0.5, type: "spring", stiffness: 90, damping: 18 }}
             className="absolute flex flex-col items-center text-center px-4"
           >
-            {/* Winner icon in centre */}
-            {topCareer &&
-              (() => {
-                const WinnerIcon = CAREER_ICON_MAP[topCareer.name];
-                return WinnerIcon ? (
-                  <motion.div
-                    initial={{ scale: 0.4, opacity: 0 }}
-                    animate={{ scale: hasResolved ? 1 : 0.4, opacity: hasResolved ? 1 : 0 }}
-                    transition={{ delay: 0.55, type: "spring", stiffness: 70, damping: 14 }}
-                    className="mb-2.5 p-4 sm:p-5 rounded-2xl bg-primary/15 border border-primary/40 shadow-2xl shadow-primary/30"
-                  >
-                    <WinnerIcon className="w-10 h-10 sm:w-12 sm:h-12 text-primary" />
-                  </motion.div>
-                ) : null;
-              })()}
+            <div className="mb-2.5 p-4 rounded-2xl bg-primary/20 border border-primary/40 shadow-xl shadow-primary/25">
+              <span className="text-2xl text-primary font-bold">🧭</span>
+            </div>
 
             <p className="text-muted-foreground text-[11px] sm:text-xs font-medium mb-1">
-              Your profile currently shows a strong fit with
+              Analysis complete
             </p>
-            <h3 className="font-heading text-base sm:text-xl md:text-2xl font-bold text-foreground mb-2.5 leading-tight max-w-[180px] sm:max-w-[240px]">
-              {topCareer?.name}
+            <h3 className="font-heading text-base sm:text-xl md:text-2xl font-bold text-foreground mb-2 leading-tight">
+              Your Career Directions
             </h3>
-            <div className="inline-flex items-center bg-green-500/10 border border-green-500/30 text-green-500 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold tracking-wide">
-              {topCareer?.matchPercentage}% Match
+            <div className="inline-flex items-center bg-primary/15 border border-primary/30 text-primary px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+              Synthesizing possibilities...
             </div>
           </motion.div>
         </div>

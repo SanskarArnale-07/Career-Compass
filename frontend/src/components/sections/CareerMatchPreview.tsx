@@ -42,15 +42,15 @@ export function CareerMatchPreview() {
           {examples.map((example, idx) => (
             <div 
               key={idx} 
-              className="flex flex-col p-6 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+              className="flex flex-col p-6 rounded-2xl bg-card border border-border shadow-sm hover:shadow-xl hover:border-primary/50 hover:bg-card-hover transition-all duration-300 relative overflow-hidden group"
             >
               {/* Subtle background glow on hover */}
-              <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
               <div className="relative z-10 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                    <div className="h-10 w-10 rounded-lg bg-primary/15 border border-primary/25 flex items-center justify-center text-primary shadow-xs shadow-primary/20">
                       <example.icon className="h-5 w-5" />
                     </div>
                   </div>
@@ -60,23 +60,23 @@ export function CareerMatchPreview() {
                   </div>
                 </div>
 
-                <h3 className="font-heading text-xl font-bold mb-3">{example.role}</h3>
+                <h3 className="font-heading text-xl font-bold mb-3 text-foreground">{example.role}</h3>
                 
                 <div className="mb-4 flex flex-wrap gap-2">
                   {example.skills.map((skill, sIdx) => (
-                    <span key={sIdx} className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                    <span key={sIdx} className="inline-flex items-center rounded-md bg-[#0F172A] border border-border/80 px-2.5 py-1 text-xs font-medium text-secondary">
                       {skill}
                     </span>
                   ))}
                 </div>
 
-                <p className="text-sm text-muted-foreground mb-8">
+                <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
                   {example.reason}
                 </p>
 
-                <div className="mt-auto">
-                  <Link href="/assessment" className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-                    View Career <ArrowRight className="ml-1 h-4 w-4" />
+                <div className="mt-auto pt-2">
+                  <Link href="/assessment" className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-hover transition-colors">
+                    View Career <ArrowRight className="ml-1.5 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </div>

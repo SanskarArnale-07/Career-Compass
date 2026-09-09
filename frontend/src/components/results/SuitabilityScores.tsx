@@ -13,72 +13,98 @@ interface SuitabilityScoresProps {
 
 export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScoresProps) {
   
+  const getStreamAlignment = (rank: number) => {
+    if (rank === 0) return { label: "Strong alignment", badge: "bg-primary/15 text-primary border-primary/30" };
+    if (rank === 1) return { label: "Good alignment", badge: "bg-secondary/15 text-secondary border-secondary/30" };
+    return { label: "Also worth exploring", badge: "bg-slate-800 text-slate-300 border-slate-700" };
+  };
+
   const streams = [
     {
-      name: "Science (PCM/PCB)",
+      name: "Science (PCM / PCB)",
       key: "science",
       score: scores.science,
-      icon: <BrainCircuit className="h-6 w-6 text-blue-500" />,
-      color: "bg-blue-500",
-      bgClass: "bg-blue-500/10",
-      description: descriptions.science || "Alignment based on your analytical, technical, and scientific traits."
+      icon: <BrainCircuit className="h-6 w-6 text-primary" />,
+      color: "bg-primary",
+      bgClass: "bg-primary/15 border border-primary/25",
+      description: descriptions.science || "Connects with analytical, technical, and empirical investigation questions."
     },
     {
-      name: "Commerce",
+      name: "Commerce & Economics",
       key: "commerce",
       score: scores.commerce,
-      icon: <Calculator className="h-6 w-6 text-emerald-500" />,
-      color: "bg-emerald-500",
-      bgClass: "bg-emerald-500/10",
-      description: descriptions.commerce || "Alignment based on your business, analytical, and leadership traits."
+      icon: <Calculator className="h-6 w-6 text-secondary" />,
+      color: "bg-secondary",
+      bgClass: "bg-secondary/15 border border-secondary/25",
+      description: descriptions.commerce || "Connects with business, structured analysis, and organizational thinking."
     },
     {
       name: "Arts & Humanities",
       key: "arts",
       score: scores.arts,
-      icon: <Palette className="h-6 w-6 text-purple-500" />,
-      color: "bg-purple-500",
-      bgClass: "bg-purple-500/10",
-      description: descriptions.arts || "Alignment based on your creative, social, and exploratory traits."
+      icon: <Palette className="h-6 w-6 text-sky-400" />,
+      color: "bg-sky-400",
+      bgClass: "bg-sky-400/15 border border-sky-400/25",
+      description: descriptions.arts || "Connects with creative expression, social perspective, and exploratory inquiry."
     }
   ].sort((a, b) => b.score - a.score);
 
   return (
-    <div className="bg-card border border-border shadow-sm rounded-xl p-6 md:p-8 w-full">
-      <h3 className="font-heading text-2xl font-bold mb-2">Class 10 Stream Suitability</h3>
-      <p className="text-muted-foreground mb-8">
-        Based on your assessment, here is your compatibility with the major 11th-grade streams.
-      </p>
+    <div className="bg-card border border-border shadow-md rounded-2xl p-6 md:p-8 w-full">
+      <div className="mb-6">
+        <h3 className="font-heading text-2xl font-bold mb-2 text-foreground">
+          Academic Stream Alignment
+        </h3>
+        <p className="text-muted-foreground text-sm md:text-base max-w-3xl">
+          Based on your assessment responses, here is how your current interests connect with major 11th-grade academic pathways.
+        </p>
+      </div>
 
-      <div className="space-y-6">
-        {streams.map((stream, index) => (
-          <div key={stream.key} className={`p-4 rounded-lg border ${index === 0 ? 'border-primary/50 bg-primary/5' : 'border-border bg-card'}`}>
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-md ${stream.bgClass}`}>
-                  {stream.icon}
+      <div className="space-y-5">
+        {streams.map((stream, index) => {
+          const alignment = getStreamAlignment(index);
+          return (
+            <div
+              key={stream.key}
+              className={`p-4 sm:p-5 rounded-xl border transition-all ${
+                index === 0
+                  ? "border-primary/40 bg-primary/5 shadow-sm shadow-primary/10"
+                  : "border-border bg-[#0F172A]/50"
+              }`}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2.5 rounded-lg ${stream.bgClass} shrink-0`}>
+                    {stream.icon}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground text-base">
+                      {stream.name}
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {stream.description}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-foreground flex items-center gap-2">
-                    {stream.name}
-                    {index === 0 && <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Top Match</span>}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">{stream.description}</p>
+                <div className="sm:text-right shrink-0">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${alignment.badge}`}
+                  >
+                    {alignment.label}
+                  </span>
                 </div>
               </div>
-              <div className="text-xl font-bold tracking-tight">
-                {stream.score}%
+
+              {/* Relative spectrum indicator without raw numbers */}
+              <div className="mt-3 h-2 w-full bg-[#0B1220] rounded-full overflow-hidden border border-border/80 p-0.5">
+                <div
+                  className={`h-full rounded-full ${stream.color} transition-all duration-1000 ease-out`}
+                  style={{ width: `${Math.max(25, Math.min(95, stream.score * 1.5))}%` }}
+                />
               </div>
             </div>
-            
-            <div className="mt-4 h-2.5 w-full bg-muted rounded-full overflow-hidden">
-              <div 
-                className={`h-full rounded-full ${stream.color} transition-all duration-1000 ease-out`}
-                style={{ width: `${stream.score}%` }}
-              />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

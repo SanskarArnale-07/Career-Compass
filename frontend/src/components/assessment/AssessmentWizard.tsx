@@ -105,21 +105,21 @@ export function AssessmentWizard() {
         className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
       >
         <SpotlightCard 
-          spotlightColor={isSelected ? "color-mix(in srgb, var(--primary) 25%, transparent)" : "color-mix(in srgb, var(--foreground) 5%, transparent)"}
+          spotlightColor={isSelected ? "rgba(59, 130, 246, 0.22)" : "rgba(59, 130, 246, 0.06)"}
           className={`transition-all duration-300 flex items-center justify-between py-2.5 px-3.5 sm:py-3 sm:px-4 border-2 ${
             isSelected 
-              ? "border-primary bg-primary/5 shadow-lg shadow-primary/20" 
-              : "border-border/40 bg-card/60 hover:border-primary/40 hover:bg-muted/40"
+              ? "border-primary bg-primary/10 shadow-lg shadow-primary/20" 
+              : "border-border bg-card hover:border-primary/40 hover:bg-card-hover"
           }`}
         >
-          <span className={`font-sans font-medium text-base sm:text-lg transition-colors ${isSelected ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}>
+          <span className={`font-sans font-medium text-base sm:text-lg transition-colors ${isSelected ? "text-foreground font-semibold" : "text-secondary-foreground group-hover:text-foreground"}`}>
             {option.label}
           </span>
           
           <div className={`h-5 w-5 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-300 ml-4 ${
-            isSelected ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/40" : "border-muted-foreground/30"
+            isSelected ? "border-primary bg-primary text-white shadow-md shadow-primary/40" : "border-slate-600"
           }`}>
-            {isSelected && <Check className="h-3 w-3" />}
+            {isSelected && <Check className="h-3 w-3 stroke-[2.5]" />}
           </div>
         </SpotlightCard>
       </button>
@@ -130,7 +130,7 @@ export function AssessmentWizard() {
     <div className="relative w-full pb-8">
       
       {/* Subtle Background */}
-      <div className="fixed inset-0 z-0 bg-radial from-transparent to-background via-background/90 pointer-events-none" />
+      <div className="fixed inset-0 z-0 bg-radial from-primary/5 to-background via-background/95 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-3xl mx-auto px-4 sm:px-6">
         
@@ -155,7 +155,7 @@ export function AssessmentWizard() {
             <span className="text-primary font-bold">{Math.round(progressPercentage)}%</span>
           </div>
           <div 
-            className="h-2 w-full bg-muted/50 rounded-full overflow-hidden border border-border/40 p-0.5"
+            className="h-2.5 w-full bg-[#0F172A] rounded-full overflow-hidden border border-border p-0.5"
             role="progressbar"
             aria-valuenow={Math.round(progressPercentage)}
             aria-valuemin={0}
@@ -171,7 +171,7 @@ export function AssessmentWizard() {
         {/* Question Container */}
         <div>
           <div className="mb-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="font-heading text-xl md:text-2xl font-bold tracking-tight mb-2 leading-snug">
+            <h2 className="font-heading text-xl md:text-2xl font-bold tracking-tight mb-2 leading-snug text-foreground">
               {currentQuestion.question}
             </h2>
             {currentQuestion.explanation && (
@@ -180,8 +180,8 @@ export function AssessmentWizard() {
               </p>
             )}
             {currentQuestion.type === "multiple-choice" && (
-              <p className="font-sans text-primary/80 text-xs mt-2 font-medium flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary/80"></span>
+              <p className="font-sans text-secondary text-xs mt-2 font-medium flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
                 Select all that apply (up to 3)
               </p>
             )}
@@ -197,10 +197,10 @@ export function AssessmentWizard() {
         </div>
 
         {/* Footer Navigation */}
-        <div className="mt-2 pt-4 pb-8 sm:pb-10 border-t border-border/20 flex items-center justify-between w-full">
+        <div className="mt-2 pt-4 pb-8 sm:pb-10 border-t border-border flex items-center justify-between w-full">
           <button
             onClick={handleBack}
-            className="inline-flex h-10 sm:h-12 items-center justify-center rounded-lg px-4 sm:px-6 text-sm font-sans font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="inline-flex h-10 sm:h-12 items-center justify-center rounded-lg px-4 sm:px-6 text-sm font-sans font-medium text-muted-foreground hover:text-foreground hover:bg-card-hover transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
@@ -211,7 +211,7 @@ export function AssessmentWizard() {
             disabled={!canContinue()}
             className={`h-10 sm:h-12 px-5 sm:px-8 text-sm font-sans font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               canContinue() 
-                ? "border-primary/30 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5" 
+                ? "border-primary/40 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5" 
                 : "opacity-50 cursor-not-allowed pointer-events-none"
             }`}
           >
