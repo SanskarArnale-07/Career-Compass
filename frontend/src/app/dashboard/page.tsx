@@ -432,6 +432,13 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/coach"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/15 text-xs font-semibold text-primary hover:bg-primary/25 transition-all shadow-sm"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Ask AI Coach</span>
+            </Link>
             <button
               onClick={() => setShowCareerSelector(!showCareerSelector)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-card-hover hover:border-primary/30 transition-colors cursor-pointer"
@@ -526,12 +533,19 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Link
+              href="/coach"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover shadow-md shadow-primary/20 transition-all"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Career Coach →</span>
+            </Link>
             <Link
               href={`/career/${career.slug}`}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card text-xs font-semibold text-foreground hover:bg-card-hover hover:border-primary/30 transition-all"
             >
-              <span>View Full Guide</span>
+              <span>View Guide</span>
               <ExternalLink className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -612,6 +626,16 @@ export default function DashboardPage() {
                 Toolkit &amp; Navigation
               </h3>
               <div className="space-y-1.5 text-xs">
+                <Link
+                  href="/coach"
+                  className="flex items-center justify-between p-2.5 rounded-lg border border-primary/30 bg-primary/10 text-primary font-semibold hover:bg-primary/20 transition-colors"
+                >
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>Ask Career Compass AI</span>
+                  </span>
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
                 <Link
                   href={`/career/${career.slug}`}
                   className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#0F172A] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
