@@ -9,17 +9,19 @@ import {
   ArrowLeft,
   CheckCircle2,
   Circle,
-  Calendar,
   Zap,
-  Target,
   BookOpen,
   Award,
-  ChevronRight,
   ChevronDown,
-  Plus,
-  Trash2,
-  RotateCcw,
   ExternalLink,
+  RotateCcw,
+  Sparkles,
+  Layers,
+  FolderKanban,
+  Clock,
+  Target,
+  ShieldAlert,
+  HelpCircle,
 } from "lucide-react";
 
 import {
@@ -28,7 +30,34 @@ import {
   type CareerDetail,
 } from "@/lib/career-details";
 
-interface WeeklyTask {
+import {
+  calculateCareerReadiness,
+  getNextBestAction,
+  generateAdaptiveWeeklySprint,
+  getAdaptiveInsights,
+  calculateTimeToReadiness,
+  type UserProgressState,
+  type CareerReadinessResult,
+  type NextBestAction,
+  type SprintTask,
+  type AdaptiveInsight,
+  type TimeToReadinessResult,
+} from "@/lib/career-details/roadmap-intelligence";
+
+import {
+  type TraitProfile,
+  getPersonalizedSkills,
+  type PersonalizedSkill,
+} from "@/lib/career-details/personalization";
+
+import NextBestActionCard from "@/components/dashboard/NextBestActionCard";
+import CareerReadinessMeter from "@/components/dashboard/CareerReadinessMeter";
+import AdaptiveSprintList from "@/components/dashboard/AdaptiveSprintList";
+import SkillMasteryMatrix from "@/components/dashboard/SkillMasteryMatrix";
+import StudyPaceSelector from "@/components/dashboard/StudyPaceSelector";
+import ProjectPortfolioTracker from "@/components/dashboard/ProjectPortfolioTracker";
+
+interface CustomTask {
   id: string;
   text: string;
   category: string;
@@ -44,7 +73,10 @@ interface StoredProgress {
   };
   completedTasks: string[];
   completedPhases: number[];
-  customTasks?: WeeklyTask[];
+  completedSkills?: string[];
+  completedProjects?: string[];
+  weeklyPaceHours?: number;
+  customTasks?: CustomTask[];
 }
 
 export default function DashboardPage() {
@@ -52,20 +84,32 @@ export default function DashboardPage() {
   const [selectedSlug, setSelectedSlug] = useState<string>("software-development");
   const [completedPhases, setCompletedPhases] = useState<Set<number>>(new Set());
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
-  const [customTasks, setCustomTasks] = useState<WeeklyTask[]>([]);
-  const [newTaskInput, setNewTaskInput] = useState("");
+  const [completedSkills, setCompletedSkills] = useState<Set<string>>(new Set());
+  const [completedProjects, setCompletedProjects] = useState<Set<string>>(new Set());
+  const [weeklyPaceHours, setWeeklyPaceHours] = useState<number>(10);
+  const [customTasks, setCustomTasks] = useState<CustomTask[]>([]);
   const [startedDate, setStartedDate] = useState<string>("");
   const [showCareerSelector, setShowCareerSelector] = useState(false);
   const [expandedPhase, setExpandedPhase] = useState<number | null>(1);
+  const [traitProfile, setTraitProfile] = useState<TraitProfile | null>(null);
 
   const allCareers = getAllCareers();
   const career: CareerDetail = getCareerBySlug(selectedSlug) || allCareers[0];
 
-  // ── Load progress from localStorage ─────────────────────────────
+  // ── Load progress from localStorage and assessment from sessionStorage ──
   useEffect(() => {
     setIsClient(true);
     try {
-      // 1. Check if progress exists in localStorage
+      // 1. Check assessment trait results
+      const resultsStr = sessionStorage.getItem("careerCompassResults");
+      if (resultsStr) {
+        const results = JSON.parse(resultsStr);
+        if (results.trait_profile) {
+          setTraitProfile(results.trait_profile);
+        }
+      }
+
+      // 2. Check stored progress in localStorage
       const stored = localStorage.getItem("careerCompassProgress");
       if (stored) {
         const data: StoredProgress = JSON.parse(stored);
@@ -81,18 +125,14 @@ export default function DashboardPage() {
             );
           }
         }
-        if (data.completedPhases) {
-          setCompletedPhases(new Set(data.completedPhases));
-        }
-        if (data.completedTasks) {
-          setCompletedTasks(new Set(data.completedTasks));
-        }
-        if (data.customTasks) {
-          setCustomTasks(data.customTasks);
-        }
+        if (data.completedPhases) setCompletedPhases(new Set(data.completedPhases));
+        if (data.completedTasks) setCompletedTasks(new Set(data.completedTasks));
+        if (data.completedSkills) setCompletedSkills(new Set(data.completedSkills));
+        if (data.completedProjects) setCompletedProjects(new Set(data.completedProjects));
+        if (data.weeklyPaceHours) setWeeklyPaceHours(data.weeklyPaceHours);
+        if (data.customTasks) setCustomTasks(data.customTasks);
       } else {
-        // 2. Try checking assessment results for top career
-        const resultsStr = sessionStorage.getItem("careerCompassResults");
+        // Fallback to top career from assessment if new
         if (resultsStr) {
           const results = JSON.parse(resultsStr);
           if (results.top_careers?.[0]) {
@@ -100,9 +140,7 @@ export default function DashboardPage() {
             const match = allCareers.find(
               (c) => c.careerName.toLowerCase() === topCareerName.toLowerCase()
             );
-            if (match) {
-              setSelectedSlug(match.slug);
-            }
+            if (match) setSelectedSlug(match.slug);
           }
         }
         setStartedDate(
@@ -114,7 +152,7 @@ export default function DashboardPage() {
         );
       }
     } catch (e) {
-      console.error("Error loading progress from storage", e);
+      console.error("Error initializing dashboard data", e);
     }
   }, []);
 
@@ -123,7 +161,10 @@ export default function DashboardPage() {
     slugToSave: string,
     phases: Set<number>,
     tasks: Set<string>,
-    customList: WeeklyTask[]
+    skills: Set<string>,
+    projects: Set<string>,
+    pace: number,
+    customList: CustomTask[]
   ) => {
     try {
       const payload: StoredProgress = {
@@ -135,6 +176,9 @@ export default function DashboardPage() {
         },
         completedPhases: Array.from(phases),
         completedTasks: Array.from(tasks),
+        completedSkills: Array.from(skills),
+        completedProjects: Array.from(projects),
+        weeklyPaceHours: pace,
         customTasks: customList,
       };
       localStorage.setItem("careerCompassProgress", JSON.stringify(payload));
@@ -146,45 +190,112 @@ export default function DashboardPage() {
   const handleSelectCareer = (newSlug: string) => {
     setSelectedSlug(newSlug);
     setShowCareerSelector(false);
-    saveProgress(newSlug, completedPhases, completedTasks, customTasks);
+    saveProgress(
+      newSlug,
+      completedPhases,
+      completedTasks,
+      completedSkills,
+      completedProjects,
+      weeklyPaceHours,
+      customTasks
+    );
   };
 
   const togglePhase = (phaseNum: number) => {
     const next = new Set(completedPhases);
-    if (next.has(phaseNum)) {
-      next.delete(phaseNum);
-    } else {
-      next.add(phaseNum);
-    }
+    if (next.has(phaseNum)) next.delete(phaseNum);
+    else next.add(phaseNum);
     setCompletedPhases(next);
-    saveProgress(selectedSlug, next, completedTasks, customTasks);
+    saveProgress(
+      selectedSlug,
+      next,
+      completedTasks,
+      completedSkills,
+      completedProjects,
+      weeklyPaceHours,
+      customTasks
+    );
   };
 
   const toggleTask = (taskId: string) => {
     const next = new Set(completedTasks);
-    if (next.has(taskId)) {
-      next.delete(taskId);
-    } else {
-      next.add(taskId);
-    }
+    if (next.has(taskId)) next.delete(taskId);
+    else next.add(taskId);
     setCompletedTasks(next);
-    saveProgress(selectedSlug, completedPhases, next, customTasks);
+    saveProgress(
+      selectedSlug,
+      completedPhases,
+      next,
+      completedSkills,
+      completedProjects,
+      weeklyPaceHours,
+      customTasks
+    );
   };
 
-  const handleAddCustomTask = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTaskInput.trim()) return;
+  const toggleSkill = (skillId: string) => {
+    const next = new Set(completedSkills);
+    if (next.has(skillId)) next.delete(skillId);
+    else next.add(skillId);
+    setCompletedSkills(next);
+    saveProgress(
+      selectedSlug,
+      completedPhases,
+      completedTasks,
+      next,
+      completedProjects,
+      weeklyPaceHours,
+      customTasks
+    );
+  };
 
-    const newTask: WeeklyTask = {
+  const toggleProject = (projectTitle: string) => {
+    const next = new Set(completedProjects);
+    if (next.has(projectTitle)) next.delete(projectTitle);
+    else next.add(projectTitle);
+    setCompletedProjects(next);
+    saveProgress(
+      selectedSlug,
+      completedPhases,
+      completedTasks,
+      completedSkills,
+      next,
+      weeklyPaceHours,
+      customTasks
+    );
+  };
+
+  const handleChangePace = (pace: number) => {
+    setWeeklyPaceHours(pace);
+    saveProgress(
+      selectedSlug,
+      completedPhases,
+      completedTasks,
+      completedSkills,
+      completedProjects,
+      pace,
+      customTasks
+    );
+  };
+
+  const handleAddCustomTask = (text: string) => {
+    const newTask: CustomTask = {
       id: `custom_${Date.now()}`,
-      text: newTaskInput.trim(),
+      text,
       category: "Personal Goal",
       done: false,
     };
     const updated = [...customTasks, newTask];
     setCustomTasks(updated);
-    setNewTaskInput("");
-    saveProgress(selectedSlug, completedPhases, completedTasks, updated);
+    saveProgress(
+      selectedSlug,
+      completedPhases,
+      completedTasks,
+      completedSkills,
+      completedProjects,
+      weeklyPaceHours,
+      updated
+    );
   };
 
   const toggleCustomTask = (id: string) => {
@@ -192,13 +303,29 @@ export default function DashboardPage() {
       t.id === id ? { ...t, done: !t.done } : t
     );
     setCustomTasks(updated);
-    saveProgress(selectedSlug, completedPhases, completedTasks, updated);
+    saveProgress(
+      selectedSlug,
+      completedPhases,
+      completedTasks,
+      completedSkills,
+      completedProjects,
+      weeklyPaceHours,
+      updated
+    );
   };
 
   const deleteCustomTask = (id: string) => {
     const updated = customTasks.filter((t) => t.id !== id);
     setCustomTasks(updated);
-    saveProgress(selectedSlug, completedPhases, completedTasks, updated);
+    saveProgress(
+      selectedSlug,
+      completedPhases,
+      completedTasks,
+      completedSkills,
+      completedProjects,
+      weeklyPaceHours,
+      updated
+    );
   };
 
   const handleResetProgress = () => {
@@ -209,69 +336,85 @@ export default function DashboardPage() {
     ) {
       setCompletedPhases(new Set());
       setCompletedTasks(new Set());
+      setCompletedSkills(new Set());
+      setCompletedProjects(new Set());
       setCustomTasks([]);
       localStorage.removeItem("careerCompassProgress");
     }
   };
 
+  const handleActionClick = (targetType: string, targetId: string | number) => {
+    if (targetType === "phase") {
+      setExpandedPhase(Number(targetId));
+      const el = document.getElementById("roadmap-phases");
+      el?.scrollIntoView({ behavior: "smooth" });
+    } else if (targetType === "project") {
+      const el = document.getElementById("portfolio-projects");
+      el?.scrollIntoView({ behavior: "smooth" });
+    } else if (targetType === "skill") {
+      const el = document.getElementById("skill-matrix");
+      el?.scrollIntoView({ behavior: "smooth" });
+    } else if (targetType === "prep") {
+      const el = document.getElementById("job-prep");
+      el?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   if (!isClient) return null;
 
-  // ── Compute metrics ─────────────────────────────────────────────
-  const totalPhases = career.roadmap.length || 1;
-  const phasePercent = Math.round((completedPhases.size / totalPhases) * 100);
+  // ── Compute Intelligence Engine Outputs ───────────────────────────
+  const progressState: UserProgressState = {
+    completedPhases: Array.from(completedPhases),
+    completedTasks: Array.from(completedTasks),
+    completedSkills: Array.from(completedSkills),
+    completedProjects: Array.from(completedProjects),
+    weeklyPaceHours,
+  };
 
-  // Derive initial tasks from Phase 1 or Job Prep
-  const defaultActionItems = [
-    {
-      id: `${career.slug}_p1_fundamentals`,
-      text: `Master Phase 1 fundamentals: ${career.roadmap[0]?.title || "Core concepts"}`,
-      category: "Foundations",
-    },
-    {
-      id: `${career.slug}_project_1`,
-      text: `Build first beginner project: ${career.projects[0]?.title || "Portfolio project"}`,
-      category: "Projects",
-    },
-    {
-      id: `${career.slug}_prep_setup`,
-      text: career.preparation[0]?.task || "Setup professional profile and development environment",
-      category: "Preparation",
-    },
-    {
-      id: `${career.slug}_dsa_practice`,
-      text: "Dedicate 3–5 hours this week to deliberate practice and coursework",
-      category: "Routine",
-    },
-  ];
-
-  const totalBuiltinTasks = defaultActionItems.length;
-  const completedBuiltin = defaultActionItems.filter((t) =>
-    completedTasks.has(t.id)
-  ).length;
-
-  const totalCustom = customTasks.length;
-  const completedCustom = customTasks.filter((t) => t.done).length;
-
-  const totalAllTasks = totalBuiltinTasks + totalCustom;
-  const completedAllTasks = completedBuiltin + completedCustom;
-
-  const overallScore = Math.round(
-    phasePercent * 0.6 + (totalAllTasks > 0 ? (completedAllTasks / totalAllTasks) * 40 : 0)
+  const readiness: CareerReadinessResult = calculateCareerReadiness(
+    career,
+    traitProfile,
+    progressState
   );
 
-  let currentLevel = "Beginner Explorer";
-  if (overallScore >= 75) currentLevel = "Career Ready & Applied";
-  else if (overallScore >= 40) currentLevel = "Active Apprentice";
-  else if (overallScore >= 15) currentLevel = "Foundations in Progress";
+  const nextBestAction: NextBestAction = getNextBestAction(
+    career,
+    traitProfile,
+    progressState
+  );
 
-  const Icon =
+  const sprintTasks: SprintTask[] = generateAdaptiveWeeklySprint(
+    career,
+    traitProfile,
+    progressState
+  );
+
+  const adaptiveInsights: AdaptiveInsight[] = getAdaptiveInsights(
+    career,
+    traitProfile
+  );
+
+  const paceInfo: TimeToReadinessResult = calculateTimeToReadiness(
+    career,
+    progressState,
+    weeklyPaceHours
+  );
+
+  const personalizedSkills: PersonalizedSkill[] = traitProfile
+    ? getPersonalizedSkills(traitProfile, career)
+    : career.skills.map((s, idx) => ({
+        ...s,
+        status: idx === 0 ? ("strong" as const) : ("developing" as const),
+      }));
+
+  const IconComponent =
     (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[
       career.icon
     ] ?? Compass;
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-28">
-      {/* Top Bar */}
+      {/* Top Utility Bar */}
       <div className="border-b border-border/80 bg-background/80 backdrop-blur-md sticky top-0 z-30">
         <div className="container mx-auto px-4 py-3 max-w-6xl flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -284,7 +427,7 @@ export default function DashboardPage() {
             </Link>
             <span className="text-border">|</span>
             <span className="text-xs font-semibold text-primary">
-              Roadmap Dashboard
+              Adaptive Intelligence Dashboard
             </span>
           </div>
 
@@ -306,7 +449,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Dropdown Career Selector modal / menu */}
+        {/* Dropdown Career Selector menu */}
         <AnimatePresence>
           {showCareerSelector && (
             <motion.div
@@ -344,14 +487,14 @@ export default function DashboardPage() {
       </div>
 
       <div className="container mx-auto px-4 max-w-6xl pt-8 space-y-8">
-        {/* Header: Current Focus */}
+        {/* Header: Current Focus & Personalization Mode */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl border border-border bg-gradient-to-r from-card via-[#0F172A] to-card">
           <div className="flex items-start gap-4">
             <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/25 text-primary shrink-0">
-              <Icon className="h-7 w-7" />
+              <IconComponent className="h-7 w-7" />
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-primary font-mono">
                   Active Career Goal
                 </span>
@@ -359,6 +502,20 @@ export default function DashboardPage() {
                 <span className="text-xs text-muted-foreground">
                   Started {startedDate || "Recently"}
                 </span>
+                <span className="text-border">•</span>
+                {traitProfile ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-mono font-semibold text-emerald-400">
+                    <Sparkles className="h-3 w-3" />
+                    Adaptive Mode Active
+                  </span>
+                ) : (
+                  <Link
+                    href="/assessment"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-mono font-semibold text-primary hover:underline"
+                  >
+                    Take Assessment for Personalization →
+                  </Link>
+                )}
               </div>
               <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
                 {career.title}
@@ -380,382 +537,79 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Top Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Card 1: Overall Progress */}
-          <div className="p-5 rounded-2xl border border-border bg-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-muted-foreground font-mono uppercase tracking-wider">
-                Overall Progress
-              </span>
-              <Award className="h-4 w-4 text-primary" />
-            </div>
-            <div className="flex items-baseline gap-2 mb-3">
-              <span className="font-heading text-3xl font-bold text-foreground">
-                {overallScore}%
-              </span>
-              <span className="text-xs text-muted-foreground">completed</span>
-            </div>
-            <div className="w-full bg-[#0F172A] rounded-full h-2 overflow-hidden border border-border/50">
+        {/* Adaptive Insights (Fast-Track / Bridge Alerts) */}
+        {adaptiveInsights.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {adaptiveInsights.map((insight, idx) => (
               <div
-                className="bg-primary h-2 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(100, Math.max(4, overallScore))}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Card 2: Current Stage */}
-          <div className="p-5 rounded-2xl border border-border bg-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-muted-foreground font-mono uppercase tracking-wider">
-                Current Level
-              </span>
-              <Target className="h-4 w-4 text-secondary" />
-            </div>
-            <div className="mb-1">
-              <span className="font-heading text-xl font-bold text-foreground">
-                {currentLevel}
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {completedPhases.size} of {totalPhases} roadmap phases completed
-            </p>
-          </div>
-
-          {/* Card 3: Action Milestones */}
-          <div className="p-5 rounded-2xl border border-border bg-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-muted-foreground font-mono uppercase tracking-wider">
-                Milestones Done
-              </span>
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            </div>
-            <div className="flex items-baseline gap-2 mb-1">
-              <span className="font-heading text-3xl font-bold text-foreground">
-                {completedAllTasks}
-                <span className="text-base text-muted-foreground font-normal">
-                  /{totalAllTasks}
-                </span>
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {totalAllTasks - completedAllTasks > 0
-                ? `${totalAllTasks - completedAllTasks} pending tasks this cycle`
-                : "All weekly goals achieved!"}
-            </p>
-          </div>
-        </div>
-
-        {/* Main 2-column layout: Roadmap Progress (left) + Action Checklist (right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* LEFT 2 COLS: Phase-by-Phase Timeline */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-heading text-xl font-bold text-foreground flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  Roadmap Phases
-                </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                  Click a phase to inspect topics, practice tasks, and mark off
-                  completion.
-                </p>
-              </div>
-              <span className="text-xs font-mono font-medium text-muted-foreground">
-                {completedPhases.size}/{totalPhases} Finished
-              </span>
-            </div>
-
-            <div className="space-y-4">
-              {career.roadmap.map((phase) => {
-                const isCompleted = completedPhases.has(phase.phase);
-                const isExpanded = expandedPhase === phase.phase;
-
-                return (
-                  <div
-                    key={phase.phase}
-                    className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                      isCompleted
-                        ? "border-emerald-500/30 bg-card/60"
-                        : "border-border bg-card hover:border-primary/30"
-                    }`}
-                  >
-                    {/* Phase Header Accordion */}
-                    <div
-                      onClick={() =>
-                        setExpandedPhase(isExpanded ? null : phase.phase)
-                      }
-                      className="p-5 flex items-start sm:items-center justify-between gap-4 cursor-pointer select-none"
-                    >
-                      <div className="flex items-center gap-3.5">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            togglePhase(phase.phase);
-                          }}
-                          className="shrink-0 transition-transform active:scale-90 cursor-pointer"
-                          title={
-                            isCompleted ? "Mark in-progress" : "Mark as completed"
-                          }
-                        >
-                          {isCompleted ? (
-                            <CheckCircle2 className="h-6 w-6 text-emerald-400 fill-emerald-400/20" />
-                          ) : (
-                            <Circle className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />
-                          )}
-                        </button>
-
-                        <div>
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-                              Phase {phase.phase}
-                            </span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono bg-primary/10 text-primary border border-primary/20">
-                              {phase.estimatedDuration}
-                            </span>
-                          </div>
-                          <h3
-                            className={`font-heading text-base font-bold transition-colors ${
-                              isCompleted
-                                ? "text-emerald-300 line-through opacity-80"
-                                : "text-foreground"
-                            }`}
-                          >
-                            {phase.title}
-                          </h3>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs text-muted-foreground hidden sm:inline font-sans">
-                          {isCompleted ? "Completed" : "In Progress"}
-                        </span>
-                        <ChevronDown
-                          className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
-                            isExpanded ? "rotate-180 text-foreground" : ""
-                          }`}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Phase Expanded Details */}
-                    {isExpanded && (
-                      <div className="px-5 pb-6 pt-2 border-t border-border/60 bg-[#0F172A]/40 space-y-4">
-                        <p className="text-xs sm:text-sm text-secondary-foreground leading-relaxed">
-                          {phase.description}
-                        </p>
-
-                        {/* Learn Points */}
-                        <div>
-                          <p className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                            Key Skills &amp; Concepts
-                          </p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {phase.skills.map((skill) => (
-                              <span
-                                key={skill}
-                                className="px-2.5 py-1 rounded-lg text-xs font-medium bg-card border border-border text-foreground"
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Practical Build Task */}
-                        {phase.build && (
-                          <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20">
-                            <p className="text-xs font-mono font-semibold text-primary uppercase tracking-wider mb-1">
-                              Phase Milestone Project
-                            </p>
-                            <p className="text-xs text-foreground font-medium">
-                              {phase.build}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Resources */}
-                        {phase.resources && phase.resources.length > 0 && (
-                          <div>
-                            <p className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                              Recommended Resources
-                            </p>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {phase.resources.map((res) => (
-                                <a
-                                  key={res.name}
-                                  href={res.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="p-2.5 rounded-xl border border-border bg-card hover:border-primary/40 hover:bg-card-hover transition-colors flex items-center justify-between group"
-                                >
-                                  <div className="truncate mr-2">
-                                    <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                                      {res.name}
-                                    </p>
-                                    <span className="text-[10px] text-muted-foreground font-mono uppercase">
-                                      {res.type} • {res.estimatedTime}
-                                    </span>
-                                  </div>
-                                  <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary shrink-0" />
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Bottom action inside phase */}
-                        <div className="pt-2 flex justify-end">
-                          <button
-                            onClick={() => togglePhase(phase.phase)}
-                            className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                              isCompleted
-                                ? "border border-border bg-card text-muted-foreground hover:text-foreground"
-                                : "bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm"
-                            }`}
-                          >
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            <span>
-                              {isCompleted
-                                ? "Mark as Incomplete"
-                                : "Mark Phase Complete"}
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* RIGHT 1 COL: Weekly Action Focus & Custom Tasks */}
-          <div className="space-y-6">
-            <div>
-              <h2 className="font-heading text-xl font-bold text-foreground flex items-center gap-2">
-                <Zap className="h-5 w-5 text-secondary" />
-                This Week&apos;s Focus
-              </h2>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                Concrete bite-sized goals to make consistent forward progress.
-              </p>
-            </div>
-
-            {/* Checklist Card */}
-            <div className="p-5 rounded-2xl border border-border bg-card space-y-4">
-              {/* Built-in Tasks */}
-              <div className="space-y-2.5">
-                {defaultActionItems.map((task) => {
-                  const isDone = completedTasks.has(task.id);
-                  return (
-                    <div
-                      key={task.id}
-                      onClick={() => toggleTask(task.id)}
-                      className={`p-3 rounded-xl border flex items-start gap-3 transition-all cursor-pointer select-none ${
-                        isDone
-                          ? "border-emerald-500/25 bg-emerald-500/5"
-                          : "border-border bg-[#0F172A] hover:border-primary/30"
-                      }`}
-                    >
-                      <button className="mt-0.5 shrink-0">
-                        {isDone ? (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                        ) : (
-                          <Circle className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block mb-0.5">
-                          {task.category}
-                        </span>
-                        <p
-                          className={`text-xs font-medium leading-relaxed ${
-                            isDone
-                              ? "text-muted-foreground line-through"
-                              : "text-foreground"
-                          }`}
-                        >
-                          {task.text}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Custom Tasks */}
-                {customTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className={`p-3 rounded-xl border flex items-start gap-3 transition-all ${
-                      task.done
-                        ? "border-emerald-500/25 bg-emerald-500/5"
-                        : "border-border bg-[#0F172A] hover:border-primary/30"
-                    }`}
-                  >
-                    <button
-                      onClick={() => toggleCustomTask(task.id)}
-                      className="mt-0.5 shrink-0 cursor-pointer"
-                    >
-                      {task.done ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                      ) : (
-                        <Circle className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </button>
-                    <div
-                      onClick={() => toggleCustomTask(task.id)}
-                      className="flex-1 min-w-0 cursor-pointer select-none"
-                    >
-                      <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block mb-0.5">
-                        {task.category}
-                      </span>
-                      <p
-                        className={`text-xs font-medium leading-relaxed ${
-                          task.done
-                            ? "text-muted-foreground line-through"
-                            : "text-foreground"
-                        }`}
-                      >
-                        {task.text}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => deleteCustomTask(task.id)}
-                      className="text-muted-foreground hover:text-destructive transition-colors shrink-0 p-0.5"
-                      title="Delete task"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add Custom Task Form */}
-              <form onSubmit={handleAddCustomTask} className="pt-2">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newTaskInput}
-                    onChange={(e) => setNewTaskInput(e.target.value)}
-                    placeholder="Add a milestone or project task..."
-                    className="flex-1 px-3 py-2 rounded-xl bg-[#0F172A] border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
-                  />
-                  <button
-                    type="submit"
-                    className="px-3 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover shrink-0 transition-colors cursor-pointer flex items-center gap-1"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    <span>Add</span>
-                  </button>
+                key={idx}
+                className={`p-4 rounded-xl border flex items-start gap-3 text-xs leading-relaxed ${
+                  insight.type === "fast-track"
+                    ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-300"
+                    : insight.type === "bridge"
+                    ? "border-amber-500/30 bg-amber-500/5 text-amber-300"
+                    : "border-primary/25 bg-primary/5 text-secondary-foreground"
+                }`}
+              >
+                {insight.type === "fast-track" ? (
+                  <Sparkles className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                ) : insight.type === "bridge" ? (
+                  <ShieldAlert className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                ) : (
+                  <HelpCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                )}
+                <div>
+                  <span className="font-bold font-mono uppercase tracking-wider block mb-0.5">
+                    {insight.title}
+                  </span>
+                  <p className="text-foreground/90">{insight.description}</p>
                 </div>
-              </form>
-            </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-            {/* Quick Career Links Card */}
+        {/* 1. SPOTLIGHT: "What Should I Do Next?" */}
+        <section id="next-best-action">
+          <NextBestActionCard
+            action={nextBestAction}
+            onActionClick={handleActionClick}
+            hasAssessment={!!traitProfile}
+          />
+        </section>
+
+        {/* 2. CAREER READINESS INDEX (3-Pillar Breakdown) */}
+        <section id="readiness-index">
+          <CareerReadinessMeter
+            readiness={readiness}
+            activeCareerTitle={career.title}
+          />
+        </section>
+
+        {/* 3. ADAPTIVE SPRINT & PACE ESTIMATOR */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <AdaptiveSprintList
+              tasks={sprintTasks}
+              customTasks={customTasks}
+              onToggleTask={toggleTask}
+              onAddCustomTask={handleAddCustomTask}
+              onToggleCustomTask={toggleCustomTask}
+              onDeleteCustomTask={deleteCustomTask}
+            />
+          </div>
+
+          <div className="space-y-6">
+            <StudyPaceSelector
+              weeklyHours={weeklyPaceHours}
+              onChangePace={handleChangePace}
+              paceInfo={paceInfo}
+            />
+
+            {/* Quick Links Card */}
             <div className="p-5 rounded-2xl border border-border bg-card space-y-3">
               <h3 className="font-heading text-sm font-bold text-foreground">
-                Quick Navigation
+                Toolkit &amp; Navigation
               </h3>
               <div className="space-y-1.5 text-xs">
                 <Link
@@ -763,26 +617,285 @@ export default function DashboardPage() {
                   className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#0F172A] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
                 >
                   <span>Complete {career.title} Guide</span>
-                  <ChevronRight className="h-3.5 w-3.5" />
+                  <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
                 <Link
                   href="/results"
                   className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#0F172A] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
                 >
                   <span>Assessment Results &amp; Strengths</span>
-                  <ChevronRight className="h-3.5 w-3.5" />
+                  <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
                 <Link
                   href="/careers"
                   className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#0F172A] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
                 >
-                  <span>Explore Other Career Paths</span>
-                  <ChevronRight className="h-3.5 w-3.5" />
+                  <span>Explore All Careers</span>
+                  <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* 4. SKILL MASTERY & GAP CLOSER */}
+        <section id="skill-matrix">
+          <SkillMasteryMatrix
+            skills={personalizedSkills}
+            completedSkills={Array.from(completedSkills)}
+            onToggleSkill={toggleSkill}
+            hasAssessment={!!traitProfile}
+          />
+        </section>
+
+        {/* 5. PORTFOLIO PROJECT MILESTONES */}
+        <section id="portfolio-projects">
+          <ProjectPortfolioTracker
+            projects={career.projects}
+            completedProjects={Array.from(completedProjects)}
+            onToggleProject={toggleProject}
+          />
+        </section>
+
+        {/* 6. PHASED ROADMAP TIMELINE */}
+        <section id="roadmap-phases" className="space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-border/70">
+            <div>
+              <h2 className="font-heading text-xl font-bold text-foreground flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                Phased Learning Roadmap
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Structured curriculum from foundations to advanced mastery.
+              </p>
+            </div>
+            <span className="text-xs font-mono font-medium text-muted-foreground">
+              {completedPhases.size} of {career.roadmap.length} Completed
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {career.roadmap.map((phase) => {
+              const isCompleted = completedPhases.has(phase.phase);
+              const isExpanded = expandedPhase === phase.phase;
+
+              return (
+                <div
+                  key={phase.phase}
+                  className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                    isCompleted
+                      ? "border-emerald-500/30 bg-card/60"
+                      : "border-border bg-card hover:border-primary/30"
+                  }`}
+                >
+                  <div
+                    onClick={() =>
+                      setExpandedPhase(isExpanded ? null : phase.phase)
+                    }
+                    className="p-5 flex items-start sm:items-center justify-between gap-4 cursor-pointer select-none"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePhase(phase.phase);
+                        }}
+                        className="shrink-0 transition-transform active:scale-90 cursor-pointer"
+                        title={
+                          isCompleted ? "Mark in-progress" : "Mark as completed"
+                        }
+                      >
+                        {isCompleted ? (
+                          <CheckCircle2 className="h-6 w-6 text-emerald-400 fill-emerald-400/20" />
+                        ) : (
+                          <Circle className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />
+                        )}
+                      </button>
+
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+                            Phase {phase.phase}
+                          </span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono bg-primary/10 text-primary border border-primary/20">
+                            {phase.estimatedDuration}
+                          </span>
+                        </div>
+                        <h3
+                          className={`font-heading text-base font-bold transition-colors ${
+                            isCompleted
+                              ? "text-emerald-300 line-through opacity-80"
+                              : "text-foreground"
+                          }`}
+                        >
+                          {phase.title}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-xs text-muted-foreground hidden sm:inline font-sans">
+                        {isCompleted ? "Completed" : "In Progress"}
+                      </span>
+                      <ChevronDown
+                        className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
+                          isExpanded ? "rotate-180 text-foreground" : ""
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {isExpanded && (
+                    <div className="px-5 pb-6 pt-2 border-t border-border/60 bg-[#0F172A]/40 space-y-4">
+                      <p className="text-xs sm:text-sm text-secondary-foreground leading-relaxed">
+                        {phase.description}
+                      </p>
+
+                      {/* Key Skills */}
+                      <div>
+                        <p className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                          Key Skills &amp; Concepts
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {phase.skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-2.5 py-1 rounded-lg text-xs font-medium bg-card border border-border text-foreground"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Capstone Build */}
+                      {phase.build && (
+                        <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20">
+                          <p className="text-xs font-mono font-semibold text-primary uppercase tracking-wider mb-1">
+                            Phase Milestone Project
+                          </p>
+                          <p className="text-xs text-foreground font-medium">
+                            {phase.build}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Resources */}
+                      {phase.resources && phase.resources.length > 0 && (
+                        <div>
+                          <p className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                            Curated Learning Resources
+                          </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {phase.resources.map((res) => (
+                              <a
+                                key={res.name}
+                                href={res.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2.5 rounded-xl border border-border bg-card hover:border-primary/40 hover:bg-card-hover transition-colors flex items-center justify-between group"
+                              >
+                                <div className="truncate mr-2">
+                                  <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                                    {res.name}
+                                  </p>
+                                  <span className="text-[10px] text-muted-foreground font-mono uppercase">
+                                    {res.type} • {res.estimatedTime}
+                                  </span>
+                                </div>
+                                <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary shrink-0" />
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="pt-2 flex justify-end">
+                        <button
+                          onClick={() => togglePhase(phase.phase)}
+                          className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                            isCompleted
+                              ? "border border-border bg-card text-muted-foreground hover:text-foreground"
+                              : "bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm"
+                          }`}
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <span>
+                            {isCompleted
+                              ? "Mark as Incomplete"
+                              : "Mark Phase Complete"}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* 7. JOB & INTERNSHIP PREPARATION CHECKLIST */}
+        <section id="job-prep" className="space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-border/70">
+            <div>
+              <h2 className="font-heading text-xl font-bold text-foreground flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                Job &amp; Internship Readiness Checklist
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Preparation milestones for landing interviews and professional roles.
+              </p>
+            </div>
+            <span className="text-xs font-mono font-medium text-muted-foreground">
+              {career.preparation.filter((p) => completedTasks.has(p.id)).length} of{" "}
+              {career.preparation.length} Done
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {career.preparation.map((item) => {
+              const isDone = completedTasks.has(item.id);
+
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => toggleTask(item.id)}
+                  className={`p-4 rounded-xl border flex items-start gap-3 transition-all cursor-pointer select-none ${
+                    isDone
+                      ? "border-emerald-500/25 bg-[#0F172A]/80"
+                      : "border-border bg-card hover:border-primary/40 hover:bg-card-hover"
+                  }`}
+                >
+                  <button type="button" className="mt-0.5 shrink-0">
+                    {isDone ? (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-400 fill-emerald-400/20" />
+                    ) : (
+                      <Circle className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
+                    )}
+                  </button>
+
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block mb-0.5">
+                      {item.category}
+                    </span>
+                    <h4
+                      className={`text-xs sm:text-sm font-semibold mb-1 transition-colors ${
+                        isDone ? "text-muted-foreground line-through" : "text-foreground"
+                      }`}
+                    >
+                      {item.task}
+                    </h4>
+                    <p className="text-xs text-secondary-foreground/80 leading-relaxed">
+                      {item.details}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       </div>
     </div>
   );
