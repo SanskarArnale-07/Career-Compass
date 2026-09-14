@@ -1,0 +1,51 @@
+import type { CareerDetail } from "../types";
+export const marketingMedia: CareerDetail = {
+  slug: "marketing-media", careerName: "Marketing / Media / Communications", title: "Marketer & Communications Professional", tagline: "Craft compelling narratives, build brands, and connect products with the people who need them.", category: "Marketing & Media", icon: "Megaphone", primaryTraits: ["CR", "BU", "SO"], relatedSlugs: ["design-creative", "entrepreneurship", "management-product"],
+  snapshot: [
+    { label: "What You Do", value: "Develop brand strategies, create content, run campaigns, analyze audience data, and drive growth through communication.", icon: "MessageCircle" },
+    { label: "Entry-Level Roles", value: "Marketing Intern, Content Writer, Social Media Associate, Digital Marketing Exec, PR Associate", icon: "Briefcase" },
+    { label: "Industries", value: "Advertising, tech, media, entertainment, FMCG, agencies, startups, publishing, PR firms", icon: "Building2" },
+    { label: "Work Environment", value: "Creative offices, agencies, remote teams, fast-paced deadlines, brainstorm-heavy culture", icon: "Monitor" },
+    { label: "Difficulty to Enter", value: "Low-Moderate — portfolio and demonstrated skills matter more than specific degrees.", icon: "Signal" },
+    { label: "Growth Potential", value: "Strong — digital marketing is booming. CMO/VP Marketing roles offer high compensation and influence.", icon: "TrendingUp" },
+  ],
+  skills: [
+    { id: "content-creation", name: "Content Creation & Copywriting", category: "Core", relevantTraits: ["CR", "SO"], whyItMatters: "Content is the engine of modern marketing. Writing compelling copy, creating videos, and telling stories drives engagement.", whatToKnow: "Copywriting fundamentals, content strategy, SEO writing, video scripts, social media content, storytelling frameworks.", recommendedLevel: "Write content that engages an audience and drives action" },
+    { id: "digital-marketing", name: "Digital Marketing", category: "Core", relevantTraits: ["BU", "AN"], whyItMatters: "Most marketing is digital now. Understanding channels, paid advertising, and analytics is essential.", whatToKnow: "SEO, SEM, social media marketing, email marketing, Google Ads, Meta Ads, analytics, conversion optimization.", recommendedLevel: "Plan and execute a digital marketing campaign" },
+    { id: "brand-strategy", name: "Brand Strategy", category: "Core", relevantTraits: ["CR", "BU"], whyItMatters: "A strong brand creates lasting value. Understanding positioning, messaging, and brand architecture is what separates good from great.", whatToKnow: "Brand positioning, competitive differentiation, brand voice, visual identity principles, brand guidelines.", recommendedLevel: "Develop a brand strategy document for a product" },
+    { id: "analytics-mktg", name: "Analytics & Data", category: "Tools", relevantTraits: ["AN", "TE"], whyItMatters: "Modern marketing is data-driven. Understanding metrics lets you optimize campaigns and prove ROI.", whatToKnow: "Google Analytics, social media insights, attribution models, A/B testing, reporting dashboards, marketing KPIs.", recommendedLevel: "Analyze campaign performance and recommend optimizations" },
+    { id: "audience-psych", name: "Audience Psychology", category: "Foundation", relevantTraits: ["SO", "SC"], whyItMatters: "Great marketing understands what motivates people. Audience psychology helps you create messages that resonate.", whatToKnow: "Consumer behavior, persuasion principles, emotional triggers, audience segmentation, persona development.", recommendedLevel: "Create detailed audience personas backed by research" },
+  ],
+  roadmap: [
+    { id: "mkt-phase-1", phase: 1, title: "Content & Copywriting", description: "Develop the ability to create compelling content across formats.", estimatedDuration: "2–3 weeks", skills: ["Content Creation & Copywriting", "Audience Psychology"], learn: ["Copywriting fundamentals (AIDA, PAS)", "Blog writing", "Social media content", "Storytelling techniques", "Audience research"], practice: ["Write 10 pieces of content across different formats", "Start a personal blog or newsletter"], build: "A content portfolio with 5+ published pieces", resources: [
+      { name: "Copyblogger — Copywriting 101", type: "documentation", difficulty: "beginner", estimatedTime: "1 week", url: "https://copyblogger.com/copywriting-101/" },
+      { name: "Google Digital Garage", type: "course", difficulty: "beginner", estimatedTime: "40 hours", url: "https://learndigital.withgoogle.com/digitalgarage" },
+    ]},
+    { id: "mkt-phase-2", phase: 2, title: "Digital Marketing Channels", description: "Learn to use digital channels to reach and engage audiences.", estimatedDuration: "3–4 weeks", skills: ["Digital Marketing"], learn: ["SEO fundamentals", "Social media strategy", "Email marketing", "Google Ads basics", "Content distribution"], practice: ["Optimize a website for SEO", "Run a small social media campaign"], build: "A digital marketing plan for a real or fictional product", resources: [
+      { name: "HubSpot Academy — Digital Marketing", type: "course", difficulty: "beginner", estimatedTime: "4 weeks", url: "https://academy.hubspot.com/" },
+      { name: "Google Ads Certification", type: "course", difficulty: "intermediate", estimatedTime: "2 weeks", url: "https://skillshop.withgoogle.com/" },
+    ]},
+    { id: "mkt-phase-3", phase: 3, title: "Brand Strategy & Analytics", description: "Develop strategic thinking and learn to measure marketing effectiveness.", estimatedDuration: "3–4 weeks", skills: ["Brand Strategy", "Analytics & Data"], learn: ["Brand positioning frameworks", "Competitive analysis", "Google Analytics", "A/B testing", "ROI measurement"], practice: ["Create a brand strategy for a fictional startup", "Set up and analyze a Google Analytics dashboard"], build: "A complete brand strategy + marketing analytics case study", resources: [
+      { name: "Google Analytics Academy", type: "course", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://analytics.google.com/analytics/academy/" },
+      { name: "Building a StoryBrand (book)", type: "book", difficulty: "beginner", estimatedTime: "3 days", url: "https://buildingastorybrand.com/" },
+    ]},
+  ],
+  projects: [
+    { title: "Personal Brand & Content Portfolio", difficulty: "beginner", skills: ["Content", "Social Media", "Copywriting"], description: "Build your personal brand on a social platform — create content, grow an audience, and document your journey.", features: ["Content calendar", "10+ published posts", "Engagement tracking", "Personal brand guidelines", "Growth analysis"], portfolioValue: "A personal following is the strongest proof of marketing ability. Even 500 engaged followers is impressive." },
+    { title: "Marketing Campaign Case Study", difficulty: "intermediate", skills: ["Digital Marketing", "Analytics", "Strategy"], description: "Plan and execute a real marketing campaign for a school club, local business, or personal project, then analyze results.", features: ["Campaign strategy", "Multi-channel execution", "Before/after metrics", "A/B test results", "Lessons learned", "ROI analysis"], portfolioValue: "Real campaign results trump any theoretical exercise. Shows execution ability and analytical thinking." },
+    { title: "Complete Brand Launch", difficulty: "advanced", skills: ["Brand Strategy", "Content", "Digital Marketing", "Design"], description: "Create a complete brand from scratch — name, identity, positioning, website, and launch campaign.", features: ["Brand strategy document", "Visual identity system", "Website/landing page", "Launch campaign plan", "Social media presence", "Press kit"], portfolioValue: "Demonstrates end-to-end marketing capability. A flagship portfolio piece for agency and brand roles." },
+  ],
+  progression: [
+    { title: "Marketing Intern / Associate", yearsRange: "0–2 years", responsibilities: ["Create content", "Manage social media", "Assist with campaigns", "Learn tools and analytics"], skills: ["Writing", "Social media", "Basic analytics"], deltaFromPrevious: "Entry point — learn the craft by creating and measuring content." },
+    { title: "Marketing Manager", yearsRange: "2–5 years", responsibilities: ["Own marketing channels", "Plan campaigns", "Manage budgets", "Analyze performance"], skills: ["Campaign management", "Analytics", "Budget management", "Team coordination"], deltaFromPrevious: "Shift from execution to strategy and channel ownership." },
+    { title: "Senior Marketing Manager / Director", yearsRange: "5–8 years", responsibilities: ["Set marketing strategy", "Lead teams", "Drive brand direction", "Manage P&L"], skills: ["Strategic thinking", "Leadership", "Brand management", "Executive communication"], deltaFromPrevious: "Influence the overall marketing direction and business outcomes." },
+    { title: "VP Marketing / CMO", yearsRange: "8–15 years", responsibilities: ["Set company marketing vision", "Lead marketing organization", "Drive growth strategy", "Board reporting"], skills: ["Org leadership", "Growth strategy", "Business acumen", "Industry vision"], deltaFromPrevious: "Shape the marketing function at the highest level." },
+  ],
+  preparation: [
+    { id: "mkt-prep-1", category: "Content", task: "Start creating content online", details: "Start a blog, Instagram, YouTube channel, or newsletter. Consistency matters more than perfection." },
+    { id: "mkt-prep-2", category: "Certification", task: "Get Google Digital Marketing Certificate", details: "Free certification that covers fundamentals of digital marketing. Great for your resume." },
+    { id: "mkt-prep-3", category: "Portfolio", task: "Build a content portfolio", details: "Collect your best writing, designs, and campaigns. Present them professionally." },
+    { id: "mkt-prep-4", category: "Skills", task: "Learn Canva and basic video editing", details: "Visual content creation tools are essential for modern marketers." },
+    { id: "mkt-prep-5", category: "Reading", task: "Study successful marketing campaigns", details: "Analyze campaigns from brands like Nike, Zomato, Amul. Understand what made them work." },
+  ],
+};

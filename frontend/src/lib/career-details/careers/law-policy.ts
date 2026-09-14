@@ -1,0 +1,53 @@
+import type { CareerDetail } from "../types";
+export const lawPolicy: CareerDetail = {
+  slug: "law-policy", careerName: "Law / Public Policy", title: "Legal & Policy Professional", tagline: "Shape the rules that govern society — through legal practice, policy analysis, and governance.", category: "Law & Governance", icon: "Scale", primaryTraits: ["AN", "LE"], relatedSlugs: ["psychology-social", "management-product", "finance-investment"],
+  snapshot: [
+    { label: "What You Do", value: "Interpret laws, advocate for clients, draft policy, analyze regulations, and work to ensure justice and governance.", icon: "Gavel" },
+    { label: "Entry-Level Roles", value: "Legal Intern, Junior Associate, Policy Research Intern, Compliance Associate, Paralegal", icon: "Briefcase" },
+    { label: "Industries", value: "Law firms, government, NGOs, corporate legal, policy think tanks, international organizations", icon: "Building2" },
+    { label: "Work Environment", value: "Courtrooms, offices, government buildings, research institutions — detail-oriented and argumentative", icon: "Monitor" },
+    { label: "Difficulty to Enter", value: "High — requires law degree (CLAT/LSAT admission), intensive study, and competitive bar exams.", icon: "Signal" },
+    { label: "Growth Potential", value: "Strong — senior lawyers and policy leaders have significant influence and high earning potential.", icon: "TrendingUp" },
+  ],
+  skills: [
+    { id: "legal-reasoning", name: "Legal Reasoning & Analysis", category: "Core", relevantTraits: ["AN"], whyItMatters: "Lawyers must analyze complex situations, identify relevant laws, and construct logical arguments.", whatToKnow: "Case analysis, statutory interpretation, legal precedents, logical argumentation, critical thinking.", recommendedLevel: "Analyze a legal case and identify key arguments on both sides" },
+    { id: "research-writing-law", name: "Legal Research & Writing", category: "Core", relevantTraits: ["AN", "SC"], whyItMatters: "Legal professionals spend most of their time researching and writing — memos, briefs, contracts, and opinions.", whatToKnow: "Legal databases, case law research, legal memo writing, contract drafting, citation formats.", recommendedLevel: "Write a structured legal opinion on a given topic" },
+    { id: "communication-law", name: "Advocacy & Communication", category: "Core", relevantTraits: ["LE", "SO"], whyItMatters: "Whether in court or in negotiations, persuasive communication is a lawyer's most powerful tool.", whatToKnow: "Public speaking, debate, negotiation, client counseling, court procedures, mediation.", recommendedLevel: "Present a persuasive argument in a structured format" },
+    { id: "constitutional", name: "Constitutional & Public Law", category: "Domain", relevantTraits: ["AN", "SC"], whyItMatters: "Understanding the constitution and public law is fundamental to any legal career.", whatToKnow: "Fundamental rights, constitutional amendments, public interest litigation, administrative law.", recommendedLevel: "Discuss major constitutional principles and landmark cases" },
+    { id: "policy-analysis", name: "Policy Analysis & Governance", category: "Domain", relevantTraits: ["AN", "LE", "SO"], whyItMatters: "Policy professionals analyze how laws and regulations affect society and propose improvements.", whatToKnow: "Policy frameworks, stakeholder analysis, cost-benefit analysis, governance structures, public administration.", recommendedLevel: "Analyze a public policy issue and propose evidence-based recommendations" },
+  ],
+  roadmap: [
+    { id: "law-phase-1", phase: 1, title: "Foundations of Law & Governance", description: "Build understanding of legal systems, constitution, and governance principles.", estimatedDuration: "3–4 weeks", skills: ["Legal Reasoning & Analysis", "Constitutional & Public Law"], learn: ["Indian Constitution basics", "Sources of law", "Types of law (civil, criminal, constitutional)", "Legal reasoning fundamentals", "Landmark Supreme Court cases"], practice: ["Read and analyze 5 landmark judgments", "Participate in school debates on legal topics"], build: "A legal analysis document on a current legal issue", resources: [
+      { name: "CLAT Prep — Legal Reasoning", type: "practice", difficulty: "beginner", estimatedTime: "Ongoing", url: "https://clat.ac.in/" },
+      { name: "Indian Kanoon — Free Legal Database", type: "documentation", difficulty: "beginner", estimatedTime: "Ongoing", url: "https://indiankanoon.org/" },
+      { name: "Yale Open Courses — Introduction to Political Philosophy", type: "course", difficulty: "beginner", estimatedTime: "Semester", url: "https://oyc.yale.edu/political-science/plsc-114" },
+    ]},
+    { id: "law-phase-2", phase: 2, title: "Research, Writing & Communication", description: "Develop the research and writing skills that are the backbone of legal practice.", estimatedDuration: "3–4 weeks", skills: ["Legal Research & Writing", "Advocacy & Communication"], learn: ["Legal research methodology", "Memo and brief writing", "Debate and mooting techniques", "Client communication", "Negotiation basics"], practice: ["Write 3 legal memos on different topics", "Participate in a moot court or debate competition"], build: "A moot court memorial or policy brief on a current issue", resources: [
+      { name: "Legal Writing Institute Resources", type: "documentation", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://www.lwionline.org/" },
+      { name: "Model UN / Moot Court participation", type: "practice", difficulty: "intermediate", estimatedTime: "Event-based", url: "https://www.un.org/en/mun" },
+    ]},
+    { id: "law-phase-3", phase: 3, title: "Specialization & Career Prep", description: "Explore legal specializations and prepare for law school entrance exams.", estimatedDuration: "Ongoing", skills: ["Policy Analysis & Governance"], learn: ["Areas of law specialization", "CLAT/LSAT preparation", "Internship research", "Current affairs and legal developments"], practice: ["Complete 20 CLAT mock tests", "Follow legal news daily"], build: "A portfolio of legal writings and competition participation", resources: [
+      { name: "CLAT Previous Year Papers", type: "practice", difficulty: "intermediate", estimatedTime: "Ongoing", url: "https://clat.ac.in/" },
+      { name: "Legally India — Legal Career Guide", type: "documentation", difficulty: "beginner", estimatedTime: "Ongoing", url: "https://www.legallyindia.com/" },
+    ]},
+  ],
+  projects: [
+    { title: "Legal Issue Analysis", difficulty: "beginner", skills: ["Legal Reasoning", "Research", "Writing"], description: "Choose a current legal issue (privacy rights, environmental law, etc.) and write a structured legal analysis.", features: ["Issue identification", "Legal framework analysis", "Arguments for both sides", "Relevant case law", "Conclusion and recommendation"], portfolioValue: "Demonstrates legal thinking and writing ability — exactly what law schools and firms look for." },
+    { title: "Model UN or Moot Court Participation", difficulty: "intermediate", skills: ["Advocacy", "Research", "Communication"], description: "Participate in a Model UN, moot court, or debate competition with thorough preparation.", features: ["Research memorials", "Oral arguments", "Rebuttals and cross-examination", "Resolution drafting", "Team coordination"], portfolioValue: "Active competition participation shows communication skills, legal reasoning, and initiative." },
+    { title: "Public Policy Research Paper", difficulty: "advanced", skills: ["Policy Analysis", "Research", "Data Analysis"], description: "Research a public policy issue, analyze existing data, and propose evidence-based policy recommendations.", features: ["Literature review", "Data analysis", "Stakeholder mapping", "Policy options evaluation", "Implementation roadmap", "Publication or presentation"], portfolioValue: "Shows research depth and policy thinking — valuable for law school, think tank, and government applications." },
+  ],
+  progression: [
+    { title: "Law Student (BA LLB / LLB)", yearsRange: "5 years (integrated) / 3 years", responsibilities: ["Study legal subjects", "Moot courts", "Legal internships", "Research papers"], skills: ["Legal knowledge", "Research", "Writing", "Debate"], deltaFromPrevious: "Foundation years — building legal knowledge and practical skills." },
+    { title: "Junior Associate / Litigator", yearsRange: "0–3 years post-law school", responsibilities: ["Research and drafting", "Court appearances", "Client interaction", "Case preparation"], skills: ["Legal practice", "Advocacy", "Time management", "Client relations"], deltaFromPrevious: "Begin practicing law with increasing independence." },
+    { title: "Senior Associate / Policy Advisor", yearsRange: "3–7 years", responsibilities: ["Lead cases", "Client advisory", "Policy drafting", "Mentoring juniors"], skills: ["Specialization depth", "Strategic thinking", "Leadership", "Negotiation"], deltaFromPrevious: "Become a subject-matter expert and take on complex matters." },
+    { title: "Partner / Director", yearsRange: "7–15 years", responsibilities: ["Firm leadership", "Client relationships", "Business development", "Policy influence"], skills: ["Business development", "Strategic leadership", "Industry reputation"], deltaFromPrevious: "Lead the firm or department and shape legal practice." },
+    { title: "Judge / Senior Policy Leader", yearsRange: "15+ years", responsibilities: ["Adjudication", "Policy formation", "Institutional leadership", "Legal scholarship"], skills: ["Judicial temperament", "Strategic vision", "Public service"], deltaFromPrevious: "Shape the legal system and governance at the highest level." },
+  ],
+  preparation: [
+    { id: "law-prep-1", category: "Education", task: "Focus on English and Social Studies", details: "Strong reading comprehension, writing, and understanding of society are foundational for law." },
+    { id: "law-prep-2", category: "Exam", task: "Start CLAT/LSAT preparation", details: "Focus on legal reasoning, reading comprehension, logical reasoning, GK, and mathematics." },
+    { id: "law-prep-3", category: "Skills", task: "Join debate or Model UN", details: "Develops argumentation, research, and public speaking — core skills for any legal career." },
+    { id: "law-prep-4", category: "Reading", task: "Read about landmark legal cases", details: "Follow Supreme Court decisions, read legal blogs, and understand how law shapes society." },
+    { id: "law-prep-5", category: "Exposure", task: "Visit a court proceeding", details: "District courts are open to the public. Observing proceedings gives invaluable perspective." },
+  ],
+};

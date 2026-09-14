@@ -1,0 +1,57 @@
+import type { CareerDetail } from "../types";
+export const entrepreneurship: CareerDetail = {
+  slug: "entrepreneurship", careerName: "Entrepreneurship", title: "Entrepreneur & Startup Founder", tagline: "Launch and grow your own ventures — turning ideas into products, teams, and value.", category: "Business & Innovation", icon: "Rocket", primaryTraits: ["BU", "LE"], relatedSlugs: ["management-product", "marketing-media", "software-development"],
+  snapshot: [
+    { label: "What You Do", value: "Identify opportunities, build products, assemble teams, raise funding, and grow businesses from scratch.", icon: "Rocket" },
+    { label: "Entry-Level Roles", value: "Startup Founder, Co-Founder, Freelancer, Side-Project Builder, Business Development Associate", icon: "Briefcase" },
+    { label: "Industries", value: "Any — tech, food, education, health, finance, sustainability, media, retail, services", icon: "Building2" },
+    { label: "Work Environment", value: "Self-directed, high uncertainty, flexible hours, co-working spaces, intense but autonomous", icon: "Monitor" },
+    { label: "Difficulty to Enter", value: "Low barrier to start, very high to succeed. Requires resilience, adaptability, and hustle.", icon: "Signal" },
+    { label: "Growth Potential", value: "Unlimited ceiling — you own what you build. High risk but potentially highest reward.", icon: "TrendingUp" },
+  ],
+  skills: [
+    { id: "business-model", name: "Business Model Thinking", category: "Foundation", relevantTraits: ["BU"], whyItMatters: "A business needs a viable model — who pays, for what, and why. Without this, even great ideas fail.", whatToKnow: "Business Model Canvas, value propositions, revenue models, unit economics, customer segments.", recommendedLevel: "Design a business model for a new idea" },
+    { id: "product-dev", name: "Product Development", category: "Core", relevantTraits: ["TE", "CR"], whyItMatters: "You need to build something people want. Understanding product development lets you go from idea to MVP.", whatToKnow: "MVP methodology, user feedback loops, prototyping, iteration, product-market fit.", recommendedLevel: "Build and launch an MVP product" },
+    { id: "marketing-sales", name: "Marketing & Sales", category: "Core", relevantTraits: ["BU", "SO"], whyItMatters: "Building a great product means nothing if nobody knows about it. Marketing and sales drive growth.", whatToKnow: "Digital marketing basics, social media, content marketing, sales funnels, pitch decks.", recommendedLevel: "Acquire first 100 customers/users for a product" },
+    { id: "leadership-mgmt", name: "Leadership & Team Building", category: "Core", relevantTraits: ["LE", "SO"], whyItMatters: "As your venture grows, you need to build and lead a team. Great entrepreneurs are great leaders.", whatToKnow: "Hiring, delegation, team culture, conflict resolution, motivation, communication.", recommendedLevel: "Lead a small team on a project or venture" },
+    { id: "finance-fundraising", name: "Finance & Fundraising", category: "Advanced", relevantTraits: ["BU", "AN"], whyItMatters: "Understanding money — both managing it and raising it — determines whether your startup survives.", whatToKnow: "Financial statements, cash flow management, bootstrapping, angel investing, VC funding, pitch presentations.", recommendedLevel: "Create financial projections and a pitch deck" },
+  ],
+  roadmap: [
+    { id: "ent-phase-1", phase: 1, title: "Entrepreneurial Mindset", description: "Develop the thinking patterns, knowledge, and habits that successful entrepreneurs share.", estimatedDuration: "2–3 weeks", skills: ["Business Model Thinking"], learn: ["Entrepreneurial mindset", "Business Model Canvas", "Market research basics", "Problem identification", "Customer discovery"], practice: ["Interview 10 people about a problem they face", "Create 3 business model canvases for different ideas"], build: "A one-page business plan for your strongest idea", resources: [
+      { name: "Y Combinator Startup School", type: "course", difficulty: "beginner", estimatedTime: "4 weeks", url: "https://www.startupschool.org/" },
+      { name: "Zero to One by Peter Thiel (book)", type: "book", difficulty: "beginner", estimatedTime: "1 week", url: "https://www.penguinrandomhouse.com/books/234480/zero-to-one-by-peter-thiel/" },
+      { name: "How I Built This (podcast)", type: "video", difficulty: "beginner", estimatedTime: "Ongoing", url: "https://www.npr.org/series/490248027/how-i-built-this" },
+    ]},
+    { id: "ent-phase-2", phase: 2, title: "Build Your First Product", description: "Go from idea to a working product that real people can use.", estimatedDuration: "3–4 weeks", skills: ["Product Development"], learn: ["MVP methodology", "Rapid prototyping", "User testing", "Iteration based on feedback", "No-code/low-code tools"], practice: ["Build 2 small MVPs using no-code tools or simple coding"], build: "A working MVP for your business idea with real users", resources: [
+      { name: "The Lean Startup by Eric Ries (book)", type: "book", difficulty: "beginner", estimatedTime: "1 week", url: "https://theleanstartup.com/" },
+      { name: "Bubble.io — No-Code App Builder", type: "documentation", difficulty: "beginner", estimatedTime: "1 week", url: "https://bubble.io/" },
+    ]},
+    { id: "ent-phase-3", phase: 3, title: "Marketing, Sales & Growth", description: "Learn to reach customers, communicate value, and drive growth.", estimatedDuration: "3–4 weeks", skills: ["Marketing & Sales", "Leadership & Team Building"], learn: ["Digital marketing fundamentals", "Social media strategy", "Content creation", "Sales basics", "Team formation"], practice: ["Run a small marketing campaign", "Make 5 sales or get 50 users"], build: "A growth strategy document and execute one campaign", resources: [
+      { name: "Google Digital Garage — Marketing", type: "course", difficulty: "beginner", estimatedTime: "40 hours", url: "https://learndigital.withgoogle.com/digitalgarage" },
+      { name: "Seth Godin — This Is Marketing (book)", type: "book", difficulty: "beginner", estimatedTime: "1 week", url: "https://www.sethgodin.com/" },
+    ]},
+    { id: "ent-phase-4", phase: 4, title: "Finance & Scaling", description: "Understand money management, fundraising, and how to scale a venture.", estimatedDuration: "2–3 weeks", skills: ["Finance & Fundraising"], learn: ["Financial projections", "Cash flow management", "Pitch deck creation", "Fundraising landscape", "Legal basics (company registration)"], practice: ["Create a 12-month financial projection", "Practice pitching to 5 people"], build: "A complete pitch deck for your venture", resources: [
+      { name: "Sequoia Capital — Pitch Deck Guide", type: "documentation", difficulty: "intermediate", estimatedTime: "2 hours", url: "https://www.sequoiacap.com/article/writing-a-business-plan/" },
+      { name: "Startup India — Registration Guide", type: "documentation", difficulty: "beginner", estimatedTime: "3 hours", url: "https://www.startupindia.gov.in/" },
+    ]},
+  ],
+  projects: [
+    { title: "School or Community Side Business", difficulty: "beginner", skills: ["Business Model", "Sales", "Communication"], description: "Start a small service business — tutoring, design work, social media management, or crafts — and serve real customers.", features: ["Real paying customers", "Pricing strategy", "Marketing materials", "Revenue tracking", "Customer feedback"], portfolioValue: "Nothing impresses more than actually doing it. Real revenue proves entrepreneurial capability." },
+    { title: "Digital Product or App MVP", difficulty: "intermediate", skills: ["Product Dev", "Marketing", "Tech"], description: "Build and launch a digital product — a tool, app, or service — targeting a specific user need.", features: ["User research validation", "Working MVP", "Landing page", "User onboarding", "Growth metrics tracking"], portfolioValue: "Shows the full entrepreneurial cycle: identify problem → build solution → acquire users." },
+    { title: "Venture Pitch & Business Plan", difficulty: "advanced", skills: ["Finance", "Strategy", "Communication"], description: "Develop a comprehensive business plan with financial model, market analysis, and present it in a pitch competition.", features: ["Market analysis", "Competitive landscape", "Financial projections (3-year)", "Go-to-market strategy", "10-slide pitch deck", "Live pitch presentation"], portfolioValue: "Demonstrates strategic thinking, financial literacy, and presentation skills — valuable for MBA applications and investor conversations." },
+  ],
+  progression: [
+    { title: "Side-Project Builder", yearsRange: "Starting now", responsibilities: ["Identify problems", "Build small solutions", "Learn by doing", "Test ideas cheaply"], skills: ["Idea validation", "Basic building", "Customer research"], deltaFromPrevious: "Entry point — experiment with ideas while still in school." },
+    { title: "Startup Founder (Early Stage)", yearsRange: "1–3 years", responsibilities: ["Build the product", "Find product-market fit", "Make first sales", "Build a small team"], skills: ["Product development", "Sales", "Leadership", "Resilience"], deltaFromPrevious: "Commit to one idea and make it real. This is the hardest phase." },
+    { title: "Scaling Founder", yearsRange: "3–5 years", responsibilities: ["Scale the business", "Raise funding", "Hire key roles", "Build processes"], skills: ["Fundraising", "Team building", "Strategy", "Operations"], deltaFromPrevious: "Shift from building to scaling — systems and people become more important than code." },
+    { title: "CEO / Business Leader", yearsRange: "5–10 years", responsibilities: ["Set company vision", "Manage executive team", "Drive strategy", "Represent the company"], skills: ["Executive leadership", "Board management", "Industry vision", "Public speaking"], deltaFromPrevious: "Lead the organization at the highest level. Your decisions shape hundreds or thousands of lives." },
+    { title: "Serial Entrepreneur / Investor", yearsRange: "10+ years", responsibilities: ["Start new ventures", "Invest in others", "Mentor founders", "Shape ecosystems"], skills: ["Pattern recognition", "Capital allocation", "Mentorship", "Network building"], deltaFromPrevious: "Use your experience and capital to create impact at scale — through your own ventures or by enabling others." },
+  ],
+  preparation: [
+    { id: "ent-prep-1", category: "Action", task: "Start a small side project or business", details: "Sell something, build something, or offer a service. The best way to learn entrepreneurship is to do it." },
+    { id: "ent-prep-2", category: "Reading", task: "Read 3 entrepreneurship books", details: "Start with 'Zero to One', 'The Lean Startup', and 'Shoe Dog'. They'll shape your thinking." },
+    { id: "ent-prep-3", category: "Network", task: "Join or start an entrepreneurship club", details: "Connect with like-minded people. Attend startup events, hackathons, or pitch competitions." },
+    { id: "ent-prep-4", category: "Skills", task: "Learn basic digital skills", details: "Website building, social media marketing, basic coding, or design. These let you build without hiring." },
+    { id: "ent-prep-5", category: "Mindset", task: "Practice pitching your ideas", details: "Explain your business idea to 10 different people in under 2 minutes. Refine based on their reactions." },
+  ],
+};

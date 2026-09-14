@@ -132,6 +132,11 @@ export default function ResultsPage() {
         setTimeout(() => {
           if (!isSubscribed) return;
           setResult(res);
+          try {
+            sessionStorage.setItem("careerCompassResults", JSON.stringify(res));
+          } catch (e) {
+            console.error("Failed to save results to sessionStorage", e);
+          }
           setError(null);
           setAnimationPhase("resolving");
         }, remaining);
@@ -170,6 +175,7 @@ export default function ResultsPage() {
       }
     });
     sessionStorage.setItem("careerCompassAssessment", JSON.stringify(sample));
+    sessionStorage.removeItem("careerCompassResults");
     setError(null);
     setAssessmentData(sample);
     setAnimationPhase("discovering");
@@ -250,6 +256,11 @@ export default function ResultsPage() {
                   scoreAssessment(assessmentData)
                     .then((res) => {
                       setResult(res);
+                      try {
+                        sessionStorage.setItem("careerCompassResults", JSON.stringify(res));
+                      } catch (e) {
+                        console.error("Failed to save results to sessionStorage", e);
+                      }
                       setError(null);
                       setAnimationPhase("resolving");
                     })

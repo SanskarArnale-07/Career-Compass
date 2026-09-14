@@ -1,0 +1,53 @@
+import type { CareerDetail } from "../types";
+export const managementProduct: CareerDetail = {
+  slug: "management-product", careerName: "Management / Product Management", title: "Manager & Product Leader", tagline: "Coordinate people, strategy, and execution to build products and organizations that thrive.", category: "Business & Management", icon: "ClipboardList", primaryTraits: ["LE", "BU"], relatedSlugs: ["entrepreneurship", "marketing-media", "finance-investment"],
+  snapshot: [
+    { label: "What You Do", value: "Define product strategy, coordinate teams, manage roadmaps, and ensure products meet user needs and business goals.", icon: "Target" },
+    { label: "Entry-Level Roles", value: "Associate PM, Business Analyst, Operations Associate, Strategy Intern, Project Coordinator", icon: "Briefcase" },
+    { label: "Industries", value: "Tech, consulting, FMCG, healthcare, finance, e-commerce, media, manufacturing", icon: "Building2" },
+    { label: "Work Environment", value: "Collaborative office or remote, cross-functional teams, meetings-heavy, strategic + execution mix", icon: "Monitor" },
+    { label: "Difficulty to Enter", value: "Moderate — PM is competitive at top companies. Strong analytical + communication skills required.", icon: "Signal" },
+    { label: "Growth Potential", value: "Very high — product and management roles lead naturally to executive leadership (VP, C-suite).", icon: "TrendingUp" },
+  ],
+  skills: [
+    { id: "product-thinking", name: "Product Thinking", category: "Core", relevantTraits: ["BU", "AN"], whyItMatters: "Product managers decide what to build and why. Product thinking means understanding users, markets, and trade-offs.", whatToKnow: "User problems, prioritization frameworks, product-market fit, jobs-to-be-done, OKRs, feature prioritization.", recommendedLevel: "Articulate why a product feature should or shouldn't be built" },
+    { id: "analytics-pm", name: "Data & Analytics", category: "Core", relevantTraits: ["AN", "TE"], whyItMatters: "Decisions should be data-informed. Understanding metrics, A/B tests, and user analytics is essential.", whatToKnow: "KPIs and metrics, SQL basics, A/B testing, cohort analysis, funnel analysis, dashboards.", recommendedLevel: "Define metrics for a product and analyze user behavior data" },
+    { id: "communication-pm", name: "Communication & Storytelling", category: "Core", relevantTraits: ["LE", "SO"], whyItMatters: "PMs spend most of their time communicating — with engineers, designers, executives, and users.", whatToKnow: "Written communication, presentations, stakeholder management, user interviews, cross-functional facilitation.", recommendedLevel: "Present a product strategy clearly to diverse audiences" },
+    { id: "strategy-pm", name: "Strategy & Business Acumen", category: "Advanced", relevantTraits: ["BU", "LE"], whyItMatters: "Product decisions must align with business strategy. Understanding markets, competition, and economics is crucial.", whatToKnow: "Competitive analysis, market sizing (TAM/SAM/SOM), business models, pricing strategy, go-to-market.", recommendedLevel: "Create a product strategy document with market analysis" },
+    { id: "tech-literacy-pm", name: "Technical Literacy", category: "Complementary", relevantTraits: ["TE"], whyItMatters: "PMs work closely with engineers. Understanding technical concepts helps you make better decisions and earn respect.", whatToKnow: "How APIs work, databases, system architecture basics, agile/scrum, technical trade-offs.", recommendedLevel: "Have productive technical discussions with engineers" },
+  ],
+  roadmap: [
+    { id: "pm-phase-1", phase: 1, title: "Product Foundations", description: "Learn what product management is and develop foundational product thinking skills.", estimatedDuration: "2–3 weeks", skills: ["Product Thinking"], learn: ["What PMs do", "User research basics", "Prioritization frameworks", "Jobs-to-be-done", "Writing PRDs"], practice: ["Analyze 5 products you use — identify target user, value prop, and business model"], build: "A product tear-down document for your favorite app", resources: [
+      { name: "Product School — Free Resources", type: "course", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://productschool.com/free-product-management-resources" },
+      { name: "Inspired by Marty Cagan (book)", type: "book", difficulty: "beginner", estimatedTime: "1 week", url: "https://www.svpg.com/inspired-how-to-create-tech-products-customers-love/" },
+      { name: "Lenny's Podcast", type: "video", difficulty: "beginner", estimatedTime: "Ongoing", url: "https://www.lennysnewsletter.com/podcast" },
+    ]},
+    { id: "pm-phase-2", phase: 2, title: "Data, Analytics & Communication", description: "Learn to make data-informed decisions and communicate effectively across teams.", estimatedDuration: "3–4 weeks", skills: ["Data & Analytics", "Communication & Storytelling"], learn: ["SQL basics", "Product metrics & KPIs", "A/B testing concepts", "Stakeholder communication", "Presentation skills"], practice: ["Write 3 product specs", "Analyze a product's metrics using public data"], build: "A product improvement proposal backed by data and user research", resources: [
+      { name: "SQLBolt", type: "practice", difficulty: "beginner", estimatedTime: "4 hours", url: "https://sqlbolt.com/" },
+      { name: "Amplitude — Product Analytics Guide", type: "documentation", difficulty: "beginner", estimatedTime: "1 week", url: "https://amplitude.com/blog/product-analytics" },
+    ]},
+    { id: "pm-phase-3", phase: 3, title: "Strategy & Execution", description: "Develop strategic thinking and learn to execute product initiatives.", estimatedDuration: "3–4 weeks", skills: ["Strategy & Business Acumen", "Technical Literacy"], learn: ["Market sizing", "Competitive analysis", "Go-to-market strategy", "Agile/Scrum basics", "Working with engineers"], practice: ["Create a competitive analysis for 3 products", "Run a mini sprint for a project"], build: "A complete product strategy document for a new product idea", resources: [
+      { name: "Cracking the PM Interview (book)", type: "book", difficulty: "intermediate", estimatedTime: "2 weeks", url: "https://www.crackingthepminterview.com/" },
+      { name: "Stratechery by Ben Thompson", type: "documentation", difficulty: "intermediate", estimatedTime: "Ongoing", url: "https://stratechery.com/" },
+    ]},
+  ],
+  projects: [
+    { title: "Product Tear-Down Analysis", difficulty: "beginner", skills: ["Product Thinking", "Analysis", "Communication"], description: "Pick a product you love, analyze every aspect of it — users, features, business model, competitors — and write a comprehensive tear-down.", features: ["User persona identification", "Feature analysis", "Business model breakdown", "Competitive comparison", "Improvement recommendations"], portfolioValue: "The most common PM interview assignment. A well-done tear-down shows product sense immediately." },
+    { title: "Product Improvement Proposal", difficulty: "intermediate", skills: ["Data Analysis", "User Research", "Strategy"], description: "Identify a real problem in an existing product, validate it with user research, and propose a solution with mockups and metrics.", features: ["Problem statement with data", "User interviews (5+)", "Solution wireframes", "Success metrics", "Implementation roadmap", "Stakeholder presentation"], portfolioValue: "Shows the full PM skillset: research, strategy, design thinking, and communication." },
+    { title: "Launch a Mini Product", difficulty: "advanced", skills: ["Product Development", "Marketing", "Analytics"], description: "Build and launch a small product — a tool, newsletter, or community — and measure its growth.", features: ["MVP with real users", "Landing page", "Onboarding flow", "Growth experiments", "Analytics dashboard", "User feedback system"], portfolioValue: "Actually launching something is the strongest possible signal for PM roles. Real users > hypothetical projects." },
+  ],
+  progression: [
+    { title: "Associate PM / Business Analyst", yearsRange: "0–2 years", responsibilities: ["Support senior PMs", "Write requirements", "Analyze data", "Coordinate with teams"], skills: ["Communication", "Data analysis", "Organization"], deltaFromPrevious: "Entry point — learn the PM craft by doing the foundational work." },
+    { title: "Product Manager", yearsRange: "2–5 years", responsibilities: ["Own a product area", "Define roadmap", "Lead cross-functional teams", "Ship features"], skills: ["Product strategy", "Prioritization", "Stakeholder management", "Execution"], deltaFromPrevious: "Own product decisions and their outcomes. Full accountability." },
+    { title: "Senior PM / Group PM", yearsRange: "5–8 years", responsibilities: ["Lead product strategy", "Manage multiple PMs", "Drive company-level initiatives", "Mentor team"], skills: ["Strategic thinking", "Team leadership", "Executive communication"], deltaFromPrevious: "Influence beyond your product — shape strategy at the business level." },
+    { title: "Director / VP of Product", yearsRange: "8–12 years", responsibilities: ["Set product vision", "Lead product organization", "Drive company strategy", "Board-level reporting"], skills: ["Org leadership", "Business strategy", "Industry vision"], deltaFromPrevious: "Lead the entire product function and influence company direction." },
+    { title: "Chief Product Officer / CEO", yearsRange: "12+ years", responsibilities: ["Company-wide strategy", "Board management", "Industry leadership", "Organizational vision"], skills: ["Executive leadership", "Strategic vision", "External communication"], deltaFromPrevious: "Product leadership is a natural path to CEO. Your product sense scales to company-level decisions." },
+  ],
+  preparation: [
+    { id: "pm-prep-1", category: "Reading", task: "Read 3 product management books", details: "'Inspired' by Marty Cagan, 'Cracking the PM Interview', and 'The Design of Everyday Things'." },
+    { id: "pm-prep-2", category: "Practice", task: "Write 3 product tear-downs", details: "Analyze apps you use daily. Focus on user needs, business model, and improvement opportunities." },
+    { id: "pm-prep-3", category: "Skills", task: "Learn SQL basics", details: "Complete SQLBolt. PMs need to query data independently." },
+    { id: "pm-prep-4", category: "Projects", task: "Lead a team project", details: "School club, hackathon, or community project. Practice coordination, delegation, and delivery." },
+    { id: "pm-prep-5", category: "Networking", task: "Follow PM thought leaders", details: "Lenny Rachitsky, Shreyas Doshi, Julie Zhuo. Join PM communities on Slack/Discord." },
+  ],
+};

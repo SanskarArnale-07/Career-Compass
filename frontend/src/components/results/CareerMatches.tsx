@@ -8,6 +8,7 @@ import {
   getAlignmentLabel,
   formatExplorationExplanation,
 } from "@/lib/career-directions";
+import { getCareerSlug } from "@/lib/career-details";
 
 interface CareerMatchData {
   career_name: string;
@@ -56,6 +57,7 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
           ];
           const alignment = getAlignmentLabel(idx);
           const Icon = getCareerIcon(career.career_name);
+          const slug = getCareerSlug(career.career_name);
 
           return (
             <div
@@ -63,16 +65,21 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
               className="bg-card border border-border rounded-2xl p-6 flex flex-col justify-between transition-all duration-200 hover:bg-card-hover hover:border-primary/30 group"
             >
               <div>
-                {/* Header: Icon + Qualitative Alignment */}
+                {/* Header: Icon + Qualitative Alignment & Match % */}
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-2.5 bg-primary/10 border border-primary/20 rounded-xl text-primary">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide ${alignment.badgeStyle}`}
-                  >
-                    {alignment.label}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold font-mono bg-primary/15 border border-primary/25 text-primary">
+                      {Math.round(career.match_percentage)}% Match
+                    </span>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide ${alignment.badgeStyle}`}
+                    >
+                      {alignment.label}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Title */}
@@ -104,10 +111,10 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
               {/* Action link */}
               <div className="pt-3 border-t border-border/60">
                 <Link
-                  href={`/careers?search=${encodeURIComponent(career.career_name)}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary group-hover:text-primary-hover transition-colors"
+                  href={`/career/${slug}`}
+                  className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-primary group-hover:text-primary-hover transition-colors"
                 >
-                  <span>Explore this direction</span>
+                  <span>Explore Career</span>
                   <ArrowRight className="h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
