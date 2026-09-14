@@ -63,6 +63,7 @@ export interface CareerCoachContext {
     overview: string;
     difficultyToEnter: string;
     growthPotential: string;
+    icon?: string;
   };
   assessmentInterpretation: {
     strengths: { title: string; status: string; explanation: string }[];
@@ -335,6 +336,7 @@ export function buildCareerContext(params?: {
       overview: career.snapshot[0]?.value || career.tagline,
       difficultyToEnter: career.snapshot.find((s) => s.label.includes("Difficulty"))?.value || "Moderate",
       growthPotential: career.snapshot.find((s) => s.label.includes("Growth"))?.value || "High",
+      icon: career.icon,
     },
     assessmentInterpretation: {
       strengths: strengthsGaps.strengths.slice(0, 3),

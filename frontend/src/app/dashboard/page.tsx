@@ -539,7 +539,7 @@ export default function DashboardPage() {
               className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover shadow-md shadow-primary/20 transition-all"
             >
               <Sparkles className="h-3.5 w-3.5" />
-              <span>Career Coach →</span>
+              <span>Ask AI Coach →</span>
             </Link>
             <Link
               href={`/career/${career.slug}`}
@@ -584,12 +584,40 @@ export default function DashboardPage() {
         )}
 
         {/* 1. SPOTLIGHT: "What Should I Do Next?" */}
-        <section id="next-best-action">
+        <section id="next-best-action" className="space-y-4">
           <NextBestActionCard
             action={nextBestAction}
             onActionClick={handleActionClick}
             hasAssessment={!!traitProfile}
           />
+
+          {/* Career Compass AI Coach CTA Card */}
+          <div className="rounded-2xl border border-primary/25 bg-gradient-to-r from-card via-[#0F172A] to-primary/10 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-primary/5">
+            <div className="flex items-center gap-3.5">
+              <div className="h-10 w-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary shrink-0 shadow-sm">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-heading text-sm sm:text-base font-bold text-foreground">
+                    Career Compass AI
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full bg-primary/15 text-[10px] font-mono font-semibold text-primary border border-primary/20">
+                    Online
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Have a question about your career path, roadmap, or next step?
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/coach"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all shrink-0"
+            >
+              <span>Ask AI Coach →</span>
+            </Link>
+          </div>
         </section>
 
         {/* 2. CAREER READINESS INDEX (3-Pillar Breakdown) */}

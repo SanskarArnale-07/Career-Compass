@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Zap,
@@ -112,8 +113,8 @@ export default function NextBestActionCard({
           </div>
         </div>
 
-        {/* Action Button */}
-        <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0 md:min-w-[200px]">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 md:min-w-[200px]">
           <button
             onClick={() => onActionClick(action.targetType, action.targetId)}
             className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-white font-semibold text-sm shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/35 hover:-translate-y-0.5 transition-all cursor-pointer text-center"
@@ -121,6 +122,13 @@ export default function NextBestActionCard({
             <span>{action.actionText}</span>
             <ArrowRight className="h-4 w-4" />
           </button>
+          <Link
+            href="/coach"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-primary/30 bg-primary/10 text-xs font-semibold text-primary hover:bg-primary/20 hover:border-primary/50 transition-all text-center"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Ask AI Coach</span>
+          </Link>
         </div>
       </div>
     </motion.div>

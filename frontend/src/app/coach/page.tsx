@@ -206,9 +206,11 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
   }
 
   const IconComponent =
-    (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[
-      context.career.slug
-    ] ?? Compass;
+    (context.career.icon &&
+      (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[
+        context.career.icon
+      ]) ||
+    Sparkles;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -245,6 +247,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
               onClick={() => setShowCareerSwitcher(!showCareerSwitcher)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary/25 bg-primary/10 text-xs font-semibold text-primary hover:bg-primary/20 transition-all cursor-pointer truncate max-w-[200px] sm:max-w-none"
             >
+              <IconComponent className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{context.career.title}</span>
               <span className="text-[10px] font-mono opacity-80">
                 ({context.career.matchPercentage}%)

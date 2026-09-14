@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Compass } from "lucide-react";
+import { Compass, Sparkles } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -23,6 +23,10 @@ export function Navbar() {
           <Link href="/careers" className="text-muted-foreground transition-colors hover:text-foreground">
             Explore Careers
           </Link>
+          <Link href="/coach" className="text-muted-foreground transition-colors hover:text-foreground flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            Career Coach
+          </Link>
           <Link href="/assessment" className="text-muted-foreground transition-colors hover:text-foreground">
             Assessment
           </Link>
@@ -33,6 +37,13 @@ export function Navbar() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-4">
+          <Link
+            href="/coach"
+            className="md:hidden inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <span>Coach</span>
+          </Link>
           <Link 
             href="/auth" 
             className="hidden sm:inline-flex text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
