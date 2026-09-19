@@ -48,6 +48,7 @@ import {
   generateAdaptiveRecommendations,
   type AdaptiveRecommendationsResult,
 } from "../recommendation-engine";
+import { loadCareerJourney } from "../persistence";
 
 export interface StoredProgressInput {
   currentCareer?: {
@@ -473,29 +474,30 @@ export function buildCareerContext(params?: {
 }
 
 /**
- * Client-side helper: Reads sessionStorage & localStorage directly.
+ * Client-side helper: Reads persistent career journey state.
  */
 export function buildCurrentCareerContext(careerSlugOverride?: string): CareerCoachContext {
-  if (typeof window === "undefined") {
-    return buildCareerContext({ careerSlug: careerSlugOverride });
-  }
+  const journey = loadCareerJourney();
+  const slug = careerSlugOverride || journey.selectedCareer.slug;
 
-  let storedProgress: StoredProgressInput | null = null;
-  let storedResults: StoredResults | null = null;
-
-  try {
-    const progStr = localStorage.getItem("careerCompassProgress");
-    if (progStr) storedProgress = JSON.parse(progStr);
-
-    const resStr = sessionStorage.getItem("careerCompassResults");
-    if (resStr) storedResults = JSON.parse(resStr);
-  } catch (e) {
-    console.error("Error reading storage for career context", e);
-  }
+  const storedProgress: StoredProgressInput = {
+    currentCareer: {
+      slug: journey.selectedCareer.slug,
+      title: journey.selectedCareer.title,
+      careerName: journey.selectedCareer.careerName,
+      startedAt: journey.selectedCareer.startedAt,
+    },
+    completedPhases: journey.progress.completedPhases,
+    completedTasks: journey.progress.completedTasks,
+    completedSkills: journey.progress.completedSkills,
+    completedProjects: journey.progress.completedProjects,
+    weeklyPaceHours: journey.progress.weeklyPaceHours,
+    customTasks: journey.progress.customTasks,
+  };
 
   return buildCareerContext({
-    careerSlug: careerSlugOverride,
+    careerSlug: slug,
     storedProgress,
-    storedResults,
+    storedResults: journey.assessment.results,
   });
 }

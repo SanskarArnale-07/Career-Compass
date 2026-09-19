@@ -53,6 +53,12 @@ import {
   getPersonalizedSkills,
   type PersonalizedSkill,
 } from "@/lib/career-details/personalization";
+import {
+  loadCareerJourney,
+  saveCareerJourney,
+  resetCareerJourney,
+  setSelectedCareer as persistSelectedCareer,
+} from "@/lib/persistence";
 
 import NextBestActionCard from "@/components/dashboard/NextBestActionCard";
 import CareerReadinessMeter from "@/components/dashboard/CareerReadinessMeter";
@@ -66,21 +72,6 @@ interface CustomTask {
   text: string;
   category: string;
   done: boolean;
-}
-
-interface StoredProgress {
-  currentCareer?: {
-    slug: string;
-    title: string;
-    careerName: string;
-    startedAt: number;
-  };
-  completedTasks: string[];
-  completedPhases: number[];
-  completedSkills?: string[];
-  completedProjects?: string[];
-  weeklyPaceHours?: number;
-  customTasks?: CustomTask[];
 }
 
 export default function DashboardPage() {
@@ -100,67 +91,42 @@ export default function DashboardPage() {
   const allCareers = getAllCareerIntelligence();
   const career: CareerIntelligence = getCareerIntelligence(selectedSlug) || allCareers[0];
 
-  // ── Load progress from localStorage and assessment from sessionStorage ──
+  // ── Load progress from unified persistence engine ──
   useEffect(() => {
     setIsClient(true);
     try {
-      // 1. Check assessment trait results
-      const resultsStr = sessionStorage.getItem("careerCompassResults");
-      if (resultsStr) {
-        const results = JSON.parse(resultsStr);
-        if (results.trait_profile) {
-          setTraitProfile(results.trait_profile);
-        }
+      const journey = loadCareerJourney();
+
+      // 1. Restore assessment traits
+      if (journey.assessment.traitProfile) {
+        setTraitProfile(journey.assessment.traitProfile);
       }
 
-      // 2. Check stored progress in localStorage
-      const stored = localStorage.getItem("careerCompassProgress");
-      if (stored) {
-        const data: StoredProgress = JSON.parse(stored);
-        if (data.currentCareer?.slug) {
-          setSelectedSlug(data.currentCareer.slug);
-          if (data.currentCareer.startedAt) {
-            setStartedDate(
-              new Date(data.currentCareer.startedAt).toLocaleDateString(undefined, {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })
-            );
-          }
-        }
-        if (data.completedPhases) setCompletedPhases(new Set(data.completedPhases));
-        if (data.completedTasks) setCompletedTasks(new Set(data.completedTasks));
-        if (data.completedSkills) setCompletedSkills(new Set(data.completedSkills));
-        if (data.completedProjects) setCompletedProjects(new Set(data.completedProjects));
-        if (data.weeklyPaceHours) setWeeklyPaceHours(data.weeklyPaceHours);
-        if (data.customTasks) setCustomTasks(data.customTasks);
-      } else {
-        // Fallback to top career from assessment if new
-        if (resultsStr) {
-          const results = JSON.parse(resultsStr);
-          if (results.top_careers?.[0]) {
-            const topCareerName = results.top_careers[0].career_name;
-            const match = allCareers.find(
-              (c) => c.careerName.toLowerCase() === topCareerName.toLowerCase()
-            );
-            if (match) setSelectedSlug(match.slug);
-          }
-        }
+      // 2. Restore selected career & started timestamp
+      if (journey.selectedCareer?.slug) {
+        setSelectedSlug(journey.selectedCareer.slug);
         setStartedDate(
-          new Date().toLocaleDateString(undefined, {
+          new Date(journey.selectedCareer.startedAt).toLocaleDateString(undefined, {
             month: "short",
             day: "numeric",
             year: "numeric",
           })
         );
       }
+
+      // 3. Restore source progress
+      setCompletedPhases(new Set(journey.progress.completedPhases));
+      setCompletedTasks(new Set(journey.progress.completedTasks));
+      setCompletedSkills(new Set(journey.progress.completedSkills));
+      setCompletedProjects(new Set(journey.progress.completedProjects));
+      setWeeklyPaceHours(journey.progress.weeklyPaceHours);
+      setCustomTasks(journey.progress.customTasks);
     } catch (e) {
       console.error("Error initializing dashboard data", e);
     }
   }, []);
 
-  // ── Save updates to localStorage ────────────────────────────────
+  // ── Save updates to unified persistence ─────────────────────────
   const saveProgress = (
     slugToSave: string,
     phases: Set<number>,
@@ -171,29 +137,33 @@ export default function DashboardPage() {
     customList: CustomTask[]
   ) => {
     try {
-      const payload: StoredProgress = {
-        currentCareer: {
+      const currentJourney = loadCareerJourney();
+      saveCareerJourney({
+        selectedCareer: {
           slug: slugToSave,
           title: career.title,
           careerName: career.careerName,
-          startedAt: Date.now(),
+          startedAt: currentJourney.selectedCareer.startedAt || Date.now(),
+          lastActiveAt: Date.now(),
         },
-        completedPhases: Array.from(phases),
-        completedTasks: Array.from(tasks),
-        completedSkills: Array.from(skills),
-        completedProjects: Array.from(projects),
-        weeklyPaceHours: pace,
-        customTasks: customList,
-      };
-      localStorage.setItem("careerCompassProgress", JSON.stringify(payload));
+        progress: {
+          completedPhases: Array.from(phases),
+          completedTasks: Array.from(tasks),
+          completedSkills: Array.from(skills),
+          completedProjects: Array.from(projects),
+          weeklyPaceHours: pace,
+          customTasks: customList,
+        },
+      });
     } catch (e) {
-      console.error("Failed to save progress to localStorage", e);
+      console.error("Failed to save progress", e);
     }
   };
 
   const handleSelectCareer = (newSlug: string) => {
     setSelectedSlug(newSlug);
     setShowCareerSelector(false);
+    persistSelectedCareer(newSlug);
     saveProgress(
       newSlug,
       completedPhases,
@@ -343,7 +313,7 @@ export default function DashboardPage() {
       setCompletedSkills(new Set());
       setCompletedProjects(new Set());
       setCustomTasks([]);
-      localStorage.removeItem("careerCompassProgress");
+      resetCareerJourney({ keepAssessment: true });
     }
   };
 

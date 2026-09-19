@@ -31,6 +31,7 @@ import {
   type StrengthGapItem,
   type AlternativeCareer,
 } from "@/lib/career-details/personalization";
+import { loadCareerJourney, setSelectedCareer } from "@/lib/persistence";
 
 import CareerHero from "@/components/career/CareerHero";
 import CareerSnapshot from "@/components/career/CareerSnapshot";
@@ -61,35 +62,26 @@ export default function CareerDetailPage() {
   useEffect(() => {
     setIsClient(true);
     try {
-      const stored = sessionStorage.getItem("careerCompassResults");
-      if (stored) {
-        setResults(JSON.parse(stored));
+      const journey = loadCareerJourney();
+      if (journey.assessment?.results) {
+        setResults(journey.assessment.results as StoredResults);
+      } else {
+        const stored = sessionStorage.getItem("careerCompassResults");
+        if (stored) {
+          setResults(JSON.parse(stored));
+        }
       }
     } catch (e) {
-      console.error("Failed to load results from sessionStorage", e);
+      console.error("Failed to load results", e);
     }
   }, []);
 
   const handleStartRoadmap = () => {
     if (!career) return;
     try {
-      const existing = localStorage.getItem("careerCompassProgress");
-      const progressData = existing ? JSON.parse(existing) : {};
-      progressData.currentCareer = {
-        slug: career.slug,
-        title: career.title,
-        careerName: career.careerName,
-        startedAt:
-          progressData.currentCareer?.slug === career.slug
-            ? progressData.currentCareer.startedAt
-            : Date.now(),
-      };
-      localStorage.setItem(
-        "careerCompassProgress",
-        JSON.stringify(progressData)
-      );
+      setSelectedCareer(career.slug);
     } catch (e) {
-      console.error("Failed to update progress in localStorage", e);
+      console.error("Failed to update progress", e);
     }
     router.push("/dashboard");
   };

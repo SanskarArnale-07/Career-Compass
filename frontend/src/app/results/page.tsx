@@ -10,6 +10,8 @@ import { SkillGaps } from "@/components/results/SkillGaps";
 import { NextSteps } from "@/components/results/NextSteps";
 import { CareerDiscoveryAnimation } from "@/components/interactive/CareerDiscoveryAnimation";
 import { assessmentQuestions } from "@/lib/assessment-data";
+import { saveAssessmentResult, loadCareerJourney } from "@/lib/persistence";
+import type { StoredResults } from "@/lib/career-details/personalization";
 
 import type { AssessmentResponse } from "@/lib/types/assessment";
 
@@ -61,7 +63,7 @@ export default function ResultsPage() {
   const [animationPhase, setAnimationPhase] = useState<"discovering" | "resolving" | "complete">("discovering");
   const [showStreamDetails, setShowStreamDetails] = useState(false);
 
-  // 1. Read answers from sessionStorage
+  // 1. Read answers from sessionStorage or persistent journey
   useEffect(() => {
     setIsClient(true);
     const data = sessionStorage.getItem("careerCompassAssessment");
@@ -73,6 +75,15 @@ export default function ResultsPage() {
         setAnimationPhase("complete");
       }
     } else {
+      // Check if we already have persisted results from an earlier session
+      try {
+        const journey = loadCareerJourney();
+        if (journey.assessment?.results) {
+          setResult(journey.assessment.results as unknown as AssessmentResponse);
+        }
+      } catch (e) {
+        console.error("Failed to check persisted journey", e);
+      }
       setAnimationPhase("complete");
     }
   }, []);
@@ -95,9 +106,9 @@ export default function ResultsPage() {
           if (!isSubscribed) return;
           setResult(res);
           try {
-            sessionStorage.setItem("careerCompassResults", JSON.stringify(res));
+            saveAssessmentResult(res as unknown as StoredResults, assessmentData || undefined);
           } catch (e) {
-            console.error("Failed to save results to sessionStorage", e);
+            console.error("Failed to save results via persistence engine", e);
           }
           setError(null);
           setAnimationPhase("resolving");

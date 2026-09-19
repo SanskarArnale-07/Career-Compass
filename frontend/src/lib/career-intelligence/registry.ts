@@ -960,10 +960,12 @@ export const CAREER_NAME_TO_ID: Record<string, string> = {
   "Scientific Research & Development": "scientific-research",
   "Data Analytics & Business Intelligence": "ai-ml-data-science",
   "AI & Data Science": "ai-ml-data-science",
+  "Data Scientist & AI Specialist": "ai-ml-data-science",
   // Common slug aliases
   "finance-fintech": "finance-investment",
   "ai-ml-data": "ai-ml-data-science",
   "data-science": "ai-ml-data-science",
+  "data-science-ai": "ai-ml-data-science",
   "data-analytics": "ai-ml-data-science",
   "product-management": "management-product",
   "digital-marketing": "marketing-media",

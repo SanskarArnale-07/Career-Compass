@@ -31,6 +31,7 @@ import {
 } from "@/lib/coach/coach-engine";
 import { getAllCareerIntelligence, type CareerIntelligence } from "@/lib/career-intelligence";
 import { CoachMarkdown } from "@/components/coach/CoachMarkdown";
+import { setSelectedCareer } from "@/lib/persistence";
 
 interface ChatMessage {
   id: string;
@@ -151,23 +152,10 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
   };
 
   const handleSelectCareer = (slug: string) => {
+    setSelectedCareer(slug);
     const updated = buildCurrentCareerContext(slug);
     setContext(updated);
     setShowCareerSwitcher(false);
-
-    try {
-      const existing = localStorage.getItem("careerCompassProgress");
-      const prog = existing ? JSON.parse(existing) : {};
-      prog.currentCareer = {
-        slug: updated.career.slug,
-        title: updated.career.title,
-        careerName: updated.career.title,
-        startedAt: Date.now(),
-      };
-      localStorage.setItem("careerCompassProgress", JSON.stringify(prog));
-    } catch (e) {
-      console.error("Failed to persist switched career", e);
-    }
 
     setMessages((prev) => [
       ...prev,
