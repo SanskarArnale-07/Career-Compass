@@ -1,14 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
-  Award,
   BookOpen,
   CheckCircle2,
   FolderKanban,
   Target,
-  ChevronRight,
-  ShieldCheck,
 } from "lucide-react";
 import type { CareerReadinessResult } from "@/lib/career-details/roadmap-intelligence";
 

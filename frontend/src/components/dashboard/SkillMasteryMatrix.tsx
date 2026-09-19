@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  CheckCircle2,
-  Circle,
-  AlertCircle,
-  Sparkles,
   ChevronDown,
   Layers,
   Check,
@@ -17,14 +12,13 @@ interface SkillMasteryMatrixProps {
   skills: PersonalizedSkill[];
   completedSkills: string[];
   onToggleSkill: (skillId: string) => void;
-  hasAssessment: boolean;
+  hasAssessment?: boolean;
 }
 
 export default function SkillMasteryMatrix({
   skills,
   completedSkills,
   onToggleSkill,
-  hasAssessment,
 }: SkillMasteryMatrixProps) {
   const [filter, setFilter] = useState<"all" | "gaps" | "mastered">("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);

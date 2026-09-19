@@ -23,6 +23,9 @@ export function Navbar() {
           <Link href="/careers" className="text-muted-foreground transition-colors hover:text-foreground">
             Explore Careers
           </Link>
+          <Link href="/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
+            Dashboard
+          </Link>
           <Link href="/coach" className="text-muted-foreground transition-colors hover:text-foreground flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             Career Coach
@@ -45,10 +48,10 @@ export function Navbar() {
             <span>Coach</span>
           </Link>
           <Link 
-            href="/auth" 
+            href="/dashboard" 
             className="hidden sm:inline-flex text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            Sign In
+            Dashboard
           </Link>
           <Link 
             href="/assessment" 

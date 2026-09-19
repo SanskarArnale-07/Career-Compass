@@ -9,17 +9,10 @@
  * 5. Time-to-readiness estimation based on study pace
  */
 
-import type {
-  CareerDetail,
-  RoadmapPhase,
-  SkillNode,
-  ProjectIdea,
-  PreparationItem,
-} from "./types";
+import type { CareerDetail } from "./types";
 import {
   type TraitProfile,
   getPersonalizedSkills,
-  type PersonalizedSkill,
 } from "./personalization";
 
 // ── State Model ───────────────────────────────────────────────────

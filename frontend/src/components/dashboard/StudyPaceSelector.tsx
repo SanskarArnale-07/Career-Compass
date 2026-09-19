@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Calendar, Zap, Sparkles } from "lucide-react";
+import { Clock, Calendar, Zap } from "lucide-react";
 import type { TimeToReadinessResult } from "@/lib/career-details/roadmap-intelligence";
 
 interface StudyPaceSelectorProps {

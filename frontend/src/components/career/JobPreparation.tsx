@@ -15,28 +15,45 @@ export default function JobPreparation({ items, careerSlug }: JobPreparationProp
 
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
-  // Load from localStorage
+  // Load from localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem(storageKey);
-      if (stored) setChecked(new Set(JSON.parse(stored)));
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setTimeout(() => {
+          setChecked(new Set(parsed));
+        }, 0);
+      }
     } catch {
       // ignore
     }
   }, [storageKey]);
-
-  // Save to localStorage
-  useEffect(() => {
-    if (checked.size > 0) {
-      localStorage.setItem(storageKey, JSON.stringify([...checked]));
-    }
-  }, [checked, storageKey]);
 
   const toggle = (id: string) => {
     setChecked((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+
+      const arr = Array.from(next);
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(arr));
+
+        // Also synchronize with global careerCompassProgress
+        const progStr = localStorage.getItem("careerCompassProgress");
+        if (progStr) {
+          const prog = JSON.parse(progStr);
+          const currentTasks = new Set<string>(prog.completedTasks || []);
+          if (next.has(id)) currentTasks.add(id);
+          else currentTasks.delete(id);
+          prog.completedTasks = Array.from(currentTasks);
+          localStorage.setItem("careerCompassProgress", JSON.stringify(prog));
+        }
+      } catch {
+        // ignore
+      }
+
       return next;
     });
   };

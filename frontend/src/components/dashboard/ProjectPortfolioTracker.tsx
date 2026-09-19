@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   FolderKanban,
   CheckCircle2,
@@ -8,7 +7,6 @@ import {
   Star,
   Zap,
   Crown,
-  ExternalLink,
 } from "lucide-react";
 import type { ProjectIdea, ProjectDifficulty } from "@/lib/career-details/types";
 

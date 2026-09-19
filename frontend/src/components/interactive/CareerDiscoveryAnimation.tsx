@@ -75,12 +75,12 @@ const FLOAT_DURATION = [4.8, 5.2, 5.6, 4.6, 5.0, 4.4, 5.4, 5.8, 4.2, 5.6, 4.8, 5
 
 export function CareerDiscoveryAnimation({
   status,
-  topCareer,
+  topCareer: _topCareer,
   onComplete,
-  topCareerNames = [],
+  topCareerNames: _topCareerNames = [],
 }: CareerDiscoveryAnimationProps) {
   const prefersReducedMotion = useReducedMotion();
-  const [hasResolved, setHasResolved] = useState(false);
+  const hasResolved = status === "resolving";
 
   const iconEntries = useMemo(() => Object.entries(CAREER_ICON_MAP), []);
 
@@ -108,17 +108,12 @@ export function CareerDiscoveryAnimation({
 
   useEffect(() => {
     if (status === "resolving") {
-      setHasResolved(true);
       const t = setTimeout(() => {
         onCompleteRef.current?.();
       }, 1000);
       return () => clearTimeout(t);
     }
   }, [status]);
-
-  // ── Rank helpers ──────────────────────────────────────────────────────────
-  const getRank = (name: string) =>
-    hasResolved ? topCareerNames.indexOf(name) : -1;
 
   const orbitOpacity = (_name: string): number => {
     if (!hasResolved) return 1;

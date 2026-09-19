@@ -1,16 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Zap,
   CheckCircle2,
   Circle,
   Plus,
   Trash2,
-  AlertCircle,
-  Clock,
-  Sparkles,
 } from "lucide-react";
 import type { SprintTask } from "@/lib/career-details/roadmap-intelligence";
 

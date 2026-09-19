@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { assessmentQuestions } from "@/lib/assessment-data";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { SpotlightCard } from "@/components/interactive/SpotlightCard";
 import { BlurText } from "@/components/interactive/BlurText";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";

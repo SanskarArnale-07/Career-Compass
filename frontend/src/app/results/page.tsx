@@ -11,13 +11,7 @@ import { NextSteps } from "@/components/results/NextSteps";
 import { CareerDiscoveryAnimation } from "@/components/interactive/CareerDiscoveryAnimation";
 import { assessmentQuestions } from "@/lib/assessment-data";
 
-import type {
-  TraitProfile,
-  StreamScores,
-  StreamResult,
-  CareerMatch,
-  AssessmentResponse,
-} from "@/lib/types/assessment";
+import type { AssessmentResponse } from "@/lib/types/assessment";
 
 // ── API Call ─────────────────────────────────────────────────────────
 

@@ -171,7 +171,7 @@ export function getPersonalizedSkills(
 export function getMatchExplanation(
   traits: TraitProfile,
   career: CareerDetail,
-  matchPercentage: number
+  _matchPercentage: number
 ): string {
   const strongTraits = career.primaryTraits
     .filter((code) => ((traits as Record<string, number>)[code] ?? 0) >= 50)
