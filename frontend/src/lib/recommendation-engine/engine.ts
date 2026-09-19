@@ -46,8 +46,37 @@ function normalizeString(val: string): string {
 // ── Main Deterministic Engine ──────────────────────────────────────
 
 export function generateAdaptiveRecommendations(
-  input: GenerateRecommendationsInput
+  inputOrCareer: GenerateRecommendationsInput | CareerIntelligence | string,
+  maybeRoadmap?: PersonalizedRoadmap | null,
+  maybeProgress?: UserProgressState | any,
+  maybeTraits?: Record<string, number> | null
 ): AdaptiveRecommendationsResult {
+  let input: GenerateRecommendationsInput;
+  if (
+    typeof inputOrCareer === "object" &&
+    inputOrCareer !== null &&
+    "career" in inputOrCareer &&
+    !("roadmap" in inputOrCareer && "skills" in inputOrCareer)
+  ) {
+    input = inputOrCareer as GenerateRecommendationsInput;
+  } else {
+    const isProgressReport = maybeProgress && "compositeReadinessIndex" in maybeProgress;
+    input = {
+      career: inputOrCareer as CareerIntelligence | string,
+      roadmap: maybeRoadmap,
+      progressReport: isProgressReport ? (maybeProgress as CareerReadinessReport) : undefined,
+      progress: isProgressReport
+        ? {
+            completedPhases: (maybeProgress as CareerReadinessReport).roadmap?.completedPhases || [],
+            completedTasks: (maybeProgress as CareerReadinessReport).preparation?.completedTasks || [],
+            completedSkills: (maybeProgress as CareerReadinessReport).skills?.completedSkills || [],
+            completedProjects: (maybeProgress as CareerReadinessReport).projects?.completedProjects || [],
+          }
+        : maybeProgress?.progressReport || maybeProgress?.progressState || maybeProgress,
+      traitProfile: maybeTraits,
+    };
+  }
+
   // 1. Resolve Target Career with safe fallback
   let career: CareerIntelligence | null = null;
   if (typeof input.career === "string") {
@@ -63,12 +92,13 @@ export function generateAdaptiveRecommendations(
   }
 
   const traits = input.traitProfile || null;
+  const rawProgress = input.progress as any;
   const progressState: UserProgressState = {
-    completedPhases: input.progress?.completedPhases || [],
-    completedTasks: input.progress?.completedTasks || [],
-    completedSkills: input.progress?.completedSkills || [],
-    completedProjects: input.progress?.completedProjects || [],
-    weeklyPaceHours: input.weeklyPaceHours || input.progress?.weeklyPaceHours || 10,
+    completedPhases: rawProgress?.completedPhases || rawProgress?.roadmap?.completedPhases || [],
+    completedTasks: rawProgress?.completedTasks || rawProgress?.preparation?.completedTasks || [],
+    completedSkills: rawProgress?.completedSkills || rawProgress?.skills?.completedSkills || [],
+    completedProjects: rawProgress?.completedProjects || rawProgress?.projects?.completedProjects || [],
+    weeklyPaceHours: input.weeklyPaceHours || rawProgress?.weeklyPaceHours || 10,
   };
 
   // 2. Resolve or generate Roadmap and Progress Report

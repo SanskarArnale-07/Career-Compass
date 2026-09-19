@@ -20,6 +20,7 @@ import type {
   RoadmapCompletionState,
   GenerateRoadmapInput,
   MilestoneRelevance,
+  StoredProgressState,
 } from "./types";
 
 // ── Canonical Progression Stage Definitions ──────────────────────────
@@ -262,7 +263,33 @@ function evaluateStudentLevel(
 
 // ── Main Deterministic Engine ────────────────────────────────────────
 
-export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): PersonalizedRoadmap {
+export function generatePersonalizedRoadmap(
+  inputOrCareer: GenerateRoadmapInput | CareerIntelligence | string,
+  maybeOptions?: {
+    traitProfile?: Record<string, number> | null;
+    progress?: StoredProgressState | null;
+    progressState?: StoredProgressState | null;
+    weeklyPaceHours?: number;
+    weeklyHours?: number;
+  }
+): PersonalizedRoadmap {
+  let input: GenerateRoadmapInput;
+  if (
+    typeof inputOrCareer === "object" &&
+    inputOrCareer !== null &&
+    "career" in inputOrCareer &&
+    !("roadmap" in inputOrCareer && "skills" in inputOrCareer)
+  ) {
+    input = inputOrCareer as GenerateRoadmapInput;
+  } else {
+    input = {
+      career: inputOrCareer as CareerIntelligence | string,
+      traitProfile: maybeOptions?.traitProfile,
+      progress: maybeOptions?.progress || maybeOptions?.progressState,
+      weeklyPaceHours: maybeOptions?.weeklyPaceHours || maybeOptions?.weeklyHours,
+    };
+  }
+
   // 1. Resolve Canonical Career
   const career: CareerIntelligence =
     typeof input.career === "string"

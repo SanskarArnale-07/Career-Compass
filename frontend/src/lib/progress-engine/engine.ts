@@ -621,11 +621,31 @@ export function calculateTransparentReadinessIndicators(params: {
   };
 }
 
-// ── 7. Master Function: Calculate Career Progress & Readiness ───────
-
 export function calculateCareerProgressAndReadiness(
-  input: CalculateProgressInput
+  inputOrCareer: CalculateProgressInput | CareerIntelligence | string,
+  maybeTraitProfile?: Record<string, number> | null,
+  maybeProgress?: UserProgressState | any,
+  maybeRoadmap?: PersonalizedRoadmap | null,
+  maybePace?: number
 ): CareerReadinessReport {
+  let input: CalculateProgressInput;
+  if (
+    typeof inputOrCareer === "object" &&
+    inputOrCareer !== null &&
+    "career" in inputOrCareer &&
+    !("roadmap" in inputOrCareer && "skills" in inputOrCareer)
+  ) {
+    input = inputOrCareer as CalculateProgressInput;
+  } else {
+    input = {
+      career: inputOrCareer as CareerIntelligence | string,
+      traitProfile: maybeTraitProfile,
+      progress: maybeProgress,
+      roadmap: maybeRoadmap,
+      weeklyPaceHours: maybePace,
+    };
+  }
+
   // 1. Resolve Target Career with safe fallback
   let career: CareerIntelligence | null = null;
   if (typeof input.career === "string") {

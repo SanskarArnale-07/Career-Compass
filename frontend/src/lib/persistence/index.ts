@@ -10,6 +10,7 @@ export {
   LEGACY_PROGRESS_KEY,
   LEGACY_RESULTS_KEY,
   LEGACY_ASSESSMENT_KEY,
+  STORAGE_KEYS,
   isStorageAvailable,
   getDefaultJourneyState,
   loadCareerJourney,

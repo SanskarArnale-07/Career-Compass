@@ -8,6 +8,7 @@
 
 import type { StoredResults, TraitProfile } from "../career-details/personalization";
 import type { CareerCoachContext } from "../career-details/career-context";
+import type { CareerIntelligence } from "../career-intelligence";
 import type { CareerReadinessReport } from "../progress-engine";
 import type { AdaptiveRecommendationsResult } from "../recommendation-engine";
 import type { PersonalizedRoadmap } from "../roadmap-engine";
@@ -32,6 +33,7 @@ export interface UserCareerTargetSourceData {
   slug: string;
   title: string;
   careerName: string;
+  category?: string;
   startedAt: number;
   lastActiveAt: number;
 }
@@ -69,6 +71,7 @@ export interface CareerJourneySourceData {
  */
 export interface HydratedJourneyState {
   source: CareerJourneySourceData;
+  activeCareer: CareerIntelligence;
   context: CareerCoachContext;
   roadmap: PersonalizedRoadmap;
   readiness: CareerReadinessReport;

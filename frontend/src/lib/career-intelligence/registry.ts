@@ -947,10 +947,18 @@ export const CAREER_NAME_TO_ID: Record<string, string> = {
     Object.values(CAREER_INTELLIGENCE_REGISTRY).map((c) => [c.careerName, c.id])
   ),
   // Common aliases & alternate cluster titles
+  "Software Development": "software-development",
+  "Software Developer": "software-development",
+  "Software / App Development": "software-development",
+  "Software & App Developer": "software-development",
   "UI/UX & Digital Product Design": "design-creative",
   "Design / Creative": "design-creative",
   "Finance & FinTech": "finance-investment",
   "Finance / Investment": "finance-investment",
+  "Finance / Investment Banking": "finance-investment",
+  "Law & Governance": "law-policy",
+  "Law / Public Policy": "law-policy",
+  "Law & Public Policy": "law-policy",
   "Management / Product": "management-product",
   "Marketing / Media": "marketing-media",
   "Healthcare & Biotechnology": "medicine-healthcare",

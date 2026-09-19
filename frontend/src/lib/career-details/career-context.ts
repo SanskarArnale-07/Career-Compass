@@ -168,18 +168,55 @@ const TRAIT_LABELS: Record<string, string> = {
 /**
  * Build a normalized, compact Career Coach Context from current application state.
  */
-export function buildCareerContext(params?: {
-  careerSlug?: string;
-  storedProgress?: StoredProgressInput | null;
-  storedResults?: StoredResults | null;
-}): CareerCoachContext {
-  // 1. Resolve Target Career
-  let identifier = params?.careerSlug;
-  if (!identifier && params?.storedProgress?.currentCareer?.slug) {
-    identifier = params.storedProgress.currentCareer.slug;
+export function buildCareerContext(
+  paramsOrCareer?:
+    | {
+        careerSlug?: string;
+        storedProgress?: StoredProgressInput | null;
+        storedResults?: StoredResults | null;
+      }
+    | CareerIntelligence
+    | CareerDetail
+    | string,
+  maybeTraits?: TraitProfile | Record<string, number> | null,
+  maybeProgress?: StoredProgressInput | UserProgressState | null,
+  maybeOptions?: { storedResults?: StoredResults | null }
+): CareerCoachContext {
+  let careerSlug: string | undefined;
+  let storedProgress: StoredProgressInput | null | undefined;
+  let storedResults: StoredResults | null | undefined;
+
+  if (
+    paramsOrCareer &&
+    typeof paramsOrCareer === "object" &&
+    ("careerSlug" in paramsOrCareer || "storedProgress" in paramsOrCareer || "storedResults" in paramsOrCareer)
+  ) {
+    const p = paramsOrCareer as {
+      careerSlug?: string;
+      storedProgress?: StoredProgressInput | null;
+      storedResults?: StoredResults | null;
+    };
+    careerSlug = p.careerSlug;
+    storedProgress = p.storedProgress;
+    storedResults = p.storedResults;
+  } else {
+    careerSlug =
+      typeof paramsOrCareer === "string"
+        ? paramsOrCareer
+        : (paramsOrCareer as any)?.slug || (paramsOrCareer as any)?.id;
+    storedProgress = maybeProgress;
+    storedResults =
+      maybeOptions?.storedResults ||
+      (maybeTraits ? ({ trait_profile: maybeTraits, top_careers: [] } as any) : null);
   }
-  if (!identifier && params?.storedResults?.top_careers?.[0]?.career_name) {
-    identifier = params.storedResults.top_careers[0].career_name;
+
+  // 1. Resolve Target Career
+  let identifier = careerSlug;
+  if (!identifier && storedProgress?.currentCareer?.slug) {
+    identifier = storedProgress.currentCareer.slug;
+  }
+  if (!identifier && storedResults?.top_careers?.[0]?.career_name) {
+    identifier = storedResults.top_careers[0].career_name;
   }
   if (!identifier) identifier = "software-development";
 
@@ -188,16 +225,19 @@ export function buildCareerContext(params?: {
   const career: CareerDetail = careerIntel;
 
   // 2. Resolve User Trait Profile
-  const traits: TraitProfile | null = params?.storedResults?.trait_profile || null;
-  const hasAssessment = !!traits;
+  const traits: TraitProfile | null =
+    storedResults?.trait_profile ||
+    (maybeTraits as TraitProfile) ||
+    null;
+  const hasAssessment = !!traits && Object.keys(traits).length > 0;
 
   // 3. Resolve Progress State
   const progressState: UserProgressState = {
-    completedPhases: params?.storedProgress?.completedPhases || [],
-    completedTasks: params?.storedProgress?.completedTasks || [],
-    completedSkills: params?.storedProgress?.completedSkills || [],
-    completedProjects: params?.storedProgress?.completedProjects || [],
-    weeklyPaceHours: params?.storedProgress?.weeklyPaceHours || 10,
+    completedPhases: storedProgress?.completedPhases || [],
+    completedTasks: storedProgress?.completedTasks || [],
+    completedSkills: storedProgress?.completedSkills || [],
+    completedProjects: storedProgress?.completedProjects || [],
+    weeklyPaceHours: storedProgress?.weeklyPaceHours || 10,
   };
 
   // 4. Compute Intelligence — canonical pipeline (single pass)
@@ -243,11 +283,13 @@ export function buildCareerContext(params?: {
   let matchPercentage: number | undefined = undefined;
   let whyCareerMatches = `Take the assessment to discover your personalized alignment with ${career.title}.`;
 
-  if (params?.storedResults?.top_careers) {
-    const matchItem = params.storedResults.top_careers.find(
+  if (storedResults?.top_careers && storedResults.top_careers.length > 0) {
+    const matchItem = storedResults.top_careers.find(
       (c) =>
         c.career_name.toLowerCase() === career.careerName.toLowerCase() ||
-        c.career_name.toLowerCase().includes(career.title.toLowerCase())
+        c.career_name.toLowerCase() === career.title.toLowerCase() ||
+        c.career_name.toLowerCase().includes(career.title.toLowerCase()) ||
+        resolveCareerIntelligence(c.career_name)?.slug === careerIntel.slug
     );
     if (matchItem) {
       matchPercentage = matchItem.match_percentage;
@@ -346,8 +388,8 @@ export function buildCareerContext(params?: {
     completedPrepCount >= 2;
 
   // 11. Activity metadata
-  const startedAtDate = params?.storedProgress?.currentCareer?.startedAt
-    ? new Date(params.storedProgress.currentCareer.startedAt).toLocaleDateString(
+  const startedAtDate = storedProgress?.currentCareer?.startedAt
+    ? new Date(storedProgress.currentCareer.startedAt).toLocaleDateString(
         undefined,
         { month: "short", day: "numeric", year: "numeric" }
       )
@@ -445,7 +487,7 @@ export function buildCareerContext(params?: {
         progressState.completedPhases.length +
         progressState.completedSkills.length +
         progressState.completedProjects.length,
-      customMilestonesCount: params?.storedProgress?.customTasks?.length || 0,
+      customMilestonesCount: storedProgress?.customTasks?.length || 0,
       weeklyGoalsCount: 4,
     },
     nextAction: {

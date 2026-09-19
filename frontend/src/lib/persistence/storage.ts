@@ -44,6 +44,13 @@ export const LEGACY_PROGRESS_KEY = "careerCompassProgress";
 export const LEGACY_RESULTS_KEY = "careerCompassResults";
 export const LEGACY_ASSESSMENT_KEY = "careerCompassAssessment";
 
+export const STORAGE_KEYS = {
+  JOURNEY_V1: JOURNEY_STORAGE_KEY,
+  LEGACY_PROGRESS: LEGACY_PROGRESS_KEY,
+  LEGACY_RESULTS: LEGACY_RESULTS_KEY,
+  LEGACY_ASSESSMENT: LEGACY_ASSESSMENT_KEY,
+} as const;
+
 // ── In-Memory Fallback Store (SSR / Incognito / Quota Exceeded) ──────
 
 const memoryStore: Record<string, string> = {};
@@ -119,6 +126,7 @@ export function getDefaultJourneyState(): CareerJourneySourceData {
       slug: fallbackCareer.slug,
       title: fallbackCareer.title,
       careerName: fallbackCareer.careerName,
+      category: fallbackCareer.category,
       startedAt: now,
       lastActiveAt: now,
     },
@@ -258,6 +266,7 @@ export function loadCareerJourney(): CareerJourneySourceData {
             slug: parsed.selectedCareer?.slug || "software-development",
             title: parsed.selectedCareer?.title || "Software & App Developer",
             careerName: parsed.selectedCareer?.careerName || "Software & App Developer",
+            category: parsed.selectedCareer?.category,
             startedAt: parsed.selectedCareer?.startedAt || Date.now(),
             lastActiveAt: parsed.selectedCareer?.lastActiveAt || Date.now(),
           },
@@ -403,6 +412,7 @@ export function setSelectedCareer(careerSlug: string): CareerJourneySourceData {
     slug: canonicalSlug,
     title,
     careerName,
+    category: intel?.category,
     startedAt: isSameCareer ? current.selectedCareer.startedAt : Date.now(),
     lastActiveAt: Date.now(),
   };
@@ -565,6 +575,7 @@ export function getHydratedJourneyState(): HydratedJourneyState {
 
   return {
     source,
+    activeCareer: career,
     context,
     roadmap,
     readiness,
