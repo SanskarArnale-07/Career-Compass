@@ -95,7 +95,7 @@ export default function NextBestActionCard({
             {action.title}
           </h2>
 
-          <p className="text-xs sm:text-sm font-medium text-secondary mb-4">
+          <p className="text-xs sm:text-sm font-medium text-secondary-foreground mb-4">
             {action.subtitle}
           </p>
 

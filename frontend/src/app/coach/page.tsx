@@ -329,7 +329,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
             <span className="text-border hidden sm:inline">•</span>
             <span className="text-foreground font-medium">
               Target:{" "}
-              <span className="text-secondary font-mono">
+              <span className="text-primary font-mono font-semibold">
                 {context.studyPace.targetMonthYear}
               </span>
             </span>
@@ -511,7 +511,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder={`Ask Coach about your ${context.career.title} roadmap, skill gaps, or schedule...`}
               disabled={isThinking}
-              className="flex-1 px-4 py-3.5 rounded-xl bg-card border border-border text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors disabled:opacity-60"
+              className="flex-1 px-4 py-3.5 rounded-xl bg-card border border-border text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all disabled:opacity-60"
             />
             <button
               type="submit"

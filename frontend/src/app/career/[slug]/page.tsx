@@ -45,6 +45,7 @@ import ProjectsSection from "@/components/career/ProjectsSection";
 import CareerProgression from "@/components/career/CareerProgression";
 import JobPreparation from "@/components/career/JobPreparation";
 import AlternativeCareers from "@/components/career/AlternativeCareers";
+import CareerConstellation from "@/components/career/CareerConstellation";
 
 const emptySubscribe = () => () => {};
 function useIsClient() {
@@ -280,6 +281,11 @@ export default function CareerDetailPage() {
       }));
   }
 
+  const relatedList = (career?.relatedSlugs || [])
+    .map((s) => resolveCareerIntelligence(s))
+    .filter((c): c is CareerIntelligence => !!c)
+    .map((c) => ({ title: c.title, slug: c.slug, category: c.category }));
+
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
       {/* Top Utility / Breadcrumb bar */}
@@ -424,6 +430,10 @@ export default function CareerDetailPage() {
                   strengths={strengths}
                   gaps={gaps}
                 />
+              </section>
+
+              <section id="constellation">
+                <CareerConstellation career={career} relatedCareers={relatedList} />
               </section>
             </div>
           )}

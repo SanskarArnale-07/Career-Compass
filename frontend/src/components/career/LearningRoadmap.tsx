@@ -12,6 +12,8 @@ import {
   GraduationCap,
   Map,
   CheckCircle2,
+  Check,
+  Sparkles,
 } from "lucide-react";
 import type { RoadmapPhase, LearningResource, ResourceType } from "@/lib/career-details/types";
 
@@ -30,11 +32,12 @@ const RESOURCE_ICONS: Record<ResourceType, React.ComponentType<{ className?: str
 
 const PROGRESSION_STAGES = [
   "Current Position",
-  "Foundations",
+  "Foundation",
   "Core Skills",
   "Applied Skills",
   "Projects",
-  "Career Prep",
+  "Advanced Skills",
+  "Career Preparation",
 ];
 
 function ResourceCard({ resource }: { resource: LearningResource }) {
@@ -77,51 +80,81 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
   const [expandedPhase, setExpandedPhase] = useState<string | null>(phases[0]?.id ?? null);
   const completedSet = new Set(completedPhases);
 
+  // Active progression stage in the 7-step journey pipeline
+  const activeStageIndex = Math.min(
+    completedPhases.length + 1,
+    PROGRESSION_STAGES.length - 1
+  );
+
   return (
     <section>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
         <div>
           <h2 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
             <Map className="h-6 w-6 text-primary" />
-            Learning Roadmap
+            Learning Roadmap &amp; Journey
           </h2>
           <p className="font-sans text-sm text-muted-foreground mt-1 max-w-2xl">
-            A step-by-step learning progression from beginner to job-ready.
+            A step-by-step career progression from your current starting point to full professional readiness.
           </p>
         </div>
-        <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary self-start sm:self-auto">
-          {phases.length} Structured Phases
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
+            {completedSet.size} of {phases.length} Phases Completed
+          </span>
+        </div>
       </div>
 
-      {/* Progression Pipeline Stepper */}
-      <div className="mb-8 p-3.5 sm:p-4 rounded-xl border border-border bg-[#0F172A]/70 overflow-x-auto scrollbar-none">
-        <div className="flex items-center gap-2 min-w-max text-xs">
+      {/* Progression Pipeline Stepper (7-Stage Journey Flow) */}
+      <div className="mb-8 p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-xs">
+        <div className="flex items-center justify-between gap-2 pb-2 mb-3 border-b border-border/60">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            Student Journey Trajectory
+          </span>
+          <span className="text-[11px] font-mono text-primary font-medium">
+            Stage {activeStageIndex + 1} of {PROGRESSION_STAGES.length}: {PROGRESSION_STAGES[activeStageIndex]}
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none pb-1">
           {PROGRESSION_STAGES.map((stage, idx) => {
-            const isFirst = idx === 0;
+            const isCompleted = idx < activeStageIndex;
+            const isActive = idx === activeStageIndex;
             const isLast = idx === PROGRESSION_STAGES.length - 1;
+
             return (
-              <div key={stage} className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5">
+              <div key={stage} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <div
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs transition-all ${
+                    isActive
+                      ? "bg-primary/15 border-primary text-primary font-semibold shadow-xs shadow-primary/20"
+                      : isCompleted
+                      ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400 font-medium"
+                      : "bg-background/40 border-border/60 text-muted-foreground"
+                  }`}
+                >
                   <span
-                    className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
-                      isFirst
-                        ? "bg-primary text-white shadow-xs shadow-primary/30"
+                    className={`h-4.5 w-4.5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold shrink-0 ${
+                      isActive
+                        ? "bg-primary text-white"
+                        : isCompleted
+                        ? "bg-emerald-500/20 text-emerald-400"
                         : "bg-card border border-border text-muted-foreground"
                     }`}
                   >
-                    {idx + 1}
+                    {isCompleted ? (
+                      <Check className="h-2.5 w-2.5 stroke-[3]" />
+                    ) : (
+                      idx + 1
+                    )}
                   </span>
-                  <span
-                    className={`font-medium ${
-                      isFirst ? "text-primary font-semibold" : "text-secondary-foreground"
-                    }`}
-                  >
-                    {stage}
-                  </span>
+                  <span className="whitespace-nowrap">{stage}</span>
+                  {isActive && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shrink-0" />
+                  )}
                 </div>
                 {!isLast && (
-                  <span className="text-border mx-1">→</span>
+                  <span className="text-border/80 text-xs select-none">→</span>
                 )}
               </div>
             );
@@ -138,17 +171,20 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
             const isExpanded = expandedPhase === phase.id;
             const isCompleted = completedSet.has(phase.phase);
             const isCurrent = !isCompleted && (i === 0 || completedSet.has(phases[i - 1]?.phase));
+            const isUpcoming = !isCompleted && !isCurrent;
 
             return (
               <motion.div
                 key={phase.id}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08, duration: 0.35 }}
+                transition={{ delay: i * 0.06, duration: 0.35 }}
               >
                 <button
                   onClick={() => setExpandedPhase(isExpanded ? null : phase.id)}
-                  className="w-full text-left"
+                  aria-expanded={isExpanded}
+                  aria-controls={`phase-details-${phase.id}`}
+                  className="w-full text-left focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded-xl cursor-pointer"
                 >
                   <div className="relative flex items-start gap-4 group">
                     {/* Phase number circle / milestone icon */}
@@ -157,7 +193,7 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                         isCompleted
                           ? "border-emerald-500 bg-emerald-500/15 text-emerald-400 shadow-sm"
                           : isCurrent
-                          ? "border-primary bg-primary text-white shadow-lg shadow-primary/30"
+                          ? "border-primary bg-primary text-white shadow-lg shadow-primary/30 ring-4 ring-primary/10"
                           : isExpanded
                           ? "border-primary/80 bg-primary/10 text-primary"
                           : "border-border bg-card text-muted-foreground group-hover:border-primary/50"
@@ -176,11 +212,13 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                     <div
                       className={`flex-1 rounded-xl border p-4 sm:p-5 transition-all duration-300 ${
                         isCompleted
-                          ? "border-emerald-500/25 bg-emerald-500/5"
+                          ? "border-emerald-500/30 bg-emerald-500/5"
                           : isCurrent
-                          ? "border-primary/40 bg-card shadow-sm shadow-primary/5"
+                          ? "border-primary/50 bg-card shadow-sm shadow-primary/10 border-l-4 border-l-primary"
                           : isExpanded
-                          ? "border-primary/30 bg-primary/5"
+                          ? "border-primary/40 bg-card shadow-xs"
+                          : isUpcoming
+                          ? "border-border/60 bg-card/60 opacity-90 group-hover:opacity-100 group-hover:border-border group-hover:bg-card"
                           : "border-border bg-card group-hover:border-primary/20 group-hover:bg-card-hover"
                       }`}
                     >
@@ -193,12 +231,17 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                             {isCurrent && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-primary/15 text-primary border border-primary/25">
                                 <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                                Active Milestone
+                                Active Focus Milestone
                               </span>
                             )}
                             {isCompleted && (
                               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
-                                Completed
+                                Completed Milestone
+                              </span>
+                            )}
+                            {isUpcoming && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono text-muted-foreground/70 bg-card border border-border/60">
+                                Upcoming Step
                               </span>
                             )}
                           </div>
@@ -214,7 +257,7 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                         </div>
                         <ChevronDown
                           className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
-                            isExpanded ? "rotate-180" : ""
+                            isExpanded ? "rotate-180 text-primary" : ""
                           }`}
                         />
                       </div>
@@ -227,15 +270,15 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                   </div>
                 </button>
 
-
                 {/* Expanded details */}
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.div
+                      id={`phase-details-${phase.id}`}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
                       <div className="ml-8 sm:ml-16 mt-2 space-y-5">
