@@ -21,9 +21,8 @@ from app.models import (
 from app.scoring.careers import CAREER_CLUSTERS
 from app.scoring.traits import (
     TRAIT_LABELS,
-    TRAIT_WEIGHT_MAP,
+    QUESTION_OPTIONS,
     Trait,
-    get_option_index,
 )
 
 
@@ -41,23 +40,16 @@ def compute_trait_scores(answers: dict[str, str]) -> TraitProfile:
     raw: dict[str, float] = {t.value: 0.0 for t in Trait}
 
     for qid, answer_text in answers.items():
-        option_idx = get_option_index(qid, answer_text)
-        if option_idx is None:
-            continue  # skip unrecognised question / answer
-
-        weights = TRAIT_WEIGHT_MAP.get(qid, {}).get(option_idx, {})
+        weights = QUESTION_OPTIONS.get(qid, {}).get(answer_text)
+        if not weights:
+            continue
         for trait, points in weights.items():
             raw[trait.value] += points
 
-    # Compute the theoretical maximum for normalisation.
-    # For each question, find the highest weight any single trait can receive,
-    # then sum them all.  This gives the upper bound for a single trait.
-    theoretical_max = _compute_theoretical_max()
-
-    # Normalise to 0-100
+    # Normalise to 0-100 using static theoretical maximum
     normalised: dict[str, float] = {}
     for trait_code, score in raw.items():
-        t_max = theoretical_max.get(trait_code, 0.0)
+        t_max = THEORETICAL_MAX.get(trait_code, 0.0)
         if t_max > 0:
             normalised[trait_code] = round(
                 min((score / t_max) * 100, 100), 1
@@ -78,18 +70,20 @@ def _compute_theoretical_max() -> dict[str, float]:
     """
     trait_max_per_q: dict[str, list[float]] = {t.value: [] for t in Trait}
 
-    for qid, options in TRAIT_WEIGHT_MAP.items():
+    for options in QUESTION_OPTIONS.values():
         # For each trait, find the max weight offered by any option in this question
         per_trait: dict[str, float] = {t.value: 0.0 for t in Trait}
-        for _opt_idx, weights in options.items():
+        for weights in options.values():
             for trait, pts in weights.items():
                 per_trait[trait.value] = max(per_trait[trait.value], pts)
         for tc, mx in per_trait.items():
             trait_max_per_q[tc].append(mx)
 
     # Sum each trait's per-question maxima
-    trait_totals = {tc: sum(vals) for tc, vals in trait_max_per_q.items()}
-    return trait_totals
+    return {tc: sum(vals) for tc, vals in trait_max_per_q.items()}
+
+
+THEORETICAL_MAX = _compute_theoretical_max()
 
 
 # ── 2. Stream Scoring ────────────────────────────────────────────────

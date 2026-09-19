@@ -6,7 +6,6 @@ import { getCareerIcon } from "@/lib/career-icons";
 import {
   CAREER_EXPLORATION_MAP,
   getAlignmentLabel,
-  formatExplorationExplanation,
 } from "@/lib/career-directions";
 import { getCareerSlug } from "@/lib/career-details";
 
@@ -45,10 +44,7 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
         {careers.map((career, idx) => {
           const detail = CAREER_EXPLORATION_MAP[career.career_name];
           const displayTitle = detail?.title || career.career_name;
-          const explanation = formatExplorationExplanation(
-            career.career_name,
-            career.top_traits
-          );
+          const explanation = career.explanation;
           const subRoles = detail?.subRoles || [
             "Domain Specialist",
             "Technical Analyst",

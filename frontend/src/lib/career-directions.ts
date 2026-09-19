@@ -226,30 +226,3 @@ export function getSignalsFromTraits(traits: Record<string, number>): UserSignal
   });
 }
 
-export function formatExplorationExplanation(careerName: string, topTraits: string[]): string {
-  const customMap: Record<string, string> = {
-    "Scientific Research": "Your responses show signals around curiosity, investigation, experimentation, and analytical problem-solving.",
-    "Software / App Development": "Your responses show signals around logical structuring, algorithmic reasoning, and digital systems architecture.",
-    "AI / Machine Learning / Data Science": "Your responses show signals around quantitative reasoning, mathematical modeling, and pattern discovery.",
-    "Engineering": "Your responses show signals around practical design, physical mechanics, and structured systems problem-solving.",
-    "Medicine / Healthcare": "Your responses show signals around biological sciences, empirical diagnosis, and human health impact.",
-    "Finance / Investment Banking": "Your responses show signals around quantitative valuation, market mechanics, and economic strategy.",
-    "Entrepreneurship": "Your responses show signals around initiative, autonomy, strategic risk-taking, and building new ventures.",
-    "Management / Product Management": "Your responses show signals around cross-functional coordination, operational strategy, and guiding outcomes.",
-    "Marketing / Media / Communications": "Your responses show signals around narrative storytelling, audience psychology, and creative communication.",
-    "Design / Creative Arts": "Your responses show signals around aesthetic intuition, user empathy, and creative experimentation.",
-    "Law / Public Policy": "Your responses show signals around ethical reasoning, governance, and structured argumentation.",
-    "Psychology / Social Impact": "Your responses show signals around interpersonal empathy, behavioral curiosity, and community impact.",
-  };
-
-  if (customMap[careerName]) {
-    return customMap[careerName];
-  }
-
-  if (topTraits && topTraits.length > 0) {
-    const formattedTraits = topTraits.slice(0, 2).map((t) => t.toLowerCase()).join(" and ");
-    return `Your responses show signals around ${formattedTraits} and structured problem-solving.`;
-  }
-
-  return "Your responses highlight an encouraging alignment with the analytical and practical demands of this pathway.";
-}

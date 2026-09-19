@@ -11,13 +11,13 @@ from fastapi import APIRouter, HTTPException
 
 from app.models import AssessmentRequest, AssessmentResponse
 from app.scoring.engine import score_assessment
-from app.scoring.traits import REQUIRED_QUESTION_IDS, get_option_index
+from app.scoring.traits import QUESTION_OPTIONS, REQUIRED_QUESTION_IDS
 
 router = APIRouter(prefix="/api/v1/assessment", tags=["assessment"])
 
 
 @router.post("/score", response_model=AssessmentResponse)
-async def score(request: AssessmentRequest) -> AssessmentResponse:
+def score(request: AssessmentRequest) -> AssessmentResponse:
     """
     Score a completed Class 10 career assessment.
 
@@ -42,11 +42,11 @@ async def score(request: AssessmentRequest) -> AssessmentResponse:
         )
 
     # ── Validate answer values ───────────────────────────────────
-    invalid: list[dict[str, str]] = []
-    for qid in REQUIRED_QUESTION_IDS:
-        answer_text = answers[qid]
-        if get_option_index(qid, answer_text) is None:
-            invalid.append({"question_id": qid, "answer": answer_text})
+    invalid = [
+        {"question_id": qid, "answer": answers[qid]}
+        for qid in REQUIRED_QUESTION_IDS
+        if answers[qid] not in QUESTION_OPTIONS.get(qid, {})
+    ]
 
     if invalid:
         raise HTTPException(

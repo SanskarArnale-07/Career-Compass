@@ -11,7 +11,7 @@ import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button
 export function AssessmentWizard() {
   const router = useRouter();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   
   const currentQuestion = assessmentQuestions[currentStepIndex];
   const isLastQuestion = currentStepIndex === assessmentQuestions.length - 1;
@@ -30,41 +30,15 @@ export function AssessmentWizard() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStepIndex]);
 
-  // Handle single choice selection
-  const handleSingleSelect = (value: string) => {
+  const handleSelect = (value: string) => {
     setAnswers((prev) => ({
       ...prev,
       [currentQuestion.id]: value,
     }));
   };
 
-  // Handle multiple choice selection
-  const handleMultiSelect = (value: string) => {
-    setAnswers((prev) => {
-      const currentSelection = (prev[currentQuestion.id] as string[]) || [];
-      
-      if (currentSelection.includes(value)) {
-        return {
-          ...prev,
-          [currentQuestion.id]: currentSelection.filter((v) => v !== value),
-        };
-      }
-      
-      return {
-        ...prev,
-        [currentQuestion.id]: [...currentSelection, value],
-      };
-    });
-  };
-
   // Validation
-  const canContinue = () => {
-    const currentAnswer = answers[currentQuestion.id];
-    if (currentQuestion.type === "multiple-choice") {
-      return Array.isArray(currentAnswer) && currentAnswer.length > 0;
-    }
-    return currentAnswer !== undefined && currentAnswer !== "";
-  };
+  const canContinue = () => Boolean(answers[currentQuestion.id]);
 
   // Navigation
   const handleNext = () => {
@@ -89,19 +63,14 @@ export function AssessmentWizard() {
 
   // Render option card
   const renderOption = (option: { value: string; label: string }) => {
-    const isMulti = currentQuestion.type === "multiple-choice";
-    const currentAnswer = answers[currentQuestion.id];
-    
-    const isSelected = isMulti 
-      ? Array.isArray(currentAnswer) && currentAnswer.includes(option.value)
-      : currentAnswer === option.value;
+    const isSelected = answers[currentQuestion.id] === option.value;
 
     return (
       <button
         key={option.value}
-        role={isMulti ? "checkbox" : "radio"}
+        role="radio"
         aria-checked={isSelected}
-        onClick={() => isMulti ? handleMultiSelect(option.value) : handleSingleSelect(option.value)}
+        onClick={() => handleSelect(option.value)}
         className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
       >
         <SpotlightCard 
@@ -179,17 +148,11 @@ export function AssessmentWizard() {
                 {currentQuestion.explanation}
               </p>
             )}
-            {currentQuestion.type === "multiple-choice" && (
-              <p className="font-sans text-secondary text-xs mt-2 font-medium flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
-                Select all that apply (up to 3)
-              </p>
-            )}
           </div>
 
           <div 
             className="space-y-2 mb-4 animate-in fade-in slide-in-from-bottom-8 duration-700"
-            role={currentQuestion.type === "multiple-choice" ? "group" : "radiogroup"}
+            role="radiogroup"
             aria-label="Assessment options"
           >
             {currentQuestion.options.map(renderOption)}
