@@ -14,6 +14,7 @@ import type { CareerCoachContext } from "../career-details/career-context";
 
 export const SUGGESTED_QUESTIONS = [
   "What should I do today?",
+  "What are my roadmap milestones?",
   "Am I ready for internships?",
   "What skill should I learn next?",
   "Why am I behind?",
@@ -37,6 +38,8 @@ STUDENT CAREER CONTEXT:
   * Skill Competency: ${context.readiness.skillsScore}%
   * Portfolio & Proof: ${context.readiness.portfolioScore}%
 - Current Active Phase: Phase ${context.roadmap.currentPhaseNumber} — ${context.roadmap.currentPhaseTitle} (${context.roadmap.phaseProgressPercent}% of roadmap complete)
+- Active Personalized Milestone: ${context.roadmapPlan?.completionState.nextMilestone?.title || context.roadmap.nextMilestone} (Stage: ${context.roadmapPlan?.completionState.activePhaseStage || "foundation"})
+- Roadmap Milestones Complete: ${context.roadmapPlan?.completionState.completedMilestonesCount || 0} of ${context.roadmapPlan?.completionState.totalMilestonesCount || 12} (${context.roadmapPlan?.completionState.overallProgressPercent || 0}%)
 - Next Priority Action: ${context.nextAction.title} (${context.nextAction.estimatedTime})
 - Top Priority Skill Gap: ${context.skills.priorityGaps[0]?.name || "None currently"}
 - Mastered Skills: ${context.skills.mastered.length > 0 ? context.skills.mastered.join(", ") : "None verified yet"}
@@ -270,7 +273,29 @@ ${progression.length > 0 ? progression.map((r, i) => `${i + 1}. **${r}**`).join(
 - Advancing past entry level requires demonstrating architecture ownership, cross-functional collaboration, and delivering production-grade outcomes.`;
   }
 
-  // 11. General / Free-form Query Fallback
+  // 11. "What are my roadmap milestones / stages?"
+  if (query.includes("roadmap") || query.includes("milestone") || query.includes("stages") || query.includes("curriculum")) {
+    const plan = context.roadmapPlan;
+    if (plan) {
+      const activeStage = plan.phases.find((p) => p.stage === plan.completionState.activePhaseStage);
+      const nextM = plan.completionState.nextMilestone;
+      return `### 🗺️ Your Personalized Career Roadmap for **${career.title}**
+
+Your roadmap is dynamically calibrated to your **${plan.studentLevel.toUpperCase()}** stage:
+
+- **Overall Roadmap Progress**: **${plan.completionState.overallProgressPercent}%** (${plan.completionState.completedMilestonesCount}/${plan.completionState.totalMilestonesCount} milestones completed)
+- **Active Progression Stage**: **${activeStage?.title || plan.completionState.activePhaseStage}**
+- **Next High-Impact Milestone**: **${nextM?.title || "All core milestones complete"}**
+${nextM ? `  * *Why this milestone*: ${nextM.relevance.reason}\n  * *Estimated Effort*: \`${nextM.estimatedEffort.durationText}\` (${nextM.estimatedEffort.hours} hours)` : ""}
+
+#### 6-Stage Progression Overview:
+${plan.phases.map((p) => `${p.order}. **${p.title}** — ${p.isCompleted ? "✅ *Completed*" : p.isUnlocked ? "🔓 *Active / Unlocked*" : "🔒 *Locked*"}`).join("\n")}
+
+${plan.skills.gapRemedySkills.length > 0 ? `\n> ⚠️ **Priority Gap Remedy**: Focused practice on **${plan.skills.gapRemedySkills.slice(0, 3).join(", ")}** is prioritized to unblock downstream applied milestones.` : ""}`;
+    }
+  }
+
+  // 12. General / Free-form Query Fallback
   return `### 🧭 Career Compass Guidance for ${career.title}
 
 Regarding your question about **"${userQuery}"**:

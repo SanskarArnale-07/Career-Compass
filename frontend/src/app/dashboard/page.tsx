@@ -29,6 +29,10 @@ import {
   getAllCareerIntelligence,
   type CareerIntelligence,
 } from "@/lib/career-intelligence";
+import {
+  generatePersonalizedRoadmap,
+  type PersonalizedRoadmap,
+} from "@/lib/roadmap-engine";
 
 import {
   calculateCareerReadiness,
@@ -400,6 +404,13 @@ export default function DashboardPage() {
     weeklyPaceHours
   );
 
+  const personalizedRoadmap: PersonalizedRoadmap = generatePersonalizedRoadmap({
+    career,
+    traitProfile,
+    progress: progressState,
+    weeklyPaceHours,
+  });
+
   const personalizedSkills: PersonalizedSkill[] = traitProfile
     ? getPersonalizedSkills(traitProfile, career)
     : career.skills.map((s, idx) => ({
@@ -523,6 +534,10 @@ export default function DashboardPage() {
                     Take Assessment for Personalization →
                   </Link>
                 )}
+                <span className="text-border hidden sm:inline">•</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-mono font-semibold text-blue-400 capitalize">
+                  {personalizedRoadmap.studentLevel} • Stage: {personalizedRoadmap.completionState.activePhaseStage}
+                </span>
               </div>
               <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
                 {career.title}

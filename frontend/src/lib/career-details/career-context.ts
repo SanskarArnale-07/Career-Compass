@@ -36,6 +36,10 @@ import {
   type NextBestAction,
   type TimeToReadinessResult,
 } from "./roadmap-intelligence";
+import {
+  generatePersonalizedRoadmap,
+  type PersonalizedRoadmap,
+} from "../roadmap-engine";
 
 export interface StoredProgressInput {
   currentCareer?: {
@@ -95,7 +99,10 @@ export interface CareerCoachContext {
     completedPhases: number[];
     phaseProgressPercent: number;
     nextMilestone: string;
+    activeMilestoneId?: string | null;
+    activeStage?: string;
   };
+  roadmapPlan?: PersonalizedRoadmap;
   projects: {
     total: number;
     completed: string[];
@@ -199,6 +206,13 @@ export function buildCareerContext(params?: {
     progressState,
     progressState.weeklyPaceHours
   );
+
+  const roadmapPlan: PersonalizedRoadmap = generatePersonalizedRoadmap({
+    career: careerIntel,
+    traitProfile: traits,
+    progress: progressState,
+    weeklyPaceHours: progressState.weeklyPaceHours,
+  });
 
   // 5. Match Percentage & Interpretation
   let matchPercentage = 75;
@@ -368,8 +382,14 @@ export function buildCareerContext(params?: {
       currentPhaseDuration: activePhase.estimatedDuration,
       completedPhases: progressState.completedPhases,
       phaseProgressPercent,
-      nextMilestone: activePhase.build || `Complete Phase ${activePhase.phase}`,
+      nextMilestone:
+        roadmapPlan.completionState.nextMilestone?.title ||
+        activePhase.build ||
+        `Complete Phase ${activePhase.phase}`,
+      activeMilestoneId: roadmapPlan.completionState.activeMilestoneId,
+      activeStage: roadmapPlan.completionState.activePhaseStage,
     },
+    roadmapPlan,
     projects: {
       total: career.projects.length,
       completed: progressState.completedProjects,
