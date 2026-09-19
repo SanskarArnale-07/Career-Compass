@@ -7,7 +7,7 @@ export const medicineHealthcare: CareerDetail = {
     { label: "Industries", value: "Hospitals, clinics, research labs, pharma, biotech, public health, mental health, telemedicine", icon: "Building2" },
     { label: "Work Environment", value: "Hospitals, clinics, operating rooms, labs — high-stakes, emotionally demanding, deeply rewarding", icon: "Monitor" },
     { label: "Difficulty to Enter", value: "Very High — long education path (MBBS + specialization), competitive entrance exams (NEET)", icon: "Signal" },
-    { label: "Growth Potential", value: "Very Strong — healthcare professionals are always in demand. Specialists earn well and have job security.", icon: "TrendingUp" },
+    { label: "Growth Potential", value: "Very Strong — sustained demand across healthcare systems with clear progression for clinical specialists.", icon: "TrendingUp" },
   ],
   skills: [
     { id: "biology", name: "Biology & Human Anatomy", category: "Foundation", relevantTraits: ["SC"], whyItMatters: "Understanding how the human body works is the foundation of all medical practice.", whatToKnow: "Cell biology, organ systems, anatomy, physiology, genetics, microbiology.", recommendedLevel: "Strong command of Class 12 Biology concepts" },

@@ -81,7 +81,7 @@ export function normalizeCoachContext(context: CareerCoachContext): CareerCoachC
     title: "Begin Foundations Roadmap",
     estimatedTime: "1-2 hours",
     reasoning: "Build foundational competencies",
-    description: "Start with programming basics",
+    description: `Start with core fundamentals of ${context.career?.title || "your chosen career path"}`,
     category: "Phase Milestone",
     priority: "high",
   };
@@ -148,9 +148,9 @@ export function formatStructuredCoachContext(
     `- Top Dominant Trait: ${userProfile?.topTrait || "Adaptability"}`,
     `- Assessment Profile Summary: ${userProfile?.assessmentSummary || "General career explorer profile."}`,
     `- Career Match Alignment: ${career?.matchPercentage ?? 80}%`,
-    `- Why Career Matches User: ${assessmentInterpretation?.whyCareerMatches || `Aligned with interest in ${career?.category || "technology"}.`}`,
+    `- Why Career Matches User: ${assessmentInterpretation?.whyCareerMatches || `Aligned with interest in ${career?.category || "this career domain"}.`}`,
     `- Identified Strengths: ${assessmentInterpretation?.strengths?.length ? assessmentInterpretation.strengths.map((s) => `${s.title} (${s.explanation})`).join("; ") : "Self-directed learning, core curiosity"}`,
-    `- Identified Skill Gaps: ${assessmentInterpretation?.gaps?.length ? assessmentInterpretation.gaps.map((g) => `${g.title} (${g.explanation})`).join("; ") : "Practical project portfolio execution"}`,
+    `- Identified Skill Gaps: ${assessmentInterpretation?.gaps?.length ? assessmentInterpretation.gaps.map((g) => `${g.title} (${g.explanation})`).join("; ") : "Domain-specific project execution and portfolio proof"}`,
   ];
 
   // 2. CAREER DATA
@@ -162,7 +162,7 @@ export function formatStructuredCoachContext(
     `- Overview: ${career.overview}`,
     `- Entry Difficulty: ${career.difficultyToEnter}`,
     `- Industry Growth Potential: ${career.growthPotential}`,
-    `- Core Responsibilities: ${career.responsibilities?.slice(0, 4).join("; ") || "Industry-standard engineering & domain execution"}`,
+    `- Core Responsibilities: ${career.responsibilities?.slice(0, 4).join("; ") || "Professional domain execution and industry practice"}`,
     `- Recommended Academic Stream: ${career.educationPath?.recommendedStream || "Relevant degree or practical portfolio proof"}`,
     `- Target Degrees: ${career.educationPath?.degrees?.join(", ") || "Bachelor's in relevant discipline"}`,
     `- Essential Tools & Technologies: ${career.toolsTechnologies?.join(", ") || "Modern industry toolchain"}`,
@@ -534,7 +534,7 @@ Here is a side-by-side breakdown of how your current track compares with **${com
 
 #### Key Strategic Differences:
 1. **Core Problem-Solving**:
-   - **${career.title}**: Focuses on ${career.responsibilities?.[0] || "engineering functional solutions"}.
+   - **${career.title}**: Focuses on ${career.responsibilities?.[0] || "specialized domain execution"}.
    - **${comparisonCareer.title}**: Focuses on ${comparisonCareer.responsibilities?.[0] || "domain-specific specialized outcomes"}.
 
 2. **Transition Overlap**:
@@ -568,7 +568,7 @@ Here is a side-by-side breakdown of how your current track compares with **${com
 Once you finish your active milestone, follow this checklist to lock in your progress:
 
 #### 1. Completion & Verification Checklist:
-- [ ] **Commit & Document**: Push any code or notes to your personal GitHub/portfolio repository.
+- [ ] **Document & Archive**: Save your notes, project artifacts, or summary to your portfolio or repository.
 - [ ] **Mark Done on Dashboard**: Toggle this milestone or task in your dashboard to immediately increase your Roadmap Progress (currently **${roadmap.phaseProgressPercent}%**).
 - [ ] **Check Skill Matrix**: If this milestone covered **${skills.priorityGaps[0]?.name || "core skills"}**, toggle it to **Mastered**.
 
@@ -625,13 +625,13 @@ Based on your current progress in **${career.title}**, here is your highest-leve
 Great news! Your profile currently shows strong readiness for introductory internships in **${career.title}**:
 
 - **Readiness Index**: **${readiness.overallScore}%** (Level ${readiness.tierLevel}: ${readiness.tierName})
-- **Portfolio Proof**: You have built **${completedProjectsCount} projects**, giving recruiters verifiable code to evaluate.
+- **Portfolio Proof**: You have built **${completedProjectsCount} practical projects**, giving evaluators verifiable work to review.
 - **Foundations**: You have completed **${roadmap.phaseProgressPercent}%** of the core curriculum.
 
 #### What to do this week:
-1. **Polish your GitHub & Portfolio**: Ensure your top project (**${projects.completed[0] || "Capstone"}**) has a clear README and setup guide.
+1. **Polish your Portfolio & Artifacts**: Ensure your top project (**${projects.completed[0] || "Capstone"}**) has a clear description, methodology, and outcome summary.
 2. **Apply to 3–5 early-career / student roles** highlighting your verified competencies (${skills.mastered.slice(0, 3).join(", ") || "core tools"}).
-3. **Practice technical problem solving** for interview screening rounds.`;
+3. **Practice domain-specific problem solving** for interview screening rounds.`;
     }
 
     return `### 📋 Internship Readiness Assessment: **In Progress (${readiness.overallScore}%)**
@@ -639,7 +639,7 @@ Great news! Your profile currently shows strong readiness for introductory inter
 You are currently at **Level ${readiness.tierLevel}: ${readiness.tierName}**. While you've made meaningful progress, you aren't quite ready for technical interviews yet. Here is exactly what is missing:
 
 1. **Portfolio Proof (Current: ${completedProjectsCount} projects built)**:
-   - Recruiters need to see at least 1–2 deployed, functional projects.
+   - Evaluators need to see at least 1–2 complete, functional projects or verified case studies.
    - **Next Target**: Build **${projects.nextToBuild?.title || "your first capstone project"}** (${projects.nextToBuild?.difficulty || "beginner"}).
 
 2. **Core Skill Gap**:

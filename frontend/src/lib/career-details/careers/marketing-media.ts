@@ -7,7 +7,7 @@ export const marketingMedia: CareerDetail = {
     { label: "Industries", value: "Advertising, tech, media, entertainment, FMCG, agencies, startups, publishing, PR firms", icon: "Building2" },
     { label: "Work Environment", value: "Creative offices, agencies, remote teams, fast-paced deadlines, brainstorm-heavy culture", icon: "Monitor" },
     { label: "Difficulty to Enter", value: "Low-Moderate — portfolio and demonstrated skills matter more than specific degrees.", icon: "Signal" },
-    { label: "Growth Potential", value: "Strong — digital marketing is booming. CMO/VP Marketing roles offer high compensation and influence.", icon: "TrendingUp" },
+    { label: "Growth Potential", value: "Strong — expanding demand for digital attribution, brand strategy, and performance marketing leaders.", icon: "TrendingUp" },
   ],
   skills: [
     { id: "content-creation", name: "Content Creation & Copywriting", category: "Core", relevantTraits: ["CR", "SO"], whyItMatters: "Content is the engine of modern marketing. Writing compelling copy, creating videos, and telling stories drives engagement.", whatToKnow: "Copywriting fundamentals, content strategy, SEO writing, video scripts, social media content, storytelling frameworks.", recommendedLevel: "Write content that engages an audience and drives action" },

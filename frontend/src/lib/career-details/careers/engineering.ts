@@ -15,7 +15,7 @@ export const engineering: CareerDetail = {
     { label: "Industries", value: "Manufacturing, automotive, aerospace, construction, electronics, energy, defense, robotics", icon: "Building2" },
     { label: "Work Environment", value: "Labs, factories, offices, field sites, R&D centers — blend of desk work and hands-on building", icon: "Monitor" },
     { label: "Difficulty to Enter", value: "Moderate-High — requires strong PCM foundation and competitive entrance exams (JEE/BITSAT)", icon: "Signal" },
-    { label: "Growth Potential", value: "Strong — engineers are in demand globally. Specializations like robotics and renewable energy are booming.", icon: "TrendingUp" },
+    { label: "Growth Potential", value: "Strong — consistent global demand across infrastructure, hardware systems, robotics, and renewable energy sectors.", icon: "TrendingUp" },
   ],
   skills: [
     { id: "math-physics", name: "Mathematics & Physics", category: "Foundation", relevantTraits: ["AN", "SC"], whyItMatters: "Engineering is applied math and physics. Calculus, mechanics, and electromagnetism are your daily tools.", whatToKnow: "Calculus, differential equations, linear algebra, classical mechanics, electromagnetism, thermodynamics.", recommendedLevel: "Comfortable with Class 12 PCM and beyond" },

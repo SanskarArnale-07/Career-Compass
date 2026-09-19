@@ -16,7 +16,7 @@ export const financeInvestment: CareerDetail = {
     { label: "Industries", value: "Banking, asset management, insurance, fintech, consulting, private equity, venture capital", icon: "Building2" },
     { label: "Work Environment", value: "Corporate offices, trading floors, high-pressure deadlines, long hours in banking, remote in fintech", icon: "Monitor" },
     { label: "Difficulty to Enter", value: "High — competitive field requiring strong academic record, certifications (CFA/CA), and networking", icon: "Signal" },
-    { label: "Growth Potential", value: "Very high — finance offers some of the highest compensation in any profession, especially in IB/PE", icon: "TrendingUp" },
+    { label: "Growth Potential", value: "Very high — strong career trajectory and competitive compensation, particularly in investment banking, asset management, and PE", icon: "TrendingUp" },
   ],
 
   skills: [

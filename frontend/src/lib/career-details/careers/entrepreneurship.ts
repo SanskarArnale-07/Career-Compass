@@ -7,7 +7,7 @@ export const entrepreneurship: CareerDetail = {
     { label: "Industries", value: "Any — tech, food, education, health, finance, sustainability, media, retail, services", icon: "Building2" },
     { label: "Work Environment", value: "Self-directed, high uncertainty, flexible hours, co-working spaces, intense but autonomous", icon: "Monitor" },
     { label: "Difficulty to Enter", value: "Low barrier to start, very high to succeed. Requires resilience, adaptability, and hustle.", icon: "Signal" },
-    { label: "Growth Potential", value: "Unlimited ceiling — you own what you build. High risk but potentially highest reward.", icon: "TrendingUp" },
+    { label: "Growth Potential", value: "Significant upside — equity ownership and high autonomy, balanced by market risk and execution intensity.", icon: "TrendingUp" },
   ],
   skills: [
     { id: "business-model", name: "Business Model Thinking", category: "Foundation", relevantTraits: ["BU"], whyItMatters: "A business needs a viable model — who pays, for what, and why. Without this, even great ideas fail.", whatToKnow: "Business Model Canvas, value propositions, revenue models, unit economics, customer segments.", recommendedLevel: "Design a business model for a new idea" },

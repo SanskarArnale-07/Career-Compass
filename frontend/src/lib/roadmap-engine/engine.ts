@@ -70,6 +70,152 @@ const CANONICAL_STAGES: StageMeta[] = [
   },
 ];
 
+/**
+ * Returns domain-tailored stage titles and descriptions for non-technical or specialized careers.
+ */
+function getDomainStageMeta(stage: ProgressionStage, career: CareerIntelligence): StageMeta {
+  const defaultMeta = CANONICAL_STAGES.find((s) => s.stage === stage) || CANONICAL_STAGES[0];
+  const cat = (career.category || "").toLowerCase();
+
+  if (cat.includes("health") || cat.includes("medicine")) {
+    switch (stage) {
+      case "foundation":
+        return { stage, title: "1. Basic Medical Sciences & Human Biology", description: "Build prerequisite biology, chemistry, and human physiological principles.", defaultHours: defaultMeta.defaultHours };
+      case "core-skills":
+        return { stage, title: "2. Core Clinical Knowledge & Reasoning", description: "Master pathology, disease mechanisms, and structured diagnostic thinking.", defaultHours: defaultMeta.defaultHours };
+      case "applied-skills":
+        return { stage, title: "3. Diagnostic Practice & Patient Care", description: "Develop patient communication, clinical ethics, and practical healthcare protocols.", defaultHours: defaultMeta.defaultHours };
+      case "projects":
+        return { stage, title: "4. Clinical Case Studies & Healthcare Exposure", description: "Analyze real patient cases, health outreach initiatives, and clinical documentation.", defaultHours: defaultMeta.defaultHours };
+      case "advanced-skills":
+        return { stage, title: "5. Clinical Specialization & Evidence-Based Medicine", description: "Explore specialized medical disciplines and critical evaluation of clinical literature.", defaultHours: defaultMeta.defaultHours };
+      case "career-prep":
+        return { stage, title: "6. Medical Licensing & Internship Readiness", description: "Systematically prepare for entrance/licensing exams, clinical vivas, and medical internships.", defaultHours: defaultMeta.defaultHours };
+    }
+  }
+
+  if (cat.includes("law") || cat.includes("govern")) {
+    switch (stage) {
+      case "foundation":
+        return { stage, title: "1. Legal Foundations & Jurisprudence", description: "Build fundamental understanding of legal systems, constitutional framework, and legal philosophy.", defaultHours: defaultMeta.defaultHours };
+      case "core-skills":
+        return { stage, title: "2. Core Statutes, Case Law & Substantive Law", description: "Master statutory interpretation, civil/criminal codes, and fundamental case law analysis.", defaultHours: defaultMeta.defaultHours };
+      case "applied-skills":
+        return { stage, title: "3. Legal Research, Drafting & Mooting", description: "Draft legal notices, contracts, and practice oral advocacy through structured dispute simulations.", defaultHours: defaultMeta.defaultHours };
+      case "projects":
+        return { stage, title: "4. Legal Briefs, Policy Papers & Legal Aid", description: "Produce comprehensive appellate briefs, legislative policy analysis, and legal aid case work.", defaultHours: defaultMeta.defaultHours };
+      case "advanced-skills":
+        return { stage, title: "5. Advanced Specialization & Jurisprudence", description: "Deepen expertise in corporate law, constitutional litigation, or international regulatory frameworks.", defaultHours: defaultMeta.defaultHours };
+      case "career-prep":
+        return { stage, title: "6. Bar Examination & Chamber Readiness", description: "Prepare for bar council examinations, curate legal writing samples, and secure chamber placements.", defaultHours: defaultMeta.defaultHours };
+    }
+  }
+
+  if (cat.includes("design") || cat.includes("art")) {
+    switch (stage) {
+      case "foundation":
+        return { stage, title: "1. Visual Fundamentals & Design Principles", description: "Master typography, color theory, grid systems, and core visual hierarchy.", defaultHours: defaultMeta.defaultHours };
+      case "core-skills":
+        return { stage, title: "2. Core UX/UI Methodologies & Tooling", description: "Master user research frameworks, information architecture, wireframing, and industry design tools.", defaultHours: defaultMeta.defaultHours };
+      case "applied-skills":
+        return { stage, title: "3. Interactive Prototyping & Design Systems", description: "Build interactive prototypes, reusable component libraries, and validate accessibility standards.", defaultHours: defaultMeta.defaultHours };
+      case "projects":
+        return { stage, title: "4. Portfolio Case Studies & Client Projects", description: "Execute end-to-end product design case studies highlighting problems, metrics, and outcomes.", defaultHours: defaultMeta.defaultHours };
+      case "advanced-skills":
+        return { stage, title: "5. Advanced Design Systems & Interaction", description: "Design complex multi-platform design systems, micro-interactions, and design token architectures.", defaultHours: defaultMeta.defaultHours };
+      case "career-prep":
+        return { stage, title: "6. Portfolio Showcase & Design Critique Readiness", description: "Publish an interactive portfolio website and practice design challenges and portfolio walkthroughs.", defaultHours: defaultMeta.defaultHours };
+    }
+  }
+
+  if (cat.includes("finance")) {
+    switch (stage) {
+      case "foundation":
+        return { stage, title: "1. Financial Accounting & Economic Principles", description: "Build core accounting fundamentals, financial statement literacy, and macroeconomic intuition.", defaultHours: defaultMeta.defaultHours };
+      case "core-skills":
+        return { stage, title: "2. Core Financial Modeling & Valuation", description: "Master 3-statement modeling, discounted cash flow (DCF), and comparable company analysis.", defaultHours: defaultMeta.defaultHours };
+      case "applied-skills":
+        return { stage, title: "3. Applied Corporate Finance & Market Analysis", description: "Execute dynamic scenario modeling, sensitivity tables, and capital budgeting evaluations.", defaultHours: defaultMeta.defaultHours };
+      case "projects":
+        return { stage, title: "4. Investment Memos & Valuation Portfolios", description: "Construct institutional-grade equity research reports, buyout analyses, and pitch presentations.", defaultHours: defaultMeta.defaultHours };
+      case "advanced-skills":
+        return { stage, title: "5. Advanced Financial Engineering & Risk Strategy", description: "Analyze M&A structures, credit risk, derivatives, and portfolio allocation frameworks.", defaultHours: defaultMeta.defaultHours };
+      case "career-prep":
+        return { stage, title: "6. Financial Certifications & Deal Team Readiness", description: "Prepare for CFA/CPA milestones, financial modeling tests, and technical superdays.", defaultHours: defaultMeta.defaultHours };
+    }
+  }
+
+  if (cat.includes("science") || cat.includes("research")) {
+    switch (stage) {
+      case "foundation":
+        return { stage, title: "1. Scientific Foundations & Research Principles", description: "Build hypothesis formulation, variable control, experimental design, and core quantitative literacy.", defaultHours: defaultMeta.defaultHours };
+      case "core-skills":
+        return { stage, title: "2. Core Experimental & Statistical Methods", description: "Master inferential statistics, laboratory protocols, and data analysis in R/Python.", defaultHours: defaultMeta.defaultHours };
+      case "applied-skills":
+        return { stage, title: "3. Applied Laboratory & Computational Workflows", description: "Execute reproducible experiments, calibrate instruments, and document rigorous lab workflows.", defaultHours: defaultMeta.defaultHours };
+      case "projects":
+        return { stage, title: "4. Research Studies & Scientific Investigation", description: "Design, conduct, and analyze an original scientific study or science fair project.", defaultHours: defaultMeta.defaultHours };
+      case "advanced-skills":
+        return { stage, title: "5. Advanced Domain Investigation & Peer Review", description: "Critique cutting-edge journal publications, write grant proposals, and explore specialized models.", defaultHours: defaultMeta.defaultHours };
+      case "career-prep":
+        return { stage, title: "6. Academic Publishing & Fellowship Applications", description: "Prepare research manuscripts (IMRaD), conference posters, and graduate scholarship dossiers.", defaultHours: defaultMeta.defaultHours };
+    }
+  }
+
+  if (cat.includes("social") || cat.includes("psychology")) {
+    switch (stage) {
+      case "foundation":
+        return { stage, title: "1. Behavioral Foundations & Psychological Theory", description: "Understand cognitive, developmental, and social psychology theories and research ethics.", defaultHours: defaultMeta.defaultHours };
+      case "core-skills":
+        return { stage, title: "2. Core Counseling & Research Methodologies", description: "Master active listening techniques, ethical boundaries, and qualitative/quantitative inquiry.", defaultHours: defaultMeta.defaultHours };
+      case "applied-skills":
+        return { stage, title: "3. Applied Fieldwork & Diagnostic Tools", description: "Apply psychometric assessments, needs analysis, and crisis intervention protocols.", defaultHours: defaultMeta.defaultHours };
+      case "projects":
+        return { stage, title: "4. Community Projects & Field Case Studies", description: "Design and deliver community interventions, mental health workshops, and social impact evaluations.", defaultHours: defaultMeta.defaultHours };
+      case "advanced-skills":
+        return { stage, title: "5. Advanced Therapeutic & Organizational Specialization", description: "Deep-dive into specialized therapeutic modalities, I/O psychology, or public policy design.", defaultHours: defaultMeta.defaultHours };
+      case "career-prep":
+        return { stage, title: "6. Professional Licensure & Impact Role Placement", description: "Document supervised clinical hours, prepare for licensure exams, and interview with social agencies.", defaultHours: defaultMeta.defaultHours };
+    }
+  }
+
+  if (cat.includes("business") || cat.includes("management") || cat.includes("marketing") || cat.includes("innovation")) {
+    switch (stage) {
+      case "foundation":
+        return { stage, title: "1. Business Models & Market Foundations", description: "Understand business model mechanics, unit economics, market structures, and competitive dynamics.", defaultHours: defaultMeta.defaultHours };
+      case "core-skills":
+        return { stage, title: "2. Core Strategic & Analytical Execution", description: "Master KPI frameworks, customer discovery, funnel analytics, and resource allocation.", defaultHours: defaultMeta.defaultHours };
+      case "applied-skills":
+        return { stage, title: "3. Applied Operations, Product & Growth Workflows", description: "Run structured sprint cycles, user feedback loops, campaign experiments, and team workflows.", defaultHours: defaultMeta.defaultHours };
+      case "projects":
+        return { stage, title: "4. Venture Launches & Strategic Deliverables", description: "Build and launch a real MVP product, business proposal, or high-impact marketing campaign.", defaultHours: defaultMeta.defaultHours };
+      case "advanced-skills":
+        return { stage, title: "5. Advanced Scaling, Organizational Strategy & Leadership", description: "Master unit economic scaling, stakeholder management, fundraising strategy, and governance.", defaultHours: defaultMeta.defaultHours };
+      case "career-prep":
+        return { stage, title: "6. Executive Presentation & Placement Readiness", description: "Polish leadership pitch decks, executive case briefs, and interview for leadership roles.", defaultHours: defaultMeta.defaultHours };
+    }
+  }
+
+  if (cat.includes("engineering")) {
+    switch (stage) {
+      case "foundation":
+        return { stage, title: "1. Engineering Sciences & Physical Principles", description: "Build core mechanics, circuit theory, thermodynamics, and mathematical modeling fundamentals.", defaultHours: defaultMeta.defaultHours };
+      case "core-skills":
+        return { stage, title: "2. Core Engineering Analysis & Design Tools", description: "Master CAD software, circuit design tools, finite element analysis, and physical prototyping.", defaultHours: defaultMeta.defaultHours };
+      case "applied-skills":
+        return { stage, title: "3. Applied Systems Engineering & Lab Practice", description: "Implement simulation validation, sensor integration, tolerance analysis, and physical assembly.", defaultHours: defaultMeta.defaultHours };
+      case "projects":
+        return { stage, title: "4. Functional Prototypes & Engineering Capstones", description: "Design, build, and test a verifiable physical device, mechanism, or embedded hardware system.", defaultHours: defaultMeta.defaultHours };
+      case "advanced-skills":
+        return { stage, title: "5. Advanced System Architecture & Reliability", description: "Analyze failure modes (FMEA), thermal/stress constraints, safety margins, and industrial scaling.", defaultHours: defaultMeta.defaultHours };
+      case "career-prep":
+        return { stage, title: "6. Engineering Licensure & Industry Placement", description: "Prepare engineering portfolios, technical calculation dossiers, and practice technical interviews.", defaultHours: defaultMeta.defaultHours };
+    }
+  }
+
+  return defaultMeta;
+}
+
 // ── Helper: Deterministic Hash Generator ─────────────────────────────
 
 function createDeterministicDigest(
@@ -165,8 +311,11 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
 
   let globalOrder = 1;
 
+  const isTech = (career.category || "").toLowerCase().includes("tech");
+
   for (let stageIdx = 0; stageIdx < CANONICAL_STAGES.length; stageIdx++) {
-    const meta = CANONICAL_STAGES[stageIdx];
+    const defaultMeta = CANONICAL_STAGES[stageIdx];
+    const meta = getDomainStageMeta(defaultMeta.stage, career);
     const stageMilestones: RoadmapMilestone[] = [];
 
     switch (meta.stage) {
@@ -229,9 +378,11 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
         const m2: RoadmapMilestone = {
           id: `${career.id}-foundation-02`,
           phaseStage: "foundation",
-          title: "Environment Setup & Developer Toolchain",
+          title: isTech
+            ? "Environment Setup & Developer Toolchain"
+            : `Workspace Setup & Essential Tools for ${career.title}`,
           description: `Configure your working environment with essential industry tools (${career.toolsTechnologies.slice(0, 3).join(", ") || "core tools"}).`,
-          skills: m2Skills.length > 0 ? m2Skills : [career.toolsTechnologies[0] || "Toolchain Setup"],
+          skills: m2Skills.length > 0 ? m2Skills : [career.toolsTechnologies[0] || "Workspace Setup"],
           resources: (career.roadmap[0]?.resources || []).slice(2, 4),
           estimatedEffort: {
             hours: 15,
@@ -301,9 +452,13 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
         const m2: RoadmapMilestone = {
           id: `${career.id}-core-02`,
           phaseStage: "core-skills",
-          title: `Data Architecture & Tool Mastery`,
-          description: `Deepen your command of ${career.toolsTechnologies.slice(3, 6).join(", ") || "advanced tooling"} and relational workflows.`,
-          skills: coreSkills2.length > 0 ? coreSkills2 : ["Architecture & Schemas"],
+          title: isTech
+            ? `Data Architecture & Tool Mastery`
+            : `Core Methodologies & Tool Mastery`,
+          description: isTech
+            ? `Deepen your command of ${career.toolsTechnologies.slice(3, 6).join(", ") || "advanced tooling"} and relational workflows.`
+            : `Deepen your command of essential tools (${career.toolsTechnologies.slice(1, 4).join(", ") || "core tools"}) and structured workflows for ${career.title}.`,
+          skills: coreSkills2.length > 0 ? coreSkills2 : [isTech ? "Architecture & Schemas" : "Structured Workflows"],
           resources: (career.roadmap[2]?.resources || []).slice(0, 2),
           estimatedEffort: {
             hours: 25,
@@ -319,7 +474,9 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
             priority: "high",
             isGapRemedy: false,
             isFastTracked: false,
-            reason: "Connects isolated components into functioning pipelines.",
+            reason: isTech
+              ? "Connects isolated components into functioning pipelines."
+              : `Connects foundational knowledge with professional practice in ${career.title}.`,
           },
           order: globalOrder++,
         };
@@ -373,9 +530,15 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
         const m2: RoadmapMilestone = {
           id: `${career.id}-applied-02`,
           phaseStage: "applied-skills",
-          title: "Integration, Testing & Quality Assurance",
-          description: "Implement automated testing, edge-case validation, and modular error handling.",
-          skills: ["Testing & Quality", "Error Handling"],
+          title: isTech
+            ? "Integration, Testing & Quality Assurance"
+            : "Quality Assurance, Verification & Professional Standards",
+          description: isTech
+            ? "Implement automated testing, edge-case validation, and modular error handling."
+            : `Implement systematic review, verification protocols, and quality standards for ${career.title}.`,
+          skills: isTech
+            ? ["Testing & Quality", "Error Handling"]
+            : ["Quality Assurance", "Professional Standards"],
           resources: (career.roadmap[3]?.resources || []).slice(0, 2),
           estimatedEffort: {
             hours: 20,
@@ -391,7 +554,9 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
             priority: "standard",
             isGapRemedy: false,
             isFastTracked: false,
-            reason: "Differentiates production engineers from tutorial learners.",
+            reason: isTech
+              ? "Differentiates production engineers from tutorial learners."
+              : `Differentiates authentic practitioners from theoretical learners in ${career.title}.`,
           },
           order: globalOrder++,
         };
@@ -435,20 +600,28 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
             priority: "critical",
             isGapRemedy: false,
             isFastTracked: false,
-            reason: "Primary recruiter evaluation artifact. Demonstrates real-world software craft.",
+            reason: isTech
+              ? "Primary recruiter evaluation artifact. Demonstrates real-world software craft."
+              : `Primary evaluation artifact. Demonstrates authentic real-world execution in ${career.title}.`,
           },
           order: globalOrder++,
         };
         stageMilestones.push(m1);
 
-        // Milestone 2: Deployment & CI/CD
+        // Milestone 2: Deployment & CI/CD / Showcase
         const m2Completed = completedPhases.has(5);
         const m2: RoadmapMilestone = {
           id: `${career.id}-project-02`,
           phaseStage: "projects",
-          title: "Cloud Deployment & Continuous Delivery",
-          description: "Deploy your project live to production with custom domain, automated builds, and public documentation.",
-          skills: ["Cloud Deployment", "CI/CD & DevOps"],
+          title: isTech
+            ? "Cloud Deployment & Continuous Delivery"
+            : "Project Delivery, Documentation & Public Showcase",
+          description: isTech
+            ? "Deploy your project live to production with custom domain, automated builds, and public documentation."
+            : `Package and publish your deliverable with clear documentation, presentation deck, and verifiable outputs for ${career.title}.`,
+          skills: isTech
+            ? ["Cloud Deployment", "CI/CD & DevOps"]
+            : ["Project Presentation", "Documentation & Showcase"],
           resources: (career.roadmap[4]?.resources || []).slice(0, 2),
           estimatedEffort: {
             hours: 25,
@@ -464,7 +637,9 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
             priority: "high",
             isGapRemedy: false,
             isFastTracked: false,
-            reason: "Live verifiable URLs increase interview callback rates by >3x.",
+            reason: isTech
+              ? "Live verifiable URLs increase interview callback rates by >3x."
+              : "Verifiable public deliverables demonstrate professional execution to reviewers and employers.",
           },
           order: globalOrder++,
         };
@@ -550,7 +725,7 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
       }
 
       case "career-prep": {
-        // Milestone 1: Technical Portfolio & Resume
+        // Milestone 1: Portfolio & Resume Narrative
         const prepItem1 = career.preparation[0];
         const m1Completed =
           prepItem1 && completedTasks.has(prepItem1.id);
@@ -561,9 +736,15 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
         const m1: RoadmapMilestone = {
           id: `${career.id}-prep-01`,
           phaseStage: "career-prep",
-          title: "Portfolio Showcase & Resume Narrative",
-          description: "Curate your project case studies, write concise architectural descriptions, and optimize your resume for applicant screening.",
-          skills: ["Portfolio Presentation", "Technical Storytelling"],
+          title: isTech
+            ? "Portfolio Showcase & Resume Narrative"
+            : `Professional Portfolio & Career Narrative`,
+          description: isTech
+            ? "Curate your project case studies, write concise architectural descriptions, and optimize your resume for applicant screening."
+            : `Curate your project case studies, articulate your practical domain experience, and optimize your resume for applicant screening.`,
+          skills: isTech
+            ? ["Portfolio Presentation", "Technical Storytelling"]
+            : ["Portfolio Presentation", "Professional Narrative"],
           resources: [],
           estimatedEffort: {
             hours: 15,
@@ -579,13 +760,15 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
             priority: "critical",
             isGapRemedy: false,
             isFastTracked: false,
-            reason: "Turns finished code into hired opportunities.",
+            reason: isTech
+              ? "Turns finished code into hired opportunities."
+              : `Turns finished projects into credible professional opportunities in ${career.title}.`,
           },
           order: globalOrder++,
         };
         stageMilestones.push(m1);
 
-        // Milestone 2: Technical Interview & Outreach Strategy
+        // Milestone 2: Interview & Outreach Strategy
         const prepItem2 = career.preparation[1];
         const m2Completed =
           prepItem2 && completedTasks.has(prepItem2.id);
@@ -593,8 +776,12 @@ export function generatePersonalizedRoadmap(input: GenerateRoadmapInput): Person
         const m2: RoadmapMilestone = {
           id: `${career.id}-prep-02`,
           phaseStage: "career-prep",
-          title: "Technical Interview Readiness & Application Sprint",
-          description: "Practice mock behavioral and technical interviews, identify target companies, and initiate direct outreach.",
+          title: isTech
+            ? "Technical Interview Readiness & Application Sprint"
+            : "Domain Interview Readiness & Application Sprint",
+          description: isTech
+            ? "Practice mock behavioral and technical interviews, identify target companies, and initiate direct outreach."
+            : `Practice domain-specific interview scenarios, identify target organizations, and initiate direct professional outreach.`,
           skills: ["Interviewing", "Industry Networking"],
           resources: [],
           estimatedEffort: {

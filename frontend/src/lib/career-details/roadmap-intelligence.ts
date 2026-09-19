@@ -163,11 +163,50 @@ export function calculateCareerReadiness(
     )
   );
 
-  // Tier level and unlock requirement
+  // Tier level and domain-aware unlock requirements
+  const cat = (career?.category || "").toLowerCase();
+  let toApprentice = "Complete Phase 1 and build your first beginner project to reach Apprentice.";
+  let toPractitioner = "Master intermediate concepts and complete a substantial portfolio project to reach Practitioner.";
+  let toReady = "Finish advanced capstone projects and finalize your career prep checklist to reach Career Ready.";
+
+  if (cat.includes("health") || cat.includes("medicine")) {
+    toApprentice = "Complete Phase 1 and foundational study modules to reach Apprentice.";
+    toPractitioner = "Master intermediate clinical concepts and complete clinical case reviews to reach Practitioner.";
+    toReady = "Finish advanced clinical studies and complete your licensing prep checklist to reach Career Ready.";
+  } else if (cat.includes("law") || cat.includes("govern")) {
+    toApprentice = "Complete Phase 1 and draft your first legal brief or case note to reach Apprentice.";
+    toPractitioner = "Master intermediate legal concepts and complete practical briefs or moot arguments to reach Practitioner.";
+    toReady = "Finish advanced legal research and complete your bar prep checklist to reach Career Ready.";
+  } else if (cat.includes("design") || cat.includes("art")) {
+    toApprentice = "Complete Phase 1 and design your first beginner project to reach Apprentice.";
+    toPractitioner = "Master intermediate design principles and build a multi-screen prototype to reach Practitioner.";
+    toReady = "Finish advanced design systems and curate your portfolio case studies to reach Career Ready.";
+  } else if (cat.includes("finance")) {
+    toApprentice = "Complete Phase 1 and build your first financial analysis model to reach Apprentice.";
+    toPractitioner = "Master intermediate valuation concepts and build a full financial model to reach Practitioner.";
+    toReady = "Finish advanced transaction cases and complete your finance career checklist to reach Career Ready.";
+  } else if (cat.includes("science") || cat.includes("research")) {
+    toApprentice = "Complete Phase 1 and design your first structured experiment to reach Apprentice.";
+    toPractitioner = "Master intermediate methodologies and complete a data-backed study to reach Practitioner.";
+    toReady = "Finish advanced research writing and complete your academic prep checklist to reach Career Ready.";
+  } else if (cat.includes("social") || cat.includes("psychology")) {
+    toApprentice = "Complete Phase 1 and complete your first case analysis to reach Apprentice.";
+    toPractitioner = "Master intermediate assessment concepts and design a community intervention to reach Practitioner.";
+    toReady = "Finish advanced case studies and complete your professional readiness checklist to reach Career Ready.";
+  } else if (cat.includes("business") || cat.includes("management") || cat.includes("marketing") || cat.includes("innovation")) {
+    toApprentice = "Complete Phase 1 and create your first strategy or business canvas to reach Apprentice.";
+    toPractitioner = "Master intermediate domain frameworks and launch a real project deliverable to reach Practitioner.";
+    toReady = "Finish advanced strategic projects and complete your career portfolio checklist to reach Career Ready.";
+  } else if (cat.includes("engineering")) {
+    toApprentice = "Complete Phase 1 and build your first engineering prototype to reach Apprentice.";
+    toPractitioner = "Master intermediate engineering tools and complete a functional subsystem build to reach Practitioner.";
+    toReady = "Finish advanced capstone systems and finalize your engineering licensure prep to reach Career Ready.";
+  }
+
   let tierLevel: 1 | 2 | 3 | 4 = 1;
   let tierName = "Explorer";
   let tierDescription = "Building foundational understanding of this career.";
-  let nextTierRequirement = "Complete Phase 1 and build your first beginner project to reach Apprentice.";
+  let nextTierRequirement = toApprentice;
 
   if (overallScore >= 80) {
     tierLevel = 4;
@@ -178,12 +217,12 @@ export function calculateCareerReadiness(
     tierLevel = 3;
     tierName = "Practitioner";
     tierDescription = "Realistic projects built, advancing through specialized phases.";
-    nextTierRequirement = "Finish advanced projects and finalize your job prep checklist to reach Career Ready.";
+    nextTierRequirement = toReady;
   } else if (overallScore >= 25) {
     tierLevel = 2;
     tierName = "Apprentice";
     tierDescription = "Active hands-on learner with core foundations in place.";
-    nextTierRequirement = "Master intermediate concepts and ship a full-stack/intermediate project to reach Practitioner.";
+    nextTierRequirement = toPractitioner;
   }
 
   return {

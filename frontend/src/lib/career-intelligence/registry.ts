@@ -357,8 +357,8 @@ const medicineHealthcareIntel = createCareerIntelligence(medicineHealthcare, {
       "Telemedicine & Digital Health Startups",
     ],
     workEnvironment: "Hospitals, outpatient clinics, operating theaters, and diagnostic laboratories with shifts and emergency calls",
-    difficultyToEnter: "Very high — highly competitive entrance exams (NEET), rigorous multi-year medical school curriculum and residency",
-    growthPotential: "Extremely resilient — recession-proof profession with lifelong societal value and respect",
+    difficultyToEnter: "Very high — requires extensive formal qualification, competitive exams (NEET/MBBS), and intensive clinical residency",
+    growthPotential: "Extremely resilient — sustained societal demand with lifelong career longevity and clinical specializations",
   },
 });
 
@@ -497,12 +497,12 @@ const financeInvestmentIntel = createCareerIntelligence(financeInvestment, {
       "Corporate Finance & Strategic Treasury",
     ],
     workEnvironment: "High-energy financial centers, fast-paced transaction desks, data-driven analytical environments",
-    difficultyToEnter: "High — highly competitive recruiting processes requiring sharp quantitative aptitude and commercial acumen",
-    growthPotential: "Extremely lucrative — exceptional compensation ceilings and direct path to executive leadership",
+    difficultyToEnter: "High — highly competitive recruiting pipelines favoring strong quantitative track records and financial acumen",
+    growthPotential: "High earning potential — competitive industry compensation and structured pathways to senior partnership and executive leadership",
   },
 });
 
-// ── 7. Entrepreneurship ────────────────────────────────────────────────────
+// ── 7. Entrepreneurship ────────────────────────────────────────────────----
 const entrepreneurshipIntel = createCareerIntelligence(entrepreneurship, {
   responsibilities: [
     "Identify unmet market needs, validate customer pain points, and define viable product solutions",
@@ -568,8 +568,8 @@ const entrepreneurshipIntel = createCareerIntelligence(entrepreneurship, {
       "Social Impact Enterprises",
     ],
     workEnvironment: "High-uncertainty, high-autonomy startup environments, dynamic workspaces, rapid sprint iterations",
-    difficultyToEnter: "Low barrier to start, very high difficulty to scale and achieve sustainable market survival",
-    growthPotential: "Uncapped upside — limitless financial and societal impact for successful innovators",
+    difficultyToEnter: "Open access to launch, but extremely high execution difficulty requiring resilience, capital efficiency, and market timing",
+    growthPotential: "Significant upside — equity ownership and high autonomy, balanced by market competition and execution risk",
   },
 });
 
