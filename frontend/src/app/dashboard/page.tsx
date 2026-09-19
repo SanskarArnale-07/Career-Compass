@@ -11,14 +11,10 @@ import {
   Circle,
   Zap,
   BookOpen,
-  Award,
   ChevronDown,
   ExternalLink,
   RotateCcw,
   Sparkles,
-  Layers,
-  FolderKanban,
-  Clock,
   Target,
   ShieldAlert,
   HelpCircle,
@@ -138,13 +134,14 @@ export default function DashboardPage() {
   ) => {
     try {
       const currentJourney = loadCareerJourney();
+      const now = Date.now();
       saveCareerJourney({
         selectedCareer: {
           slug: slugToSave,
           title: career.title,
           careerName: career.careerName,
-          startedAt: currentJourney.selectedCareer.startedAt || Date.now(),
-          lastActiveAt: Date.now(),
+          startedAt: currentJourney.selectedCareer.startedAt || now,
+          lastActiveAt: now,
         },
         progress: {
           completedPhases: Array.from(phases),

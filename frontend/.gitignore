@@ -1,1 +1,10 @@
 node_modules
+.next
+out
+build
+.env
+.env.local
+.env.production
+.env*.local
+*.tsbuildinfo
+next-env.d.ts

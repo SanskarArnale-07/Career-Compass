@@ -5,9 +5,67 @@ import {
 } from "@/lib/coach/coach-engine";
 import type { CareerCoachContext } from "@/lib/career-details/career-context";
 
+// ── In-Memory Sliding Window Rate Limiter ─────────────────────────────
+interface RateLimitEntry {
+  timestamps: number[];
+}
+
+const rateLimitStore = new Map<string, RateLimitEntry>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 30; // 30 requests per minute
+
+function checkRateLimit(clientIp: string): { allowed: boolean; retryAfter: number } {
+  const now = Date.now();
+  let entry = rateLimitStore.get(clientIp);
+
+  if (!entry) {
+    entry = { timestamps: [] };
+    rateLimitStore.set(clientIp, entry);
+  }
+
+  // Prune expired entries
+  const cutoff = now - RATE_LIMIT_WINDOW_MS;
+  entry.timestamps = entry.timestamps.filter((ts) => ts > cutoff);
+
+  if (entry.timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    const oldest = entry.timestamps[0] || now;
+    const retryAfterSeconds = Math.max(
+      1,
+      Math.ceil((RATE_LIMIT_WINDOW_MS - (now - oldest)) / 1000)
+    );
+    return { allowed: false, retryAfter: retryAfterSeconds };
+  }
+
+  entry.timestamps.push(now);
+  return { allowed: true, retryAfter: 0 };
+}
+
+// ── Coach Route Handler ───────────────────────────────────────────────
 export async function POST(request: Request) {
   try {
-    let body: any;
+    // 1. Rate Limiting Check
+    const forwardedFor = request.headers.get("x-forwarded-for");
+    const clientIp = forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1";
+    const { allowed, retryAfter } = checkRateLimit(clientIp);
+
+    if (!allowed) {
+      return NextResponse.json(
+        {
+          error: "rate_limit_exceeded",
+          message: "Too many coaching requests. Please pause for a moment before continuing.",
+          retry_after_seconds: retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(retryAfter),
+          },
+        }
+      );
+    }
+
+    // 2. Parse JSON Payload
+    let body: unknown;
     try {
       body = await request.json();
     } catch {
@@ -17,13 +75,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const { message, context, history } = (body || {}) as {
-      message?: unknown;
-      context?: CareerCoachContext;
-      history?: { role: string; content: string }[];
-    };
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Request payload must be a JSON object" },
+        { status: 400 }
+      );
+    }
 
-    // 1. Input Validation
+    const payload = body as Record<string, unknown>;
+    const message = payload.message;
+    const context = payload.context as CareerCoachContext | undefined;
+    const rawHistory = payload.history;
+
+    // 3. Message Validation
     if (!message || typeof message !== "string" || !message.trim()) {
       return NextResponse.json(
         { error: "A valid non-empty message string is required" },
@@ -31,23 +95,50 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!context || typeof context !== "object" || !context.career?.title) {
+    const cleanMessage = message.trim().slice(0, 2000);
+
+    // 4. Context Validation
+    if (
+      !context ||
+      typeof context !== "object" ||
+      !context.career ||
+      typeof context.career.title !== "string" ||
+      !context.career.title.trim()
+    ) {
       return NextResponse.json(
-        { error: "A valid CareerCoachContext object with targeted career is required" },
+        { error: "A valid CareerCoachContext object with targeted career title is required" },
         { status: 400 }
       );
     }
 
-    const cleanMessage = message.trim().slice(0, 2000);
+    // 5. History Validation (sanitize & limit length)
+    const sanitizedHistory: { role: "user" | "assistant"; content: string }[] = [];
+    if (Array.isArray(rawHistory)) {
+      const allowedRoles = new Set(["user", "assistant", "coach", "system"]);
+      for (const item of rawHistory.slice(-10)) {
+        if (
+          item &&
+          typeof item === "object" &&
+          typeof item.role === "string" &&
+          typeof item.content === "string" &&
+          allowedRoles.has(item.role)
+        ) {
+          sanitizedHistory.push({
+            role: item.role === "user" ? "user" : "assistant",
+            content: item.content.slice(0, 2000),
+          });
+        }
+      }
+    }
 
-    // 2. Check if an external LLM key is configured (OpenAI/Anthropic/Gemini)
+    // 6. External LLM (if configured in environment)
     const apiKey = process.env.OPENAI_API_KEY;
-    if (apiKey) {
+    if (apiKey && apiKey.trim()) {
       try {
         const systemPrompt = buildCoachSystemPrompt(context);
         const messages = [
           { role: "system", content: systemPrompt },
-          ...(Array.isArray(history) ? history.slice(-6) : []),
+          ...sanitizedHistory.slice(-6),
           { role: "user", content: cleanMessage },
         ];
 
@@ -63,7 +154,7 @@ export async function POST(request: Request) {
             temperature: 0.6,
             max_tokens: 800,
           }),
-          signal: AbortSignal.timeout(10000), // 10 second timeout protection
+          signal: AbortSignal.timeout(8000), // 8 second timeout protection
         });
 
         if (openAiRes.ok) {
@@ -76,15 +167,14 @@ export async function POST(request: Request) {
               engine: "llm",
             });
           }
-        } else {
-          console.warn(`External LLM API returned status ${openAiRes.status}, falling back to grounded engine`);
         }
       } catch (err) {
-        console.warn("External LLM API call timed out or failed, falling back to local coach engine:", err);
+        // Upstream failure or timeout - safely fall through to local deterministic engine
+        console.warn("External LLM call failed or timed out; falling back to grounded engine:", err);
       }
     }
 
-    // 3. Grounded Deterministic Coach Engine (instant, zero external dependency, 100% data-grounded)
+    // 7. Grounded Deterministic Coach Engine (instant, zero external dependency, 100% data-grounded)
     const localResponse = await generateLocalCoachResponse(cleanMessage, context);
 
     return NextResponse.json({

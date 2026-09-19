@@ -31,12 +31,14 @@ async function scoreAssessment(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ answers }),
+      signal: AbortSignal.timeout(10000),
     });
   } catch {
     resp = await fetch(`${API_BASE}/api/v1/assessment/score`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ answers }),
+      signal: AbortSignal.timeout(10000),
     });
   }
 
@@ -230,9 +232,12 @@ export default function ResultsPage() {
                     .then((res) => {
                       setResult(res);
                       try {
-                        sessionStorage.setItem("careerCompassResults", JSON.stringify(res));
+                        saveAssessmentResult(
+                          res as unknown as StoredResults,
+                          assessmentData || undefined
+                        );
                       } catch (e) {
-                        console.error("Failed to save results to sessionStorage", e);
+                        console.error("Failed to save results via persistence engine", e);
                       }
                       setError(null);
                       setAnimationPhase("resolving");

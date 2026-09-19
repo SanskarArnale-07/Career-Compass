@@ -31,13 +31,95 @@ export const SUGGESTED_QUESTIONS = [
 ];
 
 /**
+ * Normalizes coach context with guaranteed safe defaults to prevent runtime exceptions.
+ */
+export function normalizeCoachContext(context: CareerCoachContext): CareerCoachContext {
+  const readiness = context.readiness || {
+    overallScore: 0,
+    tierLevel: 1,
+    tierName: "Explorer",
+    foundationsScore: 0,
+    skillsScore: 0,
+    portfolioScore: 0,
+    nextTierRequirement: "Complete initial foundation skills",
+  };
+  const studyPace = context.studyPace || {
+    weeklyHours: 10,
+    estimatedWeeksRemaining: 12,
+    targetMonthYear: "3 months",
+  };
+  const skills = context.skills || {
+    total: 0,
+    mastered: [],
+    inProgress: [],
+    priorityGaps: [],
+    highAptitude: [],
+  };
+  const projects = context.projects || {
+    total: 0,
+    completed: [],
+    nextToBuild: null,
+    portfolioReadinessPercent: 0,
+  };
+  const jobPrep = context.jobPrep || {
+    totalTasks: 0,
+    completedTasksCount: 0,
+    pendingTasks: [],
+    isInternshipReady: false,
+  };
+  const roadmap = context.roadmap || {
+    totalPhases: 4,
+    currentPhaseNumber: 1,
+    currentPhaseTitle: "Foundations",
+    currentPhaseDuration: "4-6 weeks",
+    completedPhases: [],
+    phaseProgressPercent: 0,
+    nextMilestone: "Start Phase 1",
+  };
+  const nextAction = context.nextAction || {
+    id: "act_1",
+    title: "Begin Foundations Roadmap",
+    estimatedTime: "1-2 hours",
+    reasoning: "Build foundational competencies",
+    description: "Start with programming basics",
+    category: "Phase Milestone",
+    priority: "high",
+  };
+  const userProfile = context.userProfile || {
+    hasAssessment: false,
+    primaryTraits: [],
+    topTrait: "Analytical",
+    assessmentSummary: "Assessment not yet completed.",
+  };
+  const assessmentInterpretation = context.assessmentInterpretation || {
+    strengths: [],
+    gaps: [],
+    whyCareerMatches: `Explore this path to determine alignment with your goals.`,
+  };
+
+  return {
+    ...context,
+    readiness,
+    studyPace,
+    skills,
+    projects,
+    jobPrep,
+    roadmap,
+    nextAction,
+    userProfile,
+    assessmentInterpretation,
+  };
+}
+
+/**
  * Formats the student's journey state into explicitly delineated,
  * structured sections to guarantee grounding and eliminate hallucinations.
  */
 export function formatStructuredCoachContext(
-  context: CareerCoachContext,
+  rawContext: CareerCoachContext,
   query?: string
 ): string {
+  const context = normalizeCoachContext(rawContext);
   const {
     userProfile,
     career,
@@ -45,7 +127,7 @@ export function formatStructuredCoachContext(
     skills,
     roadmap,
     roadmapPlan,
-    progressReport,
+    progressReport: _progressReport,
     recommendations,
     projects,
     jobPrep,
@@ -53,6 +135,8 @@ export function formatStructuredCoachContext(
     studyPace,
     nextAction,
   } = context;
+
+  void _progressReport; // used in generateLocalCoachResponse, not here
 
   // 1. USER CONTEXT
   const userContextLines = [
@@ -193,9 +277,10 @@ function extractComparisonCareer(
  */
 export async function generateLocalCoachResponse(
   userQuery: string,
-  context: CareerCoachContext
+  rawContext: CareerCoachContext
 ): Promise<string> {
   const query = userQuery.trim().toLowerCase();
+  const context = normalizeCoachContext(rawContext);
   const {
     career,
     readiness,

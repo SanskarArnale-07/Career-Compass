@@ -4,7 +4,7 @@ Pydantic request/response models for the Career Compass scoring API.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 # ── Request ──────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 class AssessmentRequest(BaseModel):
     """
     Payload sent from the frontend after a student completes the 20-question
-    assessment.  Keys are question IDs (q1 … q20), values are the selected
+    assessment. Keys are question IDs (q1 … q20), values are the selected
     option text exactly as stored in sessionStorage.
     """
     answers: dict[str, str] = Field(
@@ -20,6 +20,18 @@ class AssessmentRequest(BaseModel):
         description="Map of question ID (q1-q20) to selected option text.",
         min_length=1,
     )
+
+    @field_validator("answers")
+    @classmethod
+    def validate_answers_payload(cls, v: dict[str, str]) -> dict[str, str]:
+        if len(v) > 30:
+            raise ValueError(f"Too many answers submitted: expected at most 30, got {len(v)}.")
+        for key, val in v.items():
+            if not isinstance(key, str) or len(key.strip()) == 0 or len(key) > 20:
+                raise ValueError(f"Invalid question ID format: {key!r}")
+            if not isinstance(val, str) or len(val.strip()) == 0 or len(val) > 500:
+                raise ValueError(f"Answer for {key} must be a non-empty string under 500 characters.")
+        return v
 
 
 # ── Trait Profile ────────────────────────────────────────────────────
