@@ -9,6 +9,7 @@ import { UserSignals } from "@/components/results/UserSignals";
 import { SkillGaps } from "@/components/results/SkillGaps";
 import { NextSteps } from "@/components/results/NextSteps";
 import { CareerDiscoveryAnimation } from "@/components/interactive/CareerDiscoveryAnimation";
+import { BlurText } from "@/components/interactive/BlurText";
 import { assessmentQuestions } from "@/lib/assessment-data";
 import { saveAssessmentResult, loadCareerJourney } from "@/lib/persistence";
 import type { StoredResults } from "@/lib/career-details/personalization";
@@ -295,7 +296,7 @@ export default function ResultsPage() {
         </div>
         
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 text-foreground">
-          Your Career Compass
+          <BlurText text="Your Career Compass" delay={0.08} className="inline-block" />
         </h1>
         
         <p className="text-base sm:text-lg text-secondary-foreground font-medium max-w-2xl mx-auto leading-relaxed">

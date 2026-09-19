@@ -128,12 +128,28 @@ export function CoachMarkdown({ content }: CoachMarkdownProps) {
         </h4>
       );
     } else if (line.startsWith("> ")) {
+      const quoteText = line.replace("> ", "");
+      const isActionOrTip =
+        quoteText.toLowerCase().includes("recommended") ||
+        quoteText.toLowerCase().includes("next step") ||
+        quoteText.toLowerCase().includes("action") ||
+        quoteText.toLowerCase().includes("focus");
+
       elements.push(
         <div
           key={i}
-          className="my-2.5 p-3 rounded-xl bg-primary/5 border-l-2 border-primary text-xs sm:text-sm text-foreground/90 leading-relaxed font-sans"
+          className={`my-2.5 p-3 sm:p-3.5 rounded-xl border-l-2 text-xs sm:text-sm leading-relaxed font-sans ${
+            isActionOrTip
+              ? "bg-primary/10 border-primary text-foreground"
+              : "bg-primary/5 border-primary/60 text-foreground/90"
+          }`}
         >
-          {parseInline(line.replace("> ", ""))}
+          {isActionOrTip && (
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary mb-1 block">
+              Key Action / Advice
+            </span>
+          )}
+          {parseInline(quoteText)}
         </div>
       );
     } else if (line.startsWith("- ")) {

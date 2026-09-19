@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Compass,
@@ -13,7 +13,12 @@ import {
   AlertCircle,
   Share2,
   Check,
+  Map,
+  Layers,
+  Code2,
+  Briefcase,
 } from "lucide-react";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
 
 import {
   getCareerIntelligence,
@@ -46,6 +51,8 @@ import AlternativeCareers from "@/components/career/AlternativeCareers";
 export default function CareerDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<"overview" | "skills" | "roadmap" | "projects" | "all">("overview");
+
   const slug =
     typeof params?.slug === "string"
       ? params.slug
@@ -56,6 +63,7 @@ export default function CareerDetailPage() {
   const [isClient, setIsClient] = useState(false);
   const [copied, setCopied] = useState(false);
   const [results, setResults] = useState<StoredResults | null>(null);
+  const [completedPhases, setCompletedPhases] = useState<number[]>([]);
 
   const career: CareerIntelligence | undefined = resolveCareerIntelligence(slug);
 
@@ -70,6 +78,9 @@ export default function CareerDetailPage() {
         if (stored) {
           setResults(JSON.parse(stored));
         }
+      }
+      if (journey.progress?.completedPhases) {
+        setCompletedPhases(journey.progress.completedPhases);
       }
     } catch (e) {
       console.error("Failed to load results", e);
@@ -356,52 +367,95 @@ export default function CareerDetailPage() {
           />
         </section>
 
-        {/* 2. Career Snapshot */}
-        <section id="snapshot">
-          <CareerSnapshot items={career.snapshot} />
-        </section>
+        {/* Editorial Content Category Tabs */}
+        <div className="border-b border-border/80 bg-background/90 backdrop-blur-md sticky top-12 z-20 py-2">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none" role="tablist">
+            {[
+              { id: "overview" as const, label: "Overview & Fit", icon: Compass },
+              { id: "skills" as const, label: "Skills Needed", icon: Sparkles },
+              { id: "roadmap" as const, label: "Phased Roadmap", icon: Map },
+              { id: "projects" as const, label: "Projects & Career Path", icon: Code2 },
+              { id: "all" as const, label: "All Insights", icon: Layers },
+            ].map((tab) => {
+              const TabIcon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? "bg-primary text-white shadow-md shadow-primary/20"
+                      : "bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-card-hover"
+                  }`}
+                >
+                  <TabIcon className="h-4 w-4 shrink-0" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-        {/* 3. Why This Career (Strengths & Gaps) */}
-        <section id="why-this-career">
-          <WhyThisCareer
-            summary={summary}
-            strengths={strengths}
-            gaps={gaps}
-          />
-        </section>
+        {/* Tab Content */}
+        <div className="space-y-16 sm:space-y-20">
+          {/* Overview Tab Content */}
+          {(activeTab === "overview" || activeTab === "all") && (
+            <div className="space-y-16 sm:space-y-20">
+              <section id="snapshot">
+                <CareerSnapshot items={career.snapshot} />
+              </section>
 
-        {/* 4. Skills Needed */}
-        <section id="skills">
-          <SkillsNeeded skills={skills} hasAssessment={hasAssessment} />
-        </section>
+              <section id="why-this-career">
+                <WhyThisCareer
+                  summary={summary}
+                  strengths={strengths}
+                  gaps={gaps}
+                />
+              </section>
+            </div>
+          )}
 
-        {/* 5. Phased Learning Roadmap */}
-        <section id="roadmap">
-          <LearningRoadmap phases={career.roadmap} />
-        </section>
+          {/* Skills Tab Content */}
+          {(activeTab === "skills" || activeTab === "all") && (
+            <section id="skills">
+              <SkillsNeeded skills={skills} hasAssessment={hasAssessment} />
+            </section>
+          )}
 
-        {/* 6. Projects to Build */}
-        <section id="projects">
-          <ProjectsSection projects={career.projects} />
-        </section>
+          {/* Roadmap Tab Content */}
+          {(activeTab === "roadmap" || activeTab === "all") && (
+            <section id="roadmap">
+              <LearningRoadmap phases={career.roadmap} completedPhases={completedPhases} />
+            </section>
+          )}
 
-        {/* 7. Career Progression */}
-        <section id="progression">
-          <CareerProgression stages={career.progression} />
-        </section>
+          {/* Projects & Progression Tab Content */}
+          {(activeTab === "projects" || activeTab === "all") && (
+            <div className="space-y-16 sm:space-y-20">
+              <section id="projects">
+                <ProjectsSection projects={career.projects} />
+              </section>
 
-        {/* 8. Job Preparation Checklist */}
-        <section id="preparation">
-          <JobPreparation
-            items={career.preparation}
-            careerSlug={career.slug}
-          />
-        </section>
+              <section id="progression">
+                <CareerProgression stages={career.progression} />
+              </section>
 
-        {/* 9. Alternative Careers */}
-        <section id="alternatives">
-          <AlternativeCareers alternatives={alternatives} />
-        </section>
+              <section id="preparation">
+                <JobPreparation
+                  items={career.preparation}
+                  careerSlug={career.slug}
+                />
+              </section>
+
+              <section id="alternatives">
+                <AlternativeCareers alternatives={alternatives} />
+              </section>
+            </div>
+          )}
+        </div>
 
         {/* 10. Bottom Action CTA */}
         <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-r from-card via-[#0F172A] to-card p-8 sm:p-12 text-center">
@@ -418,13 +472,15 @@ export default function CareerDetailPage() {
               your step-by-step roadmap on your personal dashboard.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
+              <ShimmerButton
                 onClick={handleStartRoadmap}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-primary text-white font-semibold text-sm shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-xl transition-all cursor-pointer"
+                className="w-full sm:w-auto px-8 py-3.5 text-sm font-semibold shadow-lg shadow-primary/25"
               >
-                <Zap className="h-4 w-4" />
-                <span>Go to Roadmap Dashboard</span>
-              </button>
+                <span className="flex items-center gap-2">
+                  <Zap className="h-4 w-4" />
+                  <span>Go to Roadmap Dashboard</span>
+                </span>
+              </ShimmerButton>
               <Link
                 href="/results"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:bg-card-hover transition-colors"

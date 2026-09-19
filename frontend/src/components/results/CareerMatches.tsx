@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, Compass } from "lucide-react";
+import { SpotlightCard } from "@/components/interactive/SpotlightCard";
 import { getCareerIcon } from "@/lib/career-icons";
 import {
   CAREER_EXPLORATION_MAP,
@@ -49,10 +50,12 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
           const slug = getCareerSlug(career.career_name);
 
           return (
-            <div
+            <SpotlightCard
               key={career.career_name}
-              className="bg-card border border-border rounded-2xl p-6 flex flex-col justify-between transition-all duration-200 hover:bg-card-hover hover:border-primary/30 group"
+              spotlightColor="rgba(59, 130, 246, 0.12)"
+              className="rounded-2xl p-6 flex flex-col justify-between transition-all duration-200 hover:border-primary/40 group"
             >
+
               <div>
                 {/* Header: Icon + Qualitative Alignment & Match % */}
                 <div className="flex justify-between items-start mb-4">
@@ -107,7 +110,7 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
                   <ArrowRight className="h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
-            </div>
+            </SpotlightCard>
           );
         })}
       </div>

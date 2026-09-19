@@ -9,7 +9,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   Circle,
-  Zap,
   BookOpen,
   ChevronDown,
   ExternalLink,
@@ -62,6 +61,7 @@ import AdaptiveSprintList from "@/components/dashboard/AdaptiveSprintList";
 import SkillMasteryMatrix from "@/components/dashboard/SkillMasteryMatrix";
 import StudyPaceSelector from "@/components/dashboard/StudyPaceSelector";
 import ProjectPortfolioTracker from "@/components/dashboard/ProjectPortfolioTracker";
+import { CountUp } from "@/components/ui/CountUp";
 
 interface CustomTask {
   id: string;
@@ -704,7 +704,7 @@ export default function DashboardPage() {
               </p>
             </div>
             <span className="text-xs font-mono font-medium text-muted-foreground">
-              {completedPhases.size} of {career.roadmap.length} Completed
+              <CountUp value={completedPhases.size} duration={0.8} /> of {career.roadmap.length} Completed
             </span>
           </div>
 

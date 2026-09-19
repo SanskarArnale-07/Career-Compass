@@ -1,11 +1,13 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   BookOpen,
   CheckCircle2,
   FolderKanban,
   Target,
 } from "lucide-react";
+import { CountUp } from "@/components/ui/CountUp";
 import type { CareerReadinessResult } from "@/lib/career-details/roadmap-intelligence";
 
 interface CareerReadinessMeterProps {
@@ -35,6 +37,8 @@ export default function CareerReadinessMeter({
   };
 
   const levelStyle = levelColors[tierLevel] || levelColors[1];
+  const circumference = 2 * Math.PI * 42;
+  const targetOffset = circumference * (1 - overallScore / 100);
 
   return (
     <div className="rounded-2xl border border-border bg-card p-6 sm:p-7 space-y-6">
@@ -53,7 +57,7 @@ export default function CareerReadinessMeter({
                 strokeWidth="7"
                 className="text-[#0F172A]"
               />
-              <circle
+              <motion.circle
                 cx="50"
                 cy="50"
                 r="42"
@@ -61,9 +65,10 @@ export default function CareerReadinessMeter({
                 stroke="url(#readinessGrad)"
                 strokeWidth="7"
                 strokeLinecap="round"
-                strokeDasharray={`${2 * Math.PI * 42}`}
-                strokeDashoffset={`${2 * Math.PI * 42 * (1 - overallScore / 100)}`}
-                className="transition-all duration-1000 ease-out"
+                strokeDasharray={circumference}
+                initial={{ strokeDashoffset: circumference }}
+                animate={{ strokeDashoffset: targetOffset }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
               />
               <defs>
                 <linearGradient id="readinessGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -73,9 +78,12 @@ export default function CareerReadinessMeter({
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="font-heading text-lg sm:text-xl font-bold text-foreground">
-                {overallScore}%
-              </span>
+              <CountUp
+                value={overallScore}
+                duration={1.2}
+                suffix="%"
+                className="font-heading text-lg sm:text-xl font-bold text-foreground"
+              />
               <span className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground">
                 Ready
               </span>
@@ -133,16 +141,21 @@ export default function CareerReadinessMeter({
                     {pillar.label}
                   </span>
                 </div>
-                <span className="text-xs font-bold font-mono text-primary">
-                  {pillar.score}%
-                </span>
+                <CountUp
+                  value={pillar.score}
+                  duration={1}
+                  suffix="%"
+                  className="text-xs font-bold font-mono text-primary"
+                />
               </div>
 
               {/* Progress bar */}
               <div className="w-full bg-card rounded-full h-1.5 overflow-hidden mb-2 border border-border/40">
-                <div
-                  className="bg-primary h-1.5 rounded-full transition-all duration-600"
-                  style={{ width: `${Math.min(100, Math.max(3, pillar.score))}%` }}
+                <motion.div
+                  className="bg-primary h-1.5 rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(100, Math.max(3, pillar.score))}%` }}
+                  transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                 />
               </div>
 

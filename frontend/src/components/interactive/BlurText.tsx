@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface BlurTextProps {
   text: string;
@@ -9,6 +9,12 @@ interface BlurTextProps {
 }
 
 export function BlurText({ text, delay = 0, className = "" }: BlurTextProps) {
+  const shouldReduceMotion = useReducedMotion();
+
+  if (shouldReduceMotion) {
+    return <div className={className}>{text}</div>;
+  }
+
   return (
     <motion.div
       initial={{ filter: "blur(10px)", opacity: 0, y: 10 }}
@@ -21,3 +27,4 @@ export function BlurText({ text, delay = 0, className = "" }: BlurTextProps) {
     </motion.div>
   );
 }
+

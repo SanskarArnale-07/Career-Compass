@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, Code, Target, ArrowUpRight } from "lucide-react";
 import { Particles } from "@/components/interactive/Particles";
+import { BlurText } from "@/components/interactive/BlurText";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { SpotlightCard } from "@/components/interactive/SpotlightCard";
 import { Features } from "@/components/sections/Features";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { CareerMatchPreview } from "@/components/sections/CareerMatchPreview";
@@ -28,7 +31,11 @@ export default function Home() {
           <div className="flex flex-col items-start text-left">
             {/* Hero Heading */}
             <h1 className="font-heading text-5xl md:text-6xl font-bold tracking-tight max-w-2xl mb-6 leading-[1.1] text-foreground">
-              Find the career that actually fits you.
+              <BlurText
+                text="Find the career that actually fits you."
+                delay={0.05}
+                className="inline-block"
+              />
             </h1>
             
             {/* Subheading */}
@@ -37,13 +44,14 @@ export default function Home() {
             </p>
             
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <Link 
-                href="/assessment" 
-                className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-base font-semibold text-primary-foreground shadow-md shadow-primary/25 transition-all hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              >
-                Take the Assessment
-                <ArrowRight className="ml-2 h-4 w-4" />
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-stretch sm:items-center">
+              <Link href="/assessment" className="inline-block">
+                <ShimmerButton className="h-12 px-8 text-base font-semibold shadow-md shadow-primary/25">
+                  <span className="flex items-center gap-2">
+                    <span>Take the Assessment</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </ShimmerButton>
               </Link>
               <Link 
                 href="/careers" 
@@ -58,7 +66,10 @@ export default function Home() {
           <div className="relative w-full flex justify-center lg:justify-end">
             <div className="relative w-full max-w-md">
               {/* Main Card */}
-              <div className="bg-card border border-border shadow-2xl rounded-2xl p-6 relative z-10">
+              <SpotlightCard
+                spotlightColor="rgba(59, 130, 246, 0.15)"
+                className="shadow-2xl rounded-2xl p-6 relative z-10"
+              >
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Career Match</p>
@@ -81,7 +92,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </SpotlightCard>
 
               {/* Overlapping Small Card */}
               <div className="absolute -bottom-6 -left-6 md:-left-12 bg-[#0F172A] border border-border shadow-xl rounded-xl p-4 z-20 w-64">

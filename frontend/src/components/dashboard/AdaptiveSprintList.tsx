@@ -9,6 +9,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { CountUp } from "@/components/ui/CountUp";
 import type { SprintTask } from "@/lib/career-details/roadmap-intelligence";
 
 interface CustomTask {
@@ -87,18 +88,21 @@ export default function AdaptiveSprintList({
         </div>
 
         <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
-          {completedCount}/{totalCount} Done
+          <CountUp value={completedCount} duration={0.8} />/<CountUp value={totalCount} duration={0.8} /> Done
         </span>
       </div>
 
       {/* Adaptive Task List */}
       <div className="space-y-3">
-        {tasks.map((task) => {
+        {tasks.map((task, idx) => {
           const priority = PRIORITY_BADGES[task.priority] || PRIORITY_BADGES.Recommended;
 
           return (
             <motion.div
               key={task.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, delay: Math.min(idx * 0.04, 0.25) }}
               onClick={() => onToggleTask(task.id)}
               className={`p-3.5 rounded-xl border flex items-start gap-3.5 transition-all cursor-pointer select-none ${
                 task.done
