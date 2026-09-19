@@ -7,6 +7,16 @@
  * 3. Adaptive Weekly Sprint goals
  * 4. Fast-track and bridge alerts based on trait assessment
  * 5. Time-to-readiness estimation based on study pace
+ *
+ * @deprecated (partial) — The canonical intelligence pipeline now lives in:
+ *   - progress-engine/  → calculateCareerProgressAndReadiness (supersedes calculateCareerReadiness)
+ *   - roadmap-engine/   → generatePersonalizedRoadmap
+ *   - recommendation-engine/ → generateAdaptiveRecommendations (supersedes getNextBestAction logic)
+ *
+ * Functions still uniquely provided by this module (no canonical equivalent):
+ *   - generateAdaptiveWeeklySprint()
+ *   - getAdaptiveInsights()
+ *   - calculateTimeToReadiness()
  */
 
 import type { CareerDetail } from "./types";

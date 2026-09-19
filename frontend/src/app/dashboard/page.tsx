@@ -28,10 +28,16 @@ import {
   generatePersonalizedRoadmap,
   type PersonalizedRoadmap,
 } from "@/lib/roadmap-engine";
+import {
+  calculateCareerProgressAndReadiness,
+  type CareerReadinessReport,
+} from "@/lib/progress-engine";
+import {
+  generateAdaptiveRecommendations,
+  mapRecommendationToNextBestAction,
+} from "@/lib/recommendation-engine";
 
 import {
-  calculateCareerReadiness,
-  getNextBestAction,
   generateAdaptiveWeeklySprint,
   getAdaptiveInsights,
   calculateTimeToReadiness,
@@ -353,7 +359,7 @@ export default function DashboardPage() {
 
   if (!isClient) return null;
 
-  // ── Compute Intelligence Engine Outputs ───────────────────────────
+  // ── Compute Intelligence Engine Outputs (canonical pipeline) ──────
   const progressState: UserProgressState = {
     completedPhases: Array.from(completedPhases),
     completedTasks: Array.from(completedTasks),
@@ -362,18 +368,38 @@ export default function DashboardPage() {
     weeklyPaceHours,
   };
 
-  const readiness: CareerReadinessResult = calculateCareerReadiness(
+  // Canonical roadmap (generated first, fed into progress + recommendation engines)
+  const personalizedRoadmap: PersonalizedRoadmap = generatePersonalizedRoadmap({
     career,
     traitProfile,
-    progressState
-  );
+    progress: progressState,
+    weeklyPaceHours,
+  });
 
-  const nextBestAction: NextBestAction = getNextBestAction(
+  // Canonical progress report (includes composite readiness index)
+  const _progressReport: CareerReadinessReport = calculateCareerProgressAndReadiness({
     career,
     traitProfile,
-    progressState
+    progress: progressState,
+    weeklyPaceHours,
+    roadmap: personalizedRoadmap,
+  });
+  const readiness: CareerReadinessResult = _progressReport.compositeReadinessIndex;
+
+  // Canonical recommendation engine (includes next-best-action)
+  const _recsResult = generateAdaptiveRecommendations({
+    career,
+    traitProfile,
+    progress: progressState,
+    roadmap: personalizedRoadmap,
+    progressReport: _progressReport,
+    weeklyPaceHours,
+  });
+  const nextBestAction: NextBestAction = mapRecommendationToNextBestAction(
+    _recsResult.primaryRecommendation
   );
 
+  // Legacy functions still uniquely provided (no canonical equivalent)
   const sprintTasks: SprintTask[] = generateAdaptiveWeeklySprint(
     career,
     traitProfile,
@@ -390,13 +416,6 @@ export default function DashboardPage() {
     progressState,
     weeklyPaceHours
   );
-
-  const personalizedRoadmap: PersonalizedRoadmap = generatePersonalizedRoadmap({
-    career,
-    traitProfile,
-    progress: progressState,
-    weeklyPaceHours,
-  });
 
   const personalizedSkills: PersonalizedSkill[] = traitProfile
     ? getPersonalizedSkills(traitProfile, career)

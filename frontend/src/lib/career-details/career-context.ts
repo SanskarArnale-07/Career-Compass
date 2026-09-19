@@ -28,7 +28,6 @@ import {
   type StoredResults,
 } from "./personalization";
 import {
-  calculateCareerReadiness,
   getNextBestAction,
   calculateTimeToReadiness,
   type UserProgressState,
@@ -201,23 +200,7 @@ export function buildCareerContext(params?: {
     weeklyPaceHours: params?.storedProgress?.weeklyPaceHours || 10,
   };
 
-  // 4. Compute Intelligence
-  const readiness: CareerReadinessResult = calculateCareerReadiness(
-    career,
-    traits,
-    progressState
-  );
-  const nextAction: NextBestAction = getNextBestAction(
-    career,
-    traits,
-    progressState
-  );
-  const paceInfo: TimeToReadinessResult = calculateTimeToReadiness(
-    career,
-    progressState,
-    progressState.weeklyPaceHours
-  );
-
+  // 4. Compute Intelligence — canonical pipeline (single pass)
   const roadmapPlan: PersonalizedRoadmap = generatePersonalizedRoadmap({
     career: careerIntel,
     traitProfile: traits,
@@ -232,6 +215,20 @@ export function buildCareerContext(params?: {
     weeklyPaceHours: progressState.weeklyPaceHours,
     roadmap: roadmapPlan,
   });
+
+  // Use the canonical engine's composite readiness (eliminates duplicate calculation)
+  const readiness: CareerReadinessResult = progressReport.compositeReadinessIndex;
+
+  const nextAction: NextBestAction = getNextBestAction(
+    career,
+    traits,
+    progressState
+  );
+  const paceInfo: TimeToReadinessResult = calculateTimeToReadiness(
+    career,
+    progressState,
+    progressState.weeklyPaceHours
+  );
 
   const recommendations: AdaptiveRecommendationsResult = generateAdaptiveRecommendations({
     career: careerIntel,
