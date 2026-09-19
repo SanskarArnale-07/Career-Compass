@@ -143,7 +143,7 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                     }`}
                   >
                     {isCompleted ? (
-                      <Check className="h-2.5 w-2.5 stroke-[3]" />
+                      <Check className="h-2.5 w-2.5 stroke-3" />
                     ) : (
                       idx + 1
                     )}

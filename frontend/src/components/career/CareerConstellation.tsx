@@ -96,7 +96,7 @@ export default function CareerConstellation({
       </div>
 
       {/* Interactive SVG Diagram */}
-      <div className="relative w-full aspect-square max-w-[460px] mx-auto z-10 select-none">
+      <div className="relative w-full aspect-square max-w-115 mx-auto z-10 select-none">
         <svg
           viewBox="0 0 500 500"
           className="w-full h-full overflow-visible"
@@ -188,7 +188,7 @@ export default function CareerConstellation({
               cx={center.x}
               cy={center.y}
               r={46}
-              className="fill-[#0B1220] stroke-primary stroke-2 group-hover:stroke-[3] transition-all"
+              className="fill-[#0B1220] stroke-primary stroke-2 group-hover:stroke-3 transition-all"
             />
             <circle
               cx={center.x}
