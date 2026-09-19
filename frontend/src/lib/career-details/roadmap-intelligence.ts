@@ -14,6 +14,11 @@ import {
   type TraitProfile,
   getPersonalizedSkills,
 } from "./personalization";
+import {
+  generateAdaptiveRecommendations,
+  mapRecommendationToNextBestAction,
+} from "../recommendation-engine";
+import type { CareerIntelligence } from "../career-intelligence";
 
 // ── State Model ───────────────────────────────────────────────────
 
@@ -213,12 +218,14 @@ export function getNextBestAction(
   traits: TraitProfile | null,
   progress: UserProgressState
 ): NextBestAction {
-  const personalizedSkills = traits
-    ? getPersonalizedSkills(traits, career)
-    : career.skills.map((s) => ({ ...s, status: "developing" as const }));
-
-  // 1. Phase 1 not complete
-  if (!progress.completedPhases.includes(1)) {
+  try {
+    const recResult = generateAdaptiveRecommendations({
+      career: career as unknown as CareerIntelligence,
+      traitProfile: traits,
+      progress,
+    });
+    return mapRecommendationToNextBestAction(recResult.primaryRecommendation);
+  } catch {
     const phase1 = career.roadmap[0];
     return {
       id: "action_phase_1",
@@ -233,123 +240,6 @@ export function getNextBestAction(
       targetId: 1,
     };
   }
-
-  // 2. Phase 1 complete, but beginner project not built
-  const beginnerProject = career.projects.find((p) => p.difficulty === "beginner") || career.projects[0];
-  if (beginnerProject && !progress.completedProjects.includes(beginnerProject.title)) {
-    return {
-      id: "action_project_beginner",
-      title: `Build Beginner Project: ${beginnerProject.title}`,
-      subtitle: `Hands-on Project Milestone • ${beginnerProject.difficulty.toUpperCase()}`,
-      category: "build",
-      reasoning:
-        "You have completed your foundational curriculum! Building your first working project proves you can turn theory into functional code and starts your portfolio.",
-      estimatedTime: "~4–6 hours",
-      actionText: "Review Project Blueprint",
-      targetType: "project",
-      targetId: beginnerProject.title,
-    };
-  }
-
-  // 3. Urgent skill gap in current active phase
-  const activePhaseNum = Math.min(
-    career.roadmap.length,
-    (progress.completedPhases[progress.completedPhases.length - 1] || 0) + 1
-  );
-  const activePhase = career.roadmap.find((p) => p.phase === activePhaseNum);
-
-  const urgentGap = personalizedSkills.find(
-    (s) =>
-      s.status === "needs-work" &&
-      !progress.completedSkills.includes(s.id) &&
-      activePhase?.skills.some((ps) =>
-        s.name.toLowerCase().includes(ps.toLowerCase()) ||
-        ps.toLowerCase().includes(s.name.toLowerCase())
-      )
-  );
-
-  if (urgentGap) {
-    return {
-      id: `action_gap_${urgentGap.id}`,
-      title: `Bridge Critical Skill Gap: ${urgentGap.name}`,
-      subtitle: `Targeted Skill Workout • ${urgentGap.category}`,
-      category: "practice",
-      reasoning:
-        `Your assessment highlights this area as an important growth bottleneck for ${career.title}. Focused practice on this skill will unlock smooth progress in Phase ${activePhaseNum}.`,
-      estimatedTime: "~2 hours deliberate practice",
-      actionText: "Practice & Verify Skill",
-      targetType: "skill",
-      targetId: urgentGap.id,
-    };
-  }
-
-  // 4. Advance through next phase
-  if (activePhase && !progress.completedPhases.includes(activePhase.phase)) {
-    return {
-      id: `action_phase_${activePhase.phase}`,
-      title: `Advance Through Phase ${activePhase.phase}: ${activePhase.title}`,
-      subtitle: `Core Curriculum • ${activePhase.estimatedDuration}`,
-      category: "learn",
-      reasoning:
-        `With earlier milestones verified, expanding into ${activePhase.title.toLowerCase()} builds the specialized capability employers look for.`,
-      estimatedTime: "~4 hours this week",
-      actionText: `Continue Phase ${activePhase.phase}`,
-      targetType: "phase",
-      targetId: activePhase.phase,
-    };
-  }
-
-  // 5. Intermediate/Advanced project
-  const nextProject = career.projects.find(
-    (p) => !progress.completedProjects.includes(p.title)
-  );
-  if (nextProject) {
-    return {
-      id: `action_project_${nextProject.title}`,
-      title: `Ship Capstone: ${nextProject.title}`,
-      subtitle: `${nextProject.difficulty.toUpperCase()} Project • Portfolio Centerpiece`,
-      category: "build",
-      reasoning:
-        "Building multi-feature, realistic capstones is what distinguishes standard applicants from candidates who get interviews.",
-      estimatedTime: "~8–12 hours",
-      actionText: "Inspect Project Features",
-      targetType: "project",
-      targetId: nextProject.title,
-    };
-  }
-
-  // 6. Professional / Job preparation checkpoint
-  const nextPrep = career.preparation.find(
-    (p) => !progress.completedTasks.includes(p.id)
-  );
-  if (nextPrep) {
-    return {
-      id: `action_prep_${nextPrep.id}`,
-      title: `Job Readiness: ${nextPrep.task}`,
-      subtitle: `Career Prep • ${nextPrep.category}`,
-      category: "prepare",
-      reasoning:
-        "Your technical progress is well underway. Completing this preparation milestone ensures recruiters and teams can easily discover and evaluate your work.",
-      estimatedTime: "~1–2 hours",
-      actionText: "Mark Preparation Task",
-      targetType: "prep",
-      targetId: nextPrep.id,
-    };
-  }
-
-  // 7. Capstone finalization
-  return {
-    id: "action_final_interview",
-    title: "Portfolio Polish & Interview Outreach",
-    subtitle: "Career Ready Milestone",
-    category: "prepare",
-    reasoning:
-      "You have completed all primary curriculum phases, built key projects, and verified your skills. Begin active outreach, networking, and interview preparation!",
-    estimatedTime: "Ongoing weekly",
-    actionText: "Review Prep Checklist",
-    targetType: "prep",
-    targetId: "all_complete",
-  };
 }
 
 // ── 3. Adaptive Weekly Sprint Generator ────────────────────────────

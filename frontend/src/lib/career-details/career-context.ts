@@ -44,6 +44,10 @@ import {
   calculateCareerProgressAndReadiness,
   type CareerReadinessReport,
 } from "../progress-engine";
+import {
+  generateAdaptiveRecommendations,
+  type AdaptiveRecommendationsResult,
+} from "../recommendation-engine";
 
 export interface StoredProgressInput {
   currentCareer?: {
@@ -108,6 +112,7 @@ export interface CareerCoachContext {
   };
   roadmapPlan?: PersonalizedRoadmap;
   progressReport?: CareerReadinessReport;
+  recommendations?: AdaptiveRecommendationsResult;
   projects: {
     total: number;
     completed: string[];
@@ -225,6 +230,15 @@ export function buildCareerContext(params?: {
     progress: progressState,
     weeklyPaceHours: progressState.weeklyPaceHours,
     roadmap: roadmapPlan,
+  });
+
+  const recommendations: AdaptiveRecommendationsResult = generateAdaptiveRecommendations({
+    career: careerIntel,
+    traitProfile: traits,
+    progress: progressState,
+    roadmap: roadmapPlan,
+    progressReport,
+    weeklyPaceHours: progressState.weeklyPaceHours,
   });
 
   // 5. Match Percentage & Interpretation
@@ -404,6 +418,7 @@ export function buildCareerContext(params?: {
     },
     roadmapPlan,
     progressReport,
+    recommendations,
     projects: {
       total: career.projects.length,
       completed: progressState.completedProjects,

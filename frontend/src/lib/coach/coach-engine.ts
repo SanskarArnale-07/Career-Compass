@@ -51,6 +51,11 @@ ${context.progressReport ? `- Transparent Progress Breakdown:
   * Skill Tiers: ${context.progressReport.skills.coverageByTier.beginner.percentage}% beginner, ${context.progressReport.skills.coverageByTier.intermediate.percentage}% intermediate, ${context.progressReport.skills.coverageByTier.advanced.percentage}% advanced
   * Milestone Stage: ${context.progressReport.milestones.completedMilestonesCount}/${context.progressReport.milestones.totalMilestonesCount} (${context.progressReport.milestones.activeStage})
   * High-Leverage Focus: ${context.progressReport.nextActionRationale}` : ""}
+${context.recommendations ? `- Adaptive Explainable Recommendations:
+  * Primary: [${context.recommendations.primaryRecommendation.priority.toUpperCase()}] ${context.recommendations.primaryRecommendation.title}
+    - Rationale: ${context.recommendations.primaryRecommendation.reason}
+    - Context: ${context.recommendations.primaryRecommendation.sourceContext}
+  ${context.recommendations.recommendations.slice(1, 3).map((r, i) => `* Recommendation ${i + 2}: [${r.priority.toUpperCase()}] ${r.title} (Why: ${r.reason})`).join("\n  ")}` : ""}
 - Core Responsibilities: ${context.career.responsibilities && context.career.responsibilities.length > 0 ? context.career.responsibilities.slice(0, 3).join("; ") : "Core professional duties"}
 - Recommended Education: ${context.career.educationPath?.degrees?.join(", ") || context.career.educationPath?.recommendedStream || "Self-directed & accredited degree options"}
 - Essential Tools & Technologies: ${context.career.toolsTechnologies && context.career.toolsTechnologies.length > 0 ? context.career.toolsTechnologies.join(", ") : "Standard industry toolchain"}
@@ -72,18 +77,24 @@ export async function generateLocalCoachResponse(
   context: CareerCoachContext
 ): Promise<string> {
   const query = userQuery.trim().toLowerCase();
-  const { career, readiness, roadmap, skills, projects, jobPrep, studyPace, nextAction } = context;
+  const { career, readiness, roadmap, skills, projects, jobPrep, studyPace, nextAction, recommendations } = context;
 
   // 1. "What should I do today?"
   if (query.includes("what should i do today") || query.includes("what to do today") || query.includes("today")) {
     const topGap = skills.priorityGaps[0];
+    const primaryRec = recommendations?.primaryRecommendation;
+    const actionTitle = primaryRec?.title || nextAction.title;
+    const actionReason = primaryRec?.reason || nextAction.reasoning;
+    const actionEffort = primaryRec?.estimatedEffort || nextAction.estimatedTime;
+    const sourceProof = primaryRec?.sourceContext ? `\n   - **Why Recommended**: ${primaryRec.sourceContext}` : "";
+
     return `### 🎯 Your Focus for Today
 
 Based on your current progress in **${career.title}**, here is your highest-leverage plan:
 
-1. **Primary Milestone**: **${nextAction.title}**
-   - **Why this now**: ${nextAction.reasoning}
-   - **Time Commitment**: \`${nextAction.estimatedTime}\`
+1. **Primary Recommendation**: **${actionTitle}**
+   - **Rationale**: ${actionReason}
+   - **Time Commitment**: \`${actionEffort}\`${sourceProof}
 
 2. **Skill Gap Workout**:
    ${topGap ? `- Dedicate 30–45 minutes to **${topGap.name}** (${topGap.category}). ${topGap.whyItMatters}` : "- Spend 30 minutes practicing exercises from your active phase."}
