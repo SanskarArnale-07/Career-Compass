@@ -7,20 +7,8 @@
  */
 
 import type { CareerDetail, SkillNode, SkillStatus, StrengthGapItem } from "./types";
-export type { StrengthGapItem };
-
-// ── Trait profile (mirrors the backend model) ──────────────────────
-export interface TraitProfile {
-  AN: number;
-  TE: number;
-  SC: number;
-  BU: number;
-  CR: number;
-  SO: number;
-  LE: number;
-  EX: number;
-  [key: string]: number;
-}
+import type { TraitProfile, CareerMatch as CareerMatchResult, AssessmentResponse as StoredResults } from "@/lib/types/assessment";
+export type { StrengthGapItem, TraitProfile, CareerMatchResult, StoredResults };
 
 // Human-readable trait labels
 const TRAIT_LABELS: Record<string, string> = {
@@ -205,23 +193,4 @@ export interface AlternativeCareer {
   careerName: string;
   slug: string;
   matchPercentage: number;
-}
-
-export interface CareerMatchResult {
-  career_name: string;
-  match_percentage: number;
-  top_traits: string[];
-  explanation: string;
-  skill_gaps: string[];
-  next_steps: string[];
-}
-
-export interface StoredResults {
-  trait_profile: TraitProfile;
-  streams: {
-    scores: { science: number; commerce: number; arts: number };
-    recommendation: string;
-    descriptions: Record<string, string>;
-  };
-  top_careers: CareerMatchResult[];
 }

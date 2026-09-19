@@ -298,3 +298,21 @@ class TestPerfectTraitCeilings:
             
             assert score == 100.0, f"{target_trait.value} ceiling max is {score}, expected 100.0"
 
+
+# ═══════════════════════════════════════════════════════════════════
+# TEST 8: API Root & Health Endpoints
+# ═══════════════════════════════════════════════════════════════════
+
+class TestSystemHealth:
+    """Verifies that the API root and health check endpoints respond correctly."""
+
+    def test_root_endpoint(self):
+        resp = client.get("/")
+        assert resp.status_code == 200
+        assert resp.json() == {"message": "Welcome to Career Compass API"}
+
+    def test_health_check(self):
+        resp = client.get("/api/health")
+        assert resp.status_code == 200
+        assert resp.json() == {"status": "healthy"}
+

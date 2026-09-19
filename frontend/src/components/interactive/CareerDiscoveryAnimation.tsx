@@ -102,7 +102,9 @@ export function CareerDiscoveryAnimation({
   }, [status, loadingTexts.length]);
 
   const onCompleteRef = useRef(onComplete);
-  onCompleteRef.current = onComplete;
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     if (status === "resolving") {

@@ -11,45 +11,13 @@ import { NextSteps } from "@/components/results/NextSteps";
 import { CareerDiscoveryAnimation } from "@/components/interactive/CareerDiscoveryAnimation";
 import { assessmentQuestions } from "@/lib/assessment-data";
 
-// ── Types matching the backend response ─────────────────────────────
-
-interface TraitProfile {
-  AN: number;
-  TE: number;
-  SC: number;
-  BU: number;
-  CR: number;
-  SO: number;
-  LE: number;
-  EX: number;
-}
-
-interface StreamScores {
-  science: number;
-  commerce: number;
-  arts: number;
-}
-
-interface StreamResult {
-  scores: StreamScores;
-  recommendation: string;
-  descriptions: Record<string, string>;
-}
-
-interface CareerMatch {
-  career_name: string;
-  match_percentage: number;
-  top_traits: string[];
-  explanation: string;
-  skill_gaps: string[];
-  next_steps: string[];
-}
-
-interface AssessmentResponse {
-  trait_profile: TraitProfile;
-  streams: StreamResult;
-  top_careers: CareerMatch[];
-}
+import type {
+  TraitProfile,
+  StreamScores,
+  StreamResult,
+  CareerMatch,
+  AssessmentResponse,
+} from "@/lib/types/assessment";
 
 // ── API Call ─────────────────────────────────────────────────────────
 
