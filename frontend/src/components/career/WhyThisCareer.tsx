@@ -86,8 +86,12 @@ export default function WhyThisCareer({ summary, strengths, gaps }: WhyThisCaree
               </motion.div>
             ))}
             {gaps.length === 0 && (
-              <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/5 p-4">
-                <p className="text-sm text-emerald-400 font-medium">Great news! No major gaps detected for this career.</p>
+              <div className="rounded-xl border border-border/50 bg-card/40 p-4">
+                <p className="text-sm text-muted-foreground italic">
+                  {strengths.length === 0
+                    ? "Take the assessment to discover your strengths and development areas for this career."
+                    : "Great news! No major gaps detected for this career."}
+                </p>
               </div>
             )}
           </div>

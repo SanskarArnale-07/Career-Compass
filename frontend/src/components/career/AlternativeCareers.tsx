@@ -20,7 +20,9 @@ export default function AlternativeCareers({ alternatives }: AlternativeCareersP
         Other Careers to Explore
       </h2>
       <p className="font-sans text-sm text-muted-foreground mb-6 max-w-2xl">
-        Based on your assessment, these careers also align with your profile.
+        {alternatives.some((a) => (a.matchPercentage ?? 0) > 0)
+          ? "Based on your assessment, these careers also align with your profile."
+          : "Explore related career pathways and complementary disciplines."}
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -41,9 +43,15 @@ export default function AlternativeCareers({ alternatives }: AlternativeCareersP
               >
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{career.category}</span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold text-primary bg-primary/10 border border-primary/20">
-                    {Math.round(alt.matchPercentage)}%
-                  </span>
+                  {(alt.matchPercentage ?? 0) > 0 ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold text-primary bg-primary/10 border border-primary/20">
+                      {Math.round(alt.matchPercentage)}%
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-muted-foreground bg-secondary/30 border border-border">
+                      Related
+                    </span>
+                  )}
                 </div>
 
                 <h3 className="font-heading text-base font-bold text-foreground mb-1 group-hover:text-primary transition-colors">

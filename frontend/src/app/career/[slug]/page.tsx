@@ -214,12 +214,8 @@ export default function CareerDetailPage() {
         matchPercentage
       );
     } else {
-      matchPercentage = 72; // Default baseline alignment for exploratory pathways
-      explanation = getMatchExplanation(
-        results.trait_profile,
-        career,
-        matchPercentage
-      );
+      matchPercentage = undefined;
+      explanation = `This career was not among your top assessment recommendations, but you can explore its roadmap and required competencies below.`;
     }
 
     const sg = getStrengthsAndGaps(results.trait_profile, career);
@@ -238,36 +234,14 @@ export default function CareerDetailPage() {
         matchPercentage: c.match_percentage,
       }));
   } else {
-    // Graceful unpersonalized fallback
-    summary = `Explore core strengths and key development areas essential for succeeding in ${career.title}.`;
-    strengths = [
-      {
-        title: "Domain Curiosity",
-        status: "strong",
-        explanation: `Natural interest and focus in ${career.category.toLowerCase()} concepts and problem solving.`,
-      },
-      {
-        title: "Structured Execution",
-        status: "developing",
-        explanation: `Ability to take complex projects and break them down into actionable milestones.`,
-      },
-    ];
-    gaps = [
-      {
-        title: "Core Technical Mastery",
-        status: "developing",
-        explanation: `Build specific domain tools and foundational principles from the roadmap below.`,
-      },
-      {
-        title: "Portfolio Proof",
-        status: "needs-work",
-        explanation: `Having 2–3 deployed or published projects significantly increases credibility.`,
-      },
-    ];
+    // Honest unassessed exploration baseline
+    summary = `Take the assessment to discover your personalized alignment, validated strengths, and tailored recommendations for ${career.title}.`;
+    strengths = [];
+    gaps = [];
 
-    skills = career.skills.map((s, idx) => ({
+    skills = career.skills.map((s) => ({
       ...s,
-      status: idx === 0 ? "strong" : idx < 3 ? "developing" : "needs-work",
+      status: "developing",
     }));
 
     alternatives = career.relatedSlugs

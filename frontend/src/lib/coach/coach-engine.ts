@@ -147,7 +147,7 @@ export function formatStructuredCoachContext(
       : "- Primary Traits: Not yet assessed",
     `- Top Dominant Trait: ${userProfile?.topTrait || "Adaptability"}`,
     `- Assessment Profile Summary: ${userProfile?.assessmentSummary || "General career explorer profile."}`,
-    `- Career Match Alignment: ${career?.matchPercentage ?? 80}%`,
+    `- Career Match Alignment: ${career?.matchPercentage !== undefined ? `${career.matchPercentage}%` : "Not yet assessed (Exploration Mode)"}`,
     `- Why Career Matches User: ${assessmentInterpretation?.whyCareerMatches || `Aligned with interest in ${career?.category || "this career domain"}.`}`,
     `- Identified Strengths: ${assessmentInterpretation?.strengths?.length ? assessmentInterpretation.strengths.map((s) => `${s.title} (${s.explanation})`).join("; ") : "Self-directed learning, core curiosity"}`,
     `- Identified Skill Gaps: ${assessmentInterpretation?.gaps?.length ? assessmentInterpretation.gaps.map((g) => `${g.title} (${g.explanation})`).join("; ") : "Domain-specific project execution and portfolio proof"}`,
@@ -360,15 +360,19 @@ You haven't completed the Career Compass psychometric assessment yet — **${car
       ? assessmentInterpretation.gaps.slice(0, 2).map((g) => `- **${g.title}**: ${g.explanation}`).join("\n")
       : "- **Hands-on Proof**: Building practical portfolio artifacts.";
 
+    const matchSentence = career.matchPercentage !== undefined
+      ? `Your assessment results scored a **${career.matchPercentage}% Alignment** with this career direction.`
+      : `You are exploring **${career.title}** in open discovery mode (assessment not yet completed).`;
+
     return `### 🎯 Why **${career.title}** Was Recommended
 
-Your assessment results scored a **${career.matchPercentage}% Alignment** with this career direction. Here is the breakdown:
+${matchSentence} Here is the breakdown:
 
 #### 1. Trait Synergy & Match Rationale
 ${assessmentInterpretation.whyCareerMatches}
 
 - **Dominant Trait**: **${userProfile.topTrait}**
-- **Your Top Traits**: ${userProfile.primaryTraits?.slice(0, 3).map((t) => `${t.label} (${t.score}/100)`).join(", ")}
+- **Your Top Traits**: ${userProfile.primaryTraits?.length ? userProfile.primaryTraits.slice(0, 3).map((t) => `${t.label} (${t.score}/100)`).join(", ") : "Not yet assessed"}
 
 #### 2. Key Strengths in Your Favor
 ${strengthsText}
@@ -540,7 +544,7 @@ Here is a side-by-side breakdown of how your current track compares with **${com
 2. **Transition Overlap**:
    - If you ever decide to pivot, shared fundamentals in ${overlapTraits} give you transferable advantage.
 
-> 🧭 **Bottom Line**: Both pathways offer strong long-term career growth. Your current **${career.matchPercentage}% match** indicates high alignment with **${career.title}**.`;
+> 🧭 **Bottom Line**: Both pathways offer strong long-term career growth. ${career.matchPercentage !== undefined ? `Your current **${career.matchPercentage}% match** indicates strong alignment with **${career.title}**.` : `You are exploring **${career.title}** in open discovery mode.`}`;
   }
 
   // ── 7. "What should I do after completing this milestone?" ────────────

@@ -76,7 +76,7 @@ export interface CareerCoachContext {
     title: string;
     category: string;
     tagline: string;
-    matchPercentage: number;
+    matchPercentage?: number;
     overview: string;
     difficultyToEnter: string;
     growthPotential: string;
@@ -240,8 +240,8 @@ export function buildCareerContext(params?: {
   });
 
   // 5. Match Percentage & Interpretation
-  let matchPercentage = 75;
-  let whyCareerMatches = `Based on foundational alignment with ${career.title}.`;
+  let matchPercentage: number | undefined = undefined;
+  let whyCareerMatches = `Take the assessment to discover your personalized alignment with ${career.title}.`;
 
   if (params?.storedResults?.top_careers) {
     const matchItem = params.storedResults.top_careers.find(
@@ -258,28 +258,16 @@ export function buildCareerContext(params?: {
   const strengthsGaps = traits
     ? getStrengthsAndGaps(traits, career)
     : {
-        strengths: [
-          {
-            title: "Domain Curiosity",
-            status: "strong" as const,
-            explanation: `Natural interest in ${career.category.toLowerCase()} concepts.`,
-          },
-        ],
-        gaps: [
-          {
-            title: "Hands-on Projects",
-            status: "needs-work" as const,
-            explanation: "Building practical deliverables is required for portfolio readiness.",
-          },
-        ],
-        summary: "General career alignment profile.",
+        strengths: [],
+        gaps: [],
+        summary: "Assessment not completed. Complete the assessment to discover your validated strengths and areas to develop.",
       };
 
   const personalizedSkills = traits
     ? getPersonalizedSkills(traits, career)
-    : career.skills.map((s, idx) => ({
+    : career.skills.map((s) => ({
         ...s,
-        status: idx === 0 ? ("strong" as const) : ("developing" as const),
+        status: "developing" as const,
       }));
 
   // 6. User Profile traits list

@@ -251,9 +251,11 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
             >
               <IconComponent className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{context.career.title}</span>
-              <span className="text-[10px] font-mono opacity-80">
-                ({context.career.matchPercentage}%)
-              </span>
+              {context.career.matchPercentage !== undefined && (
+                <span className="text-[10px] font-mono opacity-80">
+                  ({context.career.matchPercentage}%)
+                </span>
+              )}
               <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-60" />
             </button>
 

@@ -117,9 +117,9 @@ export function calculateCareerReadiness(
   // Pillar 2: Skill Competency (Traits + Manual Mastery)
   const personalizedSkills = traits
     ? getPersonalizedSkills(traits, career)
-    : career.skills.map((s, i) => ({
+    : career.skills.map((s) => ({
         ...s,
-        status: i === 0 ? ("strong" as const) : ("developing" as const),
+        status: "developing" as const,
       }));
 
   const totalSkills = Math.max(1, career.skills.length);
