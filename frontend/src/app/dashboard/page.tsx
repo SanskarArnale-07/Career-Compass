@@ -161,11 +161,13 @@ export default function DashboardPage() {
     try {
       const currentJourney = loadCareerJourney();
       const now = getTimestamp();
+      // Resolve title/careerName from the slug to avoid stale closure references
+      const resolvedCareer = getCareerIntelligence(slugToSave);
       saveCareerJourney({
         selectedCareer: {
           slug: slugToSave,
-          title: career.title,
-          careerName: career.careerName,
+          title: resolvedCareer?.title || currentJourney.selectedCareer.title,
+          careerName: resolvedCareer?.careerName || currentJourney.selectedCareer.careerName,
           startedAt: currentJourney.selectedCareer.startedAt || now,
           lastActiveAt: now,
         },
@@ -186,16 +188,9 @@ export default function DashboardPage() {
   const handleSelectCareer = (newSlug: string) => {
     setSelectedSlug(newSlug);
     setShowCareerSelector(false);
+    // persistSelectedCareer resolves correct title/careerName from CareerIntelligence
+    // and saves to the canonical persistence key — no separate saveProgress needed
     persistSelectedCareer(newSlug);
-    saveProgress(
-      newSlug,
-      completedPhases,
-      completedTasks,
-      completedSkills,
-      completedProjects,
-      weeklyPaceHours,
-      customTasks
-    );
   };
 
   const togglePhase = (phaseNum: number) => {

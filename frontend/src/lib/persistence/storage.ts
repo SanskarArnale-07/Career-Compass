@@ -325,8 +325,10 @@ export function saveCareerJourney(
 
     const saved = setItem(JOURNEY_STORAGE_KEY, JSON.stringify(merged));
 
-    // Dual-sync legacy keys for zero-regression backward compatibility
-    if (options?.syncLegacyKeys !== false) {
+    // Legacy key sync: disabled by default to prevent data divergence.
+    // Legacy reads for migration remain active in migrateFromLegacy().
+    // Opt in explicitly with { syncLegacyKeys: true } if needed.
+    if (options?.syncLegacyKeys === true) {
       try {
         const legacyProg = {
           currentCareer: {
