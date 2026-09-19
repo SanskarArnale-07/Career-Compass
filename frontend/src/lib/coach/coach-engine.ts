@@ -43,6 +43,10 @@ STUDENT CAREER CONTEXT:
 - Next Project to Build: ${context.projects.nextToBuild?.title || "All core projects completed"}
 - Study Pace: ${context.studyPace.weeklyHours} hrs/week (~${context.studyPace.estimatedWeeksRemaining} weeks remaining until ${context.studyPace.targetMonthYear})
 - Internship Readiness: ${context.jobPrep.isInternshipReady ? "Ready for introductory internships" : "Still building required proof"}
+- Core Responsibilities: ${context.career.responsibilities && context.career.responsibilities.length > 0 ? context.career.responsibilities.slice(0, 3).join("; ") : "Core professional duties"}
+- Recommended Education: ${context.career.educationPath?.degrees?.join(", ") || context.career.educationPath?.recommendedStream || "Self-directed & accredited degree options"}
+- Essential Tools & Technologies: ${context.career.toolsTechnologies && context.career.toolsTechnologies.length > 0 ? context.career.toolsTechnologies.join(", ") : "Standard industry toolchain"}
+- Role Progression: ${context.career.roleProgression && context.career.roleProgression.length > 0 ? context.career.roleProgression.join(" → ") : "Entry → Mid-Level → Senior → Lead"}
 
 COACHING PRINCIPLES:
 1. Always ground your responses in their specific numbers, active phase, and priority skill gaps.
@@ -221,7 +225,52 @@ When time is limited, focus exclusively on high-leverage milestones:
 > **Coach's Rule**: Do not get distracted by side tutorials. Stick strictly to these 5 hours, and you will maintain consistent forward momentum toward **${studyPace.targetMonthYear}**!`;
   }
 
-  // 8. General / Free-form Query Fallback
+  // 8. "What tools and technologies should I learn?"
+  if (query.includes("tool") || query.includes("technology") || query.includes("technologies") || query.includes("tech stack")) {
+    const tools = career.toolsTechnologies || [];
+    return `### 🛠️ Key Tools & Technologies for **${career.title}**
+
+To excel in this career track, industry standards prioritize mastering the following tools and technologies:
+
+${tools.length > 0 ? tools.map((t, idx) => `${idx + 1}. **${t}**`).join("\n") : "- Industry-standard software and development suites"}
+
+#### How to prioritize them:
+1. **Focus on the tools for your current phase**: In **Phase ${roadmap.currentPhaseNumber} (${roadmap.currentPhaseTitle})**, get hands-on experience by building your milestone projects with these tools.
+2. **Portfolio Integration**: Highlight these specific tools in your project READMEs and repositories so recruiters can verify your technical fluency.`;
+  }
+
+  // 9. "What degree or education path is recommended?"
+  if (query.includes("degree") || query.includes("education") || query.includes("college") || query.includes("academic") || query.includes("major")) {
+    const edu = career.educationPath;
+    const degrees = edu?.degrees || ["Relevant Bachelor's or equivalent practical experience"];
+    const certs = edu?.certifications || [];
+    return `### 🎓 Education Pathway for **${career.title}**
+
+Here is the typical academic and certification pathway for entering **${career.title}**:
+
+${edu?.recommendedStream ? `> **Recommended Academic Stream**: ${edu.recommendedStream} (Key subjects: ${edu.keySubjects?.join(", ") || "Foundations"})\n` : ""}
+- **Target Degrees / Disciplines**:
+${degrees.map((d) => `  * ${d}`).join("\n")}
+${certs.length > 0 ? `\n- **Valued Certifications & Credentials**:\n${certs.map((c) => `  * ${c}`).join("\n")}` : ""}
+
+> **Practical Tip**: While formal degrees provide structured fundamentals, real-world portfolio proof (like the projects in your roadmap) is often equally or more influential for entry-level hiring decisions.`;
+  }
+
+  // 10. "How does role progression work?"
+  if (query.includes("progression") || query.includes("career ladder") || query.includes("role") || query.includes("hierarchy") || query.includes("senior")) {
+    const progression = career.roleProgression || [];
+    return `### 📈 Role & Career Progression for **${career.title}**
+
+As you build experience and domain mastery, your trajectory typically moves through these stages:
+
+${progression.length > 0 ? progression.map((r, i) => `${i + 1}. **${r}**`).join("\n") : "1. Junior / Associate\n2. Mid-Level Specialist\n3. Senior Practitioner\n4. Staff / Lead / Director"}
+
+#### Advancing to the next tier:
+- **Phase 1–2 of your roadmap** builds the baseline competency for entry-level roles.
+- Advancing past entry level requires demonstrating architecture ownership, cross-functional collaboration, and delivering production-grade outcomes.`;
+  }
+
+  // 11. General / Free-form Query Fallback
   return `### 🧭 Career Compass Guidance for ${career.title}
 
 Regarding your question about **"${userQuery}"**:

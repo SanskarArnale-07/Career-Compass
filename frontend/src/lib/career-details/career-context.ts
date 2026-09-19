@@ -12,8 +12,13 @@
  */
 
 import {
-  getCareerBySlug,
-  getAllCareers,
+  getAllCareerIntelligence,
+  resolveCareerIntelligence,
+  type CareerIntelligence,
+  type EducationPathway,
+  type IndustryInfo,
+} from "../career-intelligence";
+import {
   type CareerDetail,
 } from "./index";
 import {
@@ -64,6 +69,11 @@ export interface CareerCoachContext {
     difficultyToEnter: string;
     growthPotential: string;
     icon?: string;
+    responsibilities?: string[];
+    educationPath?: EducationPathway;
+    toolsTechnologies?: string[];
+    roleProgression?: string[];
+    industryInfo?: IndustryInfo;
   };
   assessmentInterpretation: {
     strengths: { title: string; status: string; explanation: string }[];
@@ -146,23 +156,19 @@ export function buildCareerContext(params?: {
   storedProgress?: StoredProgressInput | null;
   storedResults?: StoredResults | null;
 }): CareerCoachContext {
-  const allCareers = getAllCareers();
-
   // 1. Resolve Target Career
-  let slug = params?.careerSlug;
-  if (!slug && params?.storedProgress?.currentCareer?.slug) {
-    slug = params.storedProgress.currentCareer.slug;
+  let identifier = params?.careerSlug;
+  if (!identifier && params?.storedProgress?.currentCareer?.slug) {
+    identifier = params.storedProgress.currentCareer.slug;
   }
-  if (!slug && params?.storedResults?.top_careers?.[0]) {
-    const topCareerName = params.storedResults.top_careers[0].career_name;
-    const match = allCareers.find(
-      (c) => c.careerName.toLowerCase() === topCareerName.toLowerCase()
-    );
-    if (match) slug = match.slug;
+  if (!identifier && params?.storedResults?.top_careers?.[0]?.career_name) {
+    identifier = params.storedResults.top_careers[0].career_name;
   }
-  if (!slug) slug = "software-development";
+  if (!identifier) identifier = "software-development";
 
-  const career: CareerDetail = getCareerBySlug(slug) || allCareers[0];
+  const careerIntel: CareerIntelligence =
+    resolveCareerIntelligence(identifier) || getAllCareerIntelligence()[0];
+  const career: CareerDetail = careerIntel;
 
   // 2. Resolve User Trait Profile
   const traits: TraitProfile | null = params?.storedResults?.trait_profile || null;
@@ -337,6 +343,11 @@ export function buildCareerContext(params?: {
       difficultyToEnter: career.snapshot.find((s) => s.label.includes("Difficulty"))?.value || "Moderate",
       growthPotential: career.snapshot.find((s) => s.label.includes("Growth"))?.value || "High",
       icon: career.icon,
+      responsibilities: careerIntel.responsibilities,
+      educationPath: careerIntel.educationPath,
+      toolsTechnologies: careerIntel.toolsTechnologies,
+      roleProgression: careerIntel.roleProgression,
+      industryInfo: careerIntel.industryInfo,
     },
     assessmentInterpretation: {
       strengths: strengthsGaps.strengths.slice(0, 3),

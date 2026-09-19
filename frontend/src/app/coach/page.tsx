@@ -29,7 +29,7 @@ import {
   SUGGESTED_QUESTIONS,
   generateLocalCoachResponse,
 } from "@/lib/coach/coach-engine";
-import { getAllCareers, type CareerDetail } from "@/lib/career-details";
+import { getAllCareerIntelligence, type CareerIntelligence } from "@/lib/career-intelligence";
 import { CoachMarkdown } from "@/components/coach/CoachMarkdown";
 
 interface ChatMessage {
@@ -49,7 +49,7 @@ export default function CoachPage() {
   const [showCareerSwitcher, setShowCareerSwitcher] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const allCareers = getAllCareers();
+  const allCareers = getAllCareerIntelligence();
 
   // 1. Initialize context on mount
   useEffect(() => {

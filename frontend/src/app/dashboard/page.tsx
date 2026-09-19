@@ -25,10 +25,10 @@ import {
 } from "lucide-react";
 
 import {
-  getCareerBySlug,
-  getAllCareers,
-  type CareerDetail,
-} from "@/lib/career-details";
+  getCareerIntelligence,
+  getAllCareerIntelligence,
+  type CareerIntelligence,
+} from "@/lib/career-intelligence";
 
 import {
   calculateCareerReadiness,
@@ -93,8 +93,8 @@ export default function DashboardPage() {
   const [expandedPhase, setExpandedPhase] = useState<number | null>(1);
   const [traitProfile, setTraitProfile] = useState<TraitProfile | null>(null);
 
-  const allCareers = getAllCareers();
-  const career: CareerDetail = getCareerBySlug(selectedSlug) || allCareers[0];
+  const allCareers = getAllCareerIntelligence();
+  const career: CareerIntelligence = getCareerIntelligence(selectedSlug) || allCareers[0];
 
   // ── Load progress from localStorage and assessment from sessionStorage ──
   useEffect(() => {

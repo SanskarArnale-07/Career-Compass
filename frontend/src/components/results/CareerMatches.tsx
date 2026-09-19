@@ -9,17 +9,10 @@ import {
 } from "@/lib/career-directions";
 import { getCareerSlug } from "@/lib/career-details";
 
-interface CareerMatchData {
-  career_name: string;
-  match_percentage: number;
-  top_traits: string[];
-  explanation: string;
-  skill_gaps: string[];
-  next_steps: string[];
-}
+import type { CareerMatch } from "@/lib/types/assessment";
 
 interface CareerMatchesProps {
-  careers: CareerMatchData[];
+  careers: CareerMatch[];
 }
 
 export function CareerMatches({ careers }: CareerMatchesProps) {

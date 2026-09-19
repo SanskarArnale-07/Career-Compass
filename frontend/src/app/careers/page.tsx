@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Compass, Sparkles } from "lucide-react";
-import { getAllCareers, type CareerDetail } from "@/lib/career-details";
+import { getAllCareerIntelligence, type CareerIntelligence } from "@/lib/career-intelligence";
 import { getCareerIcon } from "@/lib/career-icons";
 
 export const metadata = {
@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default function CareersPage() {
-  const careers: CareerDetail[] = getAllCareers();
+  const careers: CareerIntelligence[] = getAllCareerIntelligence();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">

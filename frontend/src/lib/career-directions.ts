@@ -1,131 +1,29 @@
+import { getAllCareerIntelligence } from "./career-intelligence";
+
 export interface CareerClusterDetail {
   title: string;
   summary: string;
   subRoles: string[];
 }
 
-export const CAREER_EXPLORATION_MAP: Record<string, CareerClusterDetail> = {
-  "Software / App Development": {
-    title: "Software & Technology",
-    summary: "Your responses suggest an interest in building digital solutions, logical architecture, and solving complex technical challenges.",
-    subRoles: [
-      "Full-Stack Developer",
-      "Mobile App Engineer",
-      "Cloud / DevOps Engineer",
-      "Systems Architect",
-    ],
-  },
-  "AI / Machine Learning / Data Science": {
-    title: "AI & Data Science",
-    summary: "Your responses indicate an aptitude for quantitative reasoning, pattern discovery, and working with intelligent data-driven systems.",
-    subRoles: [
-      "Machine Learning Engineer",
-      "Data Scientist",
-      "AI Solutions Architect",
-      "Quantitative Analyst",
-    ],
-  },
-  "Engineering": {
-    title: "Engineering & Applied Sciences",
-    summary: "Your responses suggest an interest in practical design, physics-driven systems, and hands-on mechanical or structural problem solving.",
-    subRoles: [
-      "Robotics & Automation Engineer",
-      "Aerospace / Mechanical Engineer",
-      "Electrical & Systems Specialist",
-      "Biomedical Engineer",
-    ],
-  },
-  "Medicine / Healthcare": {
-    title: "Medicine & Healthcare",
-    summary: "Your responses show an inclination toward biological sciences, clinical diagnosis, and making a tangible impact on human health.",
-    subRoles: [
-      "Clinical Physician / Surgeon",
-      "Biomedical Researcher",
-      "Healthcare Technologist",
-      "Public Health Specialist",
-    ],
-  },
-  "Scientific Research": {
-    title: "Scientific Research",
-    summary: "Your responses suggest an interest in investigation, experimentation, discovery, and understanding how the world works.",
-    subRoles: [
-      "Research Scientist",
-      "Laboratory Researcher",
-      "R&D Specialist",
-      "Scientific Data Analyst",
-    ],
-  },
-  "Finance / Investment Banking": {
-    title: "Finance & Economics",
-    summary: "Your responses highlight an aptitude for market mechanics, risk analysis, financial modeling, and structured decision making.",
-    subRoles: [
-      "Investment Analyst",
-      "Portfolio & Wealth Manager",
-      "FinTech Strategist",
-      "Risk & Valuation Consultant",
-    ],
-  },
-  "Entrepreneurship": {
-    title: "Entrepreneurship & Innovation",
-    summary: "Your responses reflect initiative, comfort with uncertainty, and a desire to turn novel ideas into real-world ventures.",
-    subRoles: [
-      "Startup Founder",
-      "Venture Builder",
-      "Innovation Lead",
-      "Growth Strategist",
-    ],
-  },
-  "Management / Product Management": {
-    title: "Product & Operations Leadership",
-    summary: "Your responses point toward coordinating cross-functional teams, shaping strategy, and guiding products from concept to execution.",
-    subRoles: [
-      "Product Manager",
-      "Operations Director",
-      "Management Consultant",
-      "Technical Program Manager",
-    ],
-  },
-  "Marketing / Media / Communications": {
-    title: "Media & Brand Communications",
-    summary: "Your responses indicate a talent for storytelling, public engagement, consumer psychology, and audience communication.",
-    subRoles: [
-      "Brand Strategist",
-      "Digital Media Producer",
-      "Content & Editorial Director",
-      "Communications Specialist",
-    ],
-  },
-  "Design / Creative Arts": {
-    title: "Design & Creative Arts",
-    summary: "Your responses suggest a strong visual sense, aesthetic intuition, and a passion for crafting engaging user experiences.",
-    subRoles: [
-      "UI/UX Product Designer",
-      "Visual & Brand Identity Designer",
-      "Creative Director",
-      "Industrial / Spatial Designer",
-    ],
-  },
-  "Law / Public Policy": {
-    title: "Law, Governance & Public Policy",
-    summary: "Your responses show an interest in governance, systematic argumentation, ethical reasoning, and social regulation.",
-    subRoles: [
-      "Corporate & Tech Legal Counsel",
-      "Public Policy Analyst",
-      "Regulatory & Compliance Advisor",
-      "International Relations Specialist",
-    ],
-  },
-  "Psychology / Social Impact": {
-    title: "Psychology & Social Impact",
-    summary: "Your responses reflect deep interpersonal empathy, curiosity about human behavior, and a commitment to helping communities thrive.",
-    subRoles: [
-      "Organizational Psychologist",
-      "Behavioral Researcher",
-      "Social Impact Director",
-      "Counselor & Wellbeing Specialist",
-    ],
-  },
-};
+/**
+ * Dynamically derived from the Centralized Career Intelligence Layer.
+ * Guarantees zero duplicate definitions.
+ */
+export const CAREER_EXPLORATION_MAP: Record<string, CareerClusterDetail> = Object.fromEntries(
+  getAllCareerIntelligence().flatMap((career) => {
+    const detail: CareerClusterDetail = {
+      title: career.title,
+      summary: career.description,
+      subRoles: career.roleProgression,
+    };
+    return [
+      [career.careerName, detail],
+      [career.slug, detail],
+      [career.title, detail],
+    ];
+  })
+);
 
 export interface AlignmentInfo {
   label: string;

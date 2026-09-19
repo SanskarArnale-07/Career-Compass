@@ -16,11 +16,12 @@ import {
 } from "lucide-react";
 
 import {
-  getCareerBySlug,
-  getAllCareers,
-  getCareerSlug,
-  type CareerDetail,
-} from "@/lib/career-details";
+  getCareerIntelligence,
+  getAllCareerIntelligence,
+  resolveCareerIntelligence,
+  type CareerIntelligence,
+} from "@/lib/career-intelligence";
+import { getCareerSlug, type CareerDetail } from "@/lib/career-details";
 import {
   getStrengthsAndGaps,
   getPersonalizedSkills,
@@ -55,7 +56,7 @@ export default function CareerDetailPage() {
   const [copied, setCopied] = useState(false);
   const [results, setResults] = useState<StoredResults | null>(null);
 
-  const career: CareerDetail | undefined = getCareerBySlug(slug);
+  const career: CareerIntelligence | undefined = resolveCareerIntelligence(slug);
 
   useEffect(() => {
     setIsClient(true);
@@ -122,7 +123,7 @@ export default function CareerDetailPage() {
 
   // ── 404 Not Found State ─────────────────────────────────────────
   if (!career) {
-    const popularCareers = getAllCareers().slice(0, 4);
+    const popularCareers: CareerIntelligence[] = getAllCareerIntelligence().slice(0, 4);
 
     return (
       <div className="container mx-auto px-4 py-20 max-w-3xl text-center">
@@ -138,7 +139,7 @@ export default function CareerDetailPage() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto mb-10 text-left">
-          {popularCareers.map((c) => (
+          {popularCareers.map((c: CareerIntelligence) => (
             <Link
               key={c.slug}
               href={`/career/${c.slug}`}
@@ -256,8 +257,8 @@ export default function CareerDetailPage() {
     }));
 
     alternatives = career.relatedSlugs
-      .map((s) => getCareerBySlug(s))
-      .filter((c): c is CareerDetail => !!c)
+      .map((s) => resolveCareerIntelligence(s))
+      .filter((c): c is CareerIntelligence => !!c)
       .slice(0, 3)
       .map((c) => ({
         careerName: c.careerName,
