@@ -46,6 +46,11 @@ STUDENT CAREER CONTEXT:
 - Next Project to Build: ${context.projects.nextToBuild?.title || "All core projects completed"}
 - Study Pace: ${context.studyPace.weeklyHours} hrs/week (~${context.studyPace.estimatedWeeksRemaining} weeks remaining until ${context.studyPace.targetMonthYear})
 - Internship Readiness: ${context.jobPrep.isInternshipReady ? "Ready for introductory internships" : "Still building required proof"}
+${context.progressReport ? `- Transparent Progress Breakdown:
+  * Foundations: ${context.progressReport.indicators.foundations.percentage}% (${context.progressReport.indicators.foundations.status})
+  * Skill Tiers: ${context.progressReport.skills.coverageByTier.beginner.percentage}% beginner, ${context.progressReport.skills.coverageByTier.intermediate.percentage}% intermediate, ${context.progressReport.skills.coverageByTier.advanced.percentage}% advanced
+  * Milestone Stage: ${context.progressReport.milestones.completedMilestonesCount}/${context.progressReport.milestones.totalMilestonesCount} (${context.progressReport.milestones.activeStage})
+  * High-Leverage Focus: ${context.progressReport.nextActionRationale}` : ""}
 - Core Responsibilities: ${context.career.responsibilities && context.career.responsibilities.length > 0 ? context.career.responsibilities.slice(0, 3).join("; ") : "Core professional duties"}
 - Recommended Education: ${context.career.educationPath?.degrees?.join(", ") || context.career.educationPath?.recommendedStream || "Self-directed & accredited degree options"}
 - Essential Tools & Technologies: ${context.career.toolsTechnologies && context.career.toolsTechnologies.length > 0 ? context.career.toolsTechnologies.join(", ") : "Standard industry toolchain"}
@@ -173,9 +178,19 @@ Feeling behind is normal, but let's look at the actual data rather than gut feel
 
   // 5. "How can I improve my readiness score?"
   if (query.includes("improve my readiness") || query.includes("readiness score") || query.includes("increase score")) {
+    const report = context.progressReport;
+    const transparentFactors = report?.indicators?.overallReadiness?.contributingFactors
+      ? `\n\n#### 🔍 Contributing Factor Analysis:\n` +
+        report.indicators.overallReadiness.contributingFactors.map((f) => `- ${f}`).join("\n")
+      : "";
+
+    const nextFocus = report?.nextActionRationale
+      ? `\n\n> **Recommended Focus**: ${report.nextActionRationale}`
+      : "";
+
     return `### 📈 How to Boost Your Readiness Score (Currently ${readiness.overallScore}%)
 
-Your Career Readiness Index is calculated across **3 pillars**. Here is the fastest path to gain points right now:
+Your Career Readiness Index is calculated across **3 transparent pillars**. Here is the fastest path to gain points right now:
 
 1. **Portfolio & Proof (+15–25 pts)** — *Highest Yield!*
    - Build **${projects.nextToBuild?.title || "your next capstone project"}**. Checking off this project delivers an immediate jump in your Portfolio score (currently ${readiness.portfolioScore}%).
@@ -184,7 +199,7 @@ Your Career Readiness Index is calculated across **3 pillars**. Here is the fast
    ${skills.priorityGaps[0] ? `- Master and verify **${skills.priorityGaps[0].name}** in the Skill Matrix on your dashboard.` : "- Verify all remaining core skills in your active phase."}
 
 3. **Foundations (+10 pts)**:
-   - Complete the remaining tasks in **Phase ${roadmap.currentPhaseNumber}** (${roadmap.currentPhaseTitle}).
+   - Complete the remaining tasks in **Phase ${roadmap.currentPhaseNumber}** (${roadmap.currentPhaseTitle}).${transparentFactors}${nextFocus}
 
 > **Target**: Reaching **${readiness.tierLevel < 4 ? "Level " + (readiness.tierLevel + 1) : "Maximum Mastery"}** requires: *${readiness.nextTierRequirement}*`;
   }
