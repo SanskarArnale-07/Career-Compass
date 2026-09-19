@@ -40,7 +40,7 @@ export default function SkillsNeeded({ skills, hasAssessment }: SkillsNeededProp
 
       <div className="relative">
         {/* Vertical connector line */}
-        <div className="absolute left-[18px] top-8 bottom-8 w-px bg-gradient-to-b from-primary/30 via-primary/15 to-transparent hidden sm:block" />
+        <div className="absolute left-4.5 top-8 bottom-8 w-px bg-linear-to-b from-primary/30 via-primary/15 to-transparent hidden sm:block" />
 
         <div className="space-y-3">
           {skills.map((skill, i) => {

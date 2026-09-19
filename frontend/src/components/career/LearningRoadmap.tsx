@@ -131,7 +131,7 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
 
       <div className="relative">
         {/* Tracing Beam timeline line */}
-        <div className="absolute left-5 sm:left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/30 to-border/40" />
+        <div className="absolute left-5 sm:left-6 top-0 bottom-0 w-0.5 bg-linear-to-b from-primary via-primary/30 to-border/40" />
 
         <div className="space-y-5">
           {phases.map((phase, i) => {

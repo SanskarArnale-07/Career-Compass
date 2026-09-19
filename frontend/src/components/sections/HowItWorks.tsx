@@ -49,7 +49,7 @@ export function HowItWorks() {
                 </span>
               </div>
               <h3 className="font-heading text-lg font-bold mb-2 text-foreground">{step.title}</h3>
-              <p className="text-sm text-muted-foreground max-w-[250px] mx-auto leading-relaxed">
+              <p className="text-sm text-muted-foreground max-w-62.5 mx-auto leading-relaxed">
                 {step.description}
               </p>
             </div>

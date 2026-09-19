@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Compass,
@@ -16,17 +16,15 @@ import {
   Map,
   Layers,
   Code2,
-  Briefcase,
 } from "lucide-react";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 
 import {
-  getCareerIntelligence,
   getAllCareerIntelligence,
   resolveCareerIntelligence,
   type CareerIntelligence,
 } from "@/lib/career-intelligence";
-import { getCareerSlug, type CareerDetail } from "@/lib/career-details";
+import { getCareerSlug } from "@/lib/career-details";
 import {
   getStrengthsAndGaps,
   getPersonalizedSkills,
@@ -48,6 +46,15 @@ import CareerProgression from "@/components/career/CareerProgression";
 import JobPreparation from "@/components/career/JobPreparation";
 import AlternativeCareers from "@/components/career/AlternativeCareers";
 
+const emptySubscribe = () => () => {};
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 export default function CareerDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -60,7 +67,7 @@ export default function CareerDetailPage() {
       ? params.slug[0]
       : "";
 
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useIsClient();
   const [copied, setCopied] = useState(false);
   const [results, setResults] = useState<StoredResults | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
@@ -68,23 +75,26 @@ export default function CareerDetailPage() {
   const career: CareerIntelligence | undefined = resolveCareerIntelligence(slug);
 
   useEffect(() => {
-    setIsClient(true);
-    try {
-      const journey = loadCareerJourney();
-      if (journey.assessment?.results) {
-        setResults(journey.assessment.results as StoredResults);
-      } else {
-        const stored = sessionStorage.getItem("careerCompassResults");
-        if (stored) {
-          setResults(JSON.parse(stored));
+    const timer = setTimeout(() => {
+      try {
+        const journey = loadCareerJourney();
+        if (journey.assessment?.results) {
+          setResults(journey.assessment.results as StoredResults);
+        } else {
+          const stored = sessionStorage.getItem("careerCompassResults");
+          if (stored) {
+            setResults(JSON.parse(stored));
+          }
         }
+        if (journey.progress?.completedPhases) {
+          setCompletedPhases(journey.progress.completedPhases);
+        }
+      } catch (e) {
+        console.error("Failed to load results", e);
       }
-      if (journey.progress?.completedPhases) {
-        setCompletedPhases(journey.progress.completedPhases);
-      }
-    } catch (e) {
-      console.error("Failed to load results", e);
-    }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleStartRoadmap = () => {
@@ -290,7 +300,7 @@ export default function CareerDetailPage() {
               Results
             </Link>
             <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
-            <span className="text-foreground font-medium truncate max-w-[180px] sm:max-w-none">
+            <span className="text-foreground font-medium truncate max-w-45 sm:max-w-none">
               {career.title}
             </span>
           </nav>
@@ -458,7 +468,7 @@ export default function CareerDetailPage() {
         </div>
 
         {/* 10. Bottom Action CTA */}
-        <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-r from-card via-[#0F172A] to-card p-8 sm:p-12 text-center">
+        <section className="relative overflow-hidden rounded-2xl border border-border bg-linear-to-r from-card via-[#0F172A] to-card p-8 sm:p-12 text-center">
           <div className="relative z-10 max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mb-4">
               <Compass className="h-3.5 w-3.5" />

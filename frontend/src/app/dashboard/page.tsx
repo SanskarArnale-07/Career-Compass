@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import * as LucideIcons from "lucide-react";
@@ -70,8 +70,25 @@ interface CustomTask {
   done: boolean;
 }
 
+const emptySubscribe = () => () => {};
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
+function getTimestamp(): number {
+  return Date.now();
+}
+
+function createCustomTaskId(): string {
+  return `custom_${Date.now()}`;
+}
+
 export default function DashboardPage() {
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useIsClient();
   const [selectedSlug, setSelectedSlug] = useState<string>("software-development");
   const [completedPhases, setCompletedPhases] = useState<Set<number>>(new Set());
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
@@ -89,37 +106,40 @@ export default function DashboardPage() {
 
   // ── Load progress from unified persistence engine ──
   useEffect(() => {
-    setIsClient(true);
-    try {
-      const journey = loadCareerJourney();
+    const timer = setTimeout(() => {
+      try {
+        const journey = loadCareerJourney();
 
-      // 1. Restore assessment traits
-      if (journey.assessment.traitProfile) {
-        setTraitProfile(journey.assessment.traitProfile);
+        // 1. Restore assessment traits
+        if (journey.assessment.traitProfile) {
+          setTraitProfile(journey.assessment.traitProfile);
+        }
+
+        // 2. Restore selected career & started timestamp
+        if (journey.selectedCareer?.slug) {
+          setSelectedSlug(journey.selectedCareer.slug);
+          setStartedDate(
+            new Date(journey.selectedCareer.startedAt).toLocaleDateString(undefined, {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          );
+        }
+
+        // 3. Restore source progress
+        setCompletedPhases(new Set(journey.progress.completedPhases));
+        setCompletedTasks(new Set(journey.progress.completedTasks));
+        setCompletedSkills(new Set(journey.progress.completedSkills));
+        setCompletedProjects(new Set(journey.progress.completedProjects));
+        setWeeklyPaceHours(journey.progress.weeklyPaceHours);
+        setCustomTasks(journey.progress.customTasks);
+      } catch (e) {
+        console.error("Error initializing dashboard data", e);
       }
+    }, 0);
 
-      // 2. Restore selected career & started timestamp
-      if (journey.selectedCareer?.slug) {
-        setSelectedSlug(journey.selectedCareer.slug);
-        setStartedDate(
-          new Date(journey.selectedCareer.startedAt).toLocaleDateString(undefined, {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
-        );
-      }
-
-      // 3. Restore source progress
-      setCompletedPhases(new Set(journey.progress.completedPhases));
-      setCompletedTasks(new Set(journey.progress.completedTasks));
-      setCompletedSkills(new Set(journey.progress.completedSkills));
-      setCompletedProjects(new Set(journey.progress.completedProjects));
-      setWeeklyPaceHours(journey.progress.weeklyPaceHours);
-      setCustomTasks(journey.progress.customTasks);
-    } catch (e) {
-      console.error("Error initializing dashboard data", e);
-    }
+    return () => clearTimeout(timer);
   }, []);
 
   // ── Save updates to unified persistence ─────────────────────────
@@ -134,7 +154,7 @@ export default function DashboardPage() {
   ) => {
     try {
       const currentJourney = loadCareerJourney();
-      const now = Date.now();
+      const now = getTimestamp();
       saveCareerJourney({
         selectedCareer: {
           slug: slugToSave,
@@ -251,7 +271,7 @@ export default function DashboardPage() {
 
   const handleAddCustomTask = (text: string) => {
     const newTask: CustomTask = {
-      id: `custom_${Date.now()}`,
+      id: createCustomTaskId(),
       text,
       category: "Personal Goal",
       done: false,
@@ -473,7 +493,7 @@ export default function DashboardPage() {
 
       <div className="container mx-auto px-4 max-w-6xl pt-8 space-y-8">
         {/* Header: Current Focus & Personalization Mode */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl border border-border bg-gradient-to-r from-card via-[#0F172A] to-card">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl border border-border bg-linear-to-r from-card via-[#0F172A] to-card">
           <div className="flex items-start gap-4">
             <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/25 text-primary shrink-0">
               <IconComponent className="h-7 w-7" />
@@ -574,7 +594,7 @@ export default function DashboardPage() {
           />
 
           {/* Career Compass AI Coach CTA Card */}
-          <div className="rounded-2xl border border-primary/25 bg-gradient-to-r from-card via-[#0F172A] to-primary/10 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-primary/5">
+          <div className="rounded-2xl border border-primary/25 bg-linear-to-r from-card via-[#0F172A] to-primary/10 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-primary/5">
             <div className="flex items-center gap-3.5">
               <div className="h-10 w-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary shrink-0 shadow-sm">
                 <Sparkles className="h-5 w-5" />

@@ -21,7 +21,7 @@ export default function CareerHero({
     (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[career.icon] ?? LucideIcons.Compass;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card via-card to-primary/5">
+    <section className="relative overflow-hidden rounded-2xl border border-border bg-linear-to-br from-card via-card to-primary/5">
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-primary/8 blur-3xl" />
@@ -97,7 +97,7 @@ export default function CareerHero({
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
-              className="flex-shrink-0 flex flex-col items-center"
+              className="shrink-0 flex flex-col items-center"
             >
               <div className="relative w-36 h-36 sm:w-44 sm:h-44">
                 {/* Background circle */}

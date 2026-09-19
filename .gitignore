@@ -1,6 +1,7 @@
-
-# dependencies
-node_modules
+# ====================================================================
+# Dependencies
+# ====================================================================
+node_modules/
 .pnp
 .pnp.*
 .yarn/*
@@ -9,47 +10,135 @@ node_modules
 !.yarn/releases
 !.yarn/versions
 
-# testing
-coverage
+# ====================================================================
+# Python & Virtual Environments
+# ====================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# next.js
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ====================================================================
+# Testing & Coverage
+# ====================================================================
+coverage/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ====================================================================
+# Next.js, Node & Frontend Builds
+# ====================================================================
 .next/
 out/
+dist/
+.turbo/
 
-# production
-build
-
-# misc
-.DS_Store
+# ====================================================================
+# Environment & Secrets (NEVER COMMIT)
+# ====================================================================
+.env
+.env.*
+.env*.local
+!.env.example
+!.env*.example
 *.pem
+*.key
+*.cert
+*.pfx
 
-# debug
+# ====================================================================
+# TypeScript & Build Metadata
+# ====================================================================
+*.tsbuildinfo
+next-env.d.ts
+
+# ====================================================================
+# Debug & Runtime Logs
+# ====================================================================
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
-!.env*.example
+# ====================================================================
+# IDE, Editors & OS Files
+# ====================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
 
-# vercel
-.vercel
+# JetBrains
+.idea/
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Visual Studio / Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+*~
 
-# temp data extraction scripts
+# ====================================================================
+# AI Assistants, Local Caches & Worktrees
+# ====================================================================
+.kilo/
+.impeccable/
+.agents/
+AGENTS.md
+CLAUDE.md
+frontend/AGENTS.md
+frontend/CLAUDE.md
+
+# ====================================================================
+# Temporary / Scratch Files
+# ====================================================================
 jotform.html
 jotform_data.json
 questions.json
 extract.py
 generate_ts.py
-
-# next.js agent files
-frontend/AGENTS.md
-frontend/CLAUDE.md
-AGENTS.md
-CLAUDE.md

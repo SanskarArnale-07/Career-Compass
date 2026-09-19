@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, AlertTriangle, Compass, Info, ChevronDown, ChevronUp } from "lucide-react";
 import { SuitabilityScores } from "@/components/results/SuitabilityScores";
@@ -53,10 +53,19 @@ async function scoreAssessment(
   return resp.json();
 }
 
+const emptySubscribe = () => () => {};
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 // ── Page Component ──────────────────────────────────────────────────
 
 export default function ResultsPage() {
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useIsClient();
   const [assessmentData, setAssessmentData] = useState<Record<
     string,
     string
@@ -68,27 +77,30 @@ export default function ResultsPage() {
 
   // 1. Read answers from sessionStorage or persistent journey
   useEffect(() => {
-    setIsClient(true);
-    const data = sessionStorage.getItem("careerCompassAssessment");
-    if (data) {
-      try {
-        setAssessmentData(JSON.parse(data));
-      } catch (e) {
-        console.error("Failed to parse assessment data", e);
+    const timer = setTimeout(() => {
+      const data = sessionStorage.getItem("careerCompassAssessment");
+      if (data) {
+        try {
+          setAssessmentData(JSON.parse(data));
+        } catch (e) {
+          console.error("Failed to parse assessment data", e);
+          setAnimationPhase("complete");
+        }
+      } else {
+        // Check if we already have persisted results from an earlier session
+        try {
+          const journey = loadCareerJourney();
+          if (journey.assessment?.results) {
+            setResult(journey.assessment.results as unknown as AssessmentResponse);
+          }
+        } catch (e) {
+          console.error("Failed to check persisted journey", e);
+        }
         setAnimationPhase("complete");
       }
-    } else {
-      // Check if we already have persisted results from an earlier session
-      try {
-        const journey = loadCareerJourney();
-        if (journey.assessment?.results) {
-          setResult(journey.assessment.results as unknown as AssessmentResponse);
-        }
-      } catch (e) {
-        console.error("Failed to check persisted journey", e);
-      }
-      setAnimationPhase("complete");
-    }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // 2. Call backend scoring API when answers are available

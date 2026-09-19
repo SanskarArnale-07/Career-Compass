@@ -1,24 +1,18 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import {
-  Compass,
   ArrowLeft,
   Sparkles,
   Send,
   Bot,
   User,
   Zap,
-  Clock,
-  Target,
   ChevronDown,
   RotateCcw,
-  ExternalLink,
-  Layers,
-  BookOpen,
 } from "lucide-react";
 
 import {
@@ -29,7 +23,7 @@ import {
   SUGGESTED_QUESTIONS,
   generateLocalCoachResponse,
 } from "@/lib/coach/coach-engine";
-import { getAllCareerIntelligence, type CareerIntelligence } from "@/lib/career-intelligence";
+import { getAllCareerIntelligence } from "@/lib/career-intelligence";
 import { CoachMarkdown } from "@/components/coach/CoachMarkdown";
 import { setSelectedCareer } from "@/lib/persistence";
 
@@ -40,8 +34,25 @@ interface ChatMessage {
   timestamp: number;
 }
 
+const emptySubscribe = () => () => {};
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
+function getTimestamp(): number {
+  return Date.now();
+}
+
+function createMessageId(prefix: string): string {
+  return `${prefix}_${Date.now()}`;
+}
+
 export default function CoachPage() {
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useIsClient();
   const [context, setContext] = useState<CareerCoachContext | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -54,16 +65,16 @@ export default function CoachPage() {
 
   // 1. Initialize context on mount
   useEffect(() => {
-    setIsClient(true);
-    const initialContext = buildCurrentCareerContext();
-    setContext(initialContext);
+    const timer = setTimeout(() => {
+      const initialContext = buildCurrentCareerContext();
+      setContext(initialContext);
 
-    // Initial welcome message
-    setMessages([
-      {
-        id: "welcome",
-        role: "coach",
-        content: `### 👋 Welcome to your Career Compass AI Coach!
+      // Initial welcome message
+      setMessages([
+        {
+          id: "welcome",
+          role: "coach",
+          content: `### 👋 Welcome to your Career Compass AI Coach!
 
 I'm synced with your actual progress toward becoming a **${initialContext.career.title}**.
 
@@ -72,9 +83,12 @@ I'm synced with your actual progress toward becoming a **${initialContext.career
 - **Recommended Next Step**: **${initialContext.nextAction.title}**
 
 Click any suggested question below or ask me about your roadmap, skill gaps, projects, or week planning!`,
-        timestamp: Date.now(),
-      },
-    ]);
+          timestamp: getTimestamp(),
+        },
+      ]);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Scroll to bottom on message change
@@ -88,10 +102,10 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
     if (!text || isThinking || !context) return;
 
     const userMsg: ChatMessage = {
-      id: `user_${Date.now()}`,
+      id: createMessageId("user"),
       role: "user",
       content: text,
-      timestamp: Date.now(),
+      timestamp: getTimestamp(),
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -128,10 +142,10 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
       }
 
       const coachMsg: ChatMessage = {
-        id: `coach_${Date.now()}`,
+        id: createMessageId("coach"),
         role: "coach",
         content: coachReply,
-        timestamp: Date.now(),
+        timestamp: getTimestamp(),
       };
 
       setMessages((prev) => [...prev, coachMsg]);
@@ -140,10 +154,10 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
       setMessages((prev) => [
         ...prev,
         {
-          id: `error_${Date.now()}`,
+          id: createMessageId("error"),
           role: "coach",
           content: "I ran into a temporary issue evaluating your request. Please try asking again!",
-          timestamp: Date.now(),
+          timestamp: getTimestamp(),
         },
       ]);
     } finally {
@@ -233,7 +247,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowCareerSwitcher(!showCareerSwitcher)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary/25 bg-primary/10 text-xs font-semibold text-primary hover:bg-primary/20 transition-all cursor-pointer truncate max-w-[200px] sm:max-w-none"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary/25 bg-primary/10 text-xs font-semibold text-primary hover:bg-primary/20 transition-all cursor-pointer truncate max-w-50 sm:max-w-none"
             >
               <IconComponent className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{context.career.title}</span>

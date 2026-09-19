@@ -63,7 +63,7 @@ export default function NextBestActionCard({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative overflow-hidden rounded-2xl border-2 border-primary/35 bg-gradient-to-br from-card via-[#0F172A] to-primary/10 p-6 sm:p-8 shadow-xl shadow-primary/5"
+      className="relative overflow-hidden rounded-2xl border-2 border-primary/35 bg-linear-to-br from-card via-[#0F172A] to-primary/10 p-6 sm:p-8 shadow-xl shadow-primary/5"
     >
       {/* Subtle backdrop glow */}
       <div className="absolute top-0 right-0 -mt-10 -mr-10 h-48 w-48 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
@@ -114,7 +114,7 @@ export default function NextBestActionCard({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 md:min-w-[200px]">
+        <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 md:min-w-50">
           <button
             onClick={() => onActionClick(action.targetType, action.targetId)}
             className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-white font-semibold text-sm shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/35 hover:-translate-y-0.5 transition-all cursor-pointer text-center"

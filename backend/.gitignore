@@ -5,12 +5,21 @@ __pycache__/
 
 # Environments
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Testing & Caches
+.pytest_cache/
+.coverage
+coverage/
+.mypy_cache/
+.ruff_cache/
 
 # FastAPI / Uvicorn
 *.log
