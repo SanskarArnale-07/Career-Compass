@@ -7,29 +7,48 @@ import type { CareerCoachContext } from "@/lib/career-details/career-context";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { message, context, history } = body as {
-      message: string;
-      context: CareerCoachContext;
-      history?: { role: string; content: string }[];
-    };
-
-    if (!message || !context) {
+    let body: any;
+    try {
+      body = await request.json();
+    } catch {
       return NextResponse.json(
-        { error: "Message and CareerCoachContext are required" },
+        { error: "Invalid JSON request payload" },
         { status: 400 }
       );
     }
 
-    // Check if an external LLM key is configured (OpenAI/Anthropic/Gemini)
+    const { message, context, history } = (body || {}) as {
+      message?: unknown;
+      context?: CareerCoachContext;
+      history?: { role: string; content: string }[];
+    };
+
+    // 1. Input Validation
+    if (!message || typeof message !== "string" || !message.trim()) {
+      return NextResponse.json(
+        { error: "A valid non-empty message string is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!context || typeof context !== "object" || !context.career?.title) {
+      return NextResponse.json(
+        { error: "A valid CareerCoachContext object with targeted career is required" },
+        { status: 400 }
+      );
+    }
+
+    const cleanMessage = message.trim().slice(0, 2000);
+
+    // 2. Check if an external LLM key is configured (OpenAI/Anthropic/Gemini)
     const apiKey = process.env.OPENAI_API_KEY;
     if (apiKey) {
       try {
         const systemPrompt = buildCoachSystemPrompt(context);
         const messages = [
           { role: "system", content: systemPrompt },
-          ...(history || []).slice(-6),
-          { role: "user", content: message },
+          ...(Array.isArray(history) ? history.slice(-6) : []),
+          { role: "user", content: cleanMessage },
         ];
 
         const openAiRes = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -41,29 +60,32 @@ export async function POST(request: Request) {
           body: JSON.stringify({
             model: "gpt-4o-mini",
             messages,
-            temperature: 0.7,
+            temperature: 0.6,
             max_tokens: 800,
           }),
+          signal: AbortSignal.timeout(10000), // 10 second timeout protection
         });
 
         if (openAiRes.ok) {
           const data = await openAiRes.json();
           const aiResponse = data.choices?.[0]?.message?.content;
-          if (aiResponse) {
+          if (aiResponse && typeof aiResponse === "string" && aiResponse.trim()) {
             return NextResponse.json({
               response: aiResponse,
               timestamp: Date.now(),
               engine: "llm",
             });
           }
+        } else {
+          console.warn(`External LLM API returned status ${openAiRes.status}, falling back to grounded engine`);
         }
       } catch (err) {
-        console.warn("LLM API call failed, falling back to local coach engine:", err);
+        console.warn("External LLM API call timed out or failed, falling back to local coach engine:", err);
       }
     }
 
-    // Default: Grounded Local Coach Engine (fast, zero external dependency)
-    const localResponse = await generateLocalCoachResponse(message, context);
+    // 3. Grounded Deterministic Coach Engine (instant, zero external dependency, 100% data-grounded)
+    const localResponse = await generateLocalCoachResponse(cleanMessage, context);
 
     return NextResponse.json({
       response: localResponse,
