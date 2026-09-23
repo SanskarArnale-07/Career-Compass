@@ -19,6 +19,7 @@ import {
   Target,
   ShieldAlert,
   HelpCircle,
+  Map,
 } from "lucide-react";
 
 import {
@@ -69,6 +70,7 @@ import AdaptiveSprintList from "@/components/dashboard/AdaptiveSprintList";
 import SkillMasteryMatrix from "@/components/dashboard/SkillMasteryMatrix";
 import StudyPaceSelector from "@/components/dashboard/StudyPaceSelector";
 import ProjectPortfolioTracker from "@/components/dashboard/ProjectPortfolioTracker";
+import RoadmapStagePanel from "@/components/dashboard/RoadmapStagePanel";
 import { CountUp } from "@/components/ui/CountUp";
 
 interface CustomTask {
@@ -109,7 +111,7 @@ export default function DashboardPage() {
   const [customTasks, setCustomTasks] = useState<CustomTask[]>([]);
   const [startedDate, setStartedDate] = useState<string>("");
   const [showCareerSelector, setShowCareerSelector] = useState(false);
-  const [expandedPhase, setExpandedPhase] = useState<number | null>(1);
+  const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
   const [traitProfile, setTraitProfile] = useState<TraitProfile | null>(null);
 
   const allCareers = getAllCareerIntelligence();
@@ -153,6 +155,15 @@ export default function DashboardPage() {
       setCompletedProjects(new Set(journey.progress.completedProjects));
       setWeeklyPaceHours(journey.progress.weeklyPaceHours);
       setCustomTasks(journey.progress.customTasks);
+
+      // Auto-open the first incomplete phase in the roadmap
+      const completedPhaseNums = new Set(journey.progress.completedPhases);
+      const resolvedSlug = journey.selectedCareer?.slug || "software-development";
+      const resolvedCareer = getCareerIntelligence(resolvedSlug);
+      const firstIncomplete = resolvedCareer?.roadmap.find(
+        (p) => !completedPhaseNums.has(p.phase)
+      );
+      setExpandedPhase(firstIncomplete?.phase ?? resolvedCareer?.roadmap[0]?.phase ?? 1);
     } catch (e) {
       console.error("Error initializing dashboard data", e);
     }
@@ -750,182 +761,60 @@ export default function DashboardPage() {
           />
         </section>
 
-        {/* 6. PHASED ROADMAP TIMELINE */}
+        {/* 6. PHASED LEARNING JOURNEY */}
         <section id="roadmap-phases" className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-border/70">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border/70">
             <div>
               <h2 className="font-heading text-xl font-bold text-foreground flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-primary" />
-                Phased Learning Roadmap
+                <Map className="h-5 w-5 text-primary" />
+                Your Learning Journey
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Structured curriculum from foundations to advanced mastery.
+                Expand a stage to explore skills, tasks, and resources. Work through one at a time.
               </p>
             </div>
-            <span className="text-xs font-mono font-medium text-muted-foreground">
-              <CountUp value={completedPhases.size} duration={0.8} /> of {career.roadmap.length} Completed
-            </span>
+            <div className="flex items-center gap-3 shrink-0">
+              {expandedPhase !== null && (
+                <span className="text-[10px] font-mono text-primary bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1 hidden sm:inline">
+                  Active: Stage {expandedPhase} · {career.roadmap.find((p) => p.phase === expandedPhase)?.title ?? ""}
+                </span>
+              )}
+              <span className="text-xs font-mono font-medium text-muted-foreground">
+                <CountUp value={completedPhases.size} duration={0.8} /> of {career.roadmap.length} Complete
+              </span>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            {career.roadmap.map((phase) => {
-              const isCompleted = completedPhases.has(phase.phase);
-              const isExpanded = expandedPhase === phase.phase;
-
-              return (
-                <div
-                  key={phase.phase}
-                  className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                    isCompleted
-                      ? "border-emerald-500/30 bg-card/60"
-                      : "border-border bg-card hover:border-primary/30"
-                  }`}
-                >
-                  <div
-                    onClick={() =>
-                      setExpandedPhase(isExpanded ? null : phase.phase)
-                    }
-                    className="p-5 flex items-start sm:items-center justify-between gap-4 cursor-pointer select-none"
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          togglePhase(phase.phase);
-                        }}
-                        className="shrink-0 transition-transform active:scale-90 cursor-pointer"
-                        title={
-                          isCompleted ? "Mark in-progress" : "Mark as completed"
-                        }
-                      >
-                        {isCompleted ? (
-                          <CheckCircle2 className="h-6 w-6 text-emerald-400 fill-emerald-400/20" />
-                        ) : (
-                          <Circle className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />
-                        )}
-                      </button>
-
-                      <div>
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-                            Phase {phase.phase}
-                          </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono bg-primary/10 text-primary border border-primary/20">
-                            {phase.estimatedDuration}
-                          </span>
-                        </div>
-                        <h3
-                          className={`font-heading text-base font-bold transition-colors ${
-                            isCompleted
-                              ? "text-emerald-300 line-through opacity-80"
-                              : "text-foreground"
-                          }`}
-                        >
-                          {phase.title}
-                        </h3>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-muted-foreground hidden sm:inline font-sans">
-                        {isCompleted ? "Completed" : "In Progress"}
-                      </span>
-                      <ChevronDown
-                        className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
-                          isExpanded ? "rotate-180 text-foreground" : ""
-                        }`}
-                      />
-                    </div>
-                  </div>
-
-                  {isExpanded && (
-                    <div className="px-5 pb-6 pt-2 border-t border-border/60 bg-[#161412]/40 space-y-4">
-                      <p className="text-xs sm:text-sm text-secondary-foreground leading-relaxed">
-                        {phase.description}
-                      </p>
-
-                      {/* Key Skills */}
-                      <div>
-                        <p className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                          Key Skills &amp; Concepts
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {phase.skills.map((skill) => (
-                            <span
-                              key={skill}
-                              className="px-2.5 py-1 rounded-lg text-xs font-medium bg-card border border-border text-foreground"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Capstone Build */}
-                      {phase.build && (
-                        <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20">
-                          <p className="text-xs font-mono font-semibold text-primary uppercase tracking-wider mb-1">
-                            Phase Milestone Project
-                          </p>
-                          <p className="text-xs text-foreground font-medium">
-                            {phase.build}
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Resources */}
-                      {phase.resources && phase.resources.length > 0 && (
-                        <div>
-                          <p className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                            Curated Learning Resources
-                          </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {phase.resources.map((res) => (
-                              <a
-                                key={res.name}
-                                href={res.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-2.5 rounded-xl border border-border bg-card hover:border-primary/40 hover:bg-card-hover transition-colors flex items-center justify-between group"
-                              >
-                                <div className="truncate mr-2">
-                                  <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                                    {res.name}
-                                  </p>
-                                  <span className="text-[10px] text-muted-foreground font-mono uppercase">
-                                    {res.type} • {res.estimatedTime}
-                                  </span>
-                                </div>
-                                <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary shrink-0" />
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="pt-2 flex justify-end">
-                        <button
-                          onClick={() => togglePhase(phase.phase)}
-                          className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                            isCompleted
-                              ? "border border-border bg-card text-muted-foreground hover:text-foreground"
-                              : "bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm"
-                          }`}
-                        >
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          <span>
-                            {isCompleted
-                              ? "Mark as Incomplete"
-                              : "Mark Phase Complete"}
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+          {/* Stage list with progressive disclosure */}
+          <div className="space-y-3">
+            {career.roadmap.map((phase, idx) => (
+              <RoadmapStagePanel
+                key={phase.phase}
+                phase={phase}
+                phaseIndex={idx}
+                totalPhases={career.roadmap.length}
+                isCompleted={completedPhases.has(phase.phase)}
+                isActive={expandedPhase === phase.phase}
+                completedSkills={completedSkills}
+                onTogglePhase={(phaseNum) => {
+                  togglePhase(phaseNum);
+                  // After toggling, auto-open the next incomplete phase
+                  const updatedCompleted = new Set(completedPhases);
+                  if (updatedCompleted.has(phaseNum)) {
+                    updatedCompleted.delete(phaseNum);
+                  } else {
+                    updatedCompleted.add(phaseNum);
+                    // Advance to next incomplete
+                    const next = career.roadmap.find(
+                      (p) => !updatedCompleted.has(p.phase) && p.phase > phaseNum
+                    );
+                    if (next) setExpandedPhase(next.phase);
+                  }
+                }}
+                onToggleSkill={toggleSkill}
+              />
+            ))}
           </div>
         </section>
 

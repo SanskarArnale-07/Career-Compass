@@ -10,6 +10,7 @@ import {
   LogOut,
   ChevronDown,
   LayoutDashboard,
+  User,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -139,6 +140,14 @@ export function Navbar() {
 
                   <div className="py-1">
                     <Link
+                      href="/profile"
+                      onClick={() => setProfileOpen(false)}
+                      className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-muted-foreground hover:bg-white/5 hover:text-foreground transition-colors"
+                    >
+                      <User className="h-3.5 w-3.5 text-primary/80" />
+                      <span>My Profile</span>
+                    </Link>
+                    <Link
                       href="/dashboard"
                       onClick={() => setProfileOpen(false)}
                       className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-muted-foreground hover:bg-white/5 hover:text-foreground transition-colors"
@@ -217,7 +226,15 @@ export function Navbar() {
                     <LogOut className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="mt-2 pt-2 border-t border-border/50">
+                <div className="mt-2 pt-2 border-t border-border/50 space-y-1.5">
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <User className="h-3.5 w-3.5 text-primary/80" />
+                    <span>My Profile</span>
+                  </Link>
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileOpen(false)}

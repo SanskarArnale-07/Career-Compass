@@ -1,319 +1,95 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Compass } from "lucide-react";
+import { ArrowRight, GitBranch, Layers } from "lucide-react";
 import { CAREER_DOMAINS } from "@/lib/career-hierarchy";
-
-interface CareerNode {
-  id: string;
-  label: string;
-  match?: string;
-  isPrimaryMatch?: boolean;
-  specializations: {
-    name: string;
-    roles: string[];
-  }[];
-}
-
-interface DomainMap {
-  id: string;
-  domainName: string;
-  overallMatch: string;
-  paths: CareerNode[];
-}
-
-// Directional illustrative alignment percentages for visual demonstration
-const DOMAIN_SAMPLE_MATCHES: Record<
-  string,
-  { overall: string; pathMatches: Record<string, { match: string; isPrimary?: boolean }> }
-> = {
-  "engineering-technology": {
-    overall: "92%",
-    pathMatches: {
-      "software-development": { match: "92%", isPrimary: true },
-      "engineering": { match: "84%" },
-    },
-  },
-  "data-ai": {
-    overall: "87%",
-    pathMatches: {
-      "ai-ml-data-science": { match: "87%", isPrimary: true },
-    },
-  },
-  "design-creative": {
-    overall: "81%",
-    pathMatches: {
-      "design-creative": { match: "81%", isPrimary: true },
-    },
-  },
-  "business-finance-management": {
-    overall: "85%",
-    pathMatches: {
-      "finance-investment": { match: "85%", isPrimary: true },
-      "management-product": { match: "83%" },
-      "entrepreneurship": { match: "79%" },
-    },
-  },
-  "healthcare-sciences": {
-    overall: "78%",
-    pathMatches: {
-      "medicine-healthcare": { match: "78%", isPrimary: true },
-      "scientific-research": { match: "75%" },
-    },
-  },
-  "media-communications-social": {
-    overall: "76%",
-    pathMatches: {
-      "marketing-media": { match: "76%", isPrimary: true },
-      "law-policy": { match: "72%" },
-      "psychology-social": { match: "70%" },
-    },
-  },
-};
-
-/**
- * Derived directly from the single source of truth: CAREER_DOMAINS.
- * Guarantees zero duplicate or out-of-sync taxonomy definitions.
- */
-export const CAREER_TAXONOMY: DomainMap[] = CAREER_DOMAINS.map((domain) => {
-  const matchInfo = DOMAIN_SAMPLE_MATCHES[domain.id] || {
-    overall: "80%",
-    pathMatches: {},
-  };
-
-  return {
-    id: domain.id,
-    domainName: domain.name.toUpperCase(),
-    overallMatch: matchInfo.overall,
-    paths: domain.paths.map((p) => {
-      const pm = matchInfo.pathMatches[p.id] || { match: "75%" };
-      return {
-        id: p.id,
-        label: p.name,
-        match: pm.match,
-        isPrimaryMatch: pm.isPrimary || false,
-        specializations: p.specializations.map((s) => ({
-          name: s.name,
-          roles: s.roles.map((r) => r.title),
-        })),
-      };
-    }),
-  };
-});
+import { CareerTreeExplorer } from "@/components/career/CareerTreeExplorer";
 
 export function Section03CareerMap() {
-  const [activeDomainId, setActiveDomainId] = useState<string>("engineering-technology");
-  const [activePathId, setActivePathId] = useState<string>("software-development");
-
-  const currentDomain =
-    CAREER_TAXONOMY.find((d) => d.id === activeDomainId) || CAREER_TAXONOMY[0];
-  const currentPath =
-    currentDomain.paths.find((p) => p.id === activePathId) ||
-    currentDomain.paths[0];
-
-  const handleSelectDomain = (domain: DomainMap) => {
-    setActiveDomainId(domain.id);
-    setActivePathId(domain.paths[0].id);
-  };
-
   return (
     <section className="py-20 md:py-28 w-full border-t border-border/40 relative">
       <div className="container mx-auto px-4 max-w-6xl">
-        
-        {/* ── Section Header ───────────────────────────────────────── */}
+
+        {/* ── Section Header ─────────────────────────────────────── */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <span className="font-mono text-7xl sm:text-8xl md:text-9xl font-light text-muted-foreground/20 leading-none select-none tracking-tighter mb-4 block">
               03
             </span>
             <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-3">
-              Your Career Map
+              One direction can lead to{" "}
+              <span className="text-primary">many paths.</span>
             </h2>
             <p className="text-base sm:text-lg text-secondary-foreground max-w-xl font-light leading-relaxed">
-              Careers are not flat lists. They exist as structural hierarchies that guide your decisions from broad domain to specialized execution.
+              Explore how broad career domains branch into specialized paths and
+              roles. Click any domain to expand.
             </p>
           </div>
 
-          <div className="flex flex-col items-start md:items-end gap-2">
+          <div className="flex flex-col items-start md:items-end gap-2 shrink-0">
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
               Taxonomy Hierarchy
             </span>
             <div className="flex items-center gap-1.5 text-xs font-mono text-primary font-semibold bg-[#161412] px-3 py-1.5 rounded border border-primary/20">
-              <span>DOMAIN</span>
+              <Layers className="h-3 w-3" />
+              <span>Domain</span>
               <span className="text-muted-foreground">→</span>
-              <span>PATH</span>
+              <GitBranch className="h-3 w-3" />
+              <span>Path</span>
               <span className="text-muted-foreground">→</span>
-              <span>SPECIALIZATION</span>
+              <span>Specialization</span>
               <span className="text-muted-foreground">→</span>
-              <span>ROLE</span>
+              <span>Role</span>
             </div>
+            <p className="text-[10px] font-mono text-muted-foreground/60">
+              {CAREER_DOMAINS.length} domains ·{" "}
+              {CAREER_DOMAINS.flatMap((d) => d.paths).length} paths ·{" "}
+              {CAREER_DOMAINS.flatMap((d) =>
+                d.paths.flatMap((p) => p.specializations)
+              ).length}{" "}
+              specializations
+            </p>
           </div>
         </div>
 
-        {/* ── Domain Selector Tabs (Masthead instrument tabs) ────────── */}
-        <div className="flex flex-wrap gap-2.5 mb-10 pb-2 border-b border-border/50">
-          {CAREER_TAXONOMY.map((domain) => {
-            const isSelected = domain.id === activeDomainId;
-            return (
-              <button
-                key={domain.id}
-                onClick={() => handleSelectDomain(domain)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono transition-all cursor-pointer ${
-                  isSelected
-                    ? "bg-[#1C1814] border border-primary/50 text-foreground font-semibold shadow-sm"
-                    : "bg-[#141210]/60 border border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
-                }`}
-              >
-                <span>{domain.domainName}</span>
-                <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${
-                    isSelected
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-[#1A1612] text-primary/80 border border-border/80"
-                  }`}
-                >
-                  {domain.overallMatch}
-                </span>
-              </button>
-            );
-          })}
+        {/* ── Compact Interactive Tree (domains + paths only) ─────── */}
+        <div className="rounded-2xl bg-[#0E0C0A] border border-border/70 p-5 sm:p-8 shadow-xl relative overflow-hidden mb-6">
+          {/* subtle grid */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#C8922A_1px,transparent_1px),linear-gradient(to_bottom,#C8922A_1px,transparent_1px)] bg-[size:36px_36px]" />
+
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-5 pb-3 border-b border-border/50">
+              <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground/60">
+                Live Career Hierarchy — click to explore
+              </p>
+            </div>
+            {/* compact mode: domain + path expandable, but specializations shown inline */}
+            <CareerTreeExplorer mode="full" showLines defaultDomainId="engineering-technology" />
+          </div>
         </div>
 
-        {/* ── Branching Tree Visualization Canvas ────────────────────── */}
-        <div className="rounded-2xl bg-[#12100E] border border-border/70 p-6 sm:p-10 shadow-xl relative overflow-hidden">
-          
-          {/* Subtle grid background */}
-          <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(to_right,#C8922A_1px,transparent_1px),linear-gradient(to_bottom,#C8922A_1px,transparent_1px)] bg-[size:32px_32px]" />
-
-          {/* LEVEL 1: CAREER DOMAIN ROOT */}
-          <div className="flex flex-col items-center relative z-10 mb-8">
-            <div className="px-5 py-2 rounded-xl bg-[#181512] border-2 border-primary/50 text-center shadow-lg shadow-amber-950/20">
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground block mb-0.5">
-                Career Domain
-              </span>
-              <span className="font-heading text-base sm:text-lg font-bold text-foreground">
-                {currentDomain.domainName}
-              </span>
-            </div>
-
-            {/* Connecting Vertical Trunk Line */}
-            <div className="w-px h-8 bg-primary/40 my-1" />
-
-            {/* Horizontal Branching Bar spanning child paths */}
-            <div className="w-3/4 max-w-2xl h-px bg-border/80 relative">
-              <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
-            </div>
+        {/* ── CTA: Open full career map ────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-xl border border-border/60 bg-[#141210]">
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              Explore the full career tree
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {CAREER_DOMAINS.flatMap((d) =>
+                d.paths.flatMap((p) => p.specializations.flatMap((s) => s.roles))
+              ).length}{" "}
+              roles across all domains, interactive and expandable.
+            </p>
           </div>
-
-          {/* LEVEL 2: CAREER PATHS */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 mb-12">
-            {currentDomain.paths.map((path) => {
-              const isSelected = path.id === activePathId;
-
-              return (
-                <div key={path.id} className="flex flex-col items-center">
-                  {/* Vertical branch drop line */}
-                  <div
-                    className={`w-px h-6 mb-1 ${
-                      isSelected ? "bg-primary" : "bg-border/60"
-                    }`}
-                  />
-
-                  {/* Path Node Card */}
-                  <button
-                    onClick={() => setActivePathId(path.id)}
-                    className={`w-full p-4 rounded-xl border text-left transition-all duration-300 cursor-pointer ${
-                      isSelected
-                        ? "bg-[#1C1814] border-primary text-foreground shadow-md shadow-amber-950/30 scale-[1.02]"
-                        : "bg-[#161412]/80 border-border/70 text-muted-foreground hover:border-border hover:bg-[#161412]"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80">
-                        Career Path
-                      </span>
-                      {path.match && (
-                        <span
-                          className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded ${
-                            isSelected
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-primary/10 text-primary border border-primary/20"
-                          }`}
-                        >
-                          {path.match}
-                        </span>
-                      )}
-                    </div>
-                    <p
-                      className={`font-heading text-sm sm:text-base font-bold ${
-                        isSelected ? "text-primary" : "text-foreground"
-                      }`}
-                    >
-                      {path.label}
-                    </p>
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* LEVEL 3 & 4: SPECIALIZATIONS & OPERATIONAL ROLES */}
-          <div className="relative z-10 border-t border-border/60 pt-8 bg-[#151311]/60 rounded-xl p-5 sm:p-7 border border-border/50">
-            <div className="flex items-center justify-between gap-4 mb-6">
-              <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-primary font-semibold">
-                  Branch Deep-Dive
-                </span>
-                <h4 className="font-heading text-lg font-bold text-foreground">
-                  Specializations &amp; High-Impact Roles in {currentPath.label}
-                </h4>
-              </div>
-              <Link
-                href="/careers"
-                className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <span>View All 12 Domains</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {currentPath.specializations.map((spec, sIdx) => (
-                <div
-                  key={sIdx}
-                  className="p-4 rounded-lg bg-[#141210] border border-border/70 flex flex-col justify-between"
-                >
-                  <div className="mb-3">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground block mb-1">
-                      Specialization 0{sIdx + 1}
-                    </span>
-                    <h5 className="font-heading text-sm font-bold text-foreground">
-                      {spec.name}
-                    </h5>
-                  </div>
-
-                  <div className="space-y-1.5 border-t border-border/40 pt-2.5">
-                    <span className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground/60 block">
-                      Typical Roles
-                    </span>
-                    {spec.roles.map((role, rIdx) => (
-                      <div
-                        key={rIdx}
-                        className="flex items-center gap-1.5 text-xs text-secondary-foreground"
-                      >
-                        <span className="w-1 h-1 rounded-full bg-primary/80" />
-                        <span>{role}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
+          <Link
+            href="/career-map"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-hover shadow-md shadow-primary/20 transition-all shrink-0"
+          >
+            Explore the Career Map
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-
       </div>
     </section>
   );

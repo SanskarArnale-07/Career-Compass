@@ -16,6 +16,7 @@ import {
   Map,
   Layers,
   Code2,
+  GitBranch,
 } from "lucide-react";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 
@@ -282,22 +283,62 @@ export default function CareerDetailPage() {
             </Link>
             {(() => {
               const hierarchy = getCareerHierarchy(career.slug);
-              return hierarchy ? (
+              if (!hierarchy) return null;
+              return (
                 <>
                   <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
-                  <span className="text-muted-foreground/80 shrink-0">
+                  <Link
+                    href={`/career-map?domain=${hierarchy.domain.id}`}
+                    className="hover:text-primary transition-colors shrink-0"
+                    title={`Explore ${hierarchy.domain.name} in Career Tree`}
+                  >
                     {hierarchy.domain.name}
-                  </span>
+                  </Link>
+
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
+                  <Link
+                    href={`/career-map?domain=${hierarchy.domain.id}&path=${hierarchy.path.slug}`}
+                    className="hover:text-primary transition-colors shrink-0"
+                    title={`Explore ${hierarchy.path.name} in Career Tree`}
+                  >
+                    {hierarchy.path.name}
+                  </Link>
+
+                  {hierarchy.primarySpecialization && (
+                    <>
+                      <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
+                      <Link
+                        href={`/career-map?domain=${hierarchy.domain.id}&path=${hierarchy.path.slug}&spec=${hierarchy.primarySpecialization.id}`}
+                        className="hover:text-primary transition-colors shrink-0"
+                        title={`Explore ${hierarchy.primarySpecialization.name} in Career Tree`}
+                      >
+                        {hierarchy.primarySpecialization.name}
+                      </Link>
+                    </>
+                  )}
                 </>
-              ) : null;
+              );
             })()}
             <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
-            <span className="text-foreground font-medium truncate max-w-45 sm:max-w-none">
+            <span className="text-primary font-semibold truncate max-w-45 sm:max-w-none">
               {career.title}
             </span>
           </nav>
 
           <div className="flex items-center gap-2 shrink-0">
+            {(() => {
+              const hierarchy = getCareerHierarchy(career.slug);
+              return hierarchy ? (
+                <Link
+                  href={`/career-map?domain=${hierarchy.domain.id}&path=${hierarchy.path.slug}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                  title="View this path in the Visual Career Tree"
+                >
+                  <GitBranch className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">View in Tree</span>
+                </Link>
+              ) : null;
+            })()}
             <button
               onClick={handleShare}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-card-hover transition-colors cursor-pointer"

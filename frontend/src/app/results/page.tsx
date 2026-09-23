@@ -13,10 +13,15 @@ import { BlurText } from "@/components/interactive/BlurText";
 import { assessmentQuestions } from "@/lib/assessment-data";
 import { saveAssessmentResult, loadCareerJourney } from "@/lib/persistence";
 import { useAuth } from "@/context/AuthContext";
-import { getRecommendedCareers, CAREER_MATCH_THRESHOLD } from "@/lib/constants/matching";
+import {
+  getTieredCareerMatches,
+  CAREER_MATCH_THRESHOLD,
+  CAREER_EXPLORATION_THRESHOLD,
+} from "@/lib/constants/matching";
 import type { StoredResults } from "@/lib/career-details/personalization";
 
 import type { AssessmentResponse } from "@/lib/types/assessment";
+import { PersonalizedHierarchy } from "@/components/results/PersonalizedHierarchy";
 
 // ── API Call ─────────────────────────────────────────────────────────
 
@@ -283,11 +288,13 @@ export default function ResultsPage() {
   // ── Results ───────────────────────────────────────────────────
   if (!result) return null;
 
-  // Filter and sort career matches using central threshold (strictly >= 40%, no score inflation)
-  const qualifyingCareers = getRecommendedCareers(result.top_careers, CAREER_MATCH_THRESHOLD);
+  // Partition career matches into two-tier system: Strong Matches (>= 40%) & Worth Exploring (>= 25%)
+  const { strongMatches, explorationMatches, allVisibleMatches } =
+    getTieredCareerMatches(result.top_careers);
 
-  // Collect all skill gaps and next steps from qualifying careers (or fallback to top_careers)
-  const careersForInsights = qualifyingCareers.length > 0 ? qualifyingCareers : result.top_careers;
+  // Collect all skill gaps and next steps from visible careers (or fallback to top_careers)
+  const careersForInsights =
+    allVisibleMatches.length > 0 ? allVisibleMatches : result.top_careers;
   const allSkillGaps = careersForInsights.flatMap((c) =>
     c.skill_gaps.map((sg) => ({
       skill: sg,
@@ -333,7 +340,7 @@ export default function ResultsPage() {
             How your matches are scored
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            These matches are scored from your trait profile across 8 dimensions. Only careers meeting or exceeding our {CAREER_MATCH_THRESHOLD}% profile alignment threshold are recommended as meaningful directional trajectories.
+            These matches are scored from your trait profile across 8 dimensions. Career paths with at least {CAREER_MATCH_THRESHOLD}% profile alignment are presented as your Strong Matches. When fewer than 3 strong matches qualify, paths with at least {CAREER_EXPLORATION_THRESHOLD}% alignment are included for directional exploration.
           </p>
         </div>
       </div>
@@ -341,8 +348,11 @@ export default function ResultsPage() {
       <div className="space-y-16">
         {/* 3 & 4. CAREER DIRECTIONS WORTH EXPLORING + MULTIPLE CARDS */}
         <section>
-          {qualifyingCareers.length > 0 ? (
-            <CareerMatches careers={qualifyingCareers} />
+          {allVisibleMatches.length > 0 ? (
+            <CareerMatches
+              strongMatches={strongMatches}
+              explorationMatches={explorationMatches}
+            />
           ) : (
             <div className="rounded-2xl border border-border/80 bg-[#141210] p-8 sm:p-12 text-center max-w-2xl mx-auto shadow-xl">
               <div className="h-14 w-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5">
@@ -352,7 +362,7 @@ export default function ResultsPage() {
                 No Direct Matches Above Threshold
               </h2>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-6">
-                We couldn&apos;t find any strong matches above your current alignment threshold ({CAREER_MATCH_THRESHOLD}%).
+                We couldn&apos;t find any direct or exploratory matches above our alignment threshold ({CAREER_EXPLORATION_THRESHOLD}%).
                 The assessment produces directional guidance; exploring broader career domains is available, or you can retake the assessment.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
@@ -422,6 +432,13 @@ export default function ResultsPage() {
                 </Link>
               </div>
             </div>
+          </section>
+        )}
+
+        {/* 4b. PERSONALIZED CAREER DIRECTION HIERARCHY */}
+        {allVisibleMatches.length > 0 && (
+          <section>
+            <PersonalizedHierarchy topMatches={allVisibleMatches} />
           </section>
         )}
 

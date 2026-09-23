@@ -8,9 +8,12 @@ import {
 } from "@/lib/career-hierarchy";
 import {
   CAREER_MATCH_THRESHOLD,
+  CAREER_EXPLORATION_THRESHOLD,
+  MAX_VISIBLE_CAREER_MATCHES,
   filterQualifiedMatches,
   sortCareerMatches,
   getRecommendedCareers,
+  getTieredCareerMatches,
 } from "@/lib/constants/matching";
 import type { CareerMatch } from "@/lib/types/assessment";
 
@@ -252,4 +255,159 @@ describe("Meaningful Match Threshold & Scoring Rules", () => {
     expect(qualified).toEqual([]);
     expect(qualified.length).toBe(0);
   });
+
+  describe("Two-Tier Career Match Presentation System", () => {
+    const makeMatch = (name: string, percentage: number): CareerMatch => ({
+      career_name: name,
+      match_percentage: percentage,
+      top_traits: ["TE"],
+      explanation: `Test match for ${name}`,
+      skill_gaps: [],
+      next_steps: [],
+    });
+
+    it("presents 87% / 72% / 54% as 3 Strong Matches (0 Worth Exploring)", () => {
+      const matches: CareerMatch[] = [
+        makeMatch("Software", 87.0),
+        makeMatch("Data Science", 72.0),
+        makeMatch("Engineering", 54.0),
+      ];
+
+      const tiered = getTieredCareerMatches(matches);
+
+      expect(tiered.strongMatches.length).toBe(3);
+      expect(tiered.strongMatches.map((m) => m.match_percentage)).toEqual([87.0, 72.0, 54.0]);
+      expect(tiered.explorationMatches.length).toBe(0);
+      expect(tiered.allVisibleMatches.length).toBe(3);
+      expect(tiered.allVisibleMatches.map((m) => m.match_percentage)).toEqual([87.0, 72.0, 54.0]);
+    });
+
+    it("presents 72% / 54% / 36% / 23% as 2 Strong + 1 Worth Exploring, with 23% hidden", () => {
+      const matches: CareerMatch[] = [
+        makeMatch("Software", 72.0),
+        makeMatch("Data Science", 54.0),
+        makeMatch("Design", 36.0),
+        makeMatch("Finance", 23.0),
+      ];
+
+      const tiered = getTieredCareerMatches(matches);
+
+      // 2 Strong Matches (>= 40%)
+      expect(tiered.strongMatches.length).toBe(2);
+      expect(tiered.strongMatches.map((m) => m.match_percentage)).toEqual([72.0, 54.0]);
+
+      // 1 Worth Exploring (>= 25% and < 40%, capped at 3 total visible)
+      expect(tiered.explorationMatches.length).toBe(1);
+      expect(tiered.explorationMatches[0].match_percentage).toBe(36.0);
+
+      // 23% is strictly hidden (< 25%)
+      expect(tiered.allVisibleMatches.length).toBe(3);
+      expect(tiered.allVisibleMatches.map((m) => m.match_percentage)).toEqual([72.0, 54.0, 36.0]);
+      expect(tiered.allVisibleMatches.some((m) => m.match_percentage === 23.0)).toBe(false);
+    });
+
+    it("presents 54% / 36% / 31% / 15% as 1 Strong + 2 Worth Exploring, with 15% hidden", () => {
+      const matches: CareerMatch[] = [
+        makeMatch("Software", 54.0),
+        makeMatch("Design", 36.0),
+        makeMatch("Marketing", 31.0),
+        makeMatch("Healthcare", 15.0),
+      ];
+
+      const tiered = getTieredCareerMatches(matches);
+
+      // 1 Strong Match (>= 40%)
+      expect(tiered.strongMatches.length).toBe(1);
+      expect(tiered.strongMatches[0].match_percentage).toBe(54.0);
+
+      // 2 Worth Exploring (>= 25% and < 40%)
+      expect(tiered.explorationMatches.length).toBe(2);
+      expect(tiered.explorationMatches.map((m) => m.match_percentage)).toEqual([36.0, 31.0]);
+
+      // 15% is hidden (< 25%)
+      expect(tiered.allVisibleMatches.length).toBe(3);
+      expect(tiered.allVisibleMatches.map((m) => m.match_percentage)).toEqual([54.0, 36.0, 31.0]);
+      expect(tiered.allVisibleMatches.some((m) => m.match_percentage === 15.0)).toBe(false);
+    });
+
+    it("caps maximum visible career paths at 3 even if more strong matches exist", () => {
+      const matches: CareerMatch[] = [
+        makeMatch("Career A", 92.0),
+        makeMatch("Career B", 84.0),
+        makeMatch("Career C", 75.0),
+        makeMatch("Career D", 62.0),
+        makeMatch("Career E", 45.0),
+      ];
+
+      const tiered = getTieredCareerMatches(matches);
+
+      expect(tiered.strongMatches.length).toBe(3);
+      expect(tiered.strongMatches.map((m) => m.match_percentage)).toEqual([92.0, 84.0, 75.0]);
+      expect(tiered.explorationMatches.length).toBe(0);
+      expect(tiered.allVisibleMatches.length).toBe(3);
+    });
+
+    it("shows only qualifying exploration careers if only 1 or 2 careers are >= 25%", () => {
+      const matches: CareerMatch[] = [
+        makeMatch("Career A", 36.0),
+        makeMatch("Career B", 31.0),
+        makeMatch("Career C", 18.0),
+      ];
+
+      const tiered = getTieredCareerMatches(matches);
+
+      expect(tiered.strongMatches.length).toBe(0);
+      expect(tiered.explorationMatches.length).toBe(2);
+      expect(tiered.explorationMatches.map((m) => m.match_percentage)).toEqual([36.0, 31.0]);
+      expect(tiered.allVisibleMatches.length).toBe(2);
+    });
+
+    it("shows zero visible careers when zero careers are >= 25% (triggers empty state)", () => {
+      const matches: CareerMatch[] = [
+        makeMatch("Career A", 23.0),
+        makeMatch("Career B", 15.0),
+        makeMatch("Career C", 12.0),
+      ];
+
+      const tiered = getTieredCareerMatches(matches);
+
+      expect(tiered.strongMatches.length).toBe(0);
+      expect(tiered.explorationMatches.length).toBe(0);
+      expect(tiered.allVisibleMatches.length).toBe(0);
+    });
+
+    it("strictly preserves original calculated scores without alteration or inflation", () => {
+      const matches: CareerMatch[] = [
+        makeMatch("Software", 73.456),
+        makeMatch("Design", 38.123),
+      ];
+
+      const tiered = getTieredCareerMatches(matches);
+
+      expect(tiered.strongMatches[0].match_percentage).toBe(73.456);
+      expect(tiered.explorationMatches[0].match_percentage).toBe(38.123);
+      expect(tiered.allVisibleMatches[0].match_percentage).toBe(73.456);
+      expect(tiered.allVisibleMatches[1].match_percentage).toBe(38.123);
+    });
+
+    it("correctly handles exact boundary values (40.0% and 25.0%)", () => {
+      const matches: CareerMatch[] = [
+        makeMatch("Borderline Strong", 40.0),
+        makeMatch("Borderline Exploration", 25.0),
+        makeMatch("Just Below Exploration", 24.9),
+      ];
+
+      const tiered = getTieredCareerMatches(matches);
+
+      expect(tiered.strongMatches.length).toBe(1);
+      expect(tiered.strongMatches[0].career_name).toBe("Borderline Strong");
+
+      expect(tiered.explorationMatches.length).toBe(1);
+      expect(tiered.explorationMatches[0].career_name).toBe("Borderline Exploration");
+
+      expect(tiered.allVisibleMatches.length).toBe(2);
+      expect(tiered.allVisibleMatches.some((m) => m.career_name === "Just Below Exploration")).toBe(false);
+    });
+  });
 });
+
