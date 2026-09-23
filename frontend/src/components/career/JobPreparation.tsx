@@ -79,9 +79,9 @@ export default function JobPreparation({ items, careerSlug }: JobPreparationProp
           <span className="text-xs font-semibold text-muted-foreground">{checked.size} of {items.length} completed</span>
           <span className="text-xs font-bold text-primary">{Math.round(progress)}%</span>
         </div>
-        <div className="h-2.5 w-full bg-[#0F172A] rounded-full overflow-hidden border border-border">
+        <div className="h-2.5 w-full bg-[#161412] rounded-full overflow-hidden border border-border/80">
           <motion.div
-            className="h-full bg-gradient-to-r from-primary to-indigo-400 rounded-full"
+            className="h-full bg-gradient-to-r from-primary to-[#D4A853] rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5, ease: "easeOut" }}

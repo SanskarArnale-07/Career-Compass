@@ -26,6 +26,7 @@
 }
 
 :root {
+<<<<<<< HEAD
   /* Warm Charcoal & Amber — Cinematic Career Navigation Theme */
   --background: #0E0E0E;       /* Main Background: Near-black charcoal */
   --secondary-bg: #161412;      /* Secondary Background / Sections */
@@ -51,10 +52,36 @@
   --accent-muted: #8B6218;      /* Muted amber for restrained usage */
   
   --border: #2A2520;            /* Borders: Warm dark */
+=======
+  /* Career Compass — Charcoal + Warm Off-White + Amber Identity */
+  --background: #0E0E0E;
+  --secondary-bg: #131110;
   
-  --success: #22C55E;
-  --warning: #F59E0B;
-  --destructive: #EF4444;
+  --foreground: #F2EDE4;
+  --secondary-foreground: #C4BCB0;
+  
+  --card: #161412;
+  --card-foreground: #F2EDE4;
+  --card-hover: #1E1A16;
+  
+  --primary: #C8922A;
+  --primary-hover: #D4A853;
+  --primary-foreground: #0E0E0E;
+  
+  --secondary: #C4BCB0;
+  
+  --muted: #131110;
+  --muted-foreground: #817A70;
+  
+  --accent: #D4A853;
+  --accent-foreground: #0E0E0E;
+  
+  --border: #2A2520;
+>>>>>>> 77a7352ad43c7c318dfb6ded252d23dec4d04528
+  
+  --success: #5A9A6B;
+  --warning: #C8922A;
+  --destructive: #C45C4A;
   
   --radius: 0.5rem;
 }
@@ -81,9 +108,27 @@ body::after {
   background-size: 128px 128px;
 }
 
+/* Subtle noise texture overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
 ::selection {
+<<<<<<< HEAD
   background-color: rgba(200, 146, 42, 0.3);
   color: #F5F0E8;
+=======
+  background-color: rgba(200, 146, 42, 0.25);
+  color: #F2EDE4;
+>>>>>>> 77a7352ad43c7c318dfb6ded252d23dec4d04528
 }
 
 /* Base resets */
@@ -121,34 +166,82 @@ body::after {
   animation: spin-around calc(var(--speed, 3s) * 2) infinite linear;
 }
 
+<<<<<<< HEAD
 /* Constellation hero keyframes */
 @keyframes slow-rotate {
+=======
+/* Constellation hero animations */
+@keyframes orbit {
+>>>>>>> 77a7352ad43c7c318dfb6ded252d23dec4d04528
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
 @keyframes pulse-glow {
   0%, 100% { opacity: 0.4; transform: scale(1); }
+<<<<<<< HEAD
   50% { opacity: 0.8; transform: scale(1.1); }
 }
 
 @keyframes float-gentle {
+=======
+  50% { opacity: 0.8; transform: scale(1.15); }
+}
+
+@keyframes float-subtle {
+>>>>>>> 77a7352ad43c7c318dfb6ded252d23dec4d04528
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
 
+<<<<<<< HEAD
 .animate-slow-rotate {
   animation: slow-rotate 60s linear infinite;
+=======
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-orbit {
+  animation: orbit 45s linear infinite;
+}
+
+.animate-orbit-reverse {
+  animation: orbit 60s linear infinite reverse;
+}
+
+.animate-orbit-slow {
+  animation: orbit 90s linear infinite;
+>>>>>>> 77a7352ad43c7c318dfb6ded252d23dec4d04528
 }
 
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
 }
 
+<<<<<<< HEAD
 .animate-float-gentle {
   animation: float-gentle 4s ease-in-out infinite;
 }
 
+=======
+.animate-float-subtle {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out both;
+}
+
+/* Staggered delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-700 { animation-delay: 0.7s; }
+
+>>>>>>> 77a7352ad43c7c318dfb6ded252d23dec4d04528
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -160,9 +253,20 @@ body::after {
   }
   .animate-shimmer-slide,
   .animate-spin-around,
+<<<<<<< HEAD
   .animate-slow-rotate,
   .animate-pulse-glow,
   .animate-float-gentle {
+=======
+  .animate-orbit,
+  .animate-orbit-reverse,
+  .animate-orbit-slow,
+  .animate-pulse-glow,
+  .animate-float-subtle {
+>>>>>>> 77a7352ad43c7c318dfb6ded252d23dec4d04528
     animation: none !important;
+  }
+  body::before {
+    display: none;
   }
 }

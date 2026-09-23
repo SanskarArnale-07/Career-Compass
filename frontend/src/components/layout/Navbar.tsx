@@ -113,9 +113,8 @@ export function Navbar() {
                 </div>
                 <span className="max-w-[100px] truncate">Hi, {firstName}</span>
                 <ChevronDown
-                  className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${
-                    profileOpen ? "rotate-180" : ""
-                  }`}
+                  className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${profileOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 

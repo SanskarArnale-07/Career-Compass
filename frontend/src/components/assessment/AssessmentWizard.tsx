@@ -74,19 +74,19 @@ export function AssessmentWizard() {
         className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
       >
         <SpotlightCard 
-          spotlightColor={isSelected ? "rgba(59, 130, 246, 0.22)" : "rgba(59, 130, 246, 0.06)"}
+          spotlightColor={isSelected ? "rgba(200, 146, 42, 0.20)" : "rgba(200, 146, 42, 0.06)"}
           className={`transition-all duration-300 flex items-center justify-between py-2.5 px-3.5 sm:py-3 sm:px-4 border-2 ${
             isSelected 
-              ? "border-primary bg-primary/10 shadow-lg shadow-primary/20" 
-              : "border-border bg-card hover:border-primary/40 hover:bg-card-hover"
+              ? "border-primary bg-primary/10 shadow-lg shadow-amber-950/20" 
+              : "border-border/70 bg-card hover:border-primary/40 hover:bg-card-hover"
           }`}
         >
-          <span className={`font-sans font-medium text-base sm:text-lg transition-colors ${isSelected ? "text-foreground font-semibold" : "text-secondary-foreground group-hover:text-foreground"}`}>
+          <span className={`font-sans font-medium text-base sm:text-lg transition-colors ${isSelected ? "text-foreground font-semibold" : "text-muted-foreground group-hover:text-foreground"}`}>
             {option.label}
           </span>
           
           <div className={`h-5 w-5 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-300 ml-4 ${
-            isSelected ? "border-primary bg-primary text-white shadow-md shadow-primary/40" : "border-slate-600"
+            isSelected ? "border-primary bg-primary text-white shadow-md shadow-amber-900/40" : "border-border/80"
           }`}>
             {isSelected && <Check className="h-3 w-3 stroke-[2.5]" />}
           </div>
@@ -124,7 +124,7 @@ export function AssessmentWizard() {
             <span className="text-primary font-bold">{Math.round(progressPercentage)}%</span>
           </div>
           <div 
-            className="h-2.5 w-full bg-[#0F172A] rounded-full overflow-hidden border border-border p-0.5"
+            className="h-2.5 w-full bg-[#161412] rounded-full overflow-hidden border border-border/80 p-0.5"
             role="progressbar"
             aria-valuenow={Math.round(progressPercentage)}
             aria-valuemin={0}

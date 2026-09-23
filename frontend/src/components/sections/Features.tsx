@@ -1,59 +1,54 @@
-import { Compass, Target, AlertCircle, Map } from "lucide-react";
-
 export function Features() {
-  const features = [
+  const steps = [
     {
-      id: "01",
-      title: "Discover",
-      description: "Explore careers that match your interests and strengths.",
-      icon: Compass,
+      num: "01",
+      title: "Understand Yourself",
+      description: "A 5-minute adaptive assessment maps your cognitive traits, interests, and natural strengths across 8 dimensions.",
     },
     {
-      id: "02",
-      title: "Understand",
-      description: "See why each career fits your profile.",
-      icon: Target,
+      num: "02",
+      title: "Find Your Direction",
+      description: "Your trait profile is scored against real career requirements to identify areas of genuine alignment.",
     },
     {
-      id: "03",
-      title: "Identify Gaps",
-      description: "Find the skills you need to develop.",
-      icon: AlertCircle,
+      num: "03",
+      title: "Discover Your Matches",
+      description: "See personalized career recommendations ranked by how closely they match your unique profile.",
     },
     {
-      id: "04",
+      num: "04",
       title: "Build Your Path",
-      description: "Get practical next steps toward your target career.",
-      icon: Map,
+      description: "Each recommended career includes a structured roadmap with skills, milestones, and projects to get you there.",
     },
   ];
 
   return (
-    <section className="py-20 w-full bg-[#0F172A] border-t border-border">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature) => (
-            <div 
-              key={feature.id} 
-              className="flex flex-col p-6 rounded-xl border border-border bg-card hover:bg-card-hover hover:border-primary/40 transition-all duration-200 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
-                  <feature.icon className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-mono font-medium text-primary/70">
-                  {feature.id}
-                </span>
-              </div>
-              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">
-                {feature.title}
+    <section className="py-24 sm:py-32 w-full border-t border-border/40">
+      <div className="container mx-auto px-4 max-w-4xl">
+
+        {steps.map((step, idx) => (
+          <div
+            key={step.num}
+            className={`flex flex-col sm:flex-row gap-6 sm:gap-12 py-12 ${
+              idx !== steps.length - 1 ? "border-b border-border/30" : ""
+            }`}
+          >
+            {/* Large number */}
+            <span className="font-heading text-5xl sm:text-6xl font-bold text-primary/20 leading-none shrink-0 tabular-nums tracking-tight">
+              {step.num}
+            </span>
+
+            <div className="flex-1">
+              <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground mb-3 tracking-tight">
+                {step.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {feature.description}
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-lg">
+                {step.description}
               </p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+
       </div>
     </section>
   );

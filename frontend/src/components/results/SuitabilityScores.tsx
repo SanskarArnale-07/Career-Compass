@@ -69,7 +69,7 @@ export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScor
               className={`p-4 sm:p-5 rounded-xl border transition-all ${
                 index === 0
                   ? "border-primary/40 bg-primary/5 shadow-sm shadow-primary/10"
-                  : "border-border bg-[#0F172A]/50"
+                  : "border-border/70 bg-[#161412]/50"
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">

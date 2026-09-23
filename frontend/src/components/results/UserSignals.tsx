@@ -35,25 +35,25 @@ export function UserSignals({ traits }: UserSignalsProps) {
   return (
     <div className="w-full">
       <div className="mb-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mb-3">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary mb-3">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Your Behavioral Patterns</span>
+          <span>Behavioral Pattern Analysis</span>
         </div>
-        <h3 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-          What's showing up in your responses?
+        <h3 className="font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+          What&apos;s showing up in your responses?
         </h3>
-        <p className="text-muted-foreground mt-1 max-w-2xl">
-          Based on how you evaluated different situations, here are the central themes that emerged from your choices.
+        <p className="text-muted-foreground mt-1 max-w-2xl font-light text-sm sm:text-base">
+          Based on how you evaluated trade-offs and scenarios, here are the central themes that emerged from your choices.
         </p>
       </div>
 
-      <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-sm">
-        <div className="flex items-center justify-between pb-4 mb-6 border-b border-border/80">
+      <div className="bg-card border border-border/70 rounded-xl p-6 md:p-8 shadow-sm">
+        <div className="flex items-center justify-between pb-4 mb-6 border-b border-border/60">
           <span className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-            Your strongest signals
+            Strongest Observed Signals
           </span>
-          <span className="text-xs font-medium text-secondary">
-            Derived from 8 dimensional profiles
+          <span className="text-xs font-mono text-muted-foreground/70">
+            8 Dimensional Vectors
           </span>
         </div>
 
@@ -63,17 +63,17 @@ export function UserSignals({ traits }: UserSignalsProps) {
             return (
               <div
                 key={signal.traitCode}
-                className="flex flex-col p-4 rounded-xl bg-[#0F172A]/70 border border-border/70 hover:border-primary/40 hover:bg-[#0F172A] transition-all duration-200"
+                className="flex flex-col p-5 rounded-xl bg-[#161412] border border-border/60 hover:border-primary/40 hover:bg-[#1A1714] transition-all duration-200 group"
               >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                <div className="flex items-center gap-3 mb-2.5">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-105 transition-transform">
                     <Icon className="h-4 w-4" />
                   </div>
-                  <h4 className="font-semibold text-foreground text-base">
+                  <h4 className="font-semibold text-foreground text-sm tracking-tight">
                     {signal.title}
                   </h4>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+                <p className="text-xs text-muted-foreground leading-relaxed font-light">
                   {signal.description}
                 </p>
               </div>
@@ -81,10 +81,10 @@ export function UserSignals({ traits }: UserSignalsProps) {
           })}
         </div>
 
-        <div className="mt-6 pt-5 border-t border-border/60 flex items-start gap-3 text-xs text-muted-foreground">
-          <div className="h-1.5 w-1.5 rounded-full bg-primary/80 mt-1.5 shrink-0" />
+        <div className="mt-6 pt-5 border-t border-border/50 flex items-start gap-3 text-xs text-muted-foreground font-light">
+          <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
           <p className="leading-relaxed">
-            <strong className="text-secondary-foreground font-semibold">Important perspective:</strong> These signals can appear across many different careers. They are useful clues for exploration, not fixed labels.
+            <strong className="text-foreground font-medium">Perspective:</strong> These signals can emerge across many disciplines. They represent exploratory coordinates, not limiting boundaries.
           </p>
         </div>
       </div>
