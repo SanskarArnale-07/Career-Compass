@@ -1,22 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, Compass } from "lucide-react";
-import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { ArrowRight } from "lucide-react";
 
 export function FinalCta() {
   return (
     <section className="py-20 md:py-24 w-full border-t border-border/40 relative overflow-hidden">
-      {/* Warm ambient radial glow in background */}
+      {/* Subtle atmospheric glow */}
       <div 
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_40%,rgba(200,146,42,0.08),transparent_70%)]" 
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_40%,rgba(200,146,42,0.06),transparent_70%)]" 
       />
 
       <div className="container mx-auto px-4 max-w-3xl relative z-10 flex flex-col items-center text-center">
-        {/* Subtle compass badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-xs font-mono text-primary mb-6">
-          <Compass className="h-3.5 w-3.5" />
-          <span>Begin Navigation</span>
-        </div>
-
         {/* Heading */}
         <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 text-foreground">
           Your career shouldn&apos;t be a guess.
@@ -28,19 +21,12 @@ export function FinalCta() {
         </p>
         
         {/* Primary CTA */}
-        <Link href="/assessment">
-          <ShimmerButton
-            shimmerColor="#D4A853"
-            shimmerSize="0.1em"
-            borderRadius="0.75rem"
-            background="linear-gradient(to bottom, #C8922A, #A6751E)"
-            className="shadow-lg shadow-amber-900/20"
-          >
-            <span className="flex items-center gap-2.5 px-7 py-2 text-base font-semibold tracking-tight text-white">
-              <span>Take the Assessment</span>
-              <ArrowRight className="h-4 w-4" />
-            </span>
-          </ShimmerButton>
+        <Link
+          href="/assessment"
+          className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-base font-semibold text-primary-foreground hover:bg-primary-hover shadow-lg shadow-amber-950/30 transition-all hover:scale-[1.02] cursor-pointer"
+        >
+          <span>Take the Assessment</span>
+          <ArrowRight className="ml-2 h-4 w-4" />
         </Link>
       </div>
     </section>

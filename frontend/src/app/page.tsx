@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Compass } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { HeroConstellation } from "@/components/interactive/HeroConstellation";
 import { Section01Understand } from "@/components/sections/Section01Understand";
 import { Section02FindDirection } from "@/components/sections/Section02FindDirection";

@@ -141,7 +141,7 @@ export function CareerTreeExplorer({
     initialPath?.specializations[0];
 
   const [selectedSpecId, setSelectedSpecId] = useState<string | null>(
-    mode === "full" ? initialSpec?.id ?? null : null
+    initialSpec?.id ?? null
   );
 
   // Sync when default props change (e.g. via URL query parameter update)
@@ -471,7 +471,7 @@ export function CareerTreeExplorer({
           )}
 
           {/* Thin connecting branch line (Level 2 → Level 3) */}
-          {showLines && activePath && mode === "full" && (
+          {showLines && activePath && (
             <div className="relative py-4 flex flex-col items-center">
               <div
                 className="w-px h-6"
@@ -489,7 +489,7 @@ export function CareerTreeExplorer({
           )}
 
           {/* ── LEVEL 3: SPECIALIZATIONS ─────────────────────────────── */}
-          {activePath && mode === "full" && (
+          {activePath && (
             <div className="relative z-10">
               <div className="text-center mb-3">
                 <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground/70">
@@ -768,7 +768,7 @@ export function CareerTreeExplorer({
                             </div>
                           </button>
 
-                          {/* Path Expanded: Specializations & Roles */}
+                          {/* Path Expanded: Specializations & Roles (Full Mode) */}
                           {isPathOpen && mode === "full" && (
                             <div className="pt-2 pl-3 border-l-2 border-border/60 space-y-3">
                               {path.specializations.map((spec) => (
@@ -810,6 +810,25 @@ export function CareerTreeExplorer({
                               </div>
                             </div>
                           )}
+
+                          {/* Path Expanded: Compact Preview (Specializations only, no 108 roles) */}
+                          {isPathOpen && mode === "compact" && (
+                            <div className="pt-2 pl-3 border-l-2 border-border/60 space-y-2">
+                              <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70">
+                                Specializations:
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {path.specializations.map((spec) => (
+                                  <span
+                                    key={spec.id}
+                                    className="inline-flex items-center px-2.5 py-1 rounded-md border border-border/70 bg-[#161412] text-[11px] font-mono text-foreground/90"
+                                  >
+                                    {spec.name}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -822,21 +841,28 @@ export function CareerTreeExplorer({
       </div>
 
       {/* ── Legend ───────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-y-2 pt-2 border-t border-border/40 text-[10px] font-mono text-muted-foreground/70">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1">
-            <Circle className="h-2 w-2 fill-primary text-primary" />
-            Entry-level role
-          </span>
-          <span className="flex items-center gap-1">
-            <Circle className="h-2 w-2 text-primary" />
-            Advanced role
+      {mode === "full" ? (
+        <div className="flex flex-wrap items-center justify-between gap-y-2 pt-2 border-t border-border/40 text-[10px] font-mono text-muted-foreground/70">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <Circle className="h-2 w-2 fill-primary text-primary" />
+              Entry-level role
+            </span>
+            <span className="flex items-center gap-1">
+              <Circle className="h-2 w-2 text-primary" />
+              Advanced role
+            </span>
+          </div>
+          <span className="text-[9px]">
+            Hierarchy: Domain → Path → Specialization → Role
           </span>
         </div>
-        <span className="text-[9px]">
-          Hierarchy: Domain → Path → Specialization → Role
-        </span>
-      </div>
+      ) : (
+        <div className="flex items-center justify-between pt-2 border-t border-border/40 text-[10px] font-mono text-muted-foreground/70">
+          <span>Career Structure Preview</span>
+          <span>Domain → Path → Specialization</span>
+        </div>
+      )}
     </div>
   );
 }
