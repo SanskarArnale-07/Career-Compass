@@ -51,6 +51,19 @@ export const STORAGE_KEYS = {
   LEGACY_ASSESSMENT: LEGACY_ASSESSMENT_KEY,
 } as const;
 
+// ── User-Scoped Storage Configuration ────────────────────────────────
+let activeUserId: string | null = null;
+let activeAuthToken: string | null = null;
+
+export function setActiveUser(userId: string | null, token: string | null = null): void {
+  activeUserId = userId;
+  activeAuthToken = token;
+}
+
+export function getActiveStorageKey(): string {
+  return activeUserId ? `${JOURNEY_STORAGE_KEY}_${activeUserId}` : JOURNEY_STORAGE_KEY;
+}
+
 // ── In-Memory Fallback Store (SSR / Incognito / Quota Exceeded) ──────
 
 const memoryStore: Record<string, string> = {};
@@ -249,7 +262,7 @@ function migrateFromLegacy(): CareerJourneySourceData | null {
  */
 export function loadCareerJourney(): CareerJourneySourceData {
   try {
-    const raw = getItem(JOURNEY_STORAGE_KEY);
+    const raw = getItem(getActiveStorageKey());
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && parsed.version === 1) {
@@ -332,7 +345,22 @@ export function saveCareerJourney(
       },
     };
 
-    const saved = setItem(JOURNEY_STORAGE_KEY, JSON.stringify(merged));
+    const saved = setItem(getActiveStorageKey(), JSON.stringify(merged));
+
+    // If an authenticated user is active, sync with backend asynchronously
+    if (typeof window !== "undefined" && activeAuthToken) {
+      const token = activeAuthToken;
+      fetch("/api/v1/user/journey", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ journey: merged }),
+      }).catch((err) => {
+        console.warn("Background user journey sync failed:", err);
+      });
+    }
 
     // Legacy key sync: disabled by default to prevent data divergence.
     // Legacy reads for migration remain active in migrateFromLegacy().
@@ -482,7 +510,7 @@ export function resetCareerJourney(options?: {
     },
   };
 
-  setItem(JOURNEY_STORAGE_KEY, JSON.stringify(nextState));
+  setItem(getActiveStorageKey(), JSON.stringify(nextState));
 
   // Sync / remove legacy keys
   try {
@@ -582,3 +610,70 @@ export function getHydratedJourneyState(): HydratedJourneyState {
     recommendations,
   };
 }
+
+/**
+ * Synchronize user journey with backend on login:
+ * 1. Checks if backend has user journey.
+ * 2. If not, merges existing anonymous local journey into the account and uploads to backend.
+ * 3. Caches under the active user's storage key.
+ */
+export async function syncUserJourneyWithBackend(
+  token: string,
+  userId: string
+): Promise<CareerJourneySourceData> {
+  setActiveUser(userId, token);
+  const userKey = `${JOURNEY_STORAGE_KEY}_${userId}`;
+
+  // 1. Fetch remote journey from backend
+  try {
+    const res = await fetch("/api/v1/user/journey", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.journey && data.journey.version === 1) {
+        setItem(userKey, JSON.stringify(data.journey));
+        return loadCareerJourney();
+      }
+    }
+  } catch (err) {
+    console.warn("Could not fetch remote user journey:", err);
+  }
+
+  // 2. If user already has cached data locally for their account, use it
+  const existingUserLocal = getItem(userKey);
+  if (existingUserLocal) {
+    return loadCareerJourney();
+  }
+
+  // 3. If no backend journey and no user-specific local journey, safely merge anonymous data
+  const anonymousRaw = getItem(JOURNEY_STORAGE_KEY);
+  if (anonymousRaw) {
+    try {
+      const anonParsed = JSON.parse(anonymousRaw);
+      if (
+        anonParsed.assessment?.completed ||
+        (Array.isArray(anonParsed.progress?.completedPhases) && anonParsed.progress.completedPhases.length > 0) ||
+        (Array.isArray(anonParsed.progress?.completedTasks) && anonParsed.progress.completedTasks.length > 0)
+      ) {
+        setItem(userKey, anonymousRaw);
+        // Upload merged journey to backend
+        fetch("/api/v1/user/journey", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ journey: anonParsed }),
+        }).catch((err) => console.warn("Failed to upload migrated journey:", err));
+        return loadCareerJourney();
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // Default state for new user
+  return loadCareerJourney();
+}
+

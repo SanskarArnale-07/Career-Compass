@@ -2,8 +2,10 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import * as LucideIcons from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 import {
   Compass,
   ArrowLeft,
@@ -95,6 +97,9 @@ function createCustomTaskId(): string {
 
 export default function DashboardPage() {
   const isClient = useIsClient();
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading } = useAuth();
+
   const [selectedSlug, setSelectedSlug] = useState<string>("software-development");
   const [completedPhases, setCompletedPhases] = useState<Set<number>>(new Set());
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
@@ -110,43 +115,48 @@ export default function DashboardPage() {
   const allCareers = getAllCareerIntelligence();
   const career: CareerIntelligence = getCareerIntelligence(selectedSlug) || allCareers[0];
 
+  // ── Route Protection: redirect unauthenticated users to /login ──
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login?redirect=/dashboard");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
   // ── Load progress from unified persistence engine ──
   useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        const journey = loadCareerJourney();
+    if (isLoading || !isAuthenticated) return;
 
-        // 1. Restore assessment traits
-        if (journey.assessment.traitProfile) {
-          setTraitProfile(journey.assessment.traitProfile);
-        }
+    try {
+      const journey = loadCareerJourney();
 
-        // 2. Restore selected career & started timestamp
-        if (journey.selectedCareer?.slug) {
-          setSelectedSlug(journey.selectedCareer.slug);
-          setStartedDate(
-            new Date(journey.selectedCareer.startedAt).toLocaleDateString(undefined, {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })
-          );
-        }
-
-        // 3. Restore source progress
-        setCompletedPhases(new Set(journey.progress.completedPhases));
-        setCompletedTasks(new Set(journey.progress.completedTasks));
-        setCompletedSkills(new Set(journey.progress.completedSkills));
-        setCompletedProjects(new Set(journey.progress.completedProjects));
-        setWeeklyPaceHours(journey.progress.weeklyPaceHours);
-        setCustomTasks(journey.progress.customTasks);
-      } catch (e) {
-        console.error("Error initializing dashboard data", e);
+      // 1. Restore assessment traits
+      if (journey.assessment.traitProfile) {
+        setTraitProfile(journey.assessment.traitProfile);
       }
-    }, 0);
 
-    return () => clearTimeout(timer);
-  }, []);
+      // 2. Restore selected career & started timestamp
+      if (journey.selectedCareer?.slug) {
+        setSelectedSlug(journey.selectedCareer.slug);
+        setStartedDate(
+          new Date(journey.selectedCareer.startedAt).toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+        );
+      }
+
+      // 3. Restore source progress
+      setCompletedPhases(new Set(journey.progress.completedPhases));
+      setCompletedTasks(new Set(journey.progress.completedTasks));
+      setCompletedSkills(new Set(journey.progress.completedSkills));
+      setCompletedProjects(new Set(journey.progress.completedProjects));
+      setWeeklyPaceHours(journey.progress.weeklyPaceHours);
+      setCustomTasks(journey.progress.customTasks);
+    } catch (e) {
+      console.error("Error initializing dashboard data", e);
+    }
+  }, [isLoading, isAuthenticated, user?.id]);
 
   // ── Save updates to unified persistence ─────────────────────────
   const saveProgress = (
@@ -352,7 +362,22 @@ export default function DashboardPage() {
     }
   };
 
-  if (!isClient) return null;
+  if (!isClient || isLoading) {
+    return (
+      <div className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-9 w-9 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+          <p className="text-xs text-muted-foreground animate-pulse">
+            Loading your career dashboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // ── Compute Intelligence Engine Outputs (canonical pipeline) ──────
   const progressState: UserProgressState = {

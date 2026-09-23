@@ -20,4 +20,7 @@ export {
   saveAssessmentResult,
   resetCareerJourney,
   getHydratedJourneyState,
+  setActiveUser,
+  getActiveStorageKey,
+  syncUserJourneyWithBackend,
 } from "./storage";
