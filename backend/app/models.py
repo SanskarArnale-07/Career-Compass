@@ -96,3 +96,56 @@ class AssessmentResponse(BaseModel):
         max_length=5,
         description="Top 5 career cluster matches.",
     )
+
+
+# ── Authentication Models ────────────────────────────────────────────
+
+class UserSignupRequest(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100, description="User's full name.")
+    email: str = Field(..., min_length=3, max_length=255, description="User's email address.")
+    password: str = Field(..., min_length=8, max_length=128, description="User's password (min 8 characters).")
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        trimmed = v.strip()
+        if not trimmed:
+            raise ValueError("Name cannot be empty.")
+        return trimmed
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, v: str) -> str:
+        trimmed = v.strip().lower()
+        if "@" not in trimmed or "." not in trimmed.split("@")[-1]:
+            raise ValueError("Invalid email address format.")
+        return trimmed
+
+
+class UserLoginRequest(BaseModel):
+    email: str = Field(..., min_length=3, max_length=255, description="User's email address.")
+    password: str = Field(..., min_length=1, max_length=128, description="User's password.")
+    remember_me: bool = Field(default=True, description="Extend session duration.")
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, v: str) -> str:
+        return v.strip().lower()
+
+
+class UserResponse(BaseModel):
+    id: str
+    name: str
+    email: str
+    created_at: int
+
+
+class AuthResponse(BaseModel):
+    token: str
+    user: UserResponse
+    expires_at: int
+
+
+class UserJourneyPayload(BaseModel):
+    journey: dict = Field(..., description="Complete or partial journey data.")
+

@@ -7,10 +7,14 @@ from collections import defaultdict
 from typing import Callable
 
 from fastapi import FastAPI, Request, Response, status
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.database import init_db
 from app.routes.assessment import router as assessment_router
+from app.routes.auth import router as auth_router
+from app.routes.user import router as user_router
 
 # ── Logging Configuration ────────────────────────────────────────────
 logging.basicConfig(
@@ -19,11 +23,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger("career_compass")
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize SQLite database schema
+    init_db()
+    logger.info("Career Compass database initialized.")
+    yield
+
+
 app = FastAPI(
     title="Career Compass API",
     version="1.0.0",
     docs_url="/docs" if os.getenv("ENVIRONMENT") != "production" else None,
     redoc_url=None,
+    lifespan=lifespan,
 )
 
 # ── CORS Configuration ───────────────────────────────────────────────
@@ -37,7 +51,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -156,6 +170,8 @@ async def global_unhandled_exception_handler(request: Request, exc: Exception) -
 
 # ── Register Routers ─────────────────────────────────────────────────
 app.include_router(assessment_router)
+app.include_router(auth_router)
+app.include_router(user_router)
 
 
 # ── Public Endpoints ─────────────────────────────────────────────────
