@@ -53,12 +53,16 @@ export default function Home() {
                   </span>
                 </ShimmerButton>
               </Link>
-              <Link 
-                href="/careers" 
-                className="inline-flex h-12 items-center justify-center rounded-lg border border-border bg-[#0F172A]/80 backdrop-blur-sm px-8 text-base font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-card-hover hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              >
-                Explore Careers
-              </Link>
+              <div className="flex flex-col items-start sm:items-center">
+                <Link 
+                  href="/careers" 
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Explore More Careers
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                <span className="text-[11px] text-muted-foreground/60 mt-0.5">Curious about other careers?</span>
+              </div>
             </div>
           </div>
 

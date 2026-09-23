@@ -17,9 +17,8 @@ export function Footer() {
           </div>
           
           <nav className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-            <Link href="/careers" className="hover:text-foreground transition-colors">Explore Careers</Link>
+            <Link href="/careers" className="hover:text-foreground transition-colors">Explore More Careers</Link>
             <Link href="/assessment" className="hover:text-foreground transition-colors">Assessment</Link>
-            <Link href="/#how-it-works" className="hover:text-foreground transition-colors">How It Works</Link>
           </nav>
           
           <div className="text-xs text-muted-foreground">

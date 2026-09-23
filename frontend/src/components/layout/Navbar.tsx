@@ -20,9 +20,6 @@ export function Navbar() {
         
         {/* Center: Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          <Link href="/careers" className="text-muted-foreground transition-colors hover:text-foreground">
-            Explore Careers
-          </Link>
           <Link href="/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
             Dashboard
           </Link>
@@ -33,8 +30,8 @@ export function Navbar() {
           <Link href="/assessment" className="text-muted-foreground transition-colors hover:text-foreground">
             Assessment
           </Link>
-          <Link href="/#how-it-works" className="text-muted-foreground transition-colors hover:text-foreground">
-            How It Works
+          <Link href="/careers" className="text-muted-foreground/60 transition-colors hover:text-muted-foreground text-[13px]">
+            Explore More Careers
           </Link>
         </nav>
 

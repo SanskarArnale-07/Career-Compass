@@ -431,11 +431,11 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-3 max-w-6xl flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
-              href={`/career/${career.slug}`}
+              href="/results"
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>Back to Career Details</span>
+              <span>Back to My Results</span>
             </Link>
             <span className="text-border">|</span>
             <span className="text-xs font-semibold text-primary">

@@ -4,9 +4,9 @@ import { getAllCareerIntelligence, type CareerIntelligence } from "@/lib/career-
 import { getCareerIcon } from "@/lib/career-icons";
 
 export const metadata = {
-  title: "Explore Careers | Career Compass",
+  title: "Explore More Careers | Career Compass",
   description:
-    "Explore in-depth roadmaps, required skills, hands-on projects, and progression pathways across 12 high-impact career domains.",
+    "Curious about careers beyond your personalized recommendations? Browse in-depth roadmaps, skill trees, and learning paths across 12 high-impact career domains.",
 };
 
 export default function CareersPage() {
@@ -17,17 +17,17 @@ export default function CareersPage() {
       <main className="flex-1 py-12 md:py-16">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary mb-3">
                 <Compass className="h-3.5 w-3.5" />
                 <span>12 Exploration Pathways</span>
               </div>
               <h1 className="font-heading text-3xl md:text-5xl font-bold tracking-tight text-foreground">
-                Explore Careers
+                Explore More Careers
               </h1>
               <p className="text-muted-foreground text-sm md:text-base mt-2 max-w-2xl">
-                Deep-dive into verified skill trees, multi-phase learning roadmaps, portfolio projects, and job preparation checklists for every domain.
+                Curious about careers beyond your personalized recommendations? Browse every domain below.
               </p>
             </div>
 
@@ -38,6 +38,37 @@ export default function CareersPage() {
               <Sparkles className="h-4 w-4" />
               <span>Take Assessment</span>
             </Link>
+          </div>
+
+          {/* Contextual Banner */}
+          <div className="mb-10 p-4 sm:p-5 rounded-2xl bg-primary/8 border border-primary/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-primary/15 border border-primary/25 text-primary shrink-0 mt-0.5">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Get matched careers tailored to you
+                </p>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                  Take the free 5-minute assessment to see which careers align most with your traits and strengths.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                href="/results"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors shadow-sm"
+              >
+                View My Matches
+              </Link>
+              <Link
+                href="/assessment"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                or take assessment
+              </Link>
+            </div>
           </div>
 
           {/* Careers Grid */}

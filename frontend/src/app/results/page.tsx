@@ -300,19 +300,19 @@ export default function ResultsPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
-      {/* 1. HEADER: Exploratory Compass Framing */}
+      {/* 1. HEADER: Personalized Match Framing */}
       <div className="text-center mb-8 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mb-4">
           <Compass className="h-4 w-4" />
-          <span>Exploratory Career Compass</span>
+          <span>Your Personalized Career Matches</span>
         </div>
         
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 text-foreground">
-          <BlurText text="Your Career Compass" delay={0.08} className="inline-block" />
+          <BlurText text="Your Career Matches" delay={0.08} className="inline-block" />
         </h1>
         
         <p className="text-base sm:text-lg text-secondary-foreground font-medium max-w-2xl mx-auto leading-relaxed">
-          Your responses point toward several career directions that may be worth exploring.
+          Based on your assessment, here are the careers most suited to your profile.
         </p>
       </div>
 
@@ -323,10 +323,10 @@ export default function ResultsPage() {
         </div>
         <div>
           <h2 className="text-xs sm:text-sm font-semibold text-foreground mb-1">
-            How to read your results
+            How your matches are scored
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            These directions reflect patterns in your responses. They aren&apos;t predictions of what you will become. Your skills, experiences, interests, and goals can all influence which path is right for you.
+            These matches are scored from your trait profile across 8 dimensions. They reflect your strongest alignment based on your assessment responses — not a prediction, but a data-driven starting point.
           </p>
         </div>
       </div>
@@ -388,27 +388,27 @@ export default function ResultsPage() {
           )}
         </section>
 
-        {/* 6. KEEP YOUR OPTIONS OPEN */}
+        {/* 6. EXPLORE MORE / RETAKE */}
         <section className="p-8 sm:p-10 rounded-2xl bg-card border border-border text-center max-w-3xl mx-auto">
           <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mb-3">
-            Keep your options open
+            Not what you were looking for?
           </h3>
           <p className="text-secondary-foreground text-sm sm:text-base leading-relaxed mb-8 max-w-2xl mx-auto">
-            Career choices are influenced by your interests, skills, experiences, values, and goals — many of which can change over time. Use these directions as a starting point, then explore what actually interests you.
+            Retake the assessment for a fresh analysis, or browse careers you&apos;re curious about beyond your personalized recommendations.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/careers"
+              href="/assessment"
               className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-xl bg-primary px-8 text-sm font-semibold text-primary-foreground hover:bg-primary-hover shadow-sm transition-all"
             >
-              Explore Careers
+              Retake Assessment
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
             <Link
-              href="/assessment"
+              href="/careers"
               className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-xl border border-border bg-[#0F172A] px-6 text-sm font-medium text-secondary-foreground hover:bg-card-hover hover:text-foreground transition-all"
             >
-              Retake Assessment
+              Explore More Careers
             </Link>
           </div>
         </section>

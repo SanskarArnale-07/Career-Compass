@@ -24,13 +24,13 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
       <div className="mb-8">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mb-3">
           <Compass className="h-3.5 w-3.5" />
-          <span>Exploratory Pathways</span>
+          <span>Personalized for You</span>
         </div>
         <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-          Career directions worth exploring
+          Your Top Career Matches
         </h2>
         <p className="text-secondary-foreground text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
-          Your results highlight several career directions with different levels of alignment. No single direction is a definitive recommendation.
+          Ranked by how closely each career aligns with your trait profile and assessment responses.
         </p>
       </div>
 
@@ -135,7 +135,7 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
                         : "bg-card border border-border text-primary hover:border-primary/40 hover:bg-card-hover"
                     }`}
                   >
-                    <span>{isTopMatch ? "Explore Primary Pathway" : "Explore Pathway"}</span>
+                    <span>View Career &amp; Roadmap</span>
                     <ArrowRight className="h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
