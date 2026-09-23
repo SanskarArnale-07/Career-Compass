@@ -50,7 +50,7 @@ export default function SkillMasteryMatrix({
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0F172A] border border-border/80 self-start sm:self-auto">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#161412] border border-border/80 self-start sm:self-auto">
           <button
             onClick={() => setFilter("all")}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
@@ -98,9 +98,9 @@ export default function SkillMasteryMatrix({
           // Status Badge config
           let badge = {
             label: "Developing",
-            bg: "bg-blue-500/10",
-            text: "text-blue-400",
-            border: "border-blue-500/20",
+            bg: "bg-amber-500/10",
+            text: "text-[#D4A853]",
+            border: "border-amber-500/20",
           };
           if (isMastered) {
             badge = {
@@ -130,7 +130,7 @@ export default function SkillMasteryMatrix({
               key={skill.id}
               className={`p-4 rounded-xl border transition-all ${
                 isMastered
-                  ? "border-emerald-500/30 bg-[#0F172A]/70"
+                  ? "border-emerald-500/30 bg-[#161412]/70"
                   : skill.status === "needs-work"
                   ? "border-red-500/20 bg-card hover:border-red-500/40"
                   : "border-border bg-card hover:border-primary/40"
@@ -160,7 +160,7 @@ export default function SkillMasteryMatrix({
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     isMastered
                       ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 hover:bg-emerald-500/30"
-                      : "bg-[#0F172A] border border-border text-muted-foreground hover:text-foreground hover:border-primary/40"
+                      : "bg-[#161412] border border-border text-muted-foreground hover:text-foreground hover:border-primary/40"
                   }`}
                 >
                   {isMastered ? (

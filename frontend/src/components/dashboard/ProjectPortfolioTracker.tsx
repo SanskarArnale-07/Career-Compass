@@ -79,8 +79,8 @@ export default function ProjectPortfolioTracker({
               key={project.title}
               className={`rounded-xl border p-5 flex flex-col justify-between transition-all ${
                 isDone
-                  ? "border-emerald-500/30 bg-[#0F172A]/70"
-                  : "border-border bg-[#0F172A] hover:border-primary/40"
+                  ? "border-emerald-500/30 bg-[#161412]/70"
+                  : "border-border/70 bg-[#161412] hover:border-primary/40"
               }`}
             >
               <div>

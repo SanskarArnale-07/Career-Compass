@@ -18,7 +18,7 @@ export default function AssessmentIntroPage() {
           This assessment looks at your interests, strengths, working preferences and goals to find careers that fit you.
         </p>
 
-        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-[#0F172A] border border-border px-4 py-2 rounded-full mb-10">
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-[#161412] border border-border/80 px-4 py-2 rounded-full mb-10">
           <Clock className="h-4 w-4 text-primary" />
           <span>~5 minutes</span>
         </div>

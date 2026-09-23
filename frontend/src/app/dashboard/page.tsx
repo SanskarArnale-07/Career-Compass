@@ -431,11 +431,11 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-3 max-w-6xl flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
-              href="/results"
+              href="/"
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>Back to My Results</span>
+              <span>Back to Home</span>
             </Link>
             <span className="text-border">|</span>
             <span className="text-xs font-semibold text-primary">
@@ -489,7 +489,7 @@ export default function DashboardPage() {
                       className={`text-left p-2.5 rounded-lg border text-xs font-medium transition-all ${
                         c.slug === selectedSlug
                           ? "bg-primary/15 border-primary text-primary font-semibold"
-                          : "border-border bg-[#0F172A] text-foreground hover:bg-card-hover hover:border-border"
+                          : "border-border bg-[#161412] text-foreground hover:bg-[#1E1A16] hover:border-border"
                       }`}
                     >
                       <div className="truncate">{c.title}</div>
@@ -507,7 +507,7 @@ export default function DashboardPage() {
 
       <div className="container mx-auto px-4 max-w-6xl pt-8 space-y-8">
         {/* Header: Current Focus & Personalization Mode */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl border border-border bg-linear-to-r from-card via-[#0F172A] to-card">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl border border-border bg-linear-to-r from-card via-[#161412] to-card">
           <div className="flex items-start gap-4">
             <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/25 text-primary shrink-0">
               <IconComponent className="h-7 w-7" />
@@ -536,7 +536,7 @@ export default function DashboardPage() {
                   </Link>
                 )}
                 <span className="text-border hidden sm:inline">•</span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-mono font-semibold text-blue-400 capitalize">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-mono font-semibold text-primary capitalize">
                   {personalizedRoadmap.studentLevel} • Stage: {personalizedRoadmap.completionState.activePhaseStage}
                 </span>
               </div>
@@ -608,7 +608,7 @@ export default function DashboardPage() {
           />
 
           {/* Career Compass AI Coach CTA Card */}
-          <div className="rounded-2xl border border-primary/25 bg-linear-to-r from-card via-[#0F172A] to-primary/10 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-primary/5">
+          <div className="rounded-2xl border border-primary/25 bg-linear-to-r from-card via-[#161412] to-primary/10 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-primary/5">
             <div className="flex items-center gap-3.5">
               <div className="h-10 w-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary shrink-0 shadow-sm">
                 <Sparkles className="h-5 w-5" />
@@ -682,21 +682,21 @@ export default function DashboardPage() {
                 </Link>
                 <Link
                   href={`/career/${career.slug}`}
-                  className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#0F172A] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                  className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#161412] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
                 >
                   <span>Complete {career.title} Guide</span>
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
                 <Link
                   href="/results"
-                  className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#0F172A] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                  className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#161412] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
                 >
                   <span>Assessment Results &amp; Strengths</span>
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
                 <Link
                   href="/careers"
-                  className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#0F172A] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                  className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-[#161412] text-foreground hover:border-primary/40 hover:text-primary transition-colors"
                 >
                   <span>Explore All Careers</span>
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -815,7 +815,7 @@ export default function DashboardPage() {
                   </div>
 
                   {isExpanded && (
-                    <div className="px-5 pb-6 pt-2 border-t border-border/60 bg-[#0F172A]/40 space-y-4">
+                    <div className="px-5 pb-6 pt-2 border-t border-border/60 bg-[#161412]/40 space-y-4">
                       <p className="text-xs sm:text-sm text-secondary-foreground leading-relaxed">
                         {phase.description}
                       </p>
@@ -932,7 +932,7 @@ export default function DashboardPage() {
                   onClick={() => toggleTask(item.id)}
                   className={`p-4 rounded-xl border flex items-start gap-3 transition-all cursor-pointer select-none ${
                     isDone
-                      ? "border-emerald-500/25 bg-[#0F172A]/80"
+                      ? "border-emerald-500/25 bg-[#161412]/80"
                       : "border-border bg-card hover:border-primary/40 hover:bg-card-hover"
                   }`}
                 >

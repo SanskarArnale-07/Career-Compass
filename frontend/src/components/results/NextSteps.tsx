@@ -34,7 +34,7 @@ export function NextSteps({ steps }: NextStepsProps) {
           </ul>
         </div>
         
-        <div className="w-full md:w-auto mt-4 md:mt-0 bg-[#0F172A] p-6 rounded-xl border border-border/80 text-center shadow-sm">
+        <div className="w-full md:w-auto mt-4 md:mt-0 bg-[#161412] p-6 rounded-xl border border-border/80 text-center shadow-sm">
           <h4 className="font-bold text-lg mb-2 text-foreground">Ready to start?</h4>
           <p className="text-sm text-muted-foreground mb-6 max-w-50 mx-auto leading-relaxed">
             Book a session with a counselor to discuss these results.

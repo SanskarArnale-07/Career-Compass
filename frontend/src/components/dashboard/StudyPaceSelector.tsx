@@ -51,7 +51,7 @@ export default function StudyPaceSelector({
               className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                 isSelected
                   ? "border-primary bg-primary/15 shadow-md shadow-primary/10 text-foreground"
-                  : "border-border bg-[#0F172A] text-secondary-foreground hover:bg-card-hover hover:border-border"
+                  : "border-border/70 bg-[#161412] text-muted-foreground hover:bg-[#1E1A16] hover:border-border"
               }`}
             >
               <div className="flex items-center justify-between mb-1">
@@ -69,7 +69,7 @@ export default function StudyPaceSelector({
       </div>
 
       {/* Dynamic Pace Summary */}
-      <div className="p-4 rounded-xl bg-[#0F172A] border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+      <div className="p-4 rounded-xl bg-[#161412] border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
             <Zap className="h-4 w-4" />

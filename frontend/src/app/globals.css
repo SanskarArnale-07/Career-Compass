@@ -25,34 +25,34 @@
 }
 
 :root {
-  /* Deep Navy & Electric Blue Modern Career-Tech Theme */
-  --background: #0B1220; /* Main Background: Deep Navy */
-  --secondary-bg: #0F172A; /* Secondary Background / Sections */
+  /* Career Compass — Charcoal + Warm Off-White + Amber Identity */
+  --background: #0E0E0E;
+  --secondary-bg: #131110;
   
-  --foreground: #F8FAFC; /* Main Text */
-  --secondary-foreground: #CBD5E1; /* Secondary Text */
+  --foreground: #F2EDE4;
+  --secondary-foreground: #C4BCB0;
   
-  --card: #111827; /* Cards / Panels */
-  --card-foreground: #F8FAFC;
-  --card-hover: #1E293B; /* Card Hover */
+  --card: #161412;
+  --card-foreground: #F2EDE4;
+  --card-hover: #1E1A16;
   
-  --primary: #3B82F6; /* Primary Accent / Electric Blue */
-  --primary-hover: #2563EB; /* Button Hover */
-  --primary-foreground: #FFFFFF; /* Clean contrast on Electric Blue */
+  --primary: #C8922A;
+  --primary-hover: #D4A853;
+  --primary-foreground: #0E0E0E;
   
-  --secondary: #60A5FA; /* Secondary Accent / Light Blue */
+  --secondary: #C4BCB0;
   
-  --muted: #0F172A; /* Secondary / elevated panel surface */
-  --muted-foreground: #94A3B8; /* Muted Text */
+  --muted: #131110;
+  --muted-foreground: #817A70;
   
-  --accent: #60A5FA; /* Light Blue Accent */
-  --accent-foreground: #0B1220;
+  --accent: #D4A853;
+  --accent-foreground: #0E0E0E;
   
-  --border: #1E293B; /* Borders */
+  --border: #2A2520;
   
-  --success: #22C55E;
-  --warning: #F59E0B;
-  --destructive: #EF4444;
+  --success: #5A9A6B;
+  --warning: #C8922A;
+  --destructive: #C45C4A;
   
   --radius: 0.5rem;
 }
@@ -65,9 +65,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Subtle noise texture overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
 ::selection {
-  background-color: rgba(59, 130, 246, 0.3);
-  color: #F8FAFC;
+  background-color: rgba(200, 146, 42, 0.25);
+  color: #F2EDE4;
 }
 
 /* Base resets */
@@ -105,6 +118,58 @@ body {
   animation: spin-around calc(var(--speed, 3s) * 2) infinite linear;
 }
 
+/* Constellation hero animations */
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.15); }
+}
+
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-orbit {
+  animation: orbit 45s linear infinite;
+}
+
+.animate-orbit-reverse {
+  animation: orbit 60s linear infinite reverse;
+}
+
+.animate-orbit-slow {
+  animation: orbit 90s linear infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-float-subtle {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out both;
+}
+
+/* Staggered delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-700 { animation-delay: 0.7s; }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -115,8 +180,15 @@ body {
     scroll-behavior: auto !important;
   }
   .animate-shimmer-slide,
-  .animate-spin-around {
+  .animate-spin-around,
+  .animate-orbit,
+  .animate-orbit-reverse,
+  .animate-orbit-slow,
+  .animate-pulse-glow,
+  .animate-float-subtle {
     animation: none !important;
   }
+  body::before {
+    display: none;
+  }
 }
-

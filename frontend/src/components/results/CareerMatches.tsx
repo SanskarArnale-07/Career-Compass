@@ -22,15 +22,15 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
     <div className="w-full">
       {/* Section Header */}
       <div className="mb-8">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mb-3">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary mb-3">
           <Compass className="h-3.5 w-3.5" />
-          <span>Personalized for You</span>
+          <span>Personalized For You</span>
         </div>
-        <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
+        <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
           Your Top Career Matches
         </h2>
-        <p className="text-secondary-foreground text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
-          Ranked by how closely each career aligns with your trait profile and assessment responses.
+        <p className="text-muted-foreground text-sm sm:text-base mt-2 max-w-3xl leading-relaxed font-light">
+          Ranked by how closely each trajectory aligns with your multi-dimensional trait profile and behavioral responses.
         </p>
       </div>
 
@@ -54,22 +54,22 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
           return (
             <motion.div
               key={career.career_name}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.12, duration: 0.5, ease: "easeOut" }}
+              transition={{ delay: idx * 0.1, duration: 0.45, ease: "easeOut" }}
               className="flex"
             >
               <SpotlightCard
-                spotlightColor={isTopMatch ? "rgba(59, 130, 246, 0.22)" : "rgba(59, 130, 246, 0.10)"}
-                className={`rounded-2xl p-6 flex flex-col justify-between w-full transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden ${
+                spotlightColor={isTopMatch ? "rgba(200, 146, 42, 0.18)" : "rgba(200, 146, 42, 0.08)"}
+                className={`rounded-xl p-6 flex flex-col justify-between w-full transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden ${
                   isTopMatch
-                    ? "border-primary/45 shadow-xl shadow-primary/10 bg-linear-to-b from-card via-card to-primary/5"
-                    : "border-border/90 hover:border-primary/40 hover:shadow-lg shadow-black/20"
+                    ? "border-primary/40 shadow-xl shadow-amber-950/20 bg-gradient-to-b from-card via-card to-primary/5"
+                    : "border-border/70 hover:border-primary/30 hover:shadow-lg"
                 }`}
               >
-                {/* Top-match accent indicator bar */}
+                {/* Top-match amber accent indicator bar */}
                 {isTopMatch && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-secondary to-primary" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#D4A853] to-primary" />
                 )}
 
                 <div>
@@ -84,7 +84,7 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
                     </div>
                     <div className="flex items-center gap-1.5 flex-wrap justify-end">
                       {isTopMatch && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-primary/20 border border-primary/35 text-primary">
                           ★ Top Match
                         </span>
                       )}
@@ -100,21 +100,21 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-heading text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                  <h3 className="font-heading text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors tracking-tight">
                     {displayTitle}
                   </h3>
 
                   {/* Short explanation of WHY user responses connect */}
-                  <p className="text-secondary-foreground/90 text-xs sm:text-sm leading-relaxed mb-5">
+                  <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed mb-5 font-light">
                     &ldquo;{explanation}&rdquo;
                   </p>
 
                   {/* "You might explore" roles */}
-                  <div className="py-3 px-3.5 rounded-xl bg-[#0F172A] border border-border/80 mb-5">
-                    <p className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                      You might explore:
+                  <div className="py-3 px-3.5 rounded-xl bg-[#161412] border border-border/80 mb-5">
+                    <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground/80 mb-2">
+                      Directional Pathways:
                     </p>
-                    <ul className="space-y-1.5 text-xs text-foreground font-medium">
+                    <ul className="space-y-1.5 text-xs text-foreground/90 font-medium">
                       {subRoles.slice(0, 4).map((role) => (
                         <li key={role} className="flex items-center gap-2">
                           <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${isTopMatch ? "bg-primary" : "bg-primary/70"}`} />
@@ -126,13 +126,13 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
                 </div>
 
                 {/* Action link */}
-                <div className="pt-3 border-t border-border/60">
+                <div className="pt-3 border-t border-border/50">
                   <Link
                     href={`/career/${slug}`}
-                    className={`inline-flex items-center justify-between w-full px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                    className={`inline-flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                       isTopMatch
-                        ? "bg-primary text-white hover:bg-primary-hover shadow-sm shadow-primary/25"
-                        : "bg-card border border-border text-primary hover:border-primary/40 hover:bg-card-hover"
+                        ? "bg-primary text-white hover:bg-primary-hover shadow-sm shadow-amber-900/25"
+                        : "bg-card border border-border/70 text-foreground hover:border-primary/40 hover:bg-card-hover"
                     }`}
                   >
                     <span>View Career &amp; Roadmap</span>

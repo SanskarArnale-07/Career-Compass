@@ -30,10 +30,10 @@ export default function CareerReadinessMeter({
 
   // Level badge styling
   const levelColors: Record<number, { bg: string; text: string; border: string }> = {
-    1: { bg: "bg-blue-500/15", text: "text-blue-400", border: "border-blue-500/30" },
-    2: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/30" },
-    3: { bg: "bg-purple-500/15", text: "text-purple-400", border: "border-purple-500/30" },
-    4: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/30" },
+    1: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/30" },
+    2: { bg: "bg-amber-500/25", text: "text-amber-300", border: "border-amber-500/40" },
+    3: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/30" },
+    4: { bg: "bg-emerald-500/25", text: "text-emerald-300", border: "border-emerald-500/40" },
   };
 
   const levelStyle = levelColors[tierLevel] || levelColors[1];
@@ -55,7 +55,7 @@ export default function CareerReadinessMeter({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="7"
-                className="text-[#0F172A]"
+                className="text-[#161412]"
               />
               <motion.circle
                 cx="50"
@@ -72,7 +72,7 @@ export default function CareerReadinessMeter({
               />
               <defs>
                 <linearGradient id="readinessGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#3B82F6" />
+                  <stop offset="0%" stopColor="#C8922A" />
                   <stop offset="100%" stopColor="#10B981" />
                 </linearGradient>
               </defs>
@@ -111,7 +111,7 @@ export default function CareerReadinessMeter({
         </div>
 
         {/* Next Unlock Requirement */}
-        <div className="sm:max-w-xs p-3 rounded-xl bg-[#0F172A] border border-border/80">
+        <div className="sm:max-w-xs p-3 rounded-xl bg-[#161412] border border-border/80">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-primary mb-1">
             <Target className="h-3.5 w-3.5" />
             <span>Next Level Target</span>
@@ -130,7 +130,7 @@ export default function CareerReadinessMeter({
           return (
             <div
               key={pillar.id}
-              className="p-4 rounded-xl border border-border/80 bg-[#0F172A]/60 hover:bg-[#0F172A] transition-colors"
+              className="p-4 rounded-xl border border-border/80 bg-[#161412]/60 hover:bg-[#161412] transition-colors"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">

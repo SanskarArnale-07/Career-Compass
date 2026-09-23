@@ -46,9 +46,9 @@ const PRIORITY_BADGES: Record<
   },
   Recommended: {
     label: "Recommended",
-    bg: "bg-blue-500/15",
-    text: "text-blue-400",
-    border: "border-blue-500/30",
+    bg: "bg-amber-500/10",
+    text: "text-[#D4A853]",
+    border: "border-amber-500/25",
   },
 };
 
@@ -107,7 +107,7 @@ export default function AdaptiveSprintList({
               className={`p-3.5 rounded-xl border flex items-start gap-3.5 transition-all cursor-pointer select-none ${
                 task.done
                   ? "border-emerald-500/25 bg-emerald-500/5"
-                  : "border-border bg-[#0F172A] hover:border-primary/40 hover:bg-card-hover"
+                  : "border-border/70 bg-[#161412] hover:border-primary/40 hover:bg-[#1E1A16]"
               }`}
             >
               <button
@@ -156,7 +156,7 @@ export default function AdaptiveSprintList({
             className={`p-3.5 rounded-xl border flex items-start gap-3.5 transition-all ${
               task.done
                 ? "border-emerald-500/25 bg-emerald-500/5"
-                : "border-border bg-[#0F172A] hover:border-primary/40"
+                : "border-border/70 bg-[#161412] hover:border-primary/40 hover:bg-[#1E1A16]"
             }`}
           >
             <button
@@ -205,7 +205,7 @@ export default function AdaptiveSprintList({
             value={newInput}
             onChange={(e) => setNewInput(e.target.value)}
             placeholder="Add a personalized sprint task or study goal..."
-            className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#0F172A] border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+            className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#161412] border border-border/80 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
           />
           <button
             type="submit"

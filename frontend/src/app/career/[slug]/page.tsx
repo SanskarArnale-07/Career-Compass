@@ -452,7 +452,7 @@ export default function CareerDetailPage() {
         </div>
 
         {/* 10. Bottom Action CTA */}
-        <section className="relative overflow-hidden rounded-2xl border border-border bg-linear-to-r from-card via-[#0F172A] to-card p-8 sm:p-12 text-center">
+        <section className="relative overflow-hidden rounded-2xl border border-border bg-linear-to-r from-card via-[#161412] to-card p-8 sm:p-12 text-center">
           <div className="relative z-10 max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mb-4">
               <Compass className="h-3.5 w-3.5" />

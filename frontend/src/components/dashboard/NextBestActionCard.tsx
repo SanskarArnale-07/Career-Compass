@@ -27,14 +27,14 @@ const CATEGORY_CONFIG: Record<
   learn: {
     label: "Curriculum Step",
     icon: BookOpen,
-    color: "text-blue-400",
-    bg: "bg-blue-500/10 border-blue-500/20",
+    color: "text-amber-300",
+    bg: "bg-amber-500/10 border-amber-500/20",
   },
   build: {
     label: "Portfolio Project",
     icon: FolderKanban,
-    color: "text-purple-400",
-    bg: "bg-purple-500/10 border-purple-500/20",
+    color: "text-[#D4A853]",
+    bg: "bg-amber-500/15 border-amber-500/30",
   },
   practice: {
     label: "Skill Bridge Workout",
@@ -63,7 +63,7 @@ export default function NextBestActionCard({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative overflow-hidden rounded-2xl border-2 border-primary/35 bg-linear-to-br from-card via-[#0F172A] to-primary/10 p-6 sm:p-8 shadow-xl shadow-primary/5"
+      className="relative overflow-hidden rounded-2xl border-2 border-primary/35 bg-linear-to-br from-card via-[#161412] to-primary/10 p-6 sm:p-8 shadow-xl shadow-primary/5"
     >
       {/* Subtle backdrop glow */}
       <div className="absolute top-0 right-0 -mt-10 -mr-10 h-48 w-48 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
