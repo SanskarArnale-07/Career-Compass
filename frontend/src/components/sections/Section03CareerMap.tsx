@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Compass } from "lucide-react";
+import { CAREER_DOMAINS } from "@/lib/career-hierarchy";
 
 interface CareerNode {
   id: string;
@@ -22,137 +23,88 @@ interface DomainMap {
   paths: CareerNode[];
 }
 
-const CAREER_TAXONOMY: DomainMap[] = [
-  {
-    id: "engineering",
-    domainName: "ENGINEERING",
-    overallMatch: "92%",
-    paths: [
-      {
-        id: "software",
-        label: "Software Engineering",
-        match: "92%",
-        isPrimaryMatch: true,
-        specializations: [
-          {
-            name: "Backend Systems",
-            roles: ["Distributed Systems Engineer", "API Architect"],
-          },
-          {
-            name: "Full Stack",
-            roles: ["Application Engineer", "Product Engineer"],
-          },
-          {
-            name: "Frontend Platforms",
-            roles: ["Design Systems Engineer", "Web Performance Lead"],
-          },
-        ],
-      },
-      {
-        id: "data-eng",
-        label: "Data & Systems",
-        match: "85%",
-        specializations: [
-          {
-            name: "Pipelines & ETL",
-            roles: ["Data Infrastructure Engineer", "Stream Processing Dev"],
-          },
-          {
-            name: "Cloud Platforms",
-            roles: ["Site Reliability Engineer", "Cloud Architect"],
-          },
-        ],
-      },
-      {
-        id: "embedded",
-        label: "Hardware & Robotics",
-        match: "78%",
-        specializations: [
-          {
-            name: "Firmware Systems",
-            roles: ["IoT Systems Engineer", "Robotics Controller Dev"],
-          },
-        ],
-      },
-    ],
+// Directional illustrative alignment percentages for visual demonstration
+const DOMAIN_SAMPLE_MATCHES: Record<
+  string,
+  { overall: string; pathMatches: Record<string, { match: string; isPrimary?: boolean }> }
+> = {
+  "engineering-technology": {
+    overall: "92%",
+    pathMatches: {
+      "software-development": { match: "92%", isPrimary: true },
+      "engineering": { match: "84%" },
+    },
   },
-  {
-    id: "data-ai",
-    domainName: "DATA & INTELLIGENCE",
-    overallMatch: "87%",
-    paths: [
-      {
-        id: "data-analytics",
-        label: "Data Analytics",
-        match: "87%",
-        isPrimaryMatch: true,
-        specializations: [
-          {
-            name: "Decision Intelligence",
-            roles: ["Product Analytics Lead", "Growth Data Scientist"],
-          },
-          {
-            name: "Business Intelligence",
-            roles: ["BI Solutions Architect", "Quantitative Strategist"],
-          },
-        ],
-      },
-      {
-        id: "machine-learning",
-        label: "Machine Learning / AI",
-        match: "86%",
-        specializations: [
-          {
-            name: "Deep Learning",
-            roles: ["AI Model Engineer", "NLP Research Engineer"],
-          },
-          {
-            name: "MLOps",
-            roles: ["Inference Infrastructure Dev", "ML Platform Engineer"],
-          },
-        ],
-      },
-    ],
+  "data-ai": {
+    overall: "87%",
+    pathMatches: {
+      "ai-ml-data-science": { match: "87%", isPrimary: true },
+    },
   },
-  {
-    id: "design",
-    domainName: "DESIGN & CREATIVE",
-    overallMatch: "81%",
-    paths: [
-      {
-        id: "ux-product",
-        label: "UX / Product Design",
-        match: "81%",
-        isPrimaryMatch: true,
-        specializations: [
-          {
-            name: "Product Experience",
-            roles: ["Lead Product Designer", "Interaction Specialist"],
-          },
-          {
-            name: "User Research",
-            roles: ["Cognitive Ergonomics Researcher", "Usability Architect"],
-          },
-        ],
-      },
-      {
-        id: "visual-brand",
-        label: "Design Systems",
-        match: "77%",
-        specializations: [
-          {
-            name: "Design Systems",
-            roles: ["Design Technologist", "Brand Experience Designer"],
-          },
-        ],
-      },
-    ],
+  "design-creative": {
+    overall: "81%",
+    pathMatches: {
+      "design-creative": { match: "81%", isPrimary: true },
+    },
   },
-];
+  "business-finance-management": {
+    overall: "85%",
+    pathMatches: {
+      "finance-investment": { match: "85%", isPrimary: true },
+      "management-product": { match: "83%" },
+      "entrepreneurship": { match: "79%" },
+    },
+  },
+  "healthcare-sciences": {
+    overall: "78%",
+    pathMatches: {
+      "medicine-healthcare": { match: "78%", isPrimary: true },
+      "scientific-research": { match: "75%" },
+    },
+  },
+  "media-communications-social": {
+    overall: "76%",
+    pathMatches: {
+      "marketing-media": { match: "76%", isPrimary: true },
+      "law-policy": { match: "72%" },
+      "psychology-social": { match: "70%" },
+    },
+  },
+};
+
+/**
+ * Derived directly from the single source of truth: CAREER_DOMAINS.
+ * Guarantees zero duplicate or out-of-sync taxonomy definitions.
+ */
+export const CAREER_TAXONOMY: DomainMap[] = CAREER_DOMAINS.map((domain) => {
+  const matchInfo = DOMAIN_SAMPLE_MATCHES[domain.id] || {
+    overall: "80%",
+    pathMatches: {},
+  };
+
+  return {
+    id: domain.id,
+    domainName: domain.name.toUpperCase(),
+    overallMatch: matchInfo.overall,
+    paths: domain.paths.map((p) => {
+      const pm = matchInfo.pathMatches[p.id] || { match: "75%" };
+      return {
+        id: p.id,
+        label: p.name,
+        match: pm.match,
+        isPrimaryMatch: pm.isPrimary || false,
+        specializations: p.specializations.map((s) => ({
+          name: s.name,
+          roles: s.roles.map((r) => r.title),
+        })),
+      };
+    }),
+  };
+});
 
 export function Section03CareerMap() {
-  const [activeDomainId, setActiveDomainId] = useState<string>("engineering");
-  const [activePathId, setActivePathId] = useState<string>("software");
+  const [activeDomainId, setActiveDomainId] = useState<string>("engineering-technology");
+  const [activePathId, setActivePathId] = useState<string>("software-development");
 
   const currentDomain =
     CAREER_TAXONOMY.find((d) => d.id === activeDomainId) || CAREER_TAXONOMY[0];

@@ -16,6 +16,7 @@ import type {
 } from "./types";
 
 export * from "./types";
+export * from "../career-hierarchy";
 export { CAREER_INTELLIGENCE_REGISTRY, CAREER_NAME_TO_ID };
 
 /**

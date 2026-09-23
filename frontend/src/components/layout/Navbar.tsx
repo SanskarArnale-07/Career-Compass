@@ -67,10 +67,10 @@ export function Navbar() {
         {/* Center: Editorial Navigation Links */}
         <nav className="hidden lg:flex items-center gap-8 text-xs font-mono uppercase tracking-[0.1em]">
           <Link
-            href="/dashboard"
+            href="/"
             className="text-muted-foreground hover:text-foreground transition-colors py-1 relative group"
           >
-            <span>Dashboard</span>
+            <span>Home</span>
             <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
           </Link>
           <Link
@@ -194,36 +194,48 @@ export function Navbar() {
         <div className="lg:hidden border-t border-border/60 bg-[#0E0E0E]/95 backdrop-blur-xl">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-3 font-mono text-xs uppercase tracking-wider">
             {isAuthenticated && user && (
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#141210] border border-border/60 mb-1">
-                <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">
-                    {firstName.charAt(0).toUpperCase()}
+              <div className="p-2.5 rounded-lg bg-[#141210] border border-border/60 mb-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="h-7 w-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">
+                      {firstName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-semibold text-foreground">
+                        {user.name}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground truncate max-w-[170px]">
+                        {user.email}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <p className="text-xs font-semibold text-foreground">
-                      {user.name}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground truncate max-w-[170px]">
-                      {user.email}
-                    </p>
-                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="p-1.5 rounded text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors cursor-pointer"
+                    title="Log out"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
                 </div>
-                <button
-                  onClick={handleLogout}
-                  className="p-1.5 rounded text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-                  title="Log out"
-                >
-                  <LogOut className="h-4 w-4" />
-                </button>
+                <div className="mt-2 pt-2 border-t border-border/50">
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <LayoutDashboard className="h-3.5 w-3.5 text-primary/80" />
+                    <span>My Dashboard</span>
+                  </Link>
+                </div>
               </div>
             )}
 
             <Link
-              href="/dashboard"
+              href="/"
               className="text-muted-foreground hover:text-foreground transition-colors py-1.5"
               onClick={() => setMobileOpen(false)}
             >
-              Dashboard
+              Home
             </Link>
             <Link
               href="/coach"

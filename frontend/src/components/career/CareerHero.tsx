@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import type { CareerDetail } from "@/lib/career-details/types";
+import { getCareerHierarchy } from "@/lib/career-hierarchy";
 
 interface CareerHeroProps {
   career: CareerDetail;
@@ -17,6 +18,7 @@ export default function CareerHero({
   explanation,
   onStartRoadmap,
 }: CareerHeroProps) {
+  const hierarchy = getCareerHierarchy(career.slug);
   const IconComponent =
     (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[career.icon] ?? LucideIcons.Compass;
 
@@ -37,12 +39,19 @@ export default function CareerHero({
             transition={{ duration: 0.6 }}
             className="flex-1 min-w-0"
           >
-            {/* Category badge */}
-            <div className="flex items-center gap-2 mb-4">
+            {/* Category badge & Hierarchy trail */}
+            <div className="flex flex-wrap items-center gap-2 mb-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary uppercase tracking-wider">
                 <IconComponent className="h-3.5 w-3.5" />
-                {career.category}
+                {hierarchy?.domain.name || career.category}
               </span>
+              {hierarchy && (
+                <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono text-muted-foreground/80 bg-[#161412] px-2.5 py-1 rounded border border-border/70">
+                  <span>{hierarchy.domain.name}</span>
+                  <span className="text-muted-foreground/40">→</span>
+                  <span className="text-primary/90">{hierarchy.path.name}</span>
+                </div>
+              )}
             </div>
 
             {/* Title */}
@@ -51,9 +60,29 @@ export default function CareerHero({
             </h1>
 
             {/* Tagline */}
-            <p className="font-sans text-lg sm:text-xl text-muted-foreground mb-6 max-w-2xl leading-relaxed">
+            <p className="font-sans text-lg sm:text-xl text-muted-foreground mb-5 max-w-2xl leading-relaxed">
               {career.tagline}
             </p>
+
+            {/* Hierarchy Specializations & Roles */}
+            {hierarchy && hierarchy.path.specializations.length > 0 && (
+              <div className="mb-6 p-3.5 rounded-xl bg-[#141210] border border-border/70 max-w-2xl">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 mb-1.5">
+                  Hierarchy Specializations &amp; Roles:
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {hierarchy.path.specializations.map((spec) => (
+                    <div
+                      key={spec.id}
+                      className="text-xs px-2.5 py-1 rounded-lg bg-[#1A1612] border border-border/60 text-secondary-foreground"
+                    >
+                      <span className="font-semibold text-foreground">{spec.name}: </span>
+                      <span className="text-muted-foreground">{spec.roles.map((r) => r.title).join(", ")}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Personalized explanation */}
             {explanation && (

@@ -25,6 +25,7 @@ import {
   type CareerIntelligence,
 } from "@/lib/career-intelligence";
 import { getCareerSlug } from "@/lib/career-details";
+import { getCareerHierarchy } from "@/lib/career-hierarchy";
 import {
   getStrengthsAndGaps,
   getPersonalizedSkills,
@@ -274,11 +275,22 @@ export default function CareerDetailPage() {
             </Link>
             <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
             <Link
-              href="/results"
+              href="/careers"
               className="hover:text-foreground transition-colors shrink-0"
             >
-              Results
+              Careers
             </Link>
+            {(() => {
+              const hierarchy = getCareerHierarchy(career.slug);
+              return hierarchy ? (
+                <>
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
+                  <span className="text-muted-foreground/80 shrink-0">
+                    {hierarchy.domain.name}
+                  </span>
+                </>
+              ) : null;
+            })()}
             <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
             <span className="text-foreground font-medium truncate max-w-45 sm:max-w-none">
               {career.title}

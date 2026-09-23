@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Compass } from "lucide-react";
+import { ArrowRight, Compass, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { SpotlightCard } from "@/components/interactive/SpotlightCard";
 import { getCareerIcon } from "@/lib/career-icons";
@@ -10,6 +10,8 @@ import {
   getAlignmentLabel,
 } from "@/lib/career-directions";
 import { getCareerSlug } from "@/lib/career-details";
+import { getCareerHierarchy } from "@/lib/career-hierarchy";
+import { CAREER_MATCH_THRESHOLD } from "@/lib/constants/matching";
 
 import type { CareerMatch } from "@/lib/types/assessment";
 
@@ -22,9 +24,15 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
     <div className="w-full">
       {/* Section Header */}
       <div className="mb-8">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary mb-3">
-          <Compass className="h-3.5 w-3.5" />
-          <span>Personalized For You</span>
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary">
+            <Compass className="h-3.5 w-3.5" />
+            <span>Personalized For You</span>
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#181512] border border-border/80 text-[11px] font-mono text-muted-foreground">
+            <ShieldCheck className="h-3 w-3 text-primary/70" />
+            <span>Showing careers with {CAREER_MATCH_THRESHOLD}% or higher profile alignment</span>
+          </div>
         </div>
         <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
           Your Top Career Matches
@@ -40,15 +48,19 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
           const detail = CAREER_EXPLORATION_MAP[career.career_name];
           const displayTitle = detail?.title || career.career_name;
           const explanation = career.explanation;
-          const subRoles = detail?.subRoles || [
-            "Domain Specialist",
-            "Technical Analyst",
-            "Project Lead",
-            "Strategic Associate",
-          ];
+          const hierarchy = getCareerHierarchy(career.career_name);
+          const subRoles =
+            hierarchy?.sampleRoles && hierarchy.sampleRoles.length > 0
+              ? hierarchy.sampleRoles
+              : detail?.subRoles || [
+                  "Domain Specialist",
+                  "Technical Analyst",
+                  "Project Lead",
+                  "Strategic Associate",
+                ];
           const alignment = getAlignmentLabel(idx);
           const Icon = getCareerIcon(career.career_name);
-          const slug = getCareerSlug(career.career_name);
+          const slug = hierarchy?.path.slug || getCareerSlug(career.career_name);
           const isTopMatch = idx === 0;
 
           return (
@@ -74,7 +86,7 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
 
                 <div>
                   {/* Header: Icon + Qualitative Alignment & Match % */}
-                  <div className="flex justify-between items-start mb-4">
+                  <div className="flex justify-between items-start mb-3">
                     <div className={`p-2.5 rounded-xl transition-colors ${
                       isTopMatch 
                         ? "bg-primary/15 border border-primary/30 text-primary shadow-xs shadow-primary/20" 
@@ -99,6 +111,28 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
                     </div>
                   </div>
 
+                  {/* Hierarchy Trail: Domain -> Path -> Specialization -> Role */}
+                  {hierarchy && hierarchy.breadcrumbs.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1 text-[10px] font-mono text-muted-foreground/75 mb-2 leading-tight">
+                      {hierarchy.breadcrumbs.map((crumb, cIdx) => (
+                        <span key={cIdx} className="inline-flex items-center gap-1">
+                          <span
+                            className={
+                              cIdx === hierarchy.breadcrumbs.length - 1
+                                ? "text-primary/90 font-medium"
+                                : "text-muted-foreground/70"
+                            }
+                          >
+                            {crumb}
+                          </span>
+                          {cIdx < hierarchy.breadcrumbs.length - 1 && (
+                            <span className="text-muted-foreground/40 text-[9px]">→</span>
+                          )}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Title */}
                   <h3 className="font-heading text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors tracking-tight">
                     {displayTitle}
@@ -109,13 +143,15 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
                     &ldquo;{explanation}&rdquo;
                   </p>
 
-                  {/* "You might explore" roles */}
+                  {/* Specializations & Key Roles from Hierarchy */}
                   <div className="py-3 px-3.5 rounded-xl bg-[#161412] border border-border/80 mb-5">
                     <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground/80 mb-2">
-                      Directional Pathways:
+                      {hierarchy?.primarySpecialization
+                        ? `${hierarchy.primarySpecialization.name}:`
+                        : "Directional Pathways:"}
                     </p>
                     <ul className="space-y-1.5 text-xs text-foreground/90 font-medium">
-                      {subRoles.slice(0, 4).map((role) => (
+                      {subRoles.slice(0, 3).map((role) => (
                         <li key={role} className="flex items-center gap-2">
                           <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${isTopMatch ? "bg-primary" : "bg-primary/70"}`} />
                           <span>{role}</span>
@@ -147,3 +183,4 @@ export function CareerMatches({ careers }: CareerMatchesProps) {
     </div>
   );
 }
+

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, AlertTriangle, Compass, Info, ChevronDown, ChevronUp, Sparkles, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, AlertTriangle, Compass, Info, ChevronDown, ChevronUp, Sparkles, Check, RotateCcw } from "lucide-react";
 import { SuitabilityScores } from "@/components/results/SuitabilityScores";
 import { CareerMatches } from "@/components/results/CareerMatches";
 import { UserSignals } from "@/components/results/UserSignals";
@@ -13,6 +13,7 @@ import { BlurText } from "@/components/interactive/BlurText";
 import { assessmentQuestions } from "@/lib/assessment-data";
 import { saveAssessmentResult, loadCareerJourney } from "@/lib/persistence";
 import { useAuth } from "@/context/AuthContext";
+import { getRecommendedCareers, CAREER_MATCH_THRESHOLD } from "@/lib/constants/matching";
 import type { StoredResults } from "@/lib/career-details/personalization";
 
 import type { AssessmentResponse } from "@/lib/types/assessment";
@@ -282,8 +283,12 @@ export default function ResultsPage() {
   // ── Results ───────────────────────────────────────────────────
   if (!result) return null;
 
-  // Collect all skill gaps and next steps from top careers
-  const allSkillGaps = result.top_careers.flatMap((c) =>
+  // Filter and sort career matches using central threshold (strictly >= 40%, no score inflation)
+  const qualifyingCareers = getRecommendedCareers(result.top_careers, CAREER_MATCH_THRESHOLD);
+
+  // Collect all skill gaps and next steps from qualifying careers (or fallback to top_careers)
+  const careersForInsights = qualifyingCareers.length > 0 ? qualifyingCareers : result.top_careers;
+  const allSkillGaps = careersForInsights.flatMap((c) =>
     c.skill_gaps.map((sg) => ({
       skill: sg,
       level: "Focus Area",
@@ -295,7 +300,7 @@ export default function ResultsPage() {
     (gap, idx, arr) => arr.findIndex((g) => g.skill === gap.skill) === idx
   );
 
-  const allNextSteps = result.top_careers
+  const allNextSteps = careersForInsights
     .flatMap((c) => c.next_steps)
     .filter((step, idx, arr) => arr.indexOf(step) === idx)
     .slice(0, 5);
@@ -328,7 +333,7 @@ export default function ResultsPage() {
             How your matches are scored
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            These matches are scored from your trait profile across 8 dimensions. They reflect your strongest alignment based on your assessment responses — not a prediction, but a data-driven starting point.
+            These matches are scored from your trait profile across 8 dimensions. Only careers meeting or exceeding our {CAREER_MATCH_THRESHOLD}% profile alignment threshold are recommended as meaningful directional trajectories.
           </p>
         </div>
       </div>
@@ -336,7 +341,37 @@ export default function ResultsPage() {
       <div className="space-y-16">
         {/* 3 & 4. CAREER DIRECTIONS WORTH EXPLORING + MULTIPLE CARDS */}
         <section>
-          <CareerMatches careers={result.top_careers} />
+          {qualifyingCareers.length > 0 ? (
+            <CareerMatches careers={qualifyingCareers} />
+          ) : (
+            <div className="rounded-2xl border border-border/80 bg-[#141210] p-8 sm:p-12 text-center max-w-2xl mx-auto shadow-xl">
+              <div className="h-14 w-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5">
+                <Compass className="h-7 w-7" />
+              </div>
+              <h2 className="font-heading text-2xl font-bold text-foreground mb-3">
+                No Direct Matches Above Threshold
+              </h2>
+              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-6">
+                We couldn&apos;t find any strong matches above your current alignment threshold ({CAREER_MATCH_THRESHOLD}%).
+                The assessment produces directional guidance; exploring broader career domains is available, or you can retake the assessment.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  href="/assessment"
+                  className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-semibold text-white hover:bg-primary-hover shadow-sm transition-colors cursor-pointer"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Retake Assessment
+                </Link>
+                <Link
+                  href="/careers"
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-[#181512] px-6 text-sm font-semibold text-foreground hover:bg-[#1E1A16] hover:border-border transition-colors"
+                >
+                  Explore All Career Domains
+                </Link>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Optional Account Creation CTA for Guest Users */}

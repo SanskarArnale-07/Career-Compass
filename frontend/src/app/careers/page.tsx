@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Compass, Sparkles } from "lucide-react";
 import { getAllCareerIntelligence, type CareerIntelligence } from "@/lib/career-intelligence";
 import { getCareerIcon } from "@/lib/career-icons";
+import { getCareerHierarchy } from "@/lib/career-hierarchy";
 
 export const metadata = {
   title: "Explore More Careers | Career Compass",
@@ -75,6 +76,7 @@ export default function CareersPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {careers.map((career) => {
               const IconComponent = getCareerIcon(career.careerName);
+              const hierarchy = getCareerHierarchy(career.slug);
               const difficulty =
                 career.snapshot.find((s) => s.label.includes("Difficulty"))?.value || "Moderate";
               const growth =
@@ -86,23 +88,43 @@ export default function CareersPage() {
                   href={`/career/${career.slug}`}
                   className="group flex flex-col p-6 rounded-xl bg-card border border-border/70 shadow-sm hover:border-primary/40 hover:bg-card-hover transition-all duration-300 relative overflow-hidden"
                 >
-                  <div className="flex items-start justify-between gap-4 mb-4">
+                  <div className="flex items-start justify-between gap-4 mb-3">
                     <div className="h-11 w-11 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 transition-transform shrink-0">
                       <IconComponent className="h-5 w-5" />
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#161412] text-[11px] font-mono font-medium text-muted-foreground border border-border/60">
-                      {career.category}
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#161412] text-[10px] font-mono font-medium text-muted-foreground border border-border/60">
+                      {hierarchy?.domain.name || career.category}
                     </span>
                   </div>
+
+                  {hierarchy && (
+                    <div className="text-[10px] font-mono text-muted-foreground/60 mb-1 flex items-center gap-1">
+                      <span>{hierarchy.domain.name}</span>
+                      <span>→</span>
+                      <span className="text-primary/80">{hierarchy.path.name}</span>
+                    </div>
+                  )}
 
                   <h2 className="font-heading text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-2 tracking-tight">
                     {career.title}
                   </h2>
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed mb-6 flex-1 font-light">
+                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed mb-4 flex-1 font-light">
                     {career.tagline}
                   </p>
 
-                  <div className="pt-4 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
+                  {/* Specializations list from hierarchy */}
+                  {hierarchy && hierarchy.path.specializations.length > 0 && (
+                    <div className="mb-4 pt-3 border-t border-border/40">
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70 mb-1">
+                        Specializations:
+                      </p>
+                      <p className="text-xs text-secondary-foreground font-medium truncate">
+                        {hierarchy.path.specializations.map((s) => s.name).join(" • ")}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="pt-3 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-3">
                       <span>Diff: <strong className="text-foreground font-medium">{difficulty}</strong></span>
                       <span>Growth: <strong className="text-foreground font-medium">{growth}</strong></span>
