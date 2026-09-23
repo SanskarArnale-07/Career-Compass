@@ -19,7 +19,10 @@ import { useAuth } from "@/context/AuthContext";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/dashboard";
+  const rawRedirect = searchParams.get("redirect");
+  // Per requirements: after successful login, redirect to Home ("/"); do NOT route to "/dashboard"
+  const redirectUrl =
+    rawRedirect && rawRedirect !== "/dashboard" ? rawRedirect : "/";
 
   const { login } = useAuth();
 
@@ -247,7 +250,7 @@ function LoginForm() {
             Don&apos;t have an account?{" "}
             <Link
               href={`/signup${
-                redirectUrl !== "/dashboard"
+                redirectUrl !== "/"
                   ? `?redirect=${encodeURIComponent(redirectUrl)}`
                   : ""
               }`}

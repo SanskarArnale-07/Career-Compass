@@ -1,180 +1,390 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Constellation node positions (percentage-based, relative to container)
-const NODES = [
-  { x: 18, y: 22, label: "Design", delay: 0 },
-  { x: 75, y: 15, label: "Engineering", delay: 0.8 },
-  { x: 85, y: 55, label: "Data", delay: 1.6 },
-  { x: 70, y: 82, label: "Business", delay: 2.4 },
-  { x: 25, y: 78, label: "Research", delay: 0.4 },
-  { x: 10, y: 50, label: "Healthcare", delay: 1.2 },
-  { x: 42, y: 10, label: "Technology", delay: 2.0 },
-  { x: 58, y: 88, label: "Creative", delay: 2.8 },
-];
+interface CareerPath {
+  name: string;
+  role: string;
+}
 
-// Trajectory lines from center to nodes
-const TRAJECTORIES = [
-  { endX: 18, endY: 22 },
-  { endX: 75, endY: 15 },
-  { endX: 85, endY: 55 },
-  { endX: 70, endY: 82 },
-  { endX: 25, endY: 78 },
-  { endX: 10, endY: 50 },
-  { endX: 42, endY: 10 },
-  { endX: 58, endY: 88 },
+interface DomainNode {
+  id: string;
+  label: string;
+  angle: number; // in degrees
+  distance: number; // percentage radius from center
+  paths: CareerPath[];
+}
+
+const DOMAINS: DomainNode[] = [
+  {
+    id: "engineering",
+    label: "Engineering",
+    angle: -90, // Top
+    distance: 36,
+    paths: [
+      { name: "Software Engineering", role: "Architecture & Systems" },
+      { name: "Civil Engineering", role: "Infrastructure & Design" },
+      { name: "Mechanical Engineering", role: "Robotics & Hardware" },
+    ],
+  },
+  {
+    id: "technology",
+    label: "Technology",
+    angle: -38,
+    distance: 38,
+    paths: [
+      { name: "Cybersecurity", role: "SecOps & Defense" },
+      { name: "Cloud Architecture", role: "Distributed Infra" },
+      { name: "Systems & DevOps", role: "Reliability & Scale" },
+    ],
+  },
+  {
+    id: "data",
+    label: "Data",
+    angle: 14,
+    distance: 37,
+    paths: [
+      { name: "Data Science", role: "Predictive Modeling" },
+      { name: "Analytics", role: "Business Intelligence" },
+      { name: "Machine Learning / AI", role: "Deep Learning" },
+    ],
+  },
+  {
+    id: "business",
+    label: "Business",
+    angle: 68,
+    distance: 36,
+    paths: [
+      { name: "Product Management", role: "Strategy & Execution" },
+      { name: "Entrepreneurship", role: "Venture Creation" },
+      { name: "Finance & Strategy", role: "Capital & Growth" },
+    ],
+  },
+  {
+    id: "society",
+    label: "People & Society",
+    angle: 125,
+    distance: 38,
+    paths: [
+      { name: "Psychology", role: "Behavioral Analysis" },
+      { name: "Public Policy", role: "Governance & Law" },
+      { name: "Education & Impact", role: "Social Leadership" },
+    ],
+  },
+  {
+    id: "science",
+    label: "Science",
+    angle: 180,
+    distance: 36,
+    paths: [
+      { name: "Scientific Research", role: "Experimental Inquiry" },
+      { name: "Biotechnology", role: "Genomics & Pharma" },
+      { name: "Applied Physics", role: "Materials & Energy" },
+    ],
+  },
+  {
+    id: "design",
+    label: "Design",
+    angle: 232,
+    distance: 37,
+    paths: [
+      { name: "Product Design", role: "Interface & Experience" },
+      { name: "Visual Systems", role: "Brand & Graphic Craft" },
+      { name: "UX Research", role: "Cognitive Ergonomics" },
+    ],
+  },
 ];
 
 export function HeroConstellation() {
-  const [mounted, setMounted] = useState(false);
+  const [activeDomainId, setActiveDomainId] = useState<string>("engineering");
+  const [autoRotate, setAutoRotate] = useState(true);
 
+  // Auto cycle active domain every 4.5s if not manually paused
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (!autoRotate) return;
+    const interval = setInterval(() => {
+      setActiveDomainId((current) => {
+        const currentIndex = DOMAINS.findIndex((d) => d.id === current);
+        const nextIndex = (currentIndex + 1) % DOMAINS.length;
+        return DOMAINS[nextIndex].id;
+      });
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [autoRotate]);
+
+  const activeDomain = DOMAINS.find((d) => d.id === activeDomainId) || DOMAINS[0];
+
+  // Helper to convert polar coordinates (center 50,50) to Cartesian %
+  const getCoordinates = (angleDeg: number, radiusPercent: number) => {
+    const rad = (angleDeg * Math.PI) / 180;
+    return {
+      x: 50 + radiusPercent * Math.cos(rad),
+      y: 50 + radiusPercent * Math.sin(rad),
+    };
+  };
 
   return (
-    <div className="relative w-full max-w-[520px] aspect-square mx-auto" aria-hidden="true">
-      {/* Ambient glow behind everything */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-primary/8 blur-[80px]" />
+    <div
+      className="relative w-full max-w-[680px] lg:max-w-[760px] aspect-[1/0.92] sm:aspect-square mx-auto select-none"
+      onMouseEnter={() => setAutoRotate(false)}
+      onMouseLeave={() => setAutoRotate(true)}
+    >
+      {/* ── Background Instrument Grid & Radial Gradients ──────────── */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        {/* Soft amber beacon behind YOU center */}
+        <div className="w-56 h-56 rounded-full bg-primary/10 blur-[90px] animate-pulse" />
+        {/* Subtle secondary ambient glow */}
+        <div className="w-[85%] h-[85%] rounded-full border border-border/20" />
       </div>
 
-      {/* SVG Canvas for orbits and trajectories */}
+      {/* ── SVG Navigation Astrolabe / Radar Circles ───────────────── */}
       <svg
         viewBox="0 0 100 100"
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full pointer-events-none"
         style={{ overflow: "visible" }}
       >
-        {/* Orbit rings */}
+        {/* Degree coordinate ticks (Instrument style) */}
         <circle
-          cx="50" cy="50" r="18"
+          cx="50"
+          cy="50"
+          r="48"
           fill="none"
           stroke="var(--border)"
-          strokeWidth="0.2"
-          opacity="0.5"
-          className="animate-slow-rotate"
-          style={{ transformOrigin: "50px 50px" }}
+          strokeWidth="0.12"
+          strokeDasharray="0.6 2.4"
+          opacity="0.3"
         />
+
+        {/* Outer orbital boundary */}
         <circle
-          cx="50" cy="50" r="32"
+          cx="50"
+          cy="50"
+          r="42"
           fill="none"
           stroke="var(--border)"
           strokeWidth="0.15"
           opacity="0.35"
-          className="animate-slow-rotate"
-          style={{ transformOrigin: "50px 50px", animationDuration: "90s", animationDirection: "reverse" }}
+        />
+
+        {/* Domain node orbit ring */}
+        <circle
+          cx="50"
+          cy="50"
+          r="36.5"
+          fill="none"
+          stroke="var(--border)"
+          strokeWidth="0.2"
+          strokeDasharray="2 2"
+          opacity="0.4"
+        />
+
+        {/* Inner sub-orbit */}
+        <circle
+          cx="50"
+          cy="50"
+          r="22"
+          fill="none"
+          stroke="var(--border)"
+          strokeWidth="0.15"
+          opacity="0.3"
+        />
+
+        {/* Core compass boundary around YOU */}
+        <circle
+          cx="50"
+          cy="50"
+          r="9"
+          fill="none"
+          stroke="var(--primary)"
+          strokeWidth="0.3"
+          opacity="0.45"
         />
         <circle
-          cx="50" cy="50" r="45"
+          cx="50"
+          cy="50"
+          r="13"
           fill="none"
           stroke="var(--border)"
           strokeWidth="0.1"
+          opacity="0.25"
+        />
+
+        {/* Crosshair axis markers */}
+        <line
+          x1="50"
+          y1="2"
+          x2="50"
+          y2="98"
+          stroke="var(--border)"
+          strokeWidth="0.08"
+          opacity="0.2"
+        />
+        <line
+          x1="2"
+          y1="50"
+          x2="98"
+          y2="50"
+          stroke="var(--border)"
+          strokeWidth="0.08"
           opacity="0.2"
         />
 
-        {/* Trajectory lines from center to nodes */}
-        {TRAJECTORIES.map((t, i) => (
-          <line
-            key={`traj-${i}`}
-            x1="50" y1="50"
-            x2={t.endX} y2={t.endY}
-            stroke="var(--border)"
-            strokeWidth="0.12"
-            opacity={mounted ? 0.3 : 0}
-            style={{
-              transition: `opacity 1.5s ease ${i * 0.15}s`,
-            }}
-          />
-        ))}
+        {/* Vector trajectories from YOU center to each Domain */}
+        {DOMAINS.map((domain) => {
+          const coords = getCoordinates(domain.angle, domain.distance);
+          const isActive = domain.id === activeDomainId;
 
-        {/* Central amber pulse */}
-        <circle
-          cx="50" cy="50" r="4"
-          fill="var(--primary)"
-          opacity="0.15"
-          className="animate-pulse-glow"
-        />
-        <circle
-          cx="50" cy="50" r="2.5"
-          fill="var(--primary)"
-          opacity="0.25"
-          className="animate-pulse-glow"
-          style={{ animationDelay: "0.5s" }}
-        />
-        {/* Center dot */}
-        <circle
-          cx="50" cy="50" r="1.2"
-          fill="var(--primary)"
-          opacity="0.9"
-        />
+          return (
+            <g key={`vector-${domain.id}`}>
+              {/* Domain line */}
+              <line
+                x1="50"
+                y1="50"
+                x2={coords.x}
+                y2={coords.y}
+                stroke={isActive ? "var(--primary)" : "var(--border)"}
+                strokeWidth={isActive ? "0.45" : "0.15"}
+                opacity={isActive ? 0.9 : 0.35}
+                strokeDasharray={isActive ? "none" : "1 1"}
+                className="transition-all duration-500"
+              />
 
-        {/* "YOU" label */}
-        <text
-          x="50" y="55.5"
-          textAnchor="middle"
-          fill="var(--primary)"
-          fontSize="2"
-          fontFamily="var(--font-heading)"
-          fontWeight="600"
-          letterSpacing="0.15em"
-          opacity="0.7"
-        >
-          YOU
-        </text>
+              {/* Sub-branch lines extending from the ACTIVE domain node outwards */}
+              {isActive &&
+                domain.paths.map((_, pIdx) => {
+                  const branchAngle = domain.angle + (pIdx - 1) * 20;
+                  const branchCoords = getCoordinates(branchAngle, domain.distance + 10);
+                  return (
+                    <line
+                      key={`subline-${pIdx}`}
+                      x1={coords.x}
+                      y1={coords.y}
+                      x2={branchCoords.x}
+                      y2={branchCoords.y}
+                      stroke="var(--primary)"
+                      strokeWidth="0.3"
+                      strokeDasharray="0.8 0.8"
+                      opacity="0.75"
+                    />
+                  );
+                })}
+            </g>
+          );
+        })}
       </svg>
 
-      {/* Constellation star nodes */}
-      {NODES.map((node, i) => (
-        <div
-          key={`node-${i}`}
-          className="absolute"
-          style={{
-            left: `${node.x}%`,
-            top: `${node.y}%`,
-            transform: "translate(-50%, -50%)",
-            opacity: mounted ? 1 : 0,
-            transition: `opacity 0.8s ease ${node.delay + 0.5}s, transform 0.8s ease ${node.delay + 0.5}s`,
-          }}
-        >
-          {/* Star dot */}
-          <div
-            className="animate-float-gentle"
-            style={{ animationDelay: `${node.delay * 0.7}s`, animationDuration: `${3.5 + i * 0.3}s` }}
-          >
-            <div className="relative flex items-center justify-center">
-              {/* Glow */}
-              <div className="absolute w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-primary/10 blur-sm" />
-              {/* Dot */}
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-foreground/40 border border-foreground/10" />
-            </div>
+      {/* ── CENTER NODE: YOU ───────────────────────────────────────── */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+        <div className="relative flex flex-col items-center justify-center">
+          {/* Signal radar wave */}
+          <div className="absolute w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-primary/40 animate-ping opacity-25" />
+          
+          {/* Glowing central core badge */}
+          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#161412] border-2 border-primary flex flex-col items-center justify-center shadow-lg shadow-amber-950/50">
+            <span className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.2em] text-primary">
+              YOU
+            </span>
           </div>
+          
+          <span className="text-[8px] font-mono uppercase tracking-[0.25em] text-muted-foreground/70 mt-1">
+            Origin
+          </span>
         </div>
-      ))}
+      </div>
 
-      {/* Small decorative dots scattered on orbits */}
-      {[
-        { x: 50, y: 5, size: 1 },
-        { x: 95, y: 50, size: 0.8 },
-        { x: 50, y: 95, size: 0.6 },
-        { x: 5, y: 50, size: 0.8 },
-        { x: 82, y: 18, size: 0.5 },
-        { x: 18, y: 82, size: 0.5 },
-      ].map((dot, i) => (
-        <div
-          key={`dec-${i}`}
-          className="absolute rounded-full bg-foreground/15"
-          style={{
-            left: `${dot.x}%`,
-            top: `${dot.y}%`,
-            width: `${dot.size * 3}px`,
-            height: `${dot.size * 3}px`,
-            transform: "translate(-50%, -50%)",
-            opacity: mounted ? 0.4 : 0,
-            transition: `opacity 2s ease ${1 + i * 0.2}s`,
-          }}
-        />
-      ))}
+      {/* ── DOMAIN NODES & SUB-BRANCHES ───────────────────────────── */}
+      {DOMAINS.map((domain) => {
+        const coords = getCoordinates(domain.angle, domain.distance);
+        const isActive = domain.id === activeDomainId;
+
+        return (
+          <div
+            key={domain.id}
+            className="absolute z-20 cursor-pointer"
+            style={{
+              left: `${coords.x}%`,
+              top: `${coords.y}%`,
+              transform: "translate(-50%, -50%)",
+            }}
+            onClick={() => {
+              setActiveDomainId(domain.id);
+              setAutoRotate(false);
+            }}
+            onMouseEnter={() => {
+              setActiveDomainId(domain.id);
+            }}
+          >
+            {/* Domain Node Button */}
+            <div
+              className={`group flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-full border transition-all duration-300 backdrop-blur-md ${
+                isActive
+                  ? "bg-[#1C1814] border-primary text-foreground shadow-md shadow-amber-950/40 scale-105"
+                  : "bg-[#141210]/90 border-border/70 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+              }`}
+            >
+              {/* Indicator dot */}
+              <span
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                  isActive ? "bg-primary shadow-sm shadow-primary" : "bg-muted-foreground/40 group-hover:bg-primary/60"
+                }`}
+              />
+              <span
+                className={`text-[10px] sm:text-xs font-heading font-medium tracking-tight whitespace-nowrap ${
+                  isActive ? "text-primary font-semibold" : ""
+                }`}
+              >
+                {domain.label}
+              </span>
+            </div>
+
+            {/* Sub-Branch Career Paths (Displayed when this node is active) */}
+            {isActive && (
+              <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2.5 pointer-events-auto">
+                <div className="flex flex-col gap-1 w-44 sm:w-52 p-2 rounded-lg bg-[#141210]/95 border border-primary/30 shadow-xl backdrop-blur-md animate-fade-in-up">
+                  <div className="flex items-center justify-between pb-1 border-b border-border/50 text-[9px] font-mono uppercase tracking-widest text-primary/80">
+                    <span>Hierarchy</span>
+                    <span>Pathways</span>
+                  </div>
+                  {domain.paths.map((path, pIdx) => (
+                    <div
+                      key={pIdx}
+                      className="flex items-center justify-between text-left py-1 px-1.5 rounded hover:bg-white/5 transition-colors"
+                    >
+                      <div className="truncate">
+                        <p className="text-[11px] font-medium text-foreground truncate">
+                          {path.name}
+                        </p>
+                        <p className="text-[9px] font-mono text-muted-foreground truncate">
+                          {path.role}
+                        </p>
+                      </div>
+                      <span className="text-[9px] font-mono text-primary/60 shrink-0 ml-1">
+                        →
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* ── Active Path Callout (Bottom-Left Telemetry Box) ─────────── */}
+      <div className="hidden sm:flex absolute bottom-2 left-2 z-10 p-2.5 rounded-lg bg-[#131110]/85 border border-border/60 text-[10px] font-mono text-muted-foreground backdrop-blur-sm">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span>Vector Active:</span>
+          <span className="text-foreground font-semibold uppercase">{activeDomain.label}</span>
+          <span className="text-muted-foreground/60">({activeDomain.paths.length} Paths)</span>
+        </div>
+      </div>
+
+      {/* ── Instrument Legend (Bottom-Right Telemetry) ─────────────── */}
+      <div className="hidden sm:flex absolute bottom-2 right-2 z-10 p-2.5 rounded-lg bg-[#131110]/85 border border-border/60 text-[10px] font-mono text-muted-foreground backdrop-blur-sm">
+        <span className="text-primary font-mono tracking-widest">NAV·GRID 0.88</span>
+      </div>
     </div>
   );
 }

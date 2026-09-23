@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, AlertTriangle, Compass, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, AlertTriangle, Compass, Info, ChevronDown, ChevronUp, Sparkles, Check } from "lucide-react";
 import { SuitabilityScores } from "@/components/results/SuitabilityScores";
 import { CareerMatches } from "@/components/results/CareerMatches";
 import { UserSignals } from "@/components/results/UserSignals";
@@ -12,6 +12,7 @@ import { CareerDiscoveryAnimation } from "@/components/interactive/CareerDiscove
 import { BlurText } from "@/components/interactive/BlurText";
 import { assessmentQuestions } from "@/lib/assessment-data";
 import { saveAssessmentResult, loadCareerJourney } from "@/lib/persistence";
+import { useAuth } from "@/context/AuthContext";
 import type { StoredResults } from "@/lib/career-details/personalization";
 
 import type { AssessmentResponse } from "@/lib/types/assessment";
@@ -66,6 +67,7 @@ function useIsClient() {
 
 export default function ResultsPage() {
   const isClient = useIsClient();
+  const { isAuthenticated } = useAuth();
   const [assessmentData, setAssessmentData] = useState<Record<
     string,
     string
@@ -336,6 +338,57 @@ export default function ResultsPage() {
         <section>
           <CareerMatches careers={result.top_careers} />
         </section>
+
+        {/* Optional Account Creation CTA for Guest Users */}
+        {!isAuthenticated && (
+          <section className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-[#161412] via-[#1C1814] to-[#161412] p-6 sm:p-8 shadow-xl">
+            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="max-w-xl">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 border border-primary/25 text-xs font-semibold text-primary mb-3">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>Optional Account</span>
+                </div>
+                <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground mb-2">
+                  Save your results &amp; track your roadmap
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  Create a free account to securely save your personalized matches, access your custom learning roadmap, and track milestone progress on your dashboard across all devices.
+                </p>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-secondary-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <Check className="h-3.5 w-3.5 text-primary" />
+                    Save 8-trait career profile
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Check className="h-3.5 w-3.5 text-primary" />
+                    Unlock personalized dashboard
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Check className="h-3.5 w-3.5 text-primary" />
+                    Track learning milestones
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-stretch gap-3 w-full sm:w-auto shrink-0">
+                <Link
+                  href="/signup"
+                  className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-7 text-sm font-semibold text-primary-foreground hover:bg-primary-hover shadow-md shadow-primary/20 transition-all hover:scale-[1.02]"
+                >
+                  <span>Create Account</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex h-10 items-center justify-center rounded-xl border border-border/70 bg-[#161412] px-5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-[#1E1A16] transition-colors text-center"
+                >
+                  Already have an account? Sign in
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* 5. WHAT'S SHOWING UP IN YOUR RESPONSES? */}
         <section>

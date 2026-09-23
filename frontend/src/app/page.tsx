@@ -1,92 +1,79 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { Particles } from "@/components/interactive/Particles";
-import { BlurText } from "@/components/interactive/BlurText";
-import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { ArrowRight, Compass } from "lucide-react";
 import { HeroConstellation } from "@/components/interactive/HeroConstellation";
-import { Features } from "@/components/sections/Features";
-import { HowItWorks } from "@/components/sections/HowItWorks";
-import { CareerMatchPreview } from "@/components/sections/CareerMatchPreview";
+import { Section01Understand } from "@/components/sections/Section01Understand";
+import { Section02FindDirection } from "@/components/sections/Section02FindDirection";
+import { Section03CareerMap } from "@/components/sections/Section03CareerMap";
+import { Section04BuildPath } from "@/components/sections/Section04BuildPath";
 import { FinalCta } from "@/components/sections/FinalCta";
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center w-full">
       
-      {/* 1. HERO SECTION — Cinematic centered composition */}
-      <section className="relative flex flex-col items-center justify-center pt-28 pb-20 md:pt-40 md:pb-32 w-full overflow-hidden">
-        {/* Particles — dimmer, atmospheric */}
-        <Particles
-          className="absolute inset-0 z-0 opacity-10"
-          quantity={50}
-          ease={80}
-          staticity={40}
-        />
+      {/* ── 1. HERO SECTION: Centered Editorial Hero with Constellation as Main Visual ── */}
+      <section className="relative flex flex-col items-center justify-center pt-16 pb-16 sm:pt-24 sm:pb-20 w-full overflow-hidden">
         
-        {/* Atmospheric warm radial glow */}
-        <div className="absolute inset-0 z-0 bg-radial from-primary/6 via-background/95 to-background" />
+        {/* Subtle atmospheric glow behind the hero */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_40%_at_50%_45%,rgba(200,146,42,0.06),transparent_70%)]" />
 
         <div className="container relative z-10 mx-auto px-4 flex flex-col items-center text-center max-w-5xl">
           
-          {/* Eyebrow */}
-          <p className="text-[11px] font-mono uppercase tracking-[0.25em] text-muted-foreground mb-8 animate-fade-in-up">
-            Career Compass&ensp;/&ensp;Discovery
-          </p>
+          {/* Eyebrow / Masthead indicator */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/70 bg-[#141210] text-[11px] font-mono text-muted-foreground uppercase tracking-[0.2em] mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span>Navigation Instrument &middot; Career Intelligence</span>
+          </div>
 
-          {/* Hero Heading */}
-          <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.03em] max-w-4xl mb-6 leading-[1.05] text-foreground">
-            <BlurText
-              text="Find the career that actually fits you."
-              delay={0.05}
-              className="inline-block"
-            />
+          {/* Hero Headline */}
+          <h1 className="font-heading text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-foreground max-w-4xl mb-5 leading-[1.06]">
+            Your future has more than one direction.
           </h1>
           
-          {/* Supporting line */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-14 leading-relaxed animate-fade-in-up delay-200">
-            Understand your strengths. Discover your direction. Build your path.
+          {/* Supporting Text */}
+          <p className="text-base sm:text-lg md:text-xl text-secondary-foreground max-w-2xl mb-10 leading-relaxed font-light">
+            Career Compass helps you understand where your strengths point &mdash; and what to do next.
           </p>
 
-          {/* Constellation Visual */}
-          <div className="w-full max-w-sm md:max-w-md mb-16 animate-fade-in-up delay-300">
+          {/* MAIN VISUAL: The Career Constellation Instrument */}
+          <div className="w-full my-4">
             <HeroConstellation />
           </div>
           
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-6 items-center animate-fade-in-up delay-500">
-            <Link href="/assessment" className="inline-block">
-              <ShimmerButton className="h-12 px-8 text-base font-semibold">
-                <span className="flex items-center gap-2">
-                  <span>Take the Assessment</span>
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </ShimmerButton>
+          <div className="flex flex-col sm:flex-row gap-4 items-center mt-6">
+            <Link
+              href="/assessment"
+              className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-base font-semibold text-primary-foreground hover:bg-primary-hover shadow-lg shadow-amber-950/30 transition-all hover:scale-[1.02] cursor-pointer"
+            >
+              <span>Take the Assessment</span>
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-            <div className="flex flex-col items-center">
-              <Link 
-                href="/careers" 
-                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Explore More Careers
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-              <span className="text-[11px] text-muted-foreground/50 mt-1">Curious about a different path?</span>
-            </div>
+
+            <Link 
+              href="/careers" 
+              className="inline-flex h-12 items-center justify-center rounded-xl border border-border/80 bg-[#141210] px-6 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-[#1A1612] transition-colors"
+            >
+              Explore More Careers
+            </Link>
           </div>
 
         </div>
       </section>
 
-      {/* 2. FEATURES */}
-      <Features />
+      {/* ── 2. SECTION 01 — UNDERSTAND YOURSELF ───────────────────── */}
+      <Section01Understand />
 
-      {/* 3. HOW IT WORKS */}
-      <HowItWorks />
+      {/* ── 3. SECTION 02 — FIND YOUR DIRECTION ───────────────────── */}
+      <Section02FindDirection />
 
-      {/* 4. CAREER MATCH PREVIEW */}
-      <CareerMatchPreview />
+      {/* ── 4. SECTION 03 — YOUR CAREER MAP ───────────────────────── */}
+      <Section03CareerMap />
 
-      {/* 5. FINAL CTA */}
+      {/* ── 5. SECTION 04 — BUILD YOUR PATH ───────────────────────── */}
+      <Section04BuildPath />
+
+      {/* ── 6. FINAL CTA ───────────────────────────────────────────── */}
       <FinalCta />
       
     </div>

@@ -20,7 +20,10 @@ import { useAuth } from "@/context/AuthContext";
 function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/dashboard";
+  const rawRedirect = searchParams.get("redirect");
+  // Per requirements: after successful signup, redirect to Home ("/"); do NOT route to "/dashboard"
+  const redirectUrl =
+    rawRedirect && rawRedirect !== "/dashboard" ? rawRedirect : "/";
 
   const { signup } = useAuth();
 
@@ -339,7 +342,7 @@ function SignupForm() {
             Already have an account?{" "}
             <Link
               href={`/login${
-                redirectUrl !== "/dashboard"
+                redirectUrl !== "/"
                   ? `?redirect=${encodeURIComponent(redirectUrl)}`
                   : ""
               }`}
