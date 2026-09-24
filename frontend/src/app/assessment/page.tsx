@@ -1,36 +1,145 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock, Compass } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  Compass,
+  ArrowRight,
+  Sparkles,
+  Layers,
+  CheckCircle2,
+  LockOpen,
+  RotateCcw,
+} from "lucide-react";
+import { assessmentQuestions } from "@/lib/assessment-data";
 
 export default function AssessmentIntroPage() {
+  const [resumeIndex, setResumeIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("careerCompassAssessment");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed === "object" && parsed !== null) {
+          const answeredCount = Object.keys(parsed).length;
+          if (answeredCount > 0 && answeredCount < assessmentQuestions.length) {
+            setResumeIndex(answeredCount);
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const handleStartFresh = () => {
+    try {
+      sessionStorage.removeItem("careerCompassAssessment");
+      setResumeIndex(null);
+    } catch {
+      // ignore
+    }
+  };
+
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
-      <div className="w-full max-w-2xl text-center flex flex-col items-center">
-        
-        <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/15 border border-primary/25 text-primary shadow-lg shadow-primary/20">
-          <Compass className="h-10 w-10" />
+    <div className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-12 sm:py-16 overflow-hidden">
+      {/* Ambient background glow & radial instrument styling */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full border border-primary/15 pointer-events-none animate-[spin_60s_linear_infinite]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full border border-border/40 border-dashed pointer-events-none" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-2xl text-center flex flex-col items-center"
+      >
+        {/* Instrument Compass Icon Badge */}
+        <div className="relative mb-6">
+          <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-gradient-to-br from-[#1A1612] via-[#141210] to-[#1A1612] border-2 border-primary/30 flex items-center justify-center text-primary shadow-xl shadow-primary/10">
+            <Compass className="h-8 w-8 sm:h-10 sm:w-10 animate-[spin_24s_linear_infinite]" />
+          </div>
+          <span className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-primary ring-4 ring-[#0E0E0E] animate-pulse" />
         </div>
 
-        <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-6 text-foreground">
-          Let's understand how you think.
+        {/* Eyebrow */}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-primary">
+            Career Compass
+          </span>
+          <span className="text-border">•</span>
+          <span className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+            Assessment
+          </span>
+        </div>
+
+        {/* Headline */}
+        <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4 leading-tight">
+          Let's find your direction.
         </h1>
 
-        <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
-          This assessment looks at your interests, strengths, working preferences and goals to find careers that fit you.
+        {/* Supporting text */}
+        <p className="text-sm sm:text-base md:text-lg text-secondary-foreground mb-8 max-w-xl leading-relaxed font-sans">
+          Answer a few questions about how you think, create, solve, learn, and work.
+          Your responses will help map the career directions that align with you.
         </p>
 
-        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-[#161412] border border-border/80 px-4 py-2 rounded-full mb-10">
-          <Clock className="h-4 w-4 text-primary" />
-          <span>~5 minutes</span>
+        {/* Concise Information Pills (Requirement 2) */}
+        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161412] border border-border/80 text-xs font-mono font-medium text-foreground">
+            <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+            <span>20 Questions</span>
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161412] border border-border/80 text-xs font-mono font-medium text-foreground">
+            <Layers className="h-3.5 w-3.5 text-primary" />
+            <span>8 Dimensions</span>
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161412] border border-border/80 text-xs font-mono font-medium text-foreground">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <span>Personalized Career Directions</span>
+          </div>
         </div>
 
-        <Link
-          href="/assessment/take"
-          className="inline-flex h-14 items-center justify-center rounded-lg bg-primary px-10 text-lg font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary-hover hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/35 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-        >
-          Start Assessment
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Link>
-      </div>
+        {/* Primary CTA and Actions */}
+        <div className="flex flex-col items-center gap-3 w-full sm:w-auto">
+          {resumeIndex !== null ? (
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <Link
+                href="/assessment/take"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-primary text-white font-bold text-base shadow-xl shadow-primary/25 hover:bg-primary-hover hover:shadow-2xl hover:shadow-primary/35 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
+              >
+                <span>Resume from Question {resumeIndex + 1}</span>
+                <ArrowRight className="h-4 w-4 stroke-[2.5]" />
+              </Link>
+              <button
+                onClick={handleStartFresh}
+                className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl border border-border bg-[#161412] text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors cursor-pointer"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Start Fresh</span>
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/assessment/take"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-primary text-white font-bold text-base sm:text-lg shadow-xl shadow-primary/25 hover:bg-primary-hover hover:shadow-2xl hover:shadow-primary/35 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
+            >
+              <span>Begin Assessment</span>
+              <ArrowRight className="h-5 w-5 stroke-[2.5]" />
+            </Link>
+          )}
+
+          {/* Secondary subtle text: No login required (Requirement 2 & 19) */}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80 font-mono mt-2">
+            <LockOpen className="h-3.5 w-3.5 text-primary/70" />
+            <span>No login required · Completely free &amp; private</span>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }

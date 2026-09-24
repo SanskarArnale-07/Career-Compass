@@ -7,6 +7,7 @@ interface StudyPaceSelectorProps {
   weeklyHours: number;
   onChangePace: (hours: number) => void;
   paceInfo: TimeToReadinessResult;
+  compact?: boolean;
 }
 
 const PACE_OPTIONS = [
@@ -19,7 +20,54 @@ export default function StudyPaceSelector({
   weeklyHours,
   onChangePace,
   paceInfo,
+  compact = false,
 }: StudyPaceSelectorProps) {
+  if (compact) {
+    const COMPACT_OPTIONS = [
+      { hours: 15, label: "Fast", pace: "15h/wk" },
+      { hours: 10, label: "Balanced", pace: "10h/wk" },
+      { hours: 5, label: "Steady", pace: "5h/wk" },
+    ];
+
+    return (
+      <div className="rounded-2xl border border-border/80 bg-card p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 font-semibold">
+            <Clock className="h-3.5 w-3.5 text-primary" />
+            Current Study Pace
+          </span>
+          <span className="text-[11px] font-mono text-primary font-medium">
+            Target: {paceInfo.targetMonthYear}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          {COMPACT_OPTIONS.map((opt) => {
+            const isSelected = weeklyHours === opt.hours;
+            return (
+              <button
+                key={opt.hours}
+                onClick={() => onChangePace(opt.hours)}
+                className={`py-2 px-2 rounded-xl border text-center transition-all cursor-pointer ${
+                  isSelected
+                    ? "border-primary bg-primary/15 text-primary font-bold shadow-xs"
+                    : "border-border/60 bg-[#161412] text-muted-foreground hover:text-foreground hover:border-border"
+                }`}
+              >
+                <span className="block text-xs font-semibold">{opt.label}</span>
+                <span className="block text-[10px] font-mono opacity-75 mt-0.5">{opt.pace}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-0.5">
+          <span>~{paceInfo.remainingWeeks} weeks remaining</span>
+          <span className="font-mono text-primary font-semibold">{paceInfo.hoursPerWeek} hrs/week</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border/70">

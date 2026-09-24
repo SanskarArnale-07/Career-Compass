@@ -66,9 +66,9 @@ const RESOURCE_TYPE_STYLE: Record<
   { bg: string; text: string; border: string }
 > = {
   course: {
-    bg: "bg-blue-500/10",
-    text: "text-blue-400",
-    border: "border-blue-500/20",
+    bg: "bg-primary/10",
+    text: "text-primary",
+    border: "border-primary/20",
   },
   documentation: {
     bg: "bg-slate-500/10",
@@ -242,7 +242,7 @@ function SkillDrawer({
               {resources.length > 0 && (
                 <div>
                   <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
-                    <BookOpen className="h-3 w-3 text-blue-400" />
+                    <BookOpen className="h-3 w-3 text-primary" />
                     Curated resources
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -372,7 +372,7 @@ export default function RoadmapStagePanel({
                 {phase.estimatedDuration}
               </span>
               {isActive && !isCompleted && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-mono font-semibold text-emerald-400">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 text-[10px] font-mono font-semibold text-primary">
                   ● Active
                 </span>
               )}

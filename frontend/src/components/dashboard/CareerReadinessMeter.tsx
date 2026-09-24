@@ -13,6 +13,7 @@ import type { CareerReadinessResult } from "@/lib/career-details/roadmap-intelli
 interface CareerReadinessMeterProps {
   readiness: CareerReadinessResult;
   activeCareerTitle: string;
+  compact?: boolean;
 }
 
 const PILLAR_ICONS = {
@@ -24,6 +25,7 @@ const PILLAR_ICONS = {
 export default function CareerReadinessMeter({
   readiness,
   activeCareerTitle,
+  compact = false,
 }: CareerReadinessMeterProps) {
   const { overallScore, tierLevel, tierName, tierDescription, nextTierRequirement, pillars } =
     readiness;
@@ -32,13 +34,64 @@ export default function CareerReadinessMeter({
   const levelColors: Record<number, { bg: string; text: string; border: string }> = {
     1: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/30" },
     2: { bg: "bg-amber-500/25", text: "text-amber-300", border: "border-amber-500/40" },
-    3: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/30" },
-    4: { bg: "bg-emerald-500/25", text: "text-emerald-300", border: "border-emerald-500/40" },
+    3: { bg: "bg-primary/20", text: "text-primary", border: "border-primary/40" },
+    4: { bg: "bg-primary/30", text: "text-[#D4A853]", border: "border-primary/50" },
   };
 
   const levelStyle = levelColors[tierLevel] || levelColors[1];
   const circumference = 2 * Math.PI * 42;
   const targetOffset = circumference * (1 - overallScore / 100);
+
+  if (compact) {
+    return (
+      <div className="rounded-2xl border border-border/80 bg-card p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+            Career Readiness
+          </span>
+          <span
+            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${levelStyle.bg} ${levelStyle.text} ${levelStyle.border}`}
+          >
+            Tier {tierLevel}: {tierName}
+          </span>
+        </div>
+
+        <div className="flex items-baseline gap-2">
+          <CountUp
+            value={overallScore}
+            duration={1.0}
+            suffix="%"
+            className="font-heading text-2xl sm:text-3xl font-bold text-foreground tabular-nums"
+          />
+          <span className="text-xs text-muted-foreground">Readiness Score</span>
+        </div>
+
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          {tierDescription}
+        </p>
+
+        {/* 3 Pillar Mini Progress Bars */}
+        <div className="space-y-2 pt-1 border-t border-border/50">
+          {Object.entries(pillars).map(([key, pillar]) => (
+            <div key={key} className="space-y-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-muted-foreground capitalize">{key}</span>
+                <span className="font-mono font-medium text-primary tabular-nums">
+                  {pillar.score}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-500"
+                  style={{ width: `${pillar.score}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card p-6 sm:p-7 space-y-6">
@@ -73,7 +126,7 @@ export default function CareerReadinessMeter({
               <defs>
                 <linearGradient id="readinessGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#C8922A" />
-                  <stop offset="100%" stopColor="#10B981" />
+                  <stop offset="100%" stopColor="#D4A853" />
                 </linearGradient>
               </defs>
             </svg>

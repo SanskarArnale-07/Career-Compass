@@ -100,7 +100,7 @@ export default function NextBestActionCard({
           </p>
 
           {/* Reasoning Box ("Why this now?") */}
-          <div className="p-3.5 sm:p-4 rounded-xl bg-[#0B1220]/80 border border-border/80 flex items-start gap-3">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-[#161412] border border-border/80 flex items-start gap-3">
             <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <div>
               <p className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
