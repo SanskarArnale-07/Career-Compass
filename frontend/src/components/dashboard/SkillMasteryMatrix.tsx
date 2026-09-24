@@ -190,7 +190,7 @@ export default function SkillMasteryMatrix({
               </button>
 
               {isExpanded && (
-                <div className="mt-3 pt-3 border-t border-border/60 text-xs space-y-2 bg-[#0B1220]/60 p-3 rounded-lg animate-in fade-in duration-200">
+                <div className="mt-3 pt-3 border-t border-border/60 text-xs space-y-2 bg-[#12100E]/80 p-3 rounded-lg animate-in fade-in duration-200">
                   <div>
                     <span className="font-semibold text-foreground block mb-0.5">
                       What to master:

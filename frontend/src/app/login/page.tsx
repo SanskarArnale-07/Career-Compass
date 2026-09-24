@@ -20,9 +20,9 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawRedirect = searchParams.get("redirect");
-  // Per requirements: after successful login, redirect to Home ("/"); do NOT route to "/dashboard"
-  const redirectUrl =
-    rawRedirect && rawRedirect !== "/dashboard" ? rawRedirect : "/";
+  // After login, redirect to the originally requested page (e.g. /dashboard),
+  // defaulting to "/" if no redirect param is provided.
+  const redirectUrl = rawRedirect || "/";
 
   const { login } = useAuth();
 

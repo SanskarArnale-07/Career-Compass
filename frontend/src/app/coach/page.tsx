@@ -276,7 +276,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="border-t border-border bg-[#0B1220]/95 backdrop-blur-md px-4 py-4"
+              className="border-t border-border bg-[#12100E]/98 backdrop-blur-md px-4 py-4"
             >
               <div className="container mx-auto max-w-5xl">
                 <p className="text-xs font-mono font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
@@ -352,7 +352,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="border-t border-border bg-[#0B1220] p-4 text-xs space-y-3"
+              className="border-t border-border bg-[#12100E] p-4 text-xs space-y-3"
             >
               <div className="container mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl border border-border bg-card/80">

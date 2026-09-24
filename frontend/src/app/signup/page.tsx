@@ -21,9 +21,9 @@ function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawRedirect = searchParams.get("redirect");
-  // Per requirements: after successful signup, redirect to Home ("/"); do NOT route to "/dashboard"
-  const redirectUrl =
-    rawRedirect && rawRedirect !== "/dashboard" ? rawRedirect : "/";
+  // After signup, redirect to the originally requested page (e.g. /dashboard),
+  // defaulting to "/" if no redirect param is provided.
+  const redirectUrl = rawRedirect || "/";
 
   const { signup } = useAuth();
 

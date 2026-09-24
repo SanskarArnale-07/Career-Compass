@@ -96,7 +96,7 @@ export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScor
               </div>
 
               {/* Relative spectrum indicator without raw numbers */}
-              <div className="mt-3 h-2 w-full bg-[#0B1220] rounded-full overflow-hidden border border-border/80 p-0.5">
+              <div className="mt-3 h-2 w-full bg-[#1E1A16] rounded-full overflow-hidden border border-border/80 p-0.5">
                 <div
                   className={`h-full rounded-full ${stream.color} transition-all duration-1000 ease-out`}
                   style={{ width: `${Math.max(25, Math.min(95, stream.score * 1.5))}%` }}
