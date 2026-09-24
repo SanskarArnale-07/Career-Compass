@@ -32,10 +32,10 @@ export default function CareerReadinessMeter({
 
   // Level badge styling
   const levelColors: Record<number, { bg: string; text: string; border: string }> = {
-    1: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/30" },
-    2: { bg: "bg-amber-500/25", text: "text-amber-300", border: "border-amber-500/40" },
+    1: { bg: "bg-slate-500/15", text: "text-slate-400", border: "border-slate-500/30" },
+    2: { bg: "bg-sky-500/15", text: "text-sky-300", border: "border-sky-500/30" },
     3: { bg: "bg-primary/20", text: "text-primary", border: "border-primary/40" },
-    4: { bg: "bg-primary/30", text: "text-[#D4A853]", border: "border-primary/50" },
+    4: { bg: "bg-indigo-500/20", text: "text-indigo-300", border: "border-indigo-500/40" },
   };
 
   const levelStyle = levelColors[tierLevel] || levelColors[1];
@@ -80,7 +80,7 @@ export default function CareerReadinessMeter({
                   {pillar.score}%
                 </span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+              <div className="h-1.5 w-full rounded-full bg-[#141920] overflow-hidden">
                 <div
                   className="h-full bg-primary rounded-full transition-all duration-500"
                   style={{ width: `${pillar.score}%` }}
@@ -108,7 +108,7 @@ export default function CareerReadinessMeter({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="7"
-                className="text-[#161412]"
+                className="text-[#141920]"
               />
               <motion.circle
                 cx="50"
@@ -125,8 +125,8 @@ export default function CareerReadinessMeter({
               />
               <defs>
                 <linearGradient id="readinessGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#C8922A" />
-                  <stop offset="100%" stopColor="#D4A853" />
+                  <stop offset="0%" stopColor="#00E5FF" />
+                  <stop offset="100%" stopColor="#38BDF8" />
                 </linearGradient>
               </defs>
             </svg>
@@ -164,7 +164,7 @@ export default function CareerReadinessMeter({
         </div>
 
         {/* Next Unlock Requirement */}
-        <div className="sm:max-w-xs p-3 rounded-xl bg-[#161412] border border-border/80">
+        <div className="sm:max-w-xs p-3 rounded-xl bg-[#10141A] border border-border/80">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-primary mb-1">
             <Target className="h-3.5 w-3.5" />
             <span>Next Level Target</span>
@@ -183,7 +183,7 @@ export default function CareerReadinessMeter({
           return (
             <div
               key={pillar.id}
-              className="p-4 rounded-xl border border-border/80 bg-[#161412]/60 hover:bg-[#161412] transition-colors"
+              className="p-4 rounded-xl border border-border/80 bg-[#10141A]/60 hover:bg-[#10141A] transition-colors"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">

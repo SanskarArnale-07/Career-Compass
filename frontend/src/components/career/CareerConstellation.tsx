@@ -77,7 +77,7 @@ export default function CareerConstellation({
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-3 text-xs font-mono shrink-0 bg-[#161412] px-3.5 py-1.5 rounded-xl border border-border/80">
+        <div className="flex items-center gap-3 text-xs font-mono shrink-0 bg-[#141920] px-3.5 py-1.5 rounded-xl border border-border/80">
           <span className="flex items-center gap-1.5 text-primary">
             <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
             Core Career
@@ -88,8 +88,8 @@ export default function CareerConstellation({
             Skills
           </span>
           <span className="text-border">•</span>
-          <span className="flex items-center gap-1.5 text-emerald-400">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="flex items-center gap-1.5 text-sky-400">
+            <span className="h-2 w-2 rounded-full bg-sky-400" />
             Pathways
           </span>
         </div>
@@ -105,12 +105,12 @@ export default function CareerConstellation({
         >
           <defs>
             <linearGradient id="orbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#C8922A" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#D4A853" stopOpacity="0.05" />
+              <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.05" />
             </linearGradient>
             <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#C8922A" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#C8922A" stopOpacity="0" />
+              <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#00E5FF" stopOpacity="0" />
             </radialGradient>
           </defs>
 
@@ -146,7 +146,7 @@ export default function CareerConstellation({
                 y1={center.y}
                 x2={s.x}
                 y2={s.y}
-                stroke={isHovered ? "#C8922A" : "rgba(200, 146, 42, 0.25)"}
+                stroke={isHovered ? "#00E5FF" : "rgba(0, 229, 255, 0.25)"}
                 strokeWidth={isHovered ? 2 : 1.2}
                 className="transition-all duration-300"
               />
@@ -188,7 +188,7 @@ export default function CareerConstellation({
               cx={center.x}
               cy={center.y}
               r={46}
-              className="fill-[#0B1220] stroke-primary stroke-2 group-hover:stroke-3 transition-all"
+              className="fill-[#10141A] stroke-primary stroke-2 group-hover:stroke-3 transition-all"
             />
             <circle
               cx={center.x}
@@ -234,9 +234,9 @@ export default function CareerConstellation({
                   cx={s.x}
                   cy={s.y}
                   r={isSelected ? 26 : 22}
-                  className={`transition-all duration-300 fill-[#161412] ${
+                  className={`transition-all duration-300 fill-[#10141A] ${
                     isSelected
-                      ? "stroke-primary stroke-2 filter drop-shadow-[0_0_8px_rgba(200,146,42,0.5)]"
+                      ? "stroke-primary stroke-2 filter drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]"
                       : "stroke-border group-hover:stroke-primary/70 stroke-1"
                   }`}
                 />
@@ -273,13 +273,13 @@ export default function CareerConstellation({
                   cx={c.x}
                   cy={c.y}
                   r={isSelected ? 28 : 24}
-                  className={`transition-all duration-300 fill-[#161412] ${
+                  className={`transition-all duration-300 fill-[#10141A] ${
                     isSelected
-                      ? "stroke-emerald-400 stroke-2 filter drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-                      : "stroke-border group-hover:stroke-emerald-400/60 stroke-1"
+                      ? "stroke-primary stroke-2 filter drop-shadow-[0_0_10px_rgba(0,229,255,0.5)]"
+                      : "stroke-border group-hover:stroke-primary/60 stroke-1"
                   }`}
                 />
-                <circle cx={c.x} cy={c.y} r={18} className="fill-emerald-500/10" />
+                <circle cx={c.x} cy={c.y} r={18} className="fill-primary/10" />
                 <text
                   x={c.x}
                   y={c.y + 3}
@@ -295,7 +295,7 @@ export default function CareerConstellation({
       </div>
 
       {/* Dynamic Detail Card Below Diagram */}
-      <div className="mt-4 p-4 rounded-xl bg-[#161412] border border-border/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
+      <div className="mt-4 p-4 rounded-xl bg-[#10141A] border border-border/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary shrink-0">
             <Sparkles className="h-4 w-4" />
@@ -314,7 +314,7 @@ export default function CareerConstellation({
         {pathways.some((p) => p.title === activeNode) && (
           <Link
             href={`/career/${pathways.find((p) => p.title === activeNode)?.slug}`}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors shrink-0 self-end sm:self-auto"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-colors shrink-0 self-end sm:self-auto"
           >
             <span>Explore Pathway</span>
             <ArrowRight className="h-3.5 w-3.5" />

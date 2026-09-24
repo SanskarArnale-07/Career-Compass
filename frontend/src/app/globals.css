@@ -3,6 +3,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-card-hover: var(--card-hover);
@@ -15,6 +16,8 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-tertiary: var(--accent-tertiary);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-muted: var(--accent-muted);
   --color-border: var(--border);
@@ -26,35 +29,38 @@
 }
 
 :root {
-  /* Warm Charcoal & Amber — Cinematic Career Navigation Theme */
-  --background: #0E0E0E;       /* Main Background: Near-black charcoal */
-  --secondary-bg: #161412;      /* Secondary Background / Sections */
+  /* Dark Graphite & Electric Blue / Cyan Design System */
+  --background: #080A0D;          /* Deepest space background */
+  --secondary-bg: #0B0E12;         /* Cinematic dark background / section backdrops */
+  --surface: #10141A;              /* Primary card and component surface */
   
-  --foreground: #F5F0E8;        /* Main Text: Warm off-white */
-  --secondary-foreground: #A8A096; /* Secondary Text: Warm gray */
+  --foreground: #F4F7FA;           /* Crisp off-white primary text */
+  --secondary-foreground: #B0B9C6;    /* Soft cool gray secondary text */
   
-  --card: #161412;              /* Cards / Panels */
-  --card-foreground: #F5F0E8;
-  --card-hover: #1E1A16;        /* Card Hover */
+  --card: #10141A;                 /* Cards / Panels (Dark Graphite) */
+  --card-foreground: #F4F7FA;
+  --card-hover: #141920;           /* Card Hover (Subtle elevation) */
   
-  --primary: #C8922A;           /* Primary Accent: Amber */
-  --primary-hover: #D4A853;     /* Button Hover: Highlight amber */
-  --primary-foreground: #0E0E0E; /* Dark contrast on amber */
+  --primary: #00E5FF;              /* Primary Accent: Electric Cyan */
+  --primary-hover: #38BDF8;        /* Button Hover: Sky Blue */
+  --primary-foreground: #080A0D;    /* Deep dark contrast on primary cyan */
   
-  --secondary: #D4A853;         /* Secondary Accent: Light amber */
+  --secondary: #38BDF8;            /* Secondary Accent: Electric Sky Blue */
   
-  --muted: #171411;             /* Secondary / elevated panel surface */
-  --muted-foreground: #817A70;  /* Muted Text: Warm gray */
+  --muted: #10141A;                /* Secondary / elevated panel surface */
+  --muted-foreground: #8C96A3;     /* Muted Text: Cool slate gray */
   
-  --accent: #D4A853;            /* Accent: Highlight amber */
-  --accent-foreground: #0E0E0E;
-  --accent-muted: #8B6218;      /* Muted amber for restrained usage */
+  --accent: #00E5FF;               /* Accent: Cyan */
+  --accent-secondary: #38BDF8;     /* Secondary Accent: Sky Blue */
+  --accent-tertiary: #818CF8;      /* Tertiary Accent: Blue-Violet */
+  --accent-foreground: #080A0D;
+  --accent-muted: rgba(0, 229, 255, 0.15); /* Restrained translucent cyan */
   
-  --border: #2A2520;            /* Borders: Warm dark */
+  --border: #1E2633;               /* Borders: Subtle cool blue-gray */
   
-  --success: #5A9A6B;
-  --warning: #C8922A;
-  --destructive: #C45C4A;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --destructive: #EF4444;
   
   --radius: 0.5rem;
 }
@@ -95,8 +101,8 @@ body::before {
 }
 
 ::selection {
-  background-color: rgba(200, 146, 42, 0.3);
-  color: #F5F0E8;
+  background-color: rgba(0, 229, 255, 0.25);
+  color: #F4F7FA;
 }
 
 /* Base resets */

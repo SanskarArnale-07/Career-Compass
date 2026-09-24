@@ -23,7 +23,6 @@ import {
   Map,
   Layers,
   FolderKanban,
-  ClipboardCheck,
   ShieldAlert,
   HelpCircle,
   LayoutDashboard,
@@ -147,45 +146,47 @@ export default function DashboardPage() {
   useEffect(() => {
     if (isLoading || !isAuthenticated) return;
 
-    try {
-      const journey = loadCareerJourney();
+    queueMicrotask(() => {
+      try {
+        const journey = loadCareerJourney();
 
-      // 1. Restore assessment traits
-      if (journey.assessment.traitProfile) {
-        setTraitProfile(journey.assessment.traitProfile);
-      }
+        // 1. Restore assessment traits
+        if (journey.assessment.traitProfile) {
+          setTraitProfile(journey.assessment.traitProfile);
+        }
 
-      // 2. Restore selected career & started timestamp
-      if (journey.selectedCareer?.slug) {
-        setSelectedSlug(journey.selectedCareer.slug);
-        setStartedDate(
-          new Date(journey.selectedCareer.startedAt).toLocaleDateString(undefined, {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
+        // 2. Restore selected career & started timestamp
+        if (journey.selectedCareer?.slug) {
+          setSelectedSlug(journey.selectedCareer.slug);
+          setStartedDate(
+            new Date(journey.selectedCareer.startedAt).toLocaleDateString(undefined, {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          );
+        }
+
+        // 3. Restore source progress
+        setCompletedPhases(new Set(journey.progress.completedPhases));
+        setCompletedTasks(new Set(journey.progress.completedTasks));
+        setCompletedSkills(new Set(journey.progress.completedSkills));
+        setCompletedProjects(new Set(journey.progress.completedProjects));
+        setWeeklyPaceHours(journey.progress.weeklyPaceHours);
+        setCustomTasks(journey.progress.customTasks);
+
+        // Auto-open the first incomplete phase in the roadmap
+        const completedPhaseNums = new Set(journey.progress.completedPhases);
+        const resolvedSlug = journey.selectedCareer?.slug || "software-development";
+        const resolvedCareer = getCareerIntelligence(resolvedSlug);
+        const firstIncomplete = resolvedCareer?.roadmap.find(
+          (p) => !completedPhaseNums.has(p.phase)
         );
+        setExpandedPhase(firstIncomplete?.phase ?? resolvedCareer?.roadmap[0]?.phase ?? 1);
+      } catch (e) {
+        console.error("Error initializing dashboard data", e);
       }
-
-      // 3. Restore source progress
-      setCompletedPhases(new Set(journey.progress.completedPhases));
-      setCompletedTasks(new Set(journey.progress.completedTasks));
-      setCompletedSkills(new Set(journey.progress.completedSkills));
-      setCompletedProjects(new Set(journey.progress.completedProjects));
-      setWeeklyPaceHours(journey.progress.weeklyPaceHours);
-      setCustomTasks(journey.progress.customTasks);
-
-      // Auto-open the first incomplete phase in the roadmap
-      const completedPhaseNums = new Set(journey.progress.completedPhases);
-      const resolvedSlug = journey.selectedCareer?.slug || "software-development";
-      const resolvedCareer = getCareerIntelligence(resolvedSlug);
-      const firstIncomplete = resolvedCareer?.roadmap.find(
-        (p) => !completedPhaseNums.has(p.phase)
-      );
-      setExpandedPhase(firstIncomplete?.phase ?? resolvedCareer?.roadmap[0]?.phase ?? 1);
-    } catch (e) {
-      console.error("Error initializing dashboard data", e);
-    }
+    });
   }, [isLoading, isAuthenticated, user?.id]);
 
   // ── Save updates to unified persistence ─────────────────────────
@@ -671,7 +672,7 @@ export default function DashboardPage() {
                       className={`text-left p-2.5 rounded-lg border text-xs font-medium transition-all ${
                         c.slug === selectedSlug
                           ? "bg-primary/15 border-primary text-primary font-semibold"
-                          : "border-border bg-[#161412] text-foreground hover:bg-[#1E1A16] hover:border-border"
+                          : "border-border bg-[#10141A] text-foreground hover:bg-[#141920] hover:border-border"
                       }`}
                     >
                       <div className="truncate">{c.title}</div>
@@ -687,7 +688,7 @@ export default function DashboardPage() {
         </AnimatePresence>
 
         {/* ── Secondary Navigation Bar (Requirement 11) ─────────────── */}
-        <div className="border-t border-border/60 bg-[#12100E]">
+        <div className="border-t border-border/60 bg-[#0B0E12]">
           <div className="container mx-auto px-4 max-w-6xl flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none py-2">
             {[
               { id: "overview", label: "Overview", icon: LayoutDashboard, count: null },
@@ -728,8 +729,8 @@ export default function DashboardPage() {
                   }}
                   className={`flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                     isActive
-                      ? "bg-primary text-white shadow-xs shadow-primary/20"
-                      : "text-muted-foreground hover:text-foreground hover:bg-[#1A1714]"
+                      ? "bg-primary text-primary-foreground font-semibold shadow-xs shadow-primary/20"
+                      : "text-muted-foreground hover:text-foreground hover:bg-[#10141A]"
                   }`}
                 >
                   <TabIcon className="h-3.5 w-3.5" />
@@ -738,8 +739,8 @@ export default function DashboardPage() {
                     <span
                       className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${
                         isActive
-                          ? "bg-white/20 text-white font-bold"
-                          : "bg-[#1E1A16] text-muted-foreground"
+                          ? "bg-black/20 text-primary-foreground font-bold"
+                          : "bg-[#141920] text-muted-foreground"
                       }`}
                     >
                       {tab.count}
@@ -759,7 +760,7 @@ export default function DashboardPage() {
         {activeTab === "overview" && (
           <div className="space-y-8">
             {/* 1. HERO / SUMMARY (Requirements 1 & 2) */}
-            <div className="rounded-2xl border border-border bg-linear-to-b from-[#161412] to-card p-6 sm:p-8 space-y-6">
+            <div className="rounded-2xl border border-border bg-linear-to-b from-[#10141A] to-card p-6 sm:p-8 space-y-6">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-border/70">
                 <div className="flex items-start gap-4">
                   <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/25 text-primary shrink-0">
@@ -824,7 +825,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-2 shrink-0 self-start lg:self-center">
                   <Link
                     href={`/career/${career.slug}`}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-[#161412] text-xs font-semibold text-foreground hover:bg-[#1E1A16] hover:border-primary/40 transition-all"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-[#10141A] text-xs font-semibold text-foreground hover:bg-[#141920] hover:border-primary/40 transition-all"
                   >
                     <span>Career Guide</span>
                     <ExternalLink className="h-3.5 w-3.5 opacity-70" />
@@ -835,7 +836,7 @@ export default function DashboardPage() {
               {/* 4 Core Questions Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
                 {/* Question 1: What career path am I following? */}
-                <div className="p-4 rounded-xl border border-border/70 bg-[#141210] flex flex-col justify-between">
+                <div className="p-4 rounded-xl border border-border/70 bg-[#10141A] flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
                       1. Career Path
@@ -856,7 +857,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Question 2: Where am I currently? */}
-                <div className="p-4 rounded-xl border border-border/70 bg-[#141210] flex flex-col justify-between">
+                <div className="p-4 rounded-xl border border-border/70 bg-[#10141A] flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
                       2. Current Focus
@@ -897,7 +898,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Question 4: How far have I progressed? */}
-                <div className="p-4 rounded-xl border border-border/70 bg-[#141210] flex flex-col justify-between">
+                <div className="p-4 rounded-xl border border-border/70 bg-[#10141A] flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
                       4. Roadmap Progress
@@ -912,7 +913,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="mt-3 pt-2.5 border-t border-border/50">
-                    <div className="h-1.5 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+                    <div className="h-1.5 w-full rounded-full bg-[#141920] overflow-hidden">
                       <div
                         className="h-full bg-primary rounded-full transition-all duration-500"
                         style={{ width: `${overallRoadmapPercent}%` }}
@@ -956,7 +957,7 @@ export default function DashboardPage() {
             )}
 
             {/* 2. PRIMARY ACTION AREA: CURRENT FOCUS (Requirements 3 & 4) */}
-            <div className="rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-[#1A1612] via-[#141210] to-[#1A1612] p-6 sm:p-8 shadow-xl shadow-primary/5 relative overflow-hidden">
+            <div className="rounded-2xl border-2 border-primary/40 bg-linear-to-br from-[#141920] via-[#10141A] to-[#141920] p-6 sm:p-8 shadow-xl shadow-primary/5 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none -mt-20 -mr-20" />
 
               <div className="relative z-10 space-y-6">
@@ -981,16 +982,16 @@ export default function DashboardPage() {
                   <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground uppercase tracking-tight">
                     {currentPhase.title}
                   </h2>
-                  <div className="h-2 w-full rounded-full bg-[#1E1A16] overflow-hidden border border-border/50">
+                  <div className="h-2 w-full rounded-full bg-[#141920] overflow-hidden border border-border/50">
                     <div
-                      className="h-full bg-gradient-to-r from-primary to-[#D4A853] rounded-full transition-all duration-700"
+                      className="h-full bg-linear-to-r from-primary to-[#38BDF8] rounded-full transition-all duration-700"
                       style={{ width: `${currentPhasePercent}%` }}
                     />
                   </div>
                 </div>
 
                 {/* Integrated Next Best Action Box */}
-                <div className="rounded-xl border border-border/80 bg-[#161412]/90 p-5 sm:p-6 space-y-4">
+                <div className="rounded-xl border border-border/80 bg-[#10141A]/90 p-5 sm:p-6 space-y-4">
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-5">
                     <div className="space-y-2 flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
@@ -1028,7 +1029,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Dominant CTA Button */}
-                    <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 md:min-w-[200px] justify-center">
+                    <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 md:min-w-50 justify-center">
                       <button
                         onClick={() =>
                           handleActionClick(
@@ -1036,7 +1037,7 @@ export default function DashboardPage() {
                             nextBestAction.targetId
                           )
                         }
-                        className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-primary text-white font-bold text-sm shadow-xl shadow-primary/25 hover:bg-primary-hover hover:shadow-2xl hover:shadow-primary/35 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer text-center"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-xl shadow-primary/25 hover:bg-primary-hover hover:shadow-2xl hover:shadow-primary/35 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer text-center"
                       >
                         <span>Continue Learning</span>
                         <ArrowRight className="h-4 w-4 stroke-[2.5]" />
@@ -1100,7 +1101,7 @@ export default function DashboardPage() {
                           className={`w-full flex items-center justify-between py-3 px-3 rounded-lg text-left transition-colors cursor-pointer group ${
                             isCurrent
                               ? "bg-primary/10 border-l-2 border-l-primary"
-                              : "hover:bg-[#161412]"
+                              : "hover:bg-[#141920]"
                           }`}
                         >
                           <div className="flex items-center gap-3 min-w-0">
@@ -1172,7 +1173,7 @@ export default function DashboardPage() {
                     {currentPhase.title}) and assessment gaps.
                   </p>
 
-                  <div className="h-1.5 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+                  <div className="h-1.5 w-full rounded-full bg-[#141920] overflow-hidden">
                     <div
                       className="h-full bg-primary rounded-full transition-all duration-500"
                       style={{
@@ -1187,7 +1188,7 @@ export default function DashboardPage() {
 
                   <button
                     onClick={() => setShowSprintDetail(!showSprintDetail)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-[#161412] text-xs font-semibold text-foreground hover:bg-[#1E1A16] hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-[#10141A] text-xs font-semibold text-foreground hover:bg-[#141920] hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
                   >
                     <span>
                       {showSprintDetail ? "Collapse Sprint ↑" : "View Sprint →"}
@@ -1271,7 +1272,7 @@ export default function DashboardPage() {
                               {percent}%
                             </span>
                           </div>
-                          <div className="h-1.5 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+                          <div className="h-1.5 w-full rounded-full bg-[#141920] overflow-hidden">
                             <div
                               className="h-full bg-primary rounded-full transition-all duration-500"
                               style={{ width: `${percent}%` }}
@@ -1284,7 +1285,7 @@ export default function DashboardPage() {
 
                   <button
                     onClick={() => setActiveTab("skills")}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-[#161412] text-xs font-semibold text-foreground hover:bg-[#1E1A16] hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-[#10141A] text-xs font-semibold text-foreground hover:bg-[#141920] hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
                   >
                     <span>View All Skills</span>
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -1305,7 +1306,7 @@ export default function DashboardPage() {
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-[#161412] border border-border/60 space-y-2">
+                  <div className="p-3.5 rounded-xl bg-[#10141A] border border-border/60 space-y-2">
                     <div>
                       <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground block mb-0.5">
                         Current Project:
@@ -1330,7 +1331,7 @@ export default function DashboardPage() {
                           {projectProgressPercent}%
                         </span>
                       </div>
-                      <div className="h-1.5 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+                      <div className="h-1.5 w-full rounded-full bg-[#141920] overflow-hidden">
                         <div
                           className="h-full bg-primary rounded-full"
                           style={{ width: `${projectProgressPercent}%` }}
@@ -1341,7 +1342,7 @@ export default function DashboardPage() {
 
                   <button
                     onClick={() => setActiveTab("projects")}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-[#161412] text-xs font-semibold text-foreground hover:bg-[#1E1A16] hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-[#10141A] text-xs font-semibold text-foreground hover:bg-[#141920] hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
                   >
                     <span>View Projects</span>
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -1363,19 +1364,19 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="space-y-2.5 text-xs">
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#161412] border border-border/60">
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#10141A] border border-border/60">
                       <span className="text-muted-foreground">Interview Readiness</span>
                       <span className="font-mono font-semibold text-primary">
                         {readiness.pillars.foundations.score}%
                       </span>
                     </div>
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#161412] border border-border/60">
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#10141A] border border-border/60">
                       <span className="text-muted-foreground">Portfolio Readiness</span>
                       <span className="font-mono font-semibold text-primary">
                         {readiness.pillars.portfolio.score}%
                       </span>
                     </div>
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#161412] border border-border/60">
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#10141A] border border-border/60">
                       <span className="text-muted-foreground">Preparation Progress</span>
                       <span className="font-mono font-semibold text-primary">
                         {prepPercent}%
@@ -1385,7 +1386,7 @@ export default function DashboardPage() {
 
                   <button
                     onClick={() => setActiveTab("prep")}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-[#161412] text-xs font-semibold text-foreground hover:bg-[#1E1A16] hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-[#10141A] text-xs font-semibold text-foreground hover:bg-[#141920] hover:border-primary/40 hover:text-primary transition-all cursor-pointer"
                   >
                     <span>View Career Preparation</span>
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -1539,9 +1540,9 @@ export default function DashboardPage() {
                   <span className="text-muted-foreground">Readiness Completion</span>
                   <span className="font-mono font-semibold text-primary">{prepPercent}%</span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-[#1E1A16] overflow-hidden border border-border/50">
+                <div className="h-2 w-full rounded-full bg-[#141920] overflow-hidden border border-border/50">
                   <div
-                    className="h-full bg-gradient-to-r from-primary to-[#D4A853] rounded-full transition-all duration-500"
+                    className="h-full bg-linear-to-r from-primary to-[#38BDF8] rounded-full transition-all duration-500"
                     style={{ width: `${prepPercent}%` }}
                   />
                 </div>
@@ -1557,7 +1558,7 @@ export default function DashboardPage() {
                       onClick={() => toggleTask(item.id)}
                       className={`p-4 rounded-xl border flex items-start gap-3 transition-all cursor-pointer select-none ${
                         isDone
-                          ? "border-primary/30 bg-[#161412]/80"
+                          ? "border-primary/30 bg-[#10141A]/80"
                           : "border-border bg-card hover:border-primary/40 hover:bg-card-hover"
                       }`}
                     >

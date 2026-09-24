@@ -68,7 +68,7 @@ export function Section01Understand() {
             </p>
 
             {/* Simple concept pill: 20 Questions → 8 Traits */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#141210] border border-border/70 text-xs font-mono text-muted-foreground">
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#10141A] border border-border/70 text-xs font-mono text-muted-foreground">
               <span className="text-foreground font-semibold">20 Questions</span>
               <ArrowRight className="h-3 w-3 text-primary" />
               <span className="text-primary font-semibold">8 Dimensions</span>
@@ -77,7 +77,7 @@ export function Section01Understand() {
 
           {/* ── RIGHT COLUMN: Single Balanced 8-Dimension Compass Visual ─ */}
           <div className="lg:col-span-6 flex flex-col items-center justify-center">
-            <div className="relative w-full max-w-[380px] aspect-square p-4">
+            <div className="relative w-full max-w-95 aspect-square p-4">
               
               {/* SVG 8-Spoke Navigational Compass Star */}
               <svg viewBox="0 0 220 220" className="w-full h-full overflow-visible">
@@ -178,7 +178,7 @@ export function Section01Understand() {
                         cy={pt.y}
                         r={isSelected ? "4" : "2.5"}
                         fill={isSelected ? "var(--primary)" : "var(--foreground)"}
-                        stroke="#0E0C0A"
+                        stroke="#080A0D"
                         strokeWidth="1"
                         className="transition-all duration-200"
                       />
@@ -199,8 +199,8 @@ export function Section01Understand() {
                     onMouseEnter={() => setActiveTrait(trait)}
                     className={`absolute text-xs font-mono px-2 py-0.5 rounded transition-all duration-200 -translate-x-1/2 -translate-y-1/2 cursor-pointer ${
                       isSelected
-                        ? "text-primary font-semibold bg-[#1C1814] border border-primary/40 shadow-sm"
-                        : "text-muted-foreground hover:text-foreground bg-[#141210]/70 border border-border/40"
+                        ? "text-primary font-semibold bg-[#141920] border border-primary/40 shadow-sm"
+                        : "text-muted-foreground hover:text-foreground bg-[#10141A]/70 border border-border/40"
                     }`}
                     style={{
                       left: `${(pt.x / 220) * 100}%`,

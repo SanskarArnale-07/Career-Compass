@@ -79,9 +79,9 @@ export default function JobPreparation({ items, careerSlug }: JobPreparationProp
           <span className="text-xs font-semibold text-muted-foreground">{checked.size} of {items.length} completed</span>
           <span className="text-xs font-bold text-primary">{Math.round(progress)}%</span>
         </div>
-        <div className="h-2.5 w-full bg-[#161412] rounded-full overflow-hidden border border-border/80">
+        <div className="h-2.5 w-full bg-[#10141A] rounded-full overflow-hidden border border-border/80">
           <motion.div
-            className="h-full bg-gradient-to-r from-primary to-[#D4A853] rounded-full"
+            className="h-full bg-linear-to-r from-primary to-[#38BDF8] rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5, ease: "easeOut" }}
@@ -111,17 +111,17 @@ export default function JobPreparation({ items, careerSlug }: JobPreparationProp
                       onClick={() => toggle(item.id)}
                       className={`w-full text-left flex items-start gap-3 p-4 rounded-xl border transition-all duration-300 ${
                         isChecked
-                          ? "border-emerald-500/20 bg-emerald-500/5"
-                          : "border-border bg-card hover:border-primary/20 hover:bg-card-hover"
+                          ? "border-border/70 bg-[#10141A]"
+                          : "border-border bg-card hover:border-primary/25 hover:bg-card-hover"
                       }`}
                     >
                       {isChecked ? (
-                        <CheckSquare className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                        <CheckSquare className="h-5 w-5 text-primary/80 shrink-0 mt-0.5" />
                       ) : (
-                        <Square className="h-5 w-5 text-slate-500 shrink-0 mt-0.5" />
+                        <Square className="h-5 w-5 text-muted-foreground/60 shrink-0 mt-0.5" />
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-semibold transition-colors ${isChecked ? "text-emerald-400 line-through decoration-emerald-400/30" : "text-foreground"}`}>
+                        <p className={`text-sm font-semibold transition-colors ${isChecked ? "text-muted-foreground line-through decoration-muted-foreground/40" : "text-foreground"}`}>
                           {item.task}
                         </p>
                         <p className="text-xs text-muted-foreground mt-0.5 flex items-start gap-1">

@@ -23,7 +23,7 @@ export function Section03CareerMap() {
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141210] border border-border/70 text-xs font-mono text-muted-foreground self-start md:self-auto shrink-0">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#10141A] border border-border/70 text-xs font-mono text-muted-foreground self-start md:self-auto shrink-0">
             <span>Domain</span>
             <span>→</span>
             <span>Path</span>
@@ -33,7 +33,7 @@ export function Section03CareerMap() {
         </div>
 
         {/* ── Compact Interactive Tree Preview (Domain → Path → Specialization) ── */}
-        <div className="rounded-2xl bg-[#0E0C0A] border border-border/70 p-5 sm:p-7 shadow-xl relative overflow-hidden mb-6">
+        <div className="rounded-2xl bg-[#080A0D] border border-border/70 p-5 sm:p-7 shadow-xl relative overflow-hidden mb-6">
           <div className="relative z-10">
             <CareerTreeExplorer
               mode="compact"
@@ -44,7 +44,7 @@ export function Section03CareerMap() {
         </div>
 
         {/* ── CTA: Open Full Career Map ────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-xl border border-border/60 bg-[#141210]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-xl border border-border/60 bg-[#10141A]">
           <div>
             <p className="text-sm font-semibold text-foreground">
               Ready to explore all career branches?
@@ -55,7 +55,7 @@ export function Section03CareerMap() {
           </div>
           <Link
             href="/career-map"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary-hover shadow-md shadow-amber-950/30 transition-all shrink-0 cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary-hover shadow-md shadow-cyan-950/30 transition-all shrink-0 cursor-pointer"
           >
             <span>Explore the Career Map</span>
             <ArrowRight className="h-4 w-4" />

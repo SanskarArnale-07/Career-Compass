@@ -27,26 +27,26 @@ const CATEGORY_CONFIG: Record<
   learn: {
     label: "Curriculum Step",
     icon: BookOpen,
-    color: "text-amber-300",
-    bg: "bg-amber-500/10 border-amber-500/20",
+    color: "text-sky-300",
+    bg: "bg-sky-500/10 border-sky-500/20",
   },
   build: {
     label: "Portfolio Project",
     icon: FolderKanban,
-    color: "text-[#D4A853]",
-    bg: "bg-amber-500/15 border-amber-500/30",
+    color: "text-primary",
+    bg: "bg-primary/10 border-primary/25",
   },
   practice: {
     label: "Skill Bridge Workout",
     icon: AlertCircle,
-    color: "text-amber-400",
-    bg: "bg-amber-500/10 border-amber-500/20",
+    color: "text-indigo-300",
+    bg: "bg-indigo-500/10 border-indigo-500/20",
   },
   prepare: {
     label: "Career Readiness",
     icon: CheckCircle2,
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/10 border-emerald-500/20",
+    color: "text-teal-300",
+    bg: "bg-teal-500/10 border-teal-500/20",
   },
 };
 
@@ -63,7 +63,7 @@ export default function NextBestActionCard({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative overflow-hidden rounded-2xl border-2 border-primary/35 bg-linear-to-br from-card via-[#161412] to-primary/10 p-6 sm:p-8 shadow-xl shadow-primary/5"
+      className="relative overflow-hidden rounded-2xl border-2 border-primary/35 bg-linear-to-br from-card via-[#10141A] to-primary/10 p-6 sm:p-8 shadow-xl shadow-primary/5"
     >
       {/* Subtle backdrop glow */}
       <div className="absolute top-0 right-0 -mt-10 -mr-10 h-48 w-48 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
@@ -100,7 +100,7 @@ export default function NextBestActionCard({
           </p>
 
           {/* Reasoning Box ("Why this now?") */}
-          <div className="p-3.5 sm:p-4 rounded-xl bg-[#161412] border border-border/80 flex items-start gap-3">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-[#10141A] border border-border/80 flex items-start gap-3">
             <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <div>
               <p className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
@@ -117,7 +117,7 @@ export default function NextBestActionCard({
         <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 md:min-w-50">
           <button
             onClick={() => onActionClick(action.targetType, action.targetId)}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-white font-semibold text-sm shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/35 hover:-translate-y-0.5 transition-all cursor-pointer text-center"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/35 hover:-translate-y-0.5 transition-all cursor-pointer text-center"
           >
             <span>{action.actionText}</span>
             <ArrowRight className="h-4 w-4" />

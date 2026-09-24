@@ -290,7 +290,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
                       className={`text-left p-2 rounded-lg border text-xs font-medium transition-all ${
                         c.slug === context.career.slug
                           ? "bg-primary/20 border-primary text-primary font-bold"
-                          : "border-border bg-[#161412] text-foreground hover:bg-[#1E1A16]"
+                          : "border-border bg-[#10141A] text-foreground hover:bg-[#141920]"
                       }`}
                     >
                       <div className="truncate">{c.title}</div>
@@ -307,7 +307,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
       </header>
 
       {/* 2. Context Grounding Bar */}
-      <div className="border-b border-border/60 bg-[#161412]/70 text-xs">
+      <div className="border-b border-border/60 bg-[#10141A]/70 text-xs">
         <div className="container mx-auto px-4 py-2 max-w-5xl flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-muted-foreground font-mono text-[11px] uppercase tracking-wider flex items-center gap-1">
@@ -412,8 +412,8 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
               <div
                 className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
                   msg.role === "user"
-                    ? "bg-primary text-white"
-                    : "bg-[#161412] border border-primary/30 text-primary"
+                    ? "bg-primary text-primary-foreground font-semibold"
+                    : "bg-[#10141A] border border-primary/30 text-primary"
                 }`}
               >
                 {msg.role === "user" ? (
@@ -427,7 +427,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
               <div
                 className={`rounded-2xl p-4 sm:p-5 max-w-[88%] sm:max-w-[82%] text-xs sm:text-sm leading-relaxed ${
                   msg.role === "user"
-                    ? "bg-primary text-white rounded-tr-none shadow-md shadow-primary/10"
+                    ? "bg-primary text-primary-foreground font-medium rounded-tr-none shadow-md shadow-primary/10"
                     : "bg-card border border-border rounded-tl-none text-foreground shadow-sm"
                 }`}
               >
@@ -440,7 +440,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
                 <div
                   className={`mt-2 text-[10px] font-mono ${
                     msg.role === "user"
-                      ? "text-white/70 text-right"
+                      ? "text-primary-foreground/75 text-right font-medium"
                       : "text-muted-foreground"
                   }`}
                 >
@@ -460,7 +460,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
               animate={{ opacity: 1 }}
               className="flex items-start gap-3.5"
             >
-              <div className="h-9 w-9 rounded-xl bg-[#161412] border border-primary/30 text-primary flex items-center justify-center shrink-0">
+              <div className="h-9 w-9 rounded-xl bg-[#10141A] border border-primary/30 text-primary flex items-center justify-center shrink-0">
                 <Bot className="h-5 w-5" />
               </div>
               <div className="p-4 rounded-2xl bg-card border border-border rounded-tl-none flex items-center gap-2">
@@ -492,7 +492,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
                 key={q}
                 onClick={() => handleSend(q)}
                 disabled={isThinking}
-                className="px-3 py-1.5 rounded-full border border-border/80 bg-[#161412] text-xs font-medium text-foreground hover:border-primary/40 hover:text-primary hover:bg-[#1E1A16] shrink-0 transition-colors cursor-pointer disabled:opacity-50"
+                className="px-3 py-1.5 rounded-full border border-border/80 bg-[#10141A] text-xs font-medium text-foreground hover:border-primary/40 hover:text-primary hover:bg-[#141920] shrink-0 transition-colors cursor-pointer disabled:opacity-50"
               >
                 {q}
               </button>
@@ -518,7 +518,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
             <button
               type="submit"
               disabled={!inputMessage.trim() || isThinking}
-              className="px-5 py-3.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-primary/20 flex items-center gap-1.5 shrink-0"
+              className="px-5 py-3.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary-hover transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-primary/20 flex items-center gap-1.5 shrink-0"
             >
               <span>Send</span>
               <Send className="h-4 w-4" />

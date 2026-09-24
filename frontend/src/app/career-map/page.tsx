@@ -57,7 +57,7 @@ export default function CareerMapPage() {
             </p>
 
             {/* Hierarchy badge */}
-            <div className="mt-6 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#141210] border border-border text-xs font-mono text-muted-foreground">
+            <div className="mt-6 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#10141A] border border-border text-xs font-mono text-muted-foreground">
               <Layers className="h-3.5 w-3.5 text-primary/70" />
               <span className="text-primary/80">Domain</span>
               <span className="text-border mx-1">→</span>
@@ -100,8 +100,8 @@ export default function CareerMapPage() {
           </div>
 
           {/* ── Interactive Tree ─────────────────────────────────────── */}
-          <div className="rounded-2xl border border-border/70 bg-[#0D0C0A] p-5 sm:p-8 shadow-2xl relative overflow-hidden">
-            <div className="absolute inset-0 opacity-[0.035] pointer-events-none bg-[linear-gradient(to_right,#C8922A_1px,transparent_1px),linear-gradient(to_bottom,#C8922A_1px,transparent_1px)] bg-[size:40px_40px]" />
+          <div className="rounded-2xl border border-border/70 bg-[#0B0E12] p-5 sm:p-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute inset-0 opacity-[0.035] pointer-events-none bg-[linear-gradient(to_right,#00E5FF_1px,transparent_1px),linear-gradient(to_bottom,#00E5FF_1px,transparent_1px)] bg-size-[40px_40px]" />
 
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/50">
@@ -132,14 +132,14 @@ export default function CareerMapPage() {
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-2 h-12 px-7 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-hover shadow-md shadow-primary/20 transition-all"
+              className="inline-flex items-center gap-2 h-12 px-7 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary-hover shadow-md shadow-primary/20 transition-all"
             >
               <Sparkles className="h-4 w-4" />
               Find My Best Career Match
             </Link>
             <Link
               href="/careers"
-              className="inline-flex items-center gap-2 h-12 px-6 rounded-xl border border-border bg-[#141210] text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-[#1A1612] transition-colors"
+              className="inline-flex items-center gap-2 h-12 px-6 rounded-xl border border-border bg-[#10141A] text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-[#141920] transition-colors"
             >
               Browse Career Library
               <ArrowRight className="h-4 w-4" />

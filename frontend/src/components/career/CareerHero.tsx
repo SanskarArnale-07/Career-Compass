@@ -46,7 +46,7 @@ export default function CareerHero({
                 {hierarchy?.domain.name || career.category}
               </span>
               {hierarchy && (
-                <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono text-muted-foreground/80 bg-[#161412] px-2.5 py-1 rounded border border-border/70">
+                <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono text-muted-foreground/80 bg-[#141920] px-2.5 py-1 rounded border border-border/70">
                   <span>{hierarchy.domain.name}</span>
                   <span className="text-muted-foreground/40">→</span>
                   <span className="text-primary/90">{hierarchy.path.name}</span>
@@ -66,7 +66,7 @@ export default function CareerHero({
 
             {/* Hierarchy Specializations & Roles */}
             {hierarchy && hierarchy.path.specializations.length > 0 && (
-              <div className="mb-6 p-3.5 rounded-xl bg-[#141210] border border-border/70 max-w-2xl">
+              <div className="mb-6 p-3.5 rounded-xl bg-[#10141A] border border-border/70 max-w-2xl">
                 <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 mb-1.5">
                   Hierarchy Specializations &amp; Roles:
                 </div>
@@ -74,7 +74,7 @@ export default function CareerHero({
                   {hierarchy.path.specializations.map((spec) => (
                     <div
                       key={spec.id}
-                      className="text-xs px-2.5 py-1 rounded-lg bg-[#1A1612] border border-border/60 text-secondary-foreground"
+                      className="text-xs px-2.5 py-1 rounded-lg bg-[#141920] border border-border/60 text-secondary-foreground"
                     >
                       <span className="font-semibold text-foreground">{spec.name}: </span>
                       <span className="text-muted-foreground">{spec.roles.map((r) => r.title).join(", ")}</span>
@@ -104,7 +104,7 @@ export default function CareerHero({
               {onStartRoadmap && (
                 <button
                   onClick={onStartRoadmap}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-semibold text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300"
                 >
                   <LucideIcons.Zap className="h-4 w-4" />
                   Start My Roadmap
@@ -115,7 +115,7 @@ export default function CareerHero({
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:bg-card-hover hover:border-primary/30 transition-all duration-300"
               >
                 <LucideIcons.ArrowLeft className="h-4 w-4" />
-                Explore Other Careers
+                Explore More Careers
               </a>
             </div>
           </motion.div>

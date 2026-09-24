@@ -23,7 +23,7 @@ export function FinalCta() {
         {/* Primary CTA */}
         <Link
           href="/assessment"
-          className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-base font-semibold text-primary-foreground hover:bg-primary-hover shadow-lg shadow-amber-950/30 transition-all hover:scale-[1.02] cursor-pointer"
+          className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-base font-semibold text-primary-foreground hover:bg-primary-hover shadow-lg shadow-cyan-950/30 transition-all hover:scale-[1.02] cursor-pointer"
         >
           <span>Take the Assessment</span>
           <ArrowRight className="ml-2 h-4 w-4" />

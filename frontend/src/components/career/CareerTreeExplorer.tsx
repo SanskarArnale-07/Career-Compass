@@ -41,56 +41,56 @@ export interface CareerTreeProps {
   showLines?: boolean;
 }
 
-// ── Color System (Dark Luxury Palette) ────────────────────────────────
+// ── Color System (Cool Electric Cyan & Blue Palette) ─────────────────
 const DOMAIN_THEMES: Record<
   string,
   { accent: string; glow: string; border: string; bg: string }
 > = {
   "engineering-technology": {
-    accent: "#C8922A",
-    glow: "rgba(200, 146, 42, 0.35)",
-    border: "rgba(200, 146, 42, 0.4)",
-    bg: "rgba(200, 146, 42, 0.08)",
+    accent: "#00E5FF",
+    glow: "rgba(0, 229, 255, 0.35)",
+    border: "rgba(0, 229, 255, 0.4)",
+    bg: "rgba(0, 229, 255, 0.08)",
   },
   "data-ai": {
-    accent: "#38bdf8",
+    accent: "#38BDF8",
     glow: "rgba(56, 189, 248, 0.35)",
     border: "rgba(56, 189, 248, 0.4)",
     bg: "rgba(56, 189, 248, 0.08)",
   },
   "design-creative": {
-    accent: "#a78bfa",
+    accent: "#818CF8",
+    glow: "rgba(129, 140, 248, 0.35)",
+    border: "rgba(129, 140, 248, 0.4)",
+    bg: "rgba(129, 140, 248, 0.08)",
+  },
+  "business-finance-management": {
+    accent: "#60A5FA",
+    glow: "rgba(96, 165, 250, 0.35)",
+    border: "rgba(96, 165, 250, 0.4)",
+    bg: "rgba(96, 165, 250, 0.08)",
+  },
+  "healthcare-sciences": {
+    accent: "#2DD4BF",
+    glow: "rgba(45, 212, 191, 0.35)",
+    border: "rgba(45, 212, 191, 0.4)",
+    bg: "rgba(45, 212, 191, 0.08)",
+  },
+  "media-communications-social": {
+    accent: "#A78BFA",
     glow: "rgba(167, 139, 250, 0.35)",
     border: "rgba(167, 139, 250, 0.4)",
     bg: "rgba(167, 139, 250, 0.08)",
-  },
-  "business-finance-management": {
-    accent: "#34d399",
-    glow: "rgba(52, 211, 153, 0.35)",
-    border: "rgba(52, 211, 153, 0.4)",
-    bg: "rgba(52, 211, 153, 0.08)",
-  },
-  "healthcare-sciences": {
-    accent: "#fb7185",
-    glow: "rgba(251, 113, 133, 0.35)",
-    border: "rgba(251, 113, 133, 0.4)",
-    bg: "rgba(251, 113, 133, 0.08)",
-  },
-  "media-communications-social": {
-    accent: "#e879f9",
-    glow: "rgba(232, 121, 249, 0.35)",
-    border: "rgba(232, 121, 249, 0.4)",
-    bg: "rgba(232, 121, 249, 0.08)",
   },
 };
 
 function getDomainTheme(id: string) {
   return (
     DOMAIN_THEMES[id] ?? {
-      accent: "#C8922A",
-      glow: "rgba(200, 146, 42, 0.35)",
-      border: "rgba(200, 146, 42, 0.4)",
-      bg: "rgba(200, 146, 42, 0.08)",
+      accent: "#00E5FF",
+      glow: "rgba(0, 229, 255, 0.35)",
+      border: "rgba(0, 229, 255, 0.4)",
+      bg: "rgba(0, 229, 255, 0.08)",
     }
   );
 }
@@ -313,7 +313,7 @@ export function CareerTreeExplorer({
                         : "rgba(255, 255, 255, 0.08)",
                       background: isSelected
                         ? dTheme.bg
-                        : "rgba(20, 18, 16, 0.6)",
+                        : "rgba(16, 20, 26, 0.6)",
                       boxShadow: isSelected
                         ? `0 0 20px ${dTheme.glow}`
                         : "none",
@@ -335,7 +335,7 @@ export function CareerTreeExplorer({
                     <span
                       className="text-xs font-semibold leading-tight transition-colors line-clamp-2"
                       style={{
-                        color: isSelected ? "#F5F0E8" : "#A8A096",
+                        color: isSelected ? "#F4F7FA" : "#8C96A3",
                       }}
                     >
                       {domain.name}
@@ -414,7 +414,7 @@ export function CareerTreeExplorer({
                           : "rgba(255, 255, 255, 0.1)",
                         background: isSelected
                           ? theme.bg
-                          : "rgba(22, 20, 18, 0.8)",
+                          : "rgba(16, 20, 26, 0.8)",
                         boxShadow: isSelected
                           ? `0 0 16px ${theme.glow}`
                           : "none",
@@ -423,7 +423,7 @@ export function CareerTreeExplorer({
                       <GitBranch
                         className="h-4 w-4 shrink-0 transition-colors"
                         style={{
-                          color: isSelected ? theme.accent : "#A8A096",
+                          color: isSelected ? theme.accent : "#8C96A3",
                         }}
                       />
 
@@ -431,7 +431,7 @@ export function CareerTreeExplorer({
                         <span
                           className="text-xs sm:text-sm font-bold block leading-snug"
                           style={{
-                            color: isSelected ? "#F5F0E8" : "#A8A096",
+                            color: isSelected ? "#F4F7FA" : "#8C96A3",
                           }}
                         >
                           {path.name}
@@ -516,7 +516,7 @@ export function CareerTreeExplorer({
                           : "rgba(255, 255, 255, 0.08)",
                         background: isSelected
                           ? `${theme.accent}12`
-                          : "rgba(24, 21, 18, 0.7)",
+                          : "rgba(16, 20, 26, 0.7)",
                         boxShadow: isSelected
                           ? `0 0 14px ${theme.glow}`
                           : "none",
@@ -528,7 +528,7 @@ export function CareerTreeExplorer({
                           style={{
                             color: isSelected
                               ? theme.accent
-                              : "#A8A096",
+                              : "#8C96A3",
                           }}
                         >
                           Specialization
@@ -540,7 +540,7 @@ export function CareerTreeExplorer({
                       <p
                         className="text-xs sm:text-sm font-semibold leading-tight"
                         style={{
-                          color: isSelected ? "#F5F0E8" : "#A8A096",
+                          color: isSelected ? "#F4F7FA" : "#8C96A3",
                         }}
                       >
                         {spec.name}
@@ -570,7 +570,7 @@ export function CareerTreeExplorer({
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25 }}
-              className="relative z-10 max-w-2xl mx-auto p-4 rounded-xl border bg-[#161412] text-center"
+              className="relative z-10 max-w-2xl mx-auto p-4 rounded-xl border bg-[#10141A] text-center"
               style={{ borderColor: `${theme.accent}30` }}
             >
               <div className="flex items-center justify-between mb-3 px-1 border-b border-border/40 pb-2">
@@ -591,7 +591,7 @@ export function CareerTreeExplorer({
                     style={{
                       borderColor: `${theme.accent}30`,
                       background: `${theme.accent}08`,
-                      color: "#F5F0E8",
+                      color: "#F4F7FA",
                     }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.borderColor = theme.accent;
@@ -635,7 +635,7 @@ export function CareerTreeExplorer({
           return (
             <div
               key={domain.id}
-              className="rounded-xl border border-border/80 bg-[#12100E] overflow-hidden"
+              className="rounded-xl border border-border/80 bg-[#10141A] overflow-hidden"
               style={{
                 borderColor: isDomainOpen ? dTheme.accent : undefined,
               }}
@@ -665,7 +665,7 @@ export function CareerTreeExplorer({
                     <h3
                       className="text-sm font-bold"
                       style={{
-                        color: isDomainOpen ? dTheme.accent : "#F5F0E8",
+                        color: isDomainOpen ? dTheme.accent : "#F4F7FA",
                       }}
                     >
                       {domain.name}
@@ -701,7 +701,7 @@ export function CareerTreeExplorer({
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.25 }}
-                    className="border-t border-border/60 bg-[#0E0C0A] px-4 py-3 space-y-3"
+                    className="border-t border-border/60 bg-[#0B0E12] px-4 py-3 space-y-3"
                   >
                     {domain.paths.map((path) => {
                       const isPathOpen = path.slug === selectedPathSlug;
@@ -710,7 +710,7 @@ export function CareerTreeExplorer({
                       return (
                         <div
                           key={path.id}
-                          className="rounded-lg border border-border/50 bg-[#161412] p-3 space-y-2.5"
+                          className="rounded-lg border border-border/50 bg-[#141920] p-3 space-y-2.5"
                           style={{
                             borderColor: isPathOpen
                               ? `${dTheme.accent}60`
@@ -735,7 +735,7 @@ export function CareerTreeExplorer({
                                 style={{
                                   color: isPathOpen
                                     ? dTheme.accent
-                                    : "#A8A096",
+                                    : "#8C96A3",
                                 }}
                               />
                               <div>
@@ -781,7 +781,7 @@ export function CareerTreeExplorer({
                                       <Link
                                         key={role.id}
                                         href={`/career/${path.slug}`}
-                                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-border/80 bg-[#1A1816] text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/40"
+                                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-border/80 bg-[#10141A] text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/40"
                                       >
                                         <Circle
                                           className="h-1.5 w-1.5 shrink-0"
@@ -789,7 +789,7 @@ export function CareerTreeExplorer({
                                             role.isEntryLevel
                                               ? dTheme.accent
                                               : "transparent"
-                                          }
+                                            }
                                           stroke={dTheme.accent}
                                         />
                                         <span>{role.title}</span>
@@ -821,7 +821,7 @@ export function CareerTreeExplorer({
                                 {path.specializations.map((spec) => (
                                   <span
                                     key={spec.id}
-                                    className="inline-flex items-center px-2.5 py-1 rounded-md border border-border/70 bg-[#161412] text-[11px] font-mono text-foreground/90"
+                                    className="inline-flex items-center px-2.5 py-1 rounded-md border border-border/70 bg-[#10141A] text-[11px] font-mono text-foreground/90"
                                   >
                                     {spec.name}
                                   </span>

@@ -31,7 +31,7 @@ export function CoachMarkdown({ content }: CoachMarkdownProps) {
         parts.push(
           <code
             key={match.index}
-            className="font-mono text-[11px] bg-[#161412] text-primary px-1.5 py-0.5 rounded border border-primary/20"
+            className="font-mono text-[11px] bg-[#141920] text-primary px-1.5 py-0.5 rounded border border-primary/20"
           >
             {token.slice(1, -1)}
           </code>
@@ -67,7 +67,7 @@ export function CoachMarkdown({ content }: CoachMarkdownProps) {
       elements.push(
         <div key={`table_${elements.length}`} className="my-3 overflow-x-auto">
           <table className="w-full text-left text-xs border border-border rounded-lg overflow-hidden">
-            <thead className="bg-[#161412] border-b border-border text-muted-foreground font-mono">
+            <thead className="bg-[#10141A] border-b border-border text-muted-foreground font-mono">
               <tr>
                 {headers.map((h, i) => (
                   <th key={i} className="px-3 py-2 font-semibold">

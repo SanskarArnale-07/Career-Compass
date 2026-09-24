@@ -9,9 +9,9 @@ interface ProjectsSectionProps {
 }
 
 const DIFFICULTY_CONFIG: Record<ProjectDifficulty, { label: string; icon: React.ComponentType<{ className?: string }>; color: string; border: string; bg: string }> = {
-  beginner: { label: "Beginner", icon: Star, color: "text-emerald-400", border: "border-emerald-500/20", bg: "bg-emerald-500/5" },
-  intermediate: { label: "Intermediate", icon: Zap, color: "text-amber-400", border: "border-amber-500/20", bg: "bg-amber-500/5" },
-  advanced: { label: "Advanced", icon: Crown, color: "text-purple-400", border: "border-purple-500/20", bg: "bg-purple-500/5" },
+  beginner: { label: "Beginner", icon: Star, color: "text-muted-foreground", border: "border-border/80", bg: "bg-[#10141A]" },
+  intermediate: { label: "Intermediate", icon: Zap, color: "text-primary", border: "border-primary/25", bg: "bg-primary/5" },
+  advanced: { label: "Advanced", icon: Crown, color: "text-[#818CF8]", border: "border-[#818CF8]/30", bg: "bg-[#818CF8]/10" },
 };
 
 export default function ProjectsSection({ projects }: ProjectsSectionProps) {

@@ -12,9 +12,9 @@ interface WhyThisCareerProps {
 
 function StatusBadge({ status }: { status: SkillStatus }) {
   const config: Record<SkillStatus, { label: string; className: string }> = {
-    strong: { label: "Strong", className: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" },
-    developing: { label: "Developing", className: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
-    "needs-work": { label: "Needs Work", className: "bg-red-500/12 text-red-400 border-red-500/25" },
+    strong: { label: "Strong", className: "bg-primary/15 text-primary border-primary/30" },
+    developing: { label: "Developing", className: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
+    "needs-work": { label: "Needs Work", className: "bg-[#141920] text-muted-foreground border-border/80" },
   };
   const { label, className } = config[status];
   return (
@@ -38,7 +38,7 @@ export default function WhyThisCareer({ summary, strengths, gaps }: WhyThisCaree
         {/* Strengths column */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <ShieldCheck className="h-5 w-5 text-emerald-400" />
+            <ShieldCheck className="h-5 w-5 text-primary" />
             <h3 className="font-heading text-lg font-bold text-foreground">Your Strengths</h3>
           </div>
           <div className="space-y-3">
@@ -48,7 +48,7 @@ export default function WhyThisCareer({ summary, strengths, gaps }: WhyThisCaree
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="rounded-xl border border-emerald-500/15 bg-emerald-500/5 p-4 hover:border-emerald-500/30 transition-colors"
+                className="rounded-xl border border-primary/20 bg-primary/5 p-4 hover:border-primary/35 transition-colors"
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <h4 className="font-heading text-sm font-bold text-foreground">{item.title}</h4>

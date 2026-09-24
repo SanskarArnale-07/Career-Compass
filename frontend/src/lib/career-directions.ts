@@ -34,22 +34,22 @@ export function getAlignmentLabel(index: number): AlignmentInfo {
   if (index === 0) {
     return {
       label: "Strong alignment",
-      badgeStyle: "bg-blue-500/15 text-blue-400 border border-blue-500/30",
+      badgeStyle: "bg-primary/15 text-primary border border-primary/30",
     };
   } else if (index === 1 || index === 2) {
     return {
       label: "Good alignment",
-      badgeStyle: "bg-blue-500/10 text-blue-300 border border-blue-500/20",
+      badgeStyle: "bg-[#141920] text-sky-400 border border-sky-500/25",
     };
   } else if (index === 3) {
     return {
       label: "Worth exploring",
-      badgeStyle: "bg-slate-800 text-slate-300 border border-slate-700",
+      badgeStyle: "bg-[#10141A] text-muted-foreground border border-border/80",
     };
   } else {
     return {
       label: "Possible direction",
-      badgeStyle: "bg-slate-800/80 text-slate-400 border border-slate-700/60",
+      badgeStyle: "bg-[#10141A] text-muted-foreground/80 border border-border/60",
     };
   }
 }

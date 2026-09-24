@@ -27,6 +27,7 @@ import {
   getPersonalizedSkills,
   type StoredResults,
 } from "./personalization";
+import type { StreamResult } from "@/lib/types/assessment";
 import {
   getNextBestAction,
   calculateTimeToReadiness,
@@ -203,11 +204,23 @@ export function buildCareerContext(
     careerSlug =
       typeof paramsOrCareer === "string"
         ? paramsOrCareer
-        : (paramsOrCareer as any)?.slug || (paramsOrCareer as any)?.id;
+        : paramsOrCareer && typeof paramsOrCareer === "object"
+        ? ("slug" in paramsOrCareer && typeof paramsOrCareer.slug === "string"
+            ? paramsOrCareer.slug
+            : "id" in paramsOrCareer && typeof paramsOrCareer.id === "string"
+            ? paramsOrCareer.id
+            : undefined)
+        : undefined;
     storedProgress = maybeProgress;
     storedResults =
       maybeOptions?.storedResults ||
-      (maybeTraits ? ({ trait_profile: maybeTraits, top_careers: [] } as any) : null);
+      (maybeTraits
+        ? {
+            trait_profile: maybeTraits as TraitProfile,
+            streams: {} as StreamResult,
+            top_careers: [],
+          }
+        : null);
   }
 
   // 1. Resolve Target Career

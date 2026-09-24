@@ -37,7 +37,7 @@ export default function CareersPage() {
 
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover shadow-md shadow-amber-950/20 transition-all shrink-0 self-start md:self-auto"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary-hover shadow-md shadow-cyan-950/20 transition-all shrink-0 self-start md:self-auto"
             >
               <Sparkles className="h-4 w-4" />
               <span>Get My Matches</span>
@@ -45,8 +45,8 @@ export default function CareersPage() {
           </div>
 
           {/* ── Interactive Hierarchy Tree ─────────────────────────── */}
-          <div className="mb-10 rounded-2xl border border-border/70 bg-[#0D0C0A] p-5 sm:p-7 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#C8922A_1px,transparent_1px),linear-gradient(to_bottom,#C8922A_1px,transparent_1px)] bg-[size:36px_36px]" />
+          <div className="mb-10 rounded-2xl border border-border/70 bg-[#080A0D] p-5 sm:p-7 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#00E5FF_1px,transparent_1px),linear-gradient(to_bottom,#00E5FF_1px,transparent_1px)] bg-size-[36px_36px]" />
 
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-5 pb-3 border-b border-border/50">

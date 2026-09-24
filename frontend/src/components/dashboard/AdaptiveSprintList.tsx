@@ -40,15 +40,15 @@ const PRIORITY_BADGES: Record<
   },
   "High Impact": {
     label: "High Impact",
-    bg: "bg-amber-500/15",
-    text: "text-amber-400",
-    border: "border-amber-500/30",
+    bg: "bg-sky-500/15",
+    text: "text-sky-400",
+    border: "border-sky-500/30",
   },
   Recommended: {
     label: "Recommended",
-    bg: "bg-amber-500/10",
-    text: "text-[#D4A853]",
-    border: "border-amber-500/25",
+    bg: "bg-primary/10",
+    text: "text-primary",
+    border: "border-primary/25",
   },
 };
 
@@ -106,8 +106,8 @@ export default function AdaptiveSprintList({
               onClick={() => onToggleTask(task.id)}
               className={`p-3.5 rounded-xl border flex items-start gap-3.5 transition-all cursor-pointer select-none ${
                 task.done
-                  ? "border-emerald-500/25 bg-emerald-500/5"
-                  : "border-border/70 bg-[#161412] hover:border-primary/40 hover:bg-[#1E1A16]"
+                  ? "border-border/70 bg-[#10141A]"
+                  : "border-border/70 bg-[#141920] hover:border-primary/40 hover:bg-[#1A222D]"
               }`}
             >
               <button
@@ -115,7 +115,7 @@ export default function AdaptiveSprintList({
                 className="mt-0.5 shrink-0 transition-transform active:scale-90"
               >
                 {task.done ? (
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400 fill-emerald-400/20" />
+                  <CheckCircle2 className="h-5 w-5 text-primary/70 fill-primary/10" />
                 ) : (
                   <Circle className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
                 )}
@@ -155,8 +155,8 @@ export default function AdaptiveSprintList({
             key={task.id}
             className={`p-3.5 rounded-xl border flex items-start gap-3.5 transition-all ${
               task.done
-                ? "border-emerald-500/25 bg-emerald-500/5"
-                : "border-border/70 bg-[#161412] hover:border-primary/40 hover:bg-[#1E1A16]"
+                ? "border-border/70 bg-[#10141A]"
+                : "border-border/70 bg-[#141920] hover:border-primary/40 hover:bg-[#1A222D]"
             }`}
           >
             <button
@@ -164,7 +164,7 @@ export default function AdaptiveSprintList({
               className="mt-0.5 shrink-0 cursor-pointer"
             >
               {task.done ? (
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 fill-emerald-400/20" />
+                <CheckCircle2 className="h-5 w-5 text-primary/70 fill-primary/10" />
               ) : (
                 <Circle className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
               )}
@@ -205,11 +205,11 @@ export default function AdaptiveSprintList({
             value={newInput}
             onChange={(e) => setNewInput(e.target.value)}
             placeholder="Add a personalized sprint task or study goal..."
-            className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#161412] border border-border/80 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+            className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#10141A] border border-border/80 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
           />
           <button
             type="submit"
-            className="px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover shrink-0 transition-colors cursor-pointer flex items-center gap-1 shadow-sm"
+            className="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover shrink-0 transition-colors cursor-pointer flex items-center gap-1 shadow-sm"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Add</span>

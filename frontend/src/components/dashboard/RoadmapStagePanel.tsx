@@ -71,24 +71,24 @@ const RESOURCE_TYPE_STYLE: Record<
     border: "border-primary/20",
   },
   documentation: {
-    bg: "bg-slate-500/10",
-    text: "text-slate-400",
-    border: "border-slate-500/20",
+    bg: "bg-[#141920]",
+    text: "text-muted-foreground",
+    border: "border-border/80",
   },
   practice: {
-    bg: "bg-violet-500/10",
-    text: "text-violet-400",
-    border: "border-violet-500/20",
+    bg: "bg-primary/10",
+    text: "text-primary",
+    border: "border-primary/20",
   },
   video: {
-    bg: "bg-rose-500/10",
-    text: "text-rose-400",
-    border: "border-rose-500/20",
+    bg: "bg-sky-500/10",
+    text: "text-sky-400",
+    border: "border-sky-500/20",
   },
   book: {
-    bg: "bg-amber-500/10",
-    text: "text-amber-400",
-    border: "border-amber-500/20",
+    bg: "bg-indigo-500/10",
+    text: "text-indigo-400",
+    border: "border-indigo-500/20",
   },
 };
 
@@ -129,10 +129,10 @@ function SkillDrawer({
     <div
       className={`rounded-xl border transition-all duration-200 ${
         isCompleted
-          ? "border-emerald-500/25 bg-emerald-500/5"
+          ? "border-border/70 bg-[#10141A]"
           : open
-          ? "border-primary/35 bg-[#161412]"
-          : "border-border/60 bg-[#141210] hover:border-primary/25 hover:bg-[#161412]"
+          ? "border-primary/35 bg-[#141920]"
+          : "border-border/60 bg-[#10141A] hover:border-primary/25 hover:bg-[#141920]"
       }`}
     >
       {/* Skill Header Row */}
@@ -153,7 +153,7 @@ function SkillDrawer({
             title={isCompleted ? "Mark as in-progress" : "Mark as mastered"}
           >
             {isCompleted ? (
-              <CheckCircle2 className="h-4 w-4 text-emerald-400 fill-emerald-400/20" />
+              <CheckCircle2 className="h-4 w-4 text-primary/70 fill-primary/10" />
             ) : (
               <Circle className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
             )}
@@ -162,7 +162,7 @@ function SkillDrawer({
           <span
             className={`text-xs font-medium leading-snug truncate transition-colors ${
               isCompleted
-                ? "text-emerald-300/70 line-through"
+                ? "text-muted-foreground line-through"
                 : "text-foreground"
             }`}
           >
@@ -200,7 +200,7 @@ function SkillDrawer({
               {learnTasks.length > 0 && (
                 <div>
                   <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
-                    <Lightbulb className="h-3 w-3 text-amber-400" />
+                    <Lightbulb className="h-3 w-3 text-sky-400" />
                     What to learn
                   </p>
                   <ul className="space-y-1.5">
@@ -221,7 +221,7 @@ function SkillDrawer({
               {practiceTasks.length > 0 && (
                 <div>
                   <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
-                    <Wrench className="h-3 w-3 text-violet-400" />
+                    <Wrench className="h-3 w-3 text-primary" />
                     How to practice
                   </p>
                   <ul className="space-y-1.5">
@@ -287,7 +287,7 @@ function SkillDrawer({
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     isCompleted
                       ? "border border-border bg-card text-muted-foreground hover:text-foreground"
-                      : "bg-emerald-600/90 text-white hover:bg-emerald-500 shadow-sm"
+                      : "bg-primary text-primary-foreground font-semibold hover:bg-primary-hover shadow-sm"
                   }`}
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" />
@@ -332,7 +332,7 @@ export default function RoadmapStagePanel({
       layout
       className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
         isCompleted
-          ? "border-emerald-500/25 bg-card/60"
+          ? "border-border/70 bg-card/60"
           : isExpanded
           ? "border-primary/35 bg-card shadow-md shadow-primary/5"
           : "border-border bg-card hover:border-primary/25"
@@ -356,7 +356,7 @@ export default function RoadmapStagePanel({
             title={isCompleted ? "Mark as in-progress" : "Mark stage complete"}
           >
             {isCompleted ? (
-              <CheckCircle2 className="h-5 w-5 text-emerald-400 fill-emerald-400/20" />
+              <CheckCircle2 className="h-5 w-5 text-primary/70 fill-primary/10" />
             ) : (
               <Circle className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
             )}
@@ -377,7 +377,7 @@ export default function RoadmapStagePanel({
                 </span>
               )}
               {isCompleted && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-mono font-semibold text-emerald-400">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#141920] border border-border/80 text-[10px] font-mono text-muted-foreground">
                   ✓ Complete
                 </span>
               )}
@@ -387,7 +387,7 @@ export default function RoadmapStagePanel({
             <h3
               className={`font-heading text-sm sm:text-base font-bold transition-colors leading-snug ${
                 isCompleted
-                  ? "text-emerald-300/70 line-through"
+                  ? "text-muted-foreground line-through"
                   : "text-foreground"
               }`}
             >
@@ -419,7 +419,7 @@ export default function RoadmapStagePanel({
             transition={{ duration: 0.28, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-border/60 bg-[#161412]/40 space-y-5">
+            <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-border/60 bg-[#10141A]/40 space-y-5">
               {/* Phase description */}
               <p className="text-xs sm:text-sm text-secondary-foreground leading-relaxed pt-2">
                 {phase.description}
@@ -470,7 +470,7 @@ export default function RoadmapStagePanel({
                   className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     isCompleted
                       ? "border border-border bg-card text-muted-foreground hover:text-foreground"
-                      : "bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm"
+                      : "bg-primary text-primary-foreground font-semibold hover:bg-primary-hover shadow-sm"
                   }`}
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" />

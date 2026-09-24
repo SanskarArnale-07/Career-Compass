@@ -183,7 +183,7 @@ export default function CareerDetailPage() {
             href="/careers"
             className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-card px-6 text-sm font-semibold text-foreground hover:bg-card-hover transition-colors"
           >
-            Explore All Careers
+            Explore More Careers
           </Link>
         </div>
       </div>
@@ -346,8 +346,8 @@ export default function CareerDetailPage() {
             >
               {copied ? (
                 <>
-                  <Check className="h-3.5 w-3.5 text-emerald-400" />
-                  <span className="text-emerald-400">Copied</span>
+                  <Check className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-primary">Copied</span>
                 </>
               ) : (
                 <>
@@ -392,7 +392,7 @@ export default function CareerDetailPage() {
             </div>
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover shrink-0 transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover shrink-0 transition-colors shadow-sm"
             >
               <span>Take Assessment</span>
               <ChevronRight className="h-3.5 w-3.5" />
@@ -430,7 +430,7 @@ export default function CareerDetailPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
+                      ? "bg-primary text-primary-foreground font-semibold shadow-md shadow-primary/20"
                       : "bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-card-hover"
                   }`}
                 >
@@ -505,7 +505,7 @@ export default function CareerDetailPage() {
         </div>
 
         {/* 10. Bottom Action CTA */}
-        <section className="relative overflow-hidden rounded-2xl border border-border bg-linear-to-r from-card via-[#161412] to-card p-8 sm:p-12 text-center">
+        <section className="relative overflow-hidden rounded-2xl border border-border bg-linear-to-r from-card via-[#10141A] to-card p-8 sm:p-12 text-center">
           <div className="relative z-10 max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mb-4">
               <Compass className="h-3.5 w-3.5" />

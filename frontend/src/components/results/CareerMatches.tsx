@@ -17,12 +17,17 @@ import {
   getTieredCareerMatches,
 } from "@/lib/constants/matching";
 
+import { createElement } from "react";
 import type { CareerMatch } from "@/lib/types/assessment";
 
 interface CareerMatchesProps {
   strongMatches?: CareerMatch[];
   explorationMatches?: CareerMatch[];
   careers?: CareerMatch[];
+}
+
+function MatchIcon({ name, className }: { name: string; className?: string }) {
+  return createElement(getCareerIcon(name), { className });
 }
 
 export function CareerMatches({
@@ -58,7 +63,7 @@ export function CareerMatches({
                 <Compass className="h-3.5 w-3.5" />
                 <span>Personalized For You</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#181512] border border-border/80 text-[11px] font-mono text-muted-foreground">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#141920] border border-border/80 text-[11px] font-mono text-muted-foreground">
                 <ShieldCheck className="h-3 w-3 text-primary/70" />
                 <span>
                   Showing career paths with {CAREER_MATCH_THRESHOLD}% or higher profile alignment
@@ -93,12 +98,12 @@ export function CareerMatches({
           {/* Section Header */}
           <div className="mb-8">
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs font-mono font-semibold text-amber-400/90">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-xs font-mono font-semibold text-sky-400">
                 <Sparkles className="h-3.5 w-3.5" />
                 <span>Directional Alignment</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#181512] border border-border/80 text-[11px] font-mono text-muted-foreground">
-                <ShieldCheck className="h-3 w-3 text-amber-500/70" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10141A] border border-border/80 text-[11px] font-mono text-muted-foreground">
+                <ShieldCheck className="h-3 w-3 text-sky-400/70" />
                 <span>
                   Showing paths with {CAREER_EXPLORATION_THRESHOLD}%–{CAREER_MATCH_THRESHOLD - 1}% profile alignment
                 </span>
@@ -152,7 +157,6 @@ function CareerCard({ career, idx, isTier2 }: CareerCardProps) {
           "Strategic Associate",
         ];
   const alignment = getAlignmentLabel(idx);
-  const Icon = getCareerIcon(career.career_name);
   const slug = hierarchy?.path.slug || getCareerSlug(career.career_name);
   const isTopMatch = !isTier2 && idx === 0;
 
@@ -166,22 +170,22 @@ function CareerCard({ career, idx, isTier2 }: CareerCardProps) {
       <SpotlightCard
         spotlightColor={
           isTopMatch
-            ? "rgba(200, 146, 42, 0.18)"
+            ? "rgba(0, 229, 255, 0.18)"
             : isTier2
-            ? "rgba(200, 146, 42, 0.04)"
-            : "rgba(200, 146, 42, 0.08)"
+            ? "rgba(56, 189, 248, 0.04)"
+            : "rgba(0, 229, 255, 0.08)"
         }
         className={`rounded-xl p-6 flex flex-col justify-between w-full transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden ${
           isTopMatch
-            ? "border-primary/40 shadow-xl shadow-amber-950/20 bg-gradient-to-b from-card via-card to-primary/5"
+            ? "border-primary/40 shadow-xl shadow-cyan-950/20 bg-linear-to-b from-card via-card to-primary/5"
             : isTier2
-            ? "border-border/60 bg-[#141210] hover:border-primary/25 hover:shadow-md"
+            ? "border-border/60 bg-[#10141A] hover:border-primary/25 hover:shadow-md"
             : "border-border/70 hover:border-primary/30 hover:shadow-lg"
         }`}
       >
-        {/* Top-match amber accent indicator bar */}
+        {/* Top-match cyan accent indicator bar */}
         {isTopMatch && (
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-[#D4A853] to-primary" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-[#38BDF8] to-primary" />
         )}
 
         <div>
@@ -192,11 +196,11 @@ function CareerCard({ career, idx, isTier2 }: CareerCardProps) {
                 isTopMatch
                   ? "bg-primary/15 border border-primary/30 text-primary shadow-xs shadow-primary/20"
                   : isTier2
-                  ? "bg-[#1A1816] border border-border/80 text-muted-foreground group-hover:text-primary/90"
+                  ? "bg-[#141920] border border-border/80 text-muted-foreground group-hover:text-primary/90"
                   : "bg-primary/10 border border-primary/20 text-primary"
               }`}
             >
-              <Icon className="h-5 w-5" />
+              <MatchIcon name={career.career_name} className="h-5 w-5" />
             </div>
 
             <div className="flex items-center gap-1.5 flex-wrap justify-end">
@@ -206,14 +210,14 @@ function CareerCard({ career, idx, isTier2 }: CareerCardProps) {
                 </span>
               )}
               {isTier2 && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold uppercase tracking-wider bg-amber-500/10 border border-amber-500/20 text-amber-400/80">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold uppercase tracking-wider bg-sky-500/10 border border-sky-500/20 text-sky-300">
                   Worth Exploring
                 </span>
               )}
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold font-mono ${
                   isTier2
-                    ? "bg-[#1A1816] border border-border/80 text-foreground/80"
+                    ? "bg-[#141920] border border-border/80 text-foreground/80"
                     : "bg-primary/15 border border-primary/25 text-primary"
                 }`}
               >
@@ -264,7 +268,7 @@ function CareerCard({ career, idx, isTier2 }: CareerCardProps) {
           </p>
 
           {/* Hierarchy Branch Exploration */}
-          <div className="py-3 px-3.5 rounded-xl bg-[#161412] border border-border/80 mb-5">
+          <div className="py-3 px-3.5 rounded-xl bg-[#10141A] border border-border/80 mb-5">
             <div className="flex items-center justify-between mb-2">
               <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground/80">
                 Possible Specializations:
@@ -282,7 +286,7 @@ function CareerCard({ career, idx, isTier2 }: CareerCardProps) {
                     <Link
                       key={spec.id}
                       href={`/career-map?domain=${hierarchy.domain.id}&path=${slug}&spec=${spec.id}`}
-                      className="flex items-center justify-between py-1 px-1.5 rounded hover:bg-[#1E1A16] text-foreground/90 font-medium group/spec transition-colors"
+                      className="flex items-center justify-between py-1 px-1.5 rounded hover:bg-[#141920] text-foreground/90 font-medium group/spec transition-colors"
                       title={`Explore ${spec.name} branch in Career Tree`}
                     >
                       <div className="flex items-center gap-1.5 truncate">
@@ -327,9 +331,9 @@ function CareerCard({ career, idx, isTier2 }: CareerCardProps) {
             href={`/career/${slug}`}
             className={`inline-flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
               isTopMatch
-                ? "bg-primary text-white hover:bg-primary-hover shadow-sm shadow-amber-900/25"
+                ? "bg-primary text-primary-foreground font-semibold hover:bg-primary-hover shadow-sm shadow-cyan-900/25"
                 : isTier2
-                ? "bg-[#181512] border border-border/70 text-foreground hover:border-primary/40 hover:bg-[#1E1A16]"
+                ? "bg-[#10141A] border border-border/70 text-foreground hover:border-primary/40 hover:bg-[#141920]"
                 : "bg-card border border-border/70 text-foreground hover:border-primary/40 hover:bg-card-hover"
             }`}
           >

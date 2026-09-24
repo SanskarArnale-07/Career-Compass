@@ -15,8 +15,8 @@ export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScor
   
   const getStreamAlignment = (rank: number) => {
     if (rank === 0) return { label: "Strong alignment", badge: "bg-primary/15 text-primary border-primary/30" };
-    if (rank === 1) return { label: "Good alignment", badge: "bg-secondary/15 text-secondary border-secondary/30" };
-    return { label: "Also worth exploring", badge: "bg-slate-800 text-slate-300 border-slate-700" };
+    if (rank === 1) return { label: "Good alignment", badge: "bg-[#141920] text-sky-400 border-sky-500/25" };
+    return { label: "Also worth exploring", badge: "bg-[#141920] text-muted-foreground border-border/80" };
   };
 
   const streams = [
@@ -33,18 +33,18 @@ export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScor
       name: "Commerce & Economics",
       key: "commerce",
       score: scores.commerce,
-      icon: <Calculator className="h-6 w-6 text-secondary" />,
-      color: "bg-secondary",
-      bgClass: "bg-secondary/15 border border-secondary/25",
+      icon: <Calculator className="h-6 w-6 text-sky-400" />,
+      color: "bg-sky-400",
+      bgClass: "bg-sky-500/15 border border-sky-500/25",
       description: descriptions.commerce || "Connects with business, structured analysis, and organizational thinking."
     },
     {
       name: "Arts & Humanities",
       key: "arts",
       score: scores.arts,
-      icon: <Palette className="h-6 w-6 text-sky-400" />,
-      color: "bg-sky-400",
-      bgClass: "bg-sky-400/15 border border-sky-400/25",
+      icon: <Palette className="h-6 w-6 text-indigo-400" />,
+      color: "bg-indigo-400",
+      bgClass: "bg-indigo-500/15 border border-indigo-500/25",
       description: descriptions.arts || "Connects with creative expression, social perspective, and exploratory inquiry."
     }
   ].sort((a, b) => b.score - a.score);
@@ -56,7 +56,7 @@ export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScor
           Academic Stream Alignment
         </h3>
         <p className="text-muted-foreground text-sm md:text-base max-w-3xl">
-          Based on your assessment responses, here is how your current interests connect with major 11th-grade academic pathways.
+          Based on your assessment responses, here is how your current interests connect with major foundation pathways.
         </p>
       </div>
 
@@ -69,7 +69,7 @@ export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScor
               className={`p-4 sm:p-5 rounded-xl border transition-all ${
                 index === 0
                   ? "border-primary/40 bg-primary/5 shadow-sm shadow-primary/10"
-                  : "border-border/70 bg-[#161412]/50"
+                  : "border-border/70 bg-[#10141A]/50"
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
@@ -96,7 +96,7 @@ export function SuitabilityScores({ scores, descriptions = {} }: SuitabilityScor
               </div>
 
               {/* Relative spectrum indicator without raw numbers */}
-              <div className="mt-3 h-2 w-full bg-[#1E1A16] rounded-full overflow-hidden border border-border/80 p-0.5">
+              <div className="mt-3 h-2 w-full bg-[#141920] rounded-full overflow-hidden border border-border/80 p-0.5">
                 <div
                   className={`h-full rounded-full ${stream.color} transition-all duration-1000 ease-out`}
                   style={{ width: `${Math.max(25, Math.min(95, stream.score * 1.5))}%` }}

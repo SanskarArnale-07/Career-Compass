@@ -36,7 +36,7 @@ export default function NotFound() {
             className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border bg-card text-foreground text-sm font-semibold hover:bg-card-hover hover:border-primary/40 transition-colors"
           >
             <BookOpen className="h-4 w-4" />
-            <span>Explore Careers</span>
+            <span>Explore More Careers</span>
           </Link>
         </div>
 

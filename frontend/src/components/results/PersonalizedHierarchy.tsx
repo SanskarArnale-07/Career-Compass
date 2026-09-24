@@ -11,12 +11,12 @@ interface PersonalizedHierarchyProps {
 }
 
 const DOMAIN_COLOR: Record<string, string> = {
-  "engineering-technology": "#C8922A",
-  "data-ai": "#38bdf8",
-  "design-creative": "#a78bfa",
-  "business-finance-management": "#34d399",
-  "healthcare-sciences": "#fb7185",
-  "media-communications-social": "#e879f9",
+  "engineering-technology": "#00E5FF",
+  "data-ai": "#38BDF8",
+  "design-creative": "#818CF8",
+  "business-finance-management": "#60A5FA",
+  "healthcare-sciences": "#2DD4BF",
+  "media-communications-social": "#A78BFA",
 };
 
 export function PersonalizedHierarchy({ topMatches }: PersonalizedHierarchyProps) {
@@ -57,7 +57,7 @@ export function PersonalizedHierarchy({ topMatches }: PersonalizedHierarchyProps
         {matchesWithHierarchy.map(({ match, hierarchy }, idx) => {
           if (!hierarchy) return null;
           const color =
-            DOMAIN_COLOR[hierarchy.domain.id] ?? "#C8922A";
+            DOMAIN_COLOR[hierarchy.domain.id] ?? "#00E5FF";
           const isPrimary = idx === 0;
 
           return (
@@ -142,7 +142,7 @@ export function PersonalizedHierarchy({ topMatches }: PersonalizedHierarchyProps
                     style={{
                       background: isPrimary ? `${color}20` : `${color}10`,
                       border: `1px solid ${color}${isPrimary ? "50" : "25"}`,
-                      color: "#F5F0E8",
+                      color: "#F4F7FA",
                     }}
                   >
                     {hierarchy.path.name}
@@ -165,9 +165,9 @@ export function PersonalizedHierarchy({ topMatches }: PersonalizedHierarchyProps
                       title={`Explore ${hierarchy.primarySpecialization.name} in Career Tree`}
                       className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-[1.02] cursor-pointer"
                       style={{
-                        background: "#141210",
+                        background: "#10141A",
                         border: `1px solid ${color}18`,
-                        color: "#A8A096",
+                        color: "#8C96A3",
                       }}
                     >
                       {hierarchy.primarySpecialization.name}
@@ -201,7 +201,7 @@ export function PersonalizedHierarchy({ topMatches }: PersonalizedHierarchyProps
                         style={{
                           background: `${color}08`,
                           border: `1px solid ${color}20`,
-                          color: "#A8A096",
+                          color: "#8C96A3",
                         }}
                       >
                         <Circle

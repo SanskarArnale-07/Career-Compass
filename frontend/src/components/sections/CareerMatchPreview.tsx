@@ -47,8 +47,8 @@ export function CareerMatchPreview() {
               key={idx} 
               className="flex flex-col p-7 rounded-xl bg-card/70 border border-border/60 shadow-sm hover:border-primary/40 hover:bg-card transition-all duration-300 relative overflow-hidden group"
             >
-              {/* Subtle warm amber glow on hover */}
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              {/* Subtle cyan glow on hover */}
+              <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               
               <div className="relative z-10 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-6">
@@ -65,7 +65,7 @@ export function CareerMatchPreview() {
                 
                 <div className="mb-5 flex flex-wrap gap-2">
                   {example.skills.map((skill, sIdx) => (
-                    <span key={sIdx} className="inline-flex items-center rounded-md bg-[#161412] border border-border/80 px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                    <span key={sIdx} className="inline-flex items-center rounded-md bg-[#141920] border border-border/80 px-2.5 py-1 text-xs font-medium text-muted-foreground">
                       {skill}
                     </span>
                   ))}

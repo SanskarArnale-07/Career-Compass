@@ -133,7 +133,7 @@ function ProgressBar({
       {sublabel && (
         <p className="text-[10px] text-muted-foreground">{sublabel}</p>
       )}
-      <div className="h-1.5 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-[#10141A] overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${clamped}%` }}
@@ -302,7 +302,7 @@ export default function ProfilePage() {
             </p>
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-hover shadow-md shadow-primary/20 transition-all mt-2"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary-hover shadow-md shadow-primary/20 transition-all mt-2"
             >
               <Sparkles className="h-4 w-4" />
               Take the Assessment
@@ -339,7 +339,7 @@ export default function ProfilePage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 {displayHierarchy && (
                   <>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161412] border border-border text-xs font-mono text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#141920] border border-border text-xs font-mono text-muted-foreground">
                       <Layers className="h-3 w-3 text-primary/70" />
                       {displayHierarchy.domain.name}
                     </span>
@@ -349,7 +349,7 @@ export default function ProfilePage() {
                   </>
                 )}
                 {topMatch && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono font-semibold text-emerald-400">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/25 text-xs font-mono font-semibold text-primary">
                     <CheckCircle2 className="h-3 w-3" />
                     {topMatch.match_percentage}% match
                   </span>
@@ -415,7 +415,7 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
-          <div className="h-2 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+          <div className="h-2 w-full rounded-full bg-[#10141A] overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${overallPercent}%` }}
@@ -450,7 +450,7 @@ export default function ProfilePage() {
         </div>
 
         {/* ── TAB NAVIGATION ─────────────────────────────────── */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#141210] border border-border/70 w-full sm:w-auto">
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#10141A] border border-border/70 w-full sm:w-auto">
           {(
             [
               { id: "overview", label: "Overview", icon: User },
@@ -464,7 +464,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab(id)}
               className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
                 activeTab === id
-                  ? "bg-primary text-white shadow-sm"
+                  ? "bg-primary text-primary-foreground font-semibold shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -495,7 +495,7 @@ export default function ProfilePage() {
               {displayHierarchy ? (
                 <div className="space-y-4">
                   {/* Visual Hierarchy Trail */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3.5 rounded-xl bg-[#141210] border border-border/80">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3.5 rounded-xl bg-[#10141A] border border-border/80">
                     <Link
                       href={`/career-map?domain=${displayHierarchy.domain.id}`}
                       className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5"
@@ -542,14 +542,14 @@ export default function ProfilePage() {
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/career-map?domain=${displayHierarchy.domain.id}&path=${displayHierarchy.path.slug}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-[#181512] text-xs font-mono text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-[#141920] text-xs font-mono text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
                       >
                         <GitBranch className="h-3 w-3" />
                         <span>Explore in Tree</span>
                       </Link>
                       <Link
                         href={`/career/${displayHierarchy.path.slug}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-colors"
                       >
                         <span>Continue Roadmap</span>
                         <ArrowRight className="h-3 w-3" />
@@ -598,7 +598,7 @@ export default function ProfilePage() {
                               {m.match_percentage}%
                             </span>
                           </div>
-                          <div className="h-1 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+                          <div className="h-1 w-full rounded-full bg-[#10141A] overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{
@@ -658,7 +658,7 @@ export default function ProfilePage() {
                   <Link
                     key={href}
                     href={href}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-[#141210] hover:border-primary/30 hover:bg-[#1A1612] transition-all group"
+                    className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-[#10141A] hover:border-primary/30 hover:bg-[#141920] transition-all group"
                   >
                     <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
                       <Icon className="h-4 w-4" />
@@ -726,20 +726,20 @@ export default function ProfilePage() {
                         key={phase.phase}
                         className={`flex items-center gap-4 p-3.5 rounded-xl border transition-colors ${
                           isComplete
-                            ? "border-emerald-500/20 bg-emerald-500/5"
+                            ? "border-border/70 bg-[#10141A]"
                             : isActive
-                            ? "border-primary/30 bg-primary/5"
-                            : "border-border/50 bg-[#141210]"
+                            ? "border-primary/40 bg-primary/10"
+                            : "border-border/40 bg-[#0B0E12]"
                         }`}
                       >
                         {/* Stage indicator */}
                         <div
                           className={`h-7 w-7 rounded-lg flex items-center justify-center text-[10px] font-mono font-bold shrink-0 ${
                             isComplete
-                              ? "bg-emerald-500/20 text-emerald-400"
+                              ? "bg-[#141920] text-muted-foreground"
                               : isActive
                               ? "bg-primary/20 text-primary"
-                              : "bg-[#1E1A16] text-muted-foreground"
+                              : "bg-[#141920] text-muted-foreground/60"
                           }`}
                         >
                           {isComplete ? (
@@ -755,9 +755,9 @@ export default function ProfilePage() {
                             <span
                               className={`text-xs font-medium truncate ${
                                 isComplete
-                                  ? "text-emerald-300/70 line-through"
+                                  ? "text-muted-foreground/80 line-through"
                                   : isActive
-                                  ? "text-foreground"
+                                  ? "text-foreground font-semibold"
                                   : "text-muted-foreground"
                               }`}
                             >
@@ -766,20 +766,20 @@ export default function ProfilePage() {
                             <span
                               className={`text-[10px] font-mono ml-2 shrink-0 ${
                                 isComplete
-                                  ? "text-emerald-400"
+                                  ? "text-muted-foreground"
                                   : isActive
-                                  ? "text-primary"
+                                  ? "text-primary font-bold"
                                   : "text-muted-foreground/60"
                               }`}
                             >
                               {isComplete ? "Done" : `${pct}%`}
                             </span>
                           </div>
-                          <div className="h-1 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+                          <div className="h-1 w-full rounded-full bg-[#10141A] overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all ${
                                 isComplete
-                                  ? "bg-emerald-500/60 w-full"
+                                  ? "bg-muted-foreground/40 w-full"
                                   : "bg-primary"
                               }`}
                               style={
@@ -915,7 +915,7 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="py-10 text-center space-y-3">
-                  <div className="h-10 w-10 rounded-xl bg-[#1E1A16] border border-border flex items-center justify-center text-muted-foreground/40 mx-auto">
+                  <div className="h-10 w-10 rounded-xl bg-[#10141A] border border-border flex items-center justify-center text-muted-foreground/40 mx-auto">
                     <Target className="h-5 w-5" />
                   </div>
                   <p className="text-sm font-medium text-foreground">
@@ -927,7 +927,7 @@ export default function ProfilePage() {
                   </p>
                   <Link
                     href="/dashboard"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-colors"
                   >
                     Start Learning
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -1003,7 +1003,7 @@ function EmptyState({
       </p>
       <Link
         href={href}
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors"
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-colors"
       >
         {cta}
         <ArrowRight className="h-3.5 w-3.5" />
@@ -1027,7 +1027,7 @@ function ActivityGrid() {
             {Array.from({ length: 7 }).map((_, day) => (
               <div
                 key={day}
-                className="h-3 w-3 rounded-sm bg-[#1E1A16] border border-border/20"
+                className="h-3 w-3 rounded-sm bg-[#10141A] border border-border/20"
                 title="No activity data yet"
               />
             ))}
@@ -1036,7 +1036,7 @@ function ActivityGrid() {
       </div>
       <div className="flex items-center gap-2 mt-2 justify-end">
         <span className="text-[10px] text-muted-foreground/50 font-mono">Less</span>
-        {["bg-[#1E1A16]", "bg-primary/20", "bg-primary/50", "bg-primary/80", "bg-primary"].map(
+        {["bg-[#10141A]", "bg-primary/20", "bg-primary/50", "bg-primary/80", "bg-primary"].map(
           (cls, i) => (
             <div key={i} className={`h-3 w-3 rounded-sm ${cls}`} />
           )
@@ -1105,11 +1105,9 @@ function RecentActivity({
         <div key={i} className="flex items-start gap-3">
           <div
             className={`mt-0.5 h-5 w-5 rounded-full flex items-center justify-center shrink-0 ${
-              item.type === "assessment"
-                ? "bg-emerald-500/20 text-emerald-400"
-                : item.type === "complete"
+              item.type === "assessment" || item.type === "complete"
                 ? "bg-primary/20 text-primary"
-                : "bg-[#1E1A16] text-muted-foreground"
+                : "bg-[#141920] text-muted-foreground"
             }`}
           >
             {item.type === "assessment" || item.type === "complete" ? (

@@ -70,12 +70,12 @@ export function Section04BuildPath() {
               return (
                 <div key={stage.name} className="flex flex-col md:flex-row items-center">
                   {/* Stage Card */}
-                  <div className="w-full flex-1 p-4 rounded-xl border border-border/60 bg-[#161412] hover:border-border transition-colors">
+                  <div className="w-full flex-1 p-4 rounded-xl border border-border/60 bg-[#10141A] hover:border-border transition-colors">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-[11px] font-mono text-muted-foreground">
                         {stage.step}
                       </span>
-                      <div className="w-8 h-8 rounded-lg bg-[#201C18] border border-border/60 flex items-center justify-center text-foreground">
+                      <div className="w-8 h-8 rounded-lg bg-[#141920] border border-border/60 flex items-center justify-center text-foreground">
                         <Icon className="h-4 w-4" />
                       </div>
                     </div>

@@ -12,9 +12,9 @@ interface SkillsNeededProps {
 }
 
 function StatusDot({ status }: { status: SkillStatus }) {
-  if (status === "strong") return <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />;
-  if (status === "developing") return <AlertCircle className="h-5 w-5 text-amber-400 shrink-0" />;
-  return <Circle className="h-5 w-5 text-slate-500 shrink-0" />;
+  if (status === "strong") return <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />;
+  if (status === "developing") return <AlertCircle className="h-5 w-5 text-sky-400 shrink-0" />;
+  return <Circle className="h-5 w-5 text-muted-foreground/60 shrink-0" />;
 }
 
 function statusLabel(status: SkillStatus): string {

@@ -44,7 +44,7 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#0E0E0E]/90 backdrop-blur-xl border-b border-border/50">
+    <header className="sticky top-0 z-50 w-full bg-[#080A0D]/90 backdrop-blur-xl border-b border-border/50">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         
         {/* Left: Brand Masthead */}
@@ -52,7 +52,7 @@ export function Navbar() {
           href="/"
           className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
         >
-          <div className="h-7 w-7 rounded-lg bg-[#161412] border border-border/80 flex items-center justify-center text-primary group-hover:border-primary/50 transition-colors">
+          <div className="h-7 w-7 rounded-lg bg-[#10141A] border border-border/80 flex items-center justify-center text-primary group-hover:border-primary/50 transition-colors">
             <Compass className="h-4 w-4" />
           </div>
           <div className="flex flex-col">
@@ -66,7 +66,7 @@ export function Navbar() {
         </Link>
 
         {/* Center: Editorial Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8 text-xs font-mono uppercase tracking-[0.1em]">
+        <nav className="hidden lg:flex items-center gap-8 text-xs font-mono uppercase tracking-widest">
           <Link
             href="/"
             className="text-muted-foreground hover:text-foreground transition-colors py-1 relative group"
@@ -111,14 +111,14 @@ export function Navbar() {
             <div className="relative hidden sm:block" ref={dropdownRef}>
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="inline-flex items-center gap-2 text-xs font-mono text-foreground bg-[#141210] hover:bg-[#1A1612] border border-border/80 px-2.5 py-1.5 rounded-lg transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 text-xs font-mono text-foreground bg-[#10141A] hover:bg-[#141920] border border-border/80 px-2.5 py-1.5 rounded-lg transition-all cursor-pointer"
                 aria-expanded={profileOpen}
                 aria-haspopup="true"
               >
                 <div className="h-5 w-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">
                   {firstName.charAt(0).toUpperCase()}
                 </div>
-                <span className="max-w-[90px] truncate">{firstName}</span>
+                <span className="max-w-22.5 truncate">{firstName}</span>
                 <ChevronDown
                   className={`h-3 w-3 text-muted-foreground transition-transform duration-200 ${
                     profileOpen ? "rotate-180" : ""
@@ -128,7 +128,7 @@ export function Navbar() {
 
               {/* Profile Dropdown Menu */}
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-xl border border-border/80 bg-[#141210] p-1.5 shadow-2xl backdrop-blur-md z-50 text-xs font-mono">
+                <div className="absolute right-0 mt-2 w-48 rounded-xl border border-border/80 bg-[#10141A] p-1.5 shadow-2xl backdrop-blur-md z-50 text-xs font-mono">
                   <div className="px-2.5 py-2 border-b border-border/50">
                     <p className="font-semibold text-foreground truncate">
                       {user.name}
@@ -172,7 +172,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1.5 rounded-lg hover:bg-[#141210]"
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1.5 rounded-lg hover:bg-[#10141A]"
             >
               <LogIn className="h-3.5 w-3.5 text-primary/80" />
               <span>Login</span>
@@ -200,10 +200,10 @@ export function Navbar() {
 
       {/* Mobile Navigation Drawer */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border/60 bg-[#0E0E0E]/95 backdrop-blur-xl">
+        <div className="lg:hidden border-t border-border/60 bg-[#080A0D]/95 backdrop-blur-xl">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-3 font-mono text-xs uppercase tracking-wider">
             {isAuthenticated && user && (
-              <div className="p-2.5 rounded-lg bg-[#141210] border border-border/60 mb-1">
+              <div className="p-2.5 rounded-lg bg-[#10141A] border border-border/60 mb-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="h-7 w-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">
@@ -213,7 +213,7 @@ export function Navbar() {
                       <p className="text-xs font-semibold text-foreground">
                         {user.name}
                       </p>
-                      <p className="text-[10px] text-muted-foreground truncate max-w-[170px]">
+                      <p className="text-[10px] text-muted-foreground truncate max-w-42.5">
                         {user.email}
                       </p>
                     </div>

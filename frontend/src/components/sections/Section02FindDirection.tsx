@@ -53,15 +53,15 @@ export function Section02FindDirection() {
             Discover Your Direction
           </h2>
           <p className="text-base sm:text-lg text-secondary-foreground max-w-xl font-light leading-relaxed">
-            Your results highlight the career directions that align most closely with your profile.
+            Your assessment will reveal the career directions that align most closely with you.
           </p>
         </div>
 
         {/* ── Conceptual Transformation Diagram ──────────────────── */}
-        <div className="rounded-2xl bg-[#12100E] border border-border/70 p-5 sm:p-8 shadow-xl relative overflow-hidden">
+        <div className="rounded-2xl bg-[#0B0E12] border border-border/70 p-5 sm:p-8 shadow-xl relative overflow-hidden">
           
           {/* Subtle grid pattern */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#C8922A_1px,transparent_1px)] [background-size:20px_20px]" />
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#00E5FF_1px,transparent_1px)] bg-size-[20px_20px]" />
 
           {/* Flow Column Headers: YOUR PROFILE → CAREER DOMAINS → CAREER PATHS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 mb-6 pb-4 border-b border-border/50 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
@@ -91,8 +91,8 @@ export function Section02FindDirection() {
                   onMouseEnter={() => setActiveFlowId(flow.id)}
                   className={`grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 p-3.5 sm:p-4 rounded-xl border transition-all duration-200 cursor-pointer items-center ${
                     isSelected
-                      ? "bg-[#1C1814] border-primary/50 shadow-md shadow-amber-950/20"
-                      : "bg-[#161412]/50 border-border/50 hover:border-border hover:bg-[#161412]"
+                      ? "bg-[#141920] border-primary/50 shadow-md shadow-cyan-950/20"
+                      : "bg-[#10141A]/50 border-border/50 hover:border-border hover:bg-[#10141A]"
                   }`}
                 >
                   {/* Stage 1: Your Profile */}
@@ -123,8 +123,8 @@ export function Section02FindDirection() {
                     <span
                       className={`text-xs font-mono px-2 py-0.5 rounded border ${
                         isSelected
-                          ? "text-foreground bg-[#221D17] border-border/80"
-                          : "text-muted-foreground/80 bg-[#161412] border-transparent"
+                          ? "text-foreground bg-[#1A222D] border-border/80"
+                          : "text-muted-foreground/80 bg-[#141920] border-transparent"
                       }`}
                     >
                       {flow.domain}

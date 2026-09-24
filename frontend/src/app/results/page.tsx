@@ -194,7 +194,7 @@ export default function ResultsPage() {
     return (
       <div className="container mx-auto px-4 py-16 max-w-4xl">
         <div className="text-center py-20 flex flex-col items-center">
-          <div className="h-16 w-16 rounded-full bg-[#161412] border border-border flex items-center justify-center text-muted-foreground mb-6 font-mono text-xl">
+          <div className="h-16 w-16 rounded-full bg-[#10141A] border border-border flex items-center justify-center text-muted-foreground mb-6 font-mono text-xl">
             ?
           </div>
           <h1 className="font-heading text-3xl font-bold mb-4 text-foreground">
@@ -213,7 +213,7 @@ export default function ResultsPage() {
             </Link>
             <button
               onClick={handleLoadSample}
-              className="inline-flex h-12 items-center justify-center rounded-xl border border-border bg-[#161412] px-8 text-sm font-semibold text-foreground hover:bg-[#1E1A16] hover:border-primary/40 transition-colors cursor-pointer"
+              className="inline-flex h-12 items-center justify-center rounded-xl border border-border bg-[#10141A] px-8 text-sm font-semibold text-foreground hover:bg-[#141920] hover:border-primary/40 transition-colors cursor-pointer"
             >
               Explore Sample Results
             </button>
@@ -275,7 +275,7 @@ export default function ResultsPage() {
             </button>
             <button
               onClick={handleLoadSample}
-              className="inline-flex h-12 items-center justify-center rounded-xl border border-border bg-[#161412] px-6 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-[#1E1A16] transition-colors cursor-pointer"
+              className="inline-flex h-12 items-center justify-center rounded-xl border border-border bg-[#10141A] px-6 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-[#141920] transition-colors cursor-pointer"
             >
               Load Sample Profile
             </button>
@@ -331,7 +331,7 @@ export default function ResultsPage() {
       </div>
 
       {/* 2. HOW TO READ THIS (Subtle information section) */}
-      <div className="mb-14 p-4 sm:p-5 rounded-xl bg-[#161412] border border-border/70 flex items-start gap-3.5 max-w-3xl mx-auto">
+      <div className="mb-14 p-4 sm:p-5 rounded-xl bg-[#10141A] border border-border/70 flex items-start gap-3.5 max-w-3xl mx-auto">
         <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
           <Info className="h-4 w-4" />
         </div>
@@ -354,7 +354,7 @@ export default function ResultsPage() {
               explorationMatches={explorationMatches}
             />
           ) : (
-            <div className="rounded-2xl border border-border/80 bg-[#141210] p-8 sm:p-12 text-center max-w-2xl mx-auto shadow-xl">
+            <div className="rounded-2xl border border-border/80 bg-[#10141A] p-8 sm:p-12 text-center max-w-2xl mx-auto shadow-xl">
               <div className="h-14 w-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5">
                 <Compass className="h-7 w-7" />
               </div>
@@ -368,16 +368,16 @@ export default function ResultsPage() {
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <Link
                   href="/assessment"
-                  className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-semibold text-white hover:bg-primary-hover shadow-sm transition-colors cursor-pointer"
+                  className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary-hover shadow-sm transition-colors cursor-pointer"
                 >
                   <RotateCcw className="h-4 w-4 mr-2" />
                   Retake Assessment
                 </Link>
                 <Link
                   href="/careers"
-                  className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-[#181512] px-6 text-sm font-semibold text-foreground hover:bg-[#1E1A16] hover:border-border transition-colors"
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-[#10141A] px-6 text-sm font-semibold text-foreground hover:bg-[#141920] hover:border-border transition-colors"
                 >
-                  Explore All Career Domains
+                  Explore More Careers
                 </Link>
               </div>
             </div>
@@ -386,7 +386,7 @@ export default function ResultsPage() {
 
         {/* Optional Account Creation CTA for Guest Users */}
         {!isAuthenticated && (
-          <section className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-[#161412] via-[#1C1814] to-[#161412] p-6 sm:p-8 shadow-xl">
+          <section className="relative overflow-hidden rounded-2xl border border-primary/30 bg-linear-to-br from-[#10141A] via-[#141920] to-[#10141A] p-6 sm:p-8 shadow-xl">
             <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="max-w-xl">
@@ -426,7 +426,7 @@ export default function ResultsPage() {
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex h-10 items-center justify-center rounded-xl border border-border/70 bg-[#161412] px-5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-[#1E1A16] transition-colors text-center"
+                  className="inline-flex h-10 items-center justify-center rounded-xl border border-border/70 bg-[#10141A] px-5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-[#141920] transition-colors text-center"
                 >
                   Already have an account? Sign in
                 </Link>
@@ -448,10 +448,10 @@ export default function ResultsPage() {
         </section>
 
         {/* Contextual Deep Dive: Academic Streams & Growth Areas (Collapsible) */}
-        <section className="rounded-xl border border-border/70 bg-[#161412]/50 overflow-hidden transition-all">
+        <section className="rounded-xl border border-border/70 bg-[#10141A]/60 overflow-hidden transition-all">
           <button
             onClick={() => setShowStreamDetails(!showStreamDetails)}
-            className="w-full p-5 sm:p-6 flex items-center justify-between text-left hover:bg-[#161412] transition-colors cursor-pointer"
+            className="w-full p-5 sm:p-6 flex items-center justify-between text-left hover:bg-[#141920] transition-colors cursor-pointer"
           >
             <div>
               <h3 className="font-heading text-lg font-bold text-foreground">
@@ -511,7 +511,7 @@ export default function ResultsPage() {
             </Link>
             <Link
               href="/careers"
-              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-xl border border-border/70 bg-[#161412] px-6 text-sm font-medium text-muted-foreground hover:bg-[#1E1A16] hover:text-foreground transition-all"
+              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-xl border border-border/70 bg-[#10141A] px-6 text-sm font-medium text-muted-foreground hover:bg-[#141920] hover:text-foreground transition-all"
             >
               Explore More Careers
             </Link>

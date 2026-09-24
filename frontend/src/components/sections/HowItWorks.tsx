@@ -54,7 +54,7 @@ export function HowItWorks() {
                 }`}>
                   {step.label}
                 </p>
-                <p className="text-xs text-muted-foreground leading-relaxed max-w-[140px]">
+                <p className="text-xs text-muted-foreground leading-relaxed max-w-35">
                   {step.description}
                 </p>
               </div>

@@ -48,7 +48,7 @@ export function CareersDirectoryFilter({ careers }: CareersDirectoryFilterProps)
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search specific career, domain, or role..."
-            className="w-full bg-[#181512] border border-border/80 rounded-lg pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/50 transition-colors"
+            className="w-full bg-[#10141A] border border-border/80 rounded-lg pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/50 transition-colors"
           />
           {searchQuery && (
             <button
@@ -66,8 +66,8 @@ export function CareersDirectoryFilter({ careers }: CareersDirectoryFilterProps)
             onClick={() => setSelectedDomain("all")}
             className={`px-2.5 py-1.5 rounded-lg text-[11px] font-mono transition-colors shrink-0 ${
               selectedDomain === "all"
-                ? "bg-primary text-white font-semibold"
-                : "bg-[#181512] text-muted-foreground hover:text-foreground border border-border/60"
+                ? "bg-primary text-primary-foreground font-semibold"
+                : "bg-[#10141A] text-muted-foreground hover:text-foreground border border-border/60"
             }`}
           >
             All
@@ -78,8 +78,8 @@ export function CareersDirectoryFilter({ careers }: CareersDirectoryFilterProps)
               onClick={() => setSelectedDomain(d.id)}
               className={`px-2.5 py-1.5 rounded-lg text-[11px] font-mono transition-colors shrink-0 ${
                 selectedDomain === d.id
-                  ? "bg-primary text-white font-semibold"
-                  : "bg-[#181512] text-muted-foreground hover:text-foreground border border-border/60"
+                  ? "bg-primary text-primary-foreground font-semibold"
+                  : "bg-[#10141A] text-muted-foreground hover:text-foreground border border-border/60"
               }`}
             >
               {d.name.split(" ")[0]}
@@ -134,7 +134,7 @@ export function CareersDirectoryFilter({ careers }: CareersDirectoryFilterProps)
                     <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 transition-transform shrink-0">
                       <IconComponent className="h-4.5 w-4.5" />
                     </div>
-                    <span className="text-[10px] font-mono text-muted-foreground bg-[#161412] border border-border/50 rounded-full px-2.5 py-0.5 truncate max-w-[140px]">
+                    <span className="text-[10px] font-mono text-muted-foreground bg-[#141920] border border-border/50 rounded-full px-2.5 py-0.5 truncate max-w-35">
                       {domain}
                     </span>
                   </div>

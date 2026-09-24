@@ -23,23 +23,23 @@ const DIFFICULTY_CONFIG: Record<
   beginner: {
     label: "Beginner",
     icon: Star,
-    color: "text-emerald-400",
-    border: "border-emerald-500/20",
-    bg: "bg-emerald-500/5",
+    color: "text-muted-foreground",
+    border: "border-border/80",
+    bg: "bg-[#141920]",
   },
   intermediate: {
     label: "Intermediate",
     icon: Zap,
-    color: "text-amber-400",
-    border: "border-amber-500/20",
-    bg: "bg-amber-500/5",
+    color: "text-sky-300",
+    border: "border-sky-500/25",
+    bg: "bg-sky-500/10",
   },
   advanced: {
     label: "Advanced",
     icon: Crown,
-    color: "text-purple-400",
-    border: "border-purple-500/20",
-    bg: "bg-purple-500/5",
+    color: "text-indigo-300",
+    border: "border-indigo-500/30",
+    bg: "bg-indigo-500/10",
   },
 };
 
@@ -79,8 +79,8 @@ export default function ProjectPortfolioTracker({
               key={project.title}
               className={`rounded-xl border p-5 flex flex-col justify-between transition-all ${
                 isDone
-                  ? "border-emerald-500/30 bg-[#161412]/70"
-                  : "border-border/70 bg-[#161412] hover:border-primary/40"
+                  ? "border-border/70 bg-[#10141A]"
+                  : "border-border/70 bg-[#141920] hover:border-primary/40"
               }`}
             >
               <div>
@@ -98,7 +98,7 @@ export default function ProjectPortfolioTracker({
                     title={isDone ? "Mark project in-progress" : "Mark project completed"}
                   >
                     {isDone ? (
-                      <CheckCircle2 className="h-5 w-5 text-emerald-400 fill-emerald-400/20" />
+                      <CheckCircle2 className="h-5 w-5 text-primary/70 fill-primary/10" />
                     ) : (
                       <Circle className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
                     )}
@@ -107,7 +107,7 @@ export default function ProjectPortfolioTracker({
 
                 <h4
                   className={`font-heading text-base font-bold mb-1.5 transition-colors ${
-                    isDone ? "text-emerald-300" : "text-foreground"
+                    isDone ? "text-muted-foreground line-through" : "text-foreground"
                   }`}
                 >
                   {project.title}
@@ -141,8 +141,8 @@ export default function ProjectPortfolioTracker({
                   onClick={() => onToggleProject(project.title)}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     isDone
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                      : "bg-primary text-white hover:bg-primary-hover shadow-sm"
+                      ? "border border-border/80 bg-[#141920] text-muted-foreground hover:text-foreground"
+                      : "bg-primary text-primary-foreground font-semibold hover:bg-primary-hover shadow-sm"
                   }`}
                 >
                   {isDone ? "Built" : "Mark Built"}

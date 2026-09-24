@@ -50,12 +50,12 @@ export default function SkillMasteryMatrix({
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#161412] border border-border/80 self-start sm:self-auto">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#141920] border border-border/80 self-start sm:self-auto">
           <button
             onClick={() => setFilter("all")}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
               filter === "all"
-                ? "bg-primary text-white font-semibold"
+                ? "bg-primary text-primary-foreground font-semibold"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -65,13 +65,13 @@ export default function SkillMasteryMatrix({
             onClick={() => setFilter("gaps")}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer flex items-center gap-1 ${
               filter === "gaps"
-                ? "bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/30"
+                ? "bg-sky-500/20 text-sky-300 font-semibold border border-sky-500/30"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
             <span>Priority Gaps</span>
             {gapCount > 0 && (
-              <span className="h-4 w-4 rounded-full bg-amber-500/30 text-amber-300 text-[10px] flex items-center justify-center font-mono">
+              <span className="h-4 w-4 rounded-full bg-sky-500/30 text-sky-300 text-[10px] flex items-center justify-center font-mono">
                 {gapCount}
               </span>
             )}
@@ -80,7 +80,7 @@ export default function SkillMasteryMatrix({
             onClick={() => setFilter("mastered")}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
               filter === "mastered"
-                ? "bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30"
+                ? "bg-primary/20 text-primary font-semibold border border-primary/35"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -98,30 +98,30 @@ export default function SkillMasteryMatrix({
           // Status Badge config
           let badge = {
             label: "Developing",
-            bg: "bg-amber-500/10",
-            text: "text-[#D4A853]",
-            border: "border-amber-500/20",
+            bg: "bg-sky-500/10",
+            text: "text-sky-300",
+            border: "border-sky-500/20",
           };
           if (isMastered) {
             badge = {
               label: "Verified Mastered",
-              bg: "bg-emerald-500/15",
-              text: "text-emerald-400",
-              border: "border-emerald-500/30",
+              bg: "bg-primary/15",
+              text: "text-primary",
+              border: "border-primary/30",
             };
           } else if (skill.status === "needs-work") {
             badge = {
               label: "Growth Gap",
-              bg: "bg-red-500/15",
-              text: "text-red-400",
-              border: "border-red-500/30",
+              bg: "bg-indigo-500/15",
+              text: "text-indigo-300",
+              border: "border-indigo-500/30",
             };
           } else if (skill.status === "strong") {
             badge = {
               label: "High Aptitude",
-              bg: "bg-emerald-500/10",
-              text: "text-emerald-400",
-              border: "border-emerald-500/20",
+              bg: "bg-primary/10",
+              text: "text-primary",
+              border: "border-primary/20",
             };
           }
 
@@ -130,9 +130,9 @@ export default function SkillMasteryMatrix({
               key={skill.id}
               className={`p-4 rounded-xl border transition-all ${
                 isMastered
-                  ? "border-emerald-500/30 bg-[#161412]/70"
+                  ? "border-border/80 bg-[#10141A]/70"
                   : skill.status === "needs-work"
-                  ? "border-red-500/20 bg-card hover:border-red-500/40"
+                  ? "border-indigo-500/20 bg-card hover:border-indigo-500/40"
                   : "border-border bg-card hover:border-primary/40"
               }`}
             >
@@ -159,13 +159,13 @@ export default function SkillMasteryMatrix({
                   onClick={() => onToggleSkill(skill.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     isMastered
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 hover:bg-emerald-500/30"
-                      : "bg-[#161412] border border-border text-muted-foreground hover:text-foreground hover:border-primary/40"
+                      ? "bg-[#141920] text-muted-foreground border border-border/80 hover:text-foreground"
+                      : "bg-primary text-primary-foreground font-semibold hover:bg-primary-hover shadow-sm"
                   }`}
                 >
                   {isMastered ? (
                     <>
-                      <Check className="h-3.5 w-3.5 text-emerald-400" />
+                      <Check className="h-3.5 w-3.5 text-primary" />
                       <span>Mastered</span>
                     </>
                   ) : (
@@ -190,7 +190,7 @@ export default function SkillMasteryMatrix({
               </button>
 
               {isExpanded && (
-                <div className="mt-3 pt-3 border-t border-border/60 text-xs space-y-2 bg-[#12100E]/80 p-3 rounded-lg animate-in fade-in duration-200">
+                <div className="mt-3 pt-3 border-t border-border/60 text-xs space-y-2 bg-[#0B0E12]/80 p-3 rounded-lg animate-in fade-in duration-200">
                   <div>
                     <span className="font-semibold text-foreground block mb-0.5">
                       What to master:

@@ -43,9 +43,9 @@ const PROGRESSION_STAGES = [
 function ResourceCard({ resource }: { resource: LearningResource }) {
   const Icon = RESOURCE_ICONS[resource.type] ?? BookOpen;
   const difficultyColors: Record<string, string> = {
-    beginner: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-    intermediate: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-    advanced: "text-red-400 bg-red-500/10 border-red-500/20",
+    beginner: "text-muted-foreground bg-[#141920] border-border/80",
+    intermediate: "text-primary bg-primary/10 border-primary/25",
+    advanced: "text-[#818CF8] bg-indigo-500/10 border-indigo-500/25",
   };
 
   return (
@@ -129,16 +129,16 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                     isActive
                       ? "bg-primary/15 border-primary text-primary font-semibold shadow-xs shadow-primary/20"
                       : isCompleted
-                      ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400 font-medium"
+                      ? "bg-[#141920] border-border text-muted-foreground font-medium"
                       : "bg-background/40 border-border/60 text-muted-foreground"
                   }`}
                 >
                   <span
                     className={`h-4.5 w-4.5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold shrink-0 ${
                       isActive
-                        ? "bg-primary text-white"
+                        ? "bg-primary text-primary-foreground font-bold"
                         : isCompleted
-                        ? "bg-emerald-500/20 text-emerald-400"
+                        ? "bg-[#10141A] text-muted-foreground border border-border/60"
                         : "bg-card border border-border text-muted-foreground"
                     }`}
                   >
@@ -191,9 +191,9 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                     <div
                       className={`relative z-10 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 shrink-0 transition-all duration-300 ${
                         isCompleted
-                          ? "border-emerald-500 bg-emerald-500/15 text-emerald-400 shadow-sm"
+                          ? "border-border/80 bg-[#10141A] text-muted-foreground shadow-xs"
                           : isCurrent
-                          ? "border-primary bg-primary text-white shadow-lg shadow-primary/30 ring-4 ring-primary/10"
+                          ? "border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-4 ring-primary/10"
                           : isExpanded
                           ? "border-primary/80 bg-primary/10 text-primary"
                           : "border-border bg-card text-muted-foreground group-hover:border-primary/50"
@@ -212,9 +212,9 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                     <div
                       className={`flex-1 rounded-xl border p-4 sm:p-5 transition-all duration-300 ${
                         isCompleted
-                          ? "border-emerald-500/30 bg-emerald-500/5"
+                          ? "border-border/70 bg-[#10141A]"
                           : isCurrent
-                          ? "border-primary/50 bg-card shadow-sm shadow-primary/10 border-l-4 border-l-primary"
+                          ? "border-primary/50 bg-[#141920] shadow-sm shadow-primary/10 border-l-4 border-l-primary"
                           : isExpanded
                           ? "border-primary/40 bg-card shadow-xs"
                           : isUpcoming
@@ -235,7 +235,7 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                               </span>
                             )}
                             {isCompleted && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono text-muted-foreground bg-[#1A1816] border border-border/80">
                                 Completed Milestone
                               </span>
                             )}
@@ -303,13 +303,13 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
                         {/* Practice */}
                         {phase.practice.length > 0 && (
                           <div>
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2 flex items-center gap-1.5">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-sky-400 mb-2 flex items-center gap-1.5">
                               <Hammer className="h-3.5 w-3.5" />Practice
                             </h4>
                             <ul className="space-y-1">
                               {phase.practice.map((item) => (
                                 <li key={item} className="flex items-center gap-2 text-sm text-foreground/80">
-                                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400/60 shrink-0" />
+                                  <span className="h-1.5 w-1.5 rounded-full bg-sky-400/60 shrink-0" />
                                   {item}
                                 </li>
                               ))}
@@ -319,10 +319,10 @@ export default function LearningRoadmap({ phases, completedPhases = [] }: Learni
 
                         {/* Build */}
                         <div>
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 flex items-center gap-1.5">
-                            <Code2 className="h-3.5 w-3.5" />Build
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-primary mb-2 flex items-center gap-1.5">
+                            <Code2 className="h-3.5 w-3.5" />Build Project
                           </h4>
-                          <p className="text-sm text-foreground/80 bg-emerald-500/5 border border-emerald-500/15 rounded-lg px-3 py-2">{phase.build}</p>
+                          <p className="text-sm text-foreground/90 bg-[#10141A] border border-border/80 rounded-lg px-3 py-2">{phase.build}</p>
                         </div>
 
                         {/* Resources */}

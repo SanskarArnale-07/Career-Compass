@@ -63,7 +63,7 @@ export function UserSignals({ traits }: UserSignalsProps) {
             return (
               <div
                 key={signal.traitCode}
-                className="flex flex-col p-5 rounded-xl bg-[#161412] border border-border/60 hover:border-primary/40 hover:bg-[#1A1714] transition-all duration-200 group"
+                className="flex flex-col p-5 rounded-xl bg-[#10141A] border border-border/60 hover:border-primary/40 hover:bg-[#141920] transition-all duration-200 group"
               >
                 <div className="flex items-center gap-3 mb-2.5">
                   <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-105 transition-transform">

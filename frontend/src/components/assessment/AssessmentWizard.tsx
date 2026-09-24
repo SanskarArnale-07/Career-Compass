@@ -214,7 +214,7 @@ export function AssessmentWizard() {
           <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
             <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping opacity-30" />
             <div className="absolute -inset-3 rounded-full border border-primary/20 animate-[spin_20s_linear_infinite]" />
-            <div className="h-20 w-20 rounded-2xl bg-linear-to-br from-[#1A1612] via-[#141210] to-[#1A1612] border border-primary/40 flex items-center justify-center text-primary shadow-xl shadow-primary/20">
+            <div className="h-20 w-20 rounded-2xl bg-linear-to-br from-[#141920] via-[#10141A] to-[#141920] border border-primary/40 flex items-center justify-center text-primary shadow-xl shadow-primary/20">
               <Compass className="h-10 w-10 animate-[spin_12s_linear_infinite]" />
             </div>
           </div>
@@ -237,13 +237,13 @@ export function AssessmentWizard() {
               className={`p-3.5 rounded-xl border flex items-center gap-3 transition-all duration-500 ${
                 completionStep >= 1
                   ? "border-primary/40 bg-primary/10 text-foreground"
-                  : "border-border/50 bg-[#141210] text-muted-foreground opacity-50"
+                  : "border-border/50 bg-[#10141A] text-muted-foreground opacity-50"
               }`}
             >
               <div
                 className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
                   completionStep >= 1
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-primary-foreground font-bold"
                     : "border border-border text-muted-foreground"
                 }`}
               >
@@ -258,13 +258,13 @@ export function AssessmentWizard() {
               className={`p-3.5 rounded-xl border flex items-center gap-3 transition-all duration-500 ${
                 completionStep >= 2
                   ? "border-primary/40 bg-primary/10 text-foreground"
-                  : "border-border/50 bg-[#141210] text-muted-foreground opacity-50"
+                  : "border-border/50 bg-[#10141A] text-muted-foreground opacity-50"
               }`}
             >
               <div
                 className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
                   completionStep >= 2
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-primary-foreground font-bold"
                     : "border border-border text-muted-foreground"
                 }`}
               >
@@ -279,13 +279,13 @@ export function AssessmentWizard() {
               className={`p-3.5 rounded-xl border flex items-center gap-3 transition-all duration-500 ${
                 completionStep >= 3
                   ? "border-primary/40 bg-primary/10 text-foreground"
-                  : "border-border/50 bg-[#141210] text-muted-foreground opacity-50"
+                  : "border-border/50 bg-[#10141A] text-muted-foreground opacity-50"
               }`}
             >
               <div
                 className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
                   completionStep >= 3
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-primary-foreground font-bold"
                     : "border border-border text-muted-foreground"
                 }`}
               >
@@ -344,16 +344,16 @@ export function AssessmentWizard() {
           </div>
         </div>
 
-        {/* Thin Amber Progress Line (Requirement 5) */}
+        {/* Thin Cyan Progress Line */}
         <div
-          className="h-1 sm:h-1.5 w-full bg-[#181614] rounded-full overflow-hidden border border-border/40"
+          className="h-1 sm:h-1.5 w-full bg-[#10141A] rounded-full overflow-hidden border border-border/40"
           role="progressbar"
           aria-valuenow={progressPercentage}
           aria-valuemin={0}
           aria-valuemax={100}
         >
           <div
-            className="h-full bg-linear-to-r from-primary to-[#D4A853] rounded-full transition-all duration-300 ease-out shadow-xs shadow-primary/40"
+            className="h-full bg-linear-to-r from-primary to-[#38BDF8] rounded-full transition-all duration-300 ease-out shadow-xs shadow-primary/40"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
@@ -411,7 +411,7 @@ export function AssessmentWizard() {
                   className={`w-full text-left p-3.5 sm:p-4 rounded-xl border transition-all duration-150 flex items-center justify-between gap-4 cursor-pointer select-none group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary ${
                     isSelected
                       ? "border-primary bg-primary/10 shadow-sm shadow-primary/15 text-foreground"
-                      : "border-border/70 bg-[#141210] hover:border-primary/40 hover:bg-[#181614] text-foreground/90"
+                      : "border-border/70 bg-[#10141A] hover:border-primary/40 hover:bg-[#141920] text-foreground/90"
                   }`}
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
@@ -419,8 +419,8 @@ export function AssessmentWizard() {
                     <span
                       className={`h-6 w-6 rounded-lg text-[11px] font-mono font-bold flex items-center justify-center shrink-0 transition-colors ${
                         isSelected
-                          ? "bg-primary text-white"
-                          : "bg-[#1E1A16] border border-border/80 text-muted-foreground group-hover:text-foreground group-hover:border-primary/40"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-[#141920] border border-border/80 text-muted-foreground group-hover:text-foreground group-hover:border-primary/40"
                       }`}
                     >
                       {optionLetter}
@@ -441,7 +441,7 @@ export function AssessmentWizard() {
                   <div
                     className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
                       isSelected
-                        ? "border-primary bg-primary text-white shadow-xs shadow-primary/30"
+                        ? "border-primary bg-primary text-primary-foreground shadow-xs shadow-primary/30"
                         : "border-border/80 bg-transparent group-hover:border-primary/40"
                     }`}
                   >
@@ -471,7 +471,7 @@ export function AssessmentWizard() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-border/80 bg-[#161412] text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-[#1A1714] transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-border/80 bg-[#10141A] text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-[#141920] transition-all cursor-pointer"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Back</span>
@@ -489,7 +489,7 @@ export function AssessmentWizard() {
             <button
               type="button"
               onClick={handleNext}
-              className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl bg-primary text-white font-bold text-xs sm:text-sm shadow-lg shadow-primary/20 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs sm:text-sm shadow-lg shadow-primary/20 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
             >
               <span>{isLastQuestion ? "See My Results" : "Continue"}</span>
               <ArrowRight className="h-4 w-4 stroke-[2.5]" />

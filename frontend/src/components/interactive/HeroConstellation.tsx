@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface CareerPath {
   name: string;
@@ -126,13 +125,13 @@ export function HeroConstellation() {
 
   return (
     <div
-      className="relative w-full max-w-[680px] lg:max-w-[760px] aspect-[1/0.92] sm:aspect-square mx-auto select-none"
+      className="relative w-full max-w-170 lg:max-w-190 aspect-[1/0.92] sm:aspect-square mx-auto select-none"
       onMouseEnter={() => setAutoRotate(false)}
       onMouseLeave={() => setAutoRotate(true)}
     >
       {/* ── Background Instrument Grid & Radial Gradients ──────────── */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-        {/* Soft amber beacon behind YOU center */}
+        {/* Soft cyan beacon behind YOU center */}
         <div className="w-56 h-56 rounded-full bg-primary/10 blur-[90px] animate-pulse" />
         {/* Subtle secondary ambient glow */}
         <div className="w-[85%] h-[85%] rounded-full border border-border/20" />
@@ -281,7 +280,7 @@ export function HeroConstellation() {
           <div className="absolute w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-primary/40 animate-ping opacity-25" />
           
           {/* Glowing central core badge */}
-          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#161412] border-2 border-primary flex flex-col items-center justify-center shadow-lg shadow-amber-950/50">
+          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[#141920] border-2 border-primary flex flex-col items-center justify-center shadow-lg shadow-cyan-950/50">
             <span className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.2em] text-primary">
               YOU
             </span>
@@ -319,8 +318,8 @@ export function HeroConstellation() {
             <div
               className={`group flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-full border transition-all duration-300 backdrop-blur-md ${
                 isActive
-                  ? "bg-[#1C1814] border-primary text-foreground shadow-md shadow-amber-950/40 scale-105"
-                  : "bg-[#141210]/90 border-border/70 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                  ? "bg-[#141920] border-primary text-foreground shadow-md shadow-cyan-950/40 scale-105"
+                  : "bg-[#10141A]/90 border-border/70 text-muted-foreground hover:border-primary/50 hover:text-foreground"
               }`}
             >
               {/* Indicator dot */}
@@ -341,7 +340,7 @@ export function HeroConstellation() {
             {/* Sub-Branch Career Paths (Displayed when this node is active) */}
             {isActive && (
               <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2.5 pointer-events-auto">
-                <div className="flex flex-col gap-1 w-44 sm:w-52 p-2 rounded-lg bg-[#141210]/95 border border-primary/30 shadow-xl backdrop-blur-md animate-fade-in-up">
+                <div className="flex flex-col gap-1 w-44 sm:w-52 p-2 rounded-lg bg-[#10141A]/95 border border-primary/30 shadow-xl backdrop-blur-md animate-fade-in-up">
                   <div className="flex items-center justify-between pb-1 border-b border-border/50 text-[9px] font-mono uppercase tracking-widest text-primary/80">
                     <span>Hierarchy</span>
                     <span>Pathways</span>
@@ -372,7 +371,7 @@ export function HeroConstellation() {
       })}
 
       {/* ── Active Path Callout (Bottom-Left Telemetry Box) ─────────── */}
-      <div className="hidden sm:flex absolute bottom-2 left-2 z-10 p-2.5 rounded-lg bg-[#131110]/85 border border-border/60 text-[10px] font-mono text-muted-foreground backdrop-blur-sm">
+      <div className="hidden sm:flex absolute bottom-2 left-2 z-10 p-2.5 rounded-lg bg-[#10141A]/85 border border-border/60 text-[10px] font-mono text-muted-foreground backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           <span>Vector Active:</span>
@@ -382,7 +381,7 @@ export function HeroConstellation() {
       </div>
 
       {/* ── Instrument Legend (Bottom-Right Telemetry) ─────────────── */}
-      <div className="hidden sm:flex absolute bottom-2 right-2 z-10 p-2.5 rounded-lg bg-[#131110]/85 border border-border/60 text-[10px] font-mono text-muted-foreground backdrop-blur-sm">
+      <div className="hidden sm:flex absolute bottom-2 right-2 z-10 p-2.5 rounded-lg bg-[#10141A]/85 border border-border/60 text-[10px] font-mono text-muted-foreground backdrop-blur-sm">
         <span className="text-primary font-mono tracking-widest">NAV·GRID 0.88</span>
       </div>
     </div>
