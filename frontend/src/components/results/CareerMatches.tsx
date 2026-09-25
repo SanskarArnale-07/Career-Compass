@@ -1,48 +1,42 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight, Compass, ShieldCheck, Sparkles } from "lucide-react";
+import { useMemo } from "react";
+import { Compass, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { SpotlightCard } from "@/components/interactive/SpotlightCard";
-import { getCareerIcon } from "@/lib/career-icons";
-import {
-  CAREER_EXPLORATION_MAP,
-  getAlignmentLabel,
-} from "@/lib/career-directions";
-import { getCareerSlug } from "@/lib/career-details";
 import { getCareerHierarchy } from "@/lib/career-hierarchy";
+import { CAREER_EXPLORATION_MAP } from "@/lib/career-directions";
 import {
   CAREER_MATCH_THRESHOLD,
   CAREER_EXPLORATION_THRESHOLD,
   getTieredCareerMatches,
 } from "@/lib/constants/matching";
-
-import { createElement } from "react";
 import type { CareerMatch } from "@/lib/types/assessment";
 
 interface CareerMatchesProps {
   strongMatches?: CareerMatch[];
   explorationMatches?: CareerMatch[];
   careers?: CareerMatch[];
-}
-
-function MatchIcon({ name, className }: { name: string; className?: string }) {
-  return createElement(getCareerIcon(name), { className });
+  activeCareerName?: string;
+  onExploreCareer?: (careerName: string) => void;
 }
 
 export function CareerMatches({
   strongMatches: propStrong,
   explorationMatches: propExploration,
   careers: propCareers,
+  activeCareerName,
+  onExploreCareer,
 }: CareerMatchesProps) {
-  // If individual tiers are passed, use them; otherwise, compute from careers array
-  const { strongMatches, explorationMatches } =
-    propStrong !== undefined
-      ? {
-          strongMatches: propStrong,
-          explorationMatches: propExploration ?? [],
-        }
-      : getTieredCareerMatches(propCareers ?? []);
+  // Use provided tiers or compute using canonical matching logic
+  const { strongMatches, explorationMatches } = useMemo(() => {
+    if (propStrong !== undefined) {
+      return {
+        strongMatches: propStrong,
+        explorationMatches: propExploration ?? [],
+      };
+    }
+    return getTieredCareerMatches(propCareers ?? []);
+  }, [propStrong, propExploration, propCareers]);
 
   const hasStrong = strongMatches.length > 0;
   const hasExploration = explorationMatches.length > 0;
@@ -52,306 +46,210 @@ export function CareerMatches({
   }
 
   return (
-    <div className="w-full space-y-14">
-      {/* ── Tier 1: Strong Matches ───────────────────────────────────── */}
+    <div className="w-full space-y-10" id="career-matches-section">
+      {/* ── Section Header ─────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-border/60">
+        <div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs font-mono font-semibold text-cyan-400 mb-2">
+            <Compass className="h-3.5 w-3.5" />
+            <span>Curated Matches</span>
+          </div>
+          <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-100 tracking-tight">
+            Careers You Can Explore
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-light leading-relaxed">
+            Top paths filtered by your assessment profile. Click any card to explore its detailed hierarchy below.
+          </p>
+        </div>
+      </div>
+
+      {/* ── Match Context: All visible results in 25–39% range ── */}
+      {!hasStrong && hasExploration && (
+        <div className="p-3.5 sm:p-4 rounded-xl bg-sky-950/25 border border-sky-500/30 flex items-center gap-3">
+          <Compass className="h-4 w-4 text-sky-400 shrink-0" />
+          <p className="text-xs sm:text-sm text-sky-200 font-light">
+            <strong className="font-semibold text-sky-300">Match Context:</strong> No strong match yet. These are your top paths worth exploring.
+          </p>
+        </div>
+      )}
+
+      {/* ── Tier 1: Strong Matches (≥40%) ──────────────────────────── */}
       {hasStrong && (
-        <section>
-          {/* Section Header */}
-          <div className="mb-8">
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary">
-                <Compass className="h-3.5 w-3.5" />
-                <span>Personalized For You</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#141920] border border-border/80 text-[11px] font-mono text-muted-foreground">
-                <ShieldCheck className="h-3 w-3 text-primary/70" />
-                <span>
-                  Showing career paths with {CAREER_MATCH_THRESHOLD}% or higher profile alignment
-                </span>
-              </div>
-            </div>
-            <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-              Your Strong Matches
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base mt-2 max-w-3xl leading-relaxed font-light">
-              These career paths show the strongest alignment with your assessment profile.
-            </p>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
+              Strong Match
+            </span>
+            <span className="text-[11px] font-mono text-slate-500">
+              (≥{CAREER_MATCH_THRESHOLD}%)
+            </span>
           </div>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
             {strongMatches.map((career, idx) => (
-              <CareerCard
+              <CleanCareerCard
                 key={career.career_name}
                 career={career}
                 idx={idx}
                 isTier2={false}
+                isActive={activeCareerName === career.career_name}
+                onSelect={onExploreCareer}
               />
             ))}
           </div>
-        </section>
+        </div>
       )}
 
-      {/* ── Tier 2: Worth Exploring ──────────────────────────────────── */}
+      {/* ── Tier 2: Worth Exploring (25–39%) ────────────────────────── */}
       {hasExploration && (
-        <section className={hasStrong ? "pt-4 border-t border-border/40" : ""}>
-          {/* Section Header */}
-          <div className="mb-8">
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-xs font-mono font-semibold text-sky-400">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Directional Alignment</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10141A] border border-border/80 text-[11px] font-mono text-muted-foreground">
-                <ShieldCheck className="h-3 w-3 text-sky-400/70" />
-                <span>
-                  Showing paths with {CAREER_EXPLORATION_THRESHOLD}%–{CAREER_MATCH_THRESHOLD - 1}% profile alignment
-                </span>
-              </div>
-            </div>
-            <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-              Other Directions Worth Exploring
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base mt-2 max-w-3xl leading-relaxed font-light">
-              These paths show some alignment with your profile, but are less strongly matched.
-            </p>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-sky-400">
+              Worth Exploring
+            </span>
+            <span className="text-[11px] font-mono text-slate-500">
+              ({CAREER_EXPLORATION_THRESHOLD}–{CAREER_MATCH_THRESHOLD - 1}%)
+            </span>
           </div>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
             {explorationMatches.map((career, idx) => (
-              <CareerCard
+              <CleanCareerCard
                 key={career.career_name}
                 career={career}
                 idx={idx + strongMatches.length}
                 isTier2={true}
+                isActive={activeCareerName === career.career_name}
+                onSelect={onExploreCareer}
               />
             ))}
           </div>
-        </section>
+        </div>
       )}
     </div>
   );
 }
 
-// ── Shared Card Component ────────────────────────────────────────────
+// ── Ultra-Clean Minimal Card ──────────────────────────────────────────
+// Entire card is clickable to select path and scroll to hierarchy.
+// No redundant Explore buttons.
 
-interface CareerCardProps {
+interface CleanCareerCardProps {
   career: CareerMatch;
   idx: number;
   isTier2: boolean;
+  isActive: boolean;
+  onSelect?: (careerName: string) => void;
 }
 
-function CareerCard({ career, idx, isTier2 }: CareerCardProps) {
-  const detail = CAREER_EXPLORATION_MAP[career.career_name];
-  const displayTitle = detail?.title || career.career_name;
-  const explanation = career.explanation;
+function CleanCareerCard({
+  career,
+  idx,
+  isTier2,
+  isActive,
+  onSelect,
+}: CleanCareerCardProps) {
   const hierarchy = getCareerHierarchy(career.career_name);
-  const subRoles =
-    hierarchy?.sampleRoles && hierarchy.sampleRoles.length > 0
-      ? hierarchy.sampleRoles
-      : detail?.subRoles || [
-          "Domain Specialist",
-          "Technical Analyst",
-          "Project Lead",
-          "Strategic Associate",
-        ];
-  const alignment = getAlignmentLabel(idx);
-  const slug = hierarchy?.path.slug || getCareerSlug(career.career_name);
-  const isTopMatch = !isTier2 && idx === 0;
+  const detail = CAREER_EXPLORATION_MAP[career.career_name];
+  const displayTitle = hierarchy?.path.name || detail?.title || career.career_name;
+
+  // 1-line description (clean, concise, non-bloated)
+  const description =
+    hierarchy?.path.tagline ||
+    detail?.summary ||
+    career.explanation?.split(".")[0] ||
+    "Specialized career path aligned with your assessment strengths.";
+
+  const matchScore = Math.round(career.match_percentage);
+
+  const handleClick = () => {
+    if (onSelect) {
+      onSelect(career.career_name);
+    }
+  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
+    <motion.button
+      type="button"
+      onClick={handleClick}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: idx * 0.08, duration: 0.45, ease: "easeOut" }}
-      className="flex"
+      transition={{ delay: idx * 0.05, duration: 0.35 }}
+      aria-pressed={isActive}
+      className={`rounded-2xl p-5 sm:p-6 text-left flex flex-col justify-between transition-all duration-200 border cursor-pointer group relative overflow-hidden focus:outline-hidden focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+        isActive
+          ? "bg-[#141C26] border-cyan-400 shadow-xl shadow-cyan-950/40 ring-1 ring-cyan-400/50"
+          : isTier2
+          ? "bg-[#10141A]/90 border-border/70 hover:border-sky-500/50 hover:bg-[#121720]"
+          : "bg-[#10141A]/90 border-border/70 hover:border-cyan-500/50 hover:bg-[#121720]"
+      }`}
     >
-      <SpotlightCard
-        spotlightColor={
-          isTopMatch
-            ? "rgba(0, 229, 255, 0.18)"
-            : isTier2
-            ? "rgba(56, 189, 248, 0.04)"
-            : "rgba(0, 229, 255, 0.08)"
-        }
-        className={`rounded-xl p-6 flex flex-col justify-between w-full transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden ${
-          isTopMatch
-            ? "border-primary/40 shadow-xl shadow-cyan-950/20 bg-linear-to-b from-card via-card to-primary/5"
-            : isTier2
-            ? "border-border/60 bg-[#10141A] hover:border-primary/25 hover:shadow-md"
-            : "border-border/70 hover:border-primary/30 hover:shadow-lg"
-        }`}
-      >
-        {/* Top-match cyan accent indicator bar */}
-        {isTopMatch && (
-          <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary via-[#38BDF8] to-primary" />
-        )}
+      {/* Top active indicator line */}
+      {isActive && (
+        <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-cyan-400 via-sky-400 to-cyan-400" />
+      )}
 
-        <div>
-          {/* Header: Icon + Qualitative Alignment & Match % */}
-          <div className="flex justify-between items-start mb-3">
-            <div
-              className={`p-2.5 rounded-xl transition-colors ${
-                isTopMatch
-                  ? "bg-primary/15 border border-primary/30 text-primary shadow-xs shadow-primary/20"
-                  : isTier2
-                  ? "bg-[#141920] border border-border/80 text-muted-foreground group-hover:text-primary/90"
-                  : "bg-primary/10 border border-primary/20 text-primary"
-              }`}
-            >
-              <MatchIcon name={career.career_name} className="h-5 w-5" />
-            </div>
-
-            <div className="flex items-center gap-1.5 flex-wrap justify-end">
-              {isTopMatch && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-primary/20 border border-primary/35 text-primary">
-                  ★ Top Match
-                </span>
-              )}
-              {isTier2 && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold uppercase tracking-wider bg-sky-500/10 border border-sky-500/20 text-sky-300">
-                  Worth Exploring
-                </span>
-              )}
-              <span
-                className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold font-mono ${
-                  isTier2
-                    ? "bg-[#141920] border border-border/80 text-foreground/80"
-                    : "bg-primary/15 border border-primary/25 text-primary"
-                }`}
-              >
-                {Math.round(career.match_percentage)}%
-              </span>
-              {!isTier2 && (
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide ${alignment.badgeStyle}`}
-                >
-                  {alignment.label}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Hierarchy Trail: Domain -> Path -> Specialization -> Role */}
-          {hierarchy && hierarchy.breadcrumbs.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1 text-[10px] font-mono text-muted-foreground/75 mb-2 leading-tight">
-              {hierarchy.breadcrumbs.map((crumb, cIdx) => (
-                <span key={cIdx} className="inline-flex items-center gap-1">
-                  <span
-                    className={
-                      cIdx === hierarchy.breadcrumbs.length - 1
-                        ? isTier2
-                          ? "text-muted-foreground font-medium"
-                          : "text-primary/90 font-medium"
-                        : "text-muted-foreground/70"
-                    }
-                  >
-                    {crumb}
-                  </span>
-                  {cIdx < hierarchy.breadcrumbs.length - 1 && (
-                    <span className="text-muted-foreground/40 text-[9px]">→</span>
-                  )}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Title */}
-          <h3 className="font-heading text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors tracking-tight">
+      <div className="w-full">
+        {/* Top: Career Path + Match Percentage */}
+        <div className="flex items-start justify-between gap-3 mb-2.5">
+          <h3
+            className={`font-heading text-base sm:text-lg font-bold leading-snug transition-colors ${
+              isActive
+                ? "text-cyan-300"
+                : "text-slate-100 group-hover:text-cyan-200"
+            }`}
+          >
             {displayTitle}
           </h3>
 
-          {/* Short explanation of WHY user responses connect */}
-          <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed mb-5 font-light">
-            &ldquo;{explanation}&rdquo;
-          </p>
-
-          {/* Hierarchy Branch Exploration */}
-          <div className="py-3 px-3.5 rounded-xl bg-[#10141A] border border-border/80 mb-5">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground/80">
-                Possible Specializations:
-              </p>
-              <span className="text-[9px] font-mono text-muted-foreground/50">
-                Path score: {Math.round(career.match_percentage)}%
-              </span>
-            </div>
-
-            {hierarchy?.path.specializations && hierarchy.path.specializations.length > 0 ? (
-              <div className="space-y-1 text-xs">
-                {hierarchy.path.specializations.map((spec, sIdx) => {
-                  const isLast = sIdx === hierarchy.path.specializations.length - 1;
-                  return (
-                    <Link
-                      key={spec.id}
-                      href={`/career-map?domain=${hierarchy.domain.id}&path=${slug}&spec=${spec.id}`}
-                      className="flex items-center justify-between py-1 px-1.5 rounded hover:bg-[#141920] text-foreground/90 font-medium group/spec transition-colors"
-                      title={`Explore ${spec.name} branch in Career Tree`}
-                    >
-                      <div className="flex items-center gap-1.5 truncate">
-                        <span className="text-primary/60 font-mono text-[11px]">
-                          {isLast ? "└──" : "├──"}
-                        </span>
-                        <span className="truncate group-hover/spec:text-primary transition-colors">
-                          {spec.name}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono text-muted-foreground/50 group-hover/spec:text-primary transition-colors shrink-0">
-                        {spec.roles.length} roles →
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            ) : (
-              <ul className="space-y-1.5 text-xs text-foreground/90 font-medium">
-                {subRoles.slice(0, 3).map((role) => (
-                  <li key={role} className="flex items-center gap-2">
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full shrink-0 ${
-                        isTopMatch
-                          ? "bg-primary"
-                          : isTier2
-                          ? "bg-muted-foreground/50"
-                          : "bg-primary/70"
-                      }`}
-                    />
-                    <span>{role}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        {/* Action Links */}
-        <div className="pt-3 border-t border-border/50 flex flex-col gap-2">
-          <Link
-            href={`/career/${slug}`}
-            className={`inline-flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-              isTopMatch
-                ? "bg-primary text-primary-foreground font-semibold hover:bg-primary-hover shadow-sm shadow-cyan-900/25"
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-mono font-bold shrink-0 ${
+              isActive
+                ? "bg-cyan-400 text-slate-950 font-extrabold shadow-xs shadow-cyan-400/30"
                 : isTier2
-                ? "bg-[#10141A] border border-border/70 text-foreground hover:border-primary/40 hover:bg-[#141920]"
-                : "bg-card border border-border/70 text-foreground hover:border-primary/40 hover:bg-card-hover"
+                ? "bg-sky-500/10 border border-sky-500/20 text-sky-400"
+                : "bg-cyan-500/10 border border-cyan-500/25 text-cyan-300"
             }`}
           >
-            <span>{isTier2 ? "View Career Path Details" : "View Career & Roadmap"}</span>
-            <ArrowRight className="h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform" />
-          </Link>
-
-          {hierarchy && (
-            <Link
-              href={`/career-map?domain=${hierarchy.domain.id}&path=${slug}&match=${Math.round(career.match_percentage)}`}
-              className="inline-flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg text-[11px] font-mono font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              <span>Explore this branch in Career Tree</span>
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          )}
+            {matchScore}%
+          </span>
         </div>
-      </SpotlightCard>
-    </motion.div>
+
+        {/* 1-Line Description */}
+        <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-light line-clamp-2">
+          {description}
+        </p>
+      </div>
+
+      {/* Bottom active state / hint */}
+      <div className="mt-5 pt-3 border-t border-border/40 flex items-center justify-between text-[11px] font-mono">
+        <span
+          className={`flex items-center gap-1.5 transition-colors ${
+            isActive
+              ? "text-cyan-400 font-semibold"
+              : "text-slate-500 group-hover:text-slate-300"
+          }`}
+        >
+          {isActive ? (
+            <>
+              <CheckCircle2 className="h-3 w-3 text-cyan-400 shrink-0" />
+              <span>Currently Exploring</span>
+            </>
+          ) : (
+            <span>Click to explore hierarchy</span>
+          )}
+        </span>
+
+        <span
+          className={`text-xs transition-transform duration-200 ${
+            isActive
+              ? "text-cyan-400 translate-y-0.5"
+              : "text-slate-500 group-hover:text-cyan-400 group-hover:translate-y-0.5"
+          }`}
+        >
+          ↓
+        </span>
+      </div>
+    </motion.button>
   );
 }

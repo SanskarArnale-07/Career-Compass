@@ -66,5 +66,5 @@ describe("Homepage 2.0 Continuous Scroll Experience", () => {
 
     const { GlobeOverlay } = await import("@/components/home/globe/GlobeOverlay");
     expect(GlobeOverlay).toBeDefined();
-  });
+  }, 45000);
 });

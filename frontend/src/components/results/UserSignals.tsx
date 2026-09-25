@@ -39,10 +39,10 @@ export function UserSignals({ traits }: UserSignalsProps) {
           <Sparkles className="h-3.5 w-3.5" />
           <span>Behavioral Pattern Analysis</span>
         </div>
-        <h3 className="font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+        <h3 className="font-heading text-lg sm:text-xl font-bold tracking-tight text-slate-100">
           What&apos;s showing up in your responses?
         </h3>
-        <p className="text-muted-foreground mt-1 max-w-2xl font-light text-sm sm:text-base">
+        <p className="text-xs sm:text-sm text-slate-400 mt-0.5 max-w-2xl font-light leading-relaxed">
           Based on how you evaluated trade-offs and scenarios, here are the central themes that emerged from your choices.
         </p>
       </div>

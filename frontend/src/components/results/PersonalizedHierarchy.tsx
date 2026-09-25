@@ -37,10 +37,10 @@ export function PersonalizedHierarchy({ topMatches }: PersonalizedHierarchyProps
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-heading text-xl font-bold text-foreground">
+          <h2 className="font-heading text-lg sm:text-xl font-bold tracking-tight text-slate-100">
             Your Career Direction
           </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-light leading-relaxed">
             How your top matches map to the career hierarchy
           </p>
         </div>

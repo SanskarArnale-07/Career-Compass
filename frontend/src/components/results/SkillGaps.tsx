@@ -11,38 +11,47 @@ interface SkillGapsProps {
 }
 
 export function SkillGaps({ gaps }: SkillGapsProps) {
+  if (!gaps || gaps.length === 0) return null;
 
   return (
-    <div className="w-full">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2.5 bg-primary/10 border border-primary/25 rounded-xl text-primary shadow-xs shadow-primary/10">
-          <Target className="h-6 w-6" />
+    <div className="w-full space-y-4">
+      {/* Section Header - Normalized to established Results-page scale */}
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <div className="p-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-400 shrink-0">
+            <Target className="h-4 w-4" />
+          </div>
+          <h3 className="font-heading text-lg sm:text-xl font-bold tracking-tight text-slate-100">
+            Skill Development Focus
+          </h3>
         </div>
-        <div>
-          <h3 className="font-heading text-2xl font-bold text-foreground">Your Skill Gaps</h3>
-          <p className="text-muted-foreground">Key capabilities to develop for your target career direction</p>
-        </div>
+        <p className="text-xs sm:text-sm text-slate-400 font-light mt-0.5 leading-relaxed">
+          Key capabilities to develop for your target career direction.
+        </p>
       </div>
 
-      <div className="bg-card border border-border shadow-sm rounded-xl overflow-hidden">
-        <div className="divide-y divide-border">
-          {gaps.map((gap, idx) => (
-            <div key={idx} className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-card-hover transition-colors">
-              <div className="flex-1">
-                <h4 className="font-semibold text-lg flex items-center gap-2.5 text-foreground">
+      <div className="rounded-xl border border-border/70 bg-[#141920]/60 overflow-hidden divide-y divide-border/60">
+        {gaps.map((gap, idx) => (
+          <div
+            key={idx}
+            className="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 hover:bg-[#181F28] transition-colors"
+          >
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="font-heading text-xs sm:text-sm font-semibold text-slate-200">
                   {gap.skill}
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-sky-500/15 text-sky-300 border border-sky-500/30 px-2.5 py-0.5 rounded-full">
-                    {gap.level}
-                  </span>
                 </h4>
-                <div className="mt-2 flex items-start gap-2 text-muted-foreground text-sm leading-relaxed">
-                  <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-sky-400" />
-                  <p>{gap.action}</p>
-                </div>
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider bg-sky-500/10 text-sky-300 border border-sky-500/20 px-2 py-0.5 rounded-md">
+                  {gap.level}
+                </span>
+              </div>
+              <div className="flex items-start gap-1.5 text-xs sm:text-sm text-slate-400 font-light leading-relaxed">
+                <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0 text-cyan-400" />
+                <p>{gap.action}</p>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
