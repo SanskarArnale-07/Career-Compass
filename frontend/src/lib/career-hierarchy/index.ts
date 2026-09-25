@@ -6,3 +6,5 @@
 
 export * from "./types";
 export * from "./registry";
+export * from "./search";
+// searchCareerCatalogGrouped is re-exported via search above

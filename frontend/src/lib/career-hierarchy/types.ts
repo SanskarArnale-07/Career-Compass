@@ -10,6 +10,8 @@ export interface CareerRole {
   title: string;
   description?: string;
   isEntryLevel?: boolean;
+  aliases?: string[];
+  keywords?: string[];
 }
 
 export interface CareerSpecialization {
@@ -17,6 +19,8 @@ export interface CareerSpecialization {
   name: string;
   description?: string;
   roles: CareerRole[];
+  aliases?: string[];
+  keywords?: string[];
 }
 
 export interface CareerPath {
@@ -29,6 +33,8 @@ export interface CareerPath {
   domainName: string;
   tagline: string;
   specializations: CareerSpecialization[];
+  aliases?: string[];
+  keywords?: string[];
 }
 
 export interface CareerDomain {
@@ -44,4 +50,11 @@ export interface CareerHierarchyMatch {
   primarySpecialization?: CareerSpecialization;
   sampleRoles: string[];
   breadcrumbs: string[];
+}
+
+export interface CareerCatalogueStats {
+  totalDomains: number;
+  totalPaths: number;
+  totalSpecializations: number;
+  totalRoles: number;
 }

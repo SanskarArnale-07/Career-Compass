@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Compass, Sparkles, CompassIcon } from "lucide-react";
-import { getAllCareerPaths, CAREER_DOMAINS } from "@/lib/career-hierarchy";
+import {
+  getAllCareerPaths,
+  getCareerCatalogueStats,
+} from "@/lib/career-hierarchy";
 import { CareersDirectoryFilter } from "@/components/career/CareersDirectoryFilter";
 
 export const metadata = {
@@ -11,6 +14,7 @@ export const metadata = {
 
 export default function CareersPage() {
   const paths = getAllCareerPaths();
+  const stats = getCareerCatalogueStats();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -20,14 +24,21 @@ export default function CareersPage() {
           {/* ── Directory Hero Header ───────────────────────────────── */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 pb-6 border-b border-border/60">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary mb-3">
+              {/* Hierarchy depth indicator */}
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary mb-3">
                 <Compass className="h-3.5 w-3.5" />
-                <span>{CAREER_DOMAINS.length} Domains · {paths.length} Career Paths</span>
+                <span>{`${stats.totalPaths} career paths · ${stats.totalSpecializations} specializations · ${stats.totalRoles} roles`}</span>
               </div>
+
               <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
                 Explore More Careers
               </h1>
-              <p className="text-muted-foreground text-sm sm:text-base mt-2 max-w-2xl font-light leading-relaxed">
+
+              {/* Concise catalogue summary */}
+              <p className="text-foreground/90 text-base sm:text-lg mt-2 font-medium">
+                {`Explore ${stats.totalRoles} career roles across ${stats.totalDomains} career domains`}
+              </p>
+              <p className="text-muted-foreground text-sm sm:text-base mt-1 max-w-2xl font-light leading-relaxed">
                 Explore career directions across technology, business, health, creativity, science, and more.
               </p>
             </div>
@@ -58,7 +69,7 @@ export default function CareersPage() {
               </span>
             </div>
             <span className="text-[11px] font-mono text-primary/90 shrink-0">
-              {paths.length} disciplines available
+              {`${stats.totalPaths} paths · ${stats.totalRoles} roles`}
             </span>
           </div>
 

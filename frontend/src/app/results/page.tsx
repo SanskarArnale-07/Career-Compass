@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   AlertTriangle,
-  Compass,
   ChevronDown,
   ChevronUp,
   Sparkles,
@@ -25,8 +24,6 @@ import { getCareerSlug } from "@/lib/career-details";
 import {
   getTieredCareerMatches,
   isStrongMatch,
-  CAREER_MATCH_THRESHOLD,
-  CAREER_EXPLORATION_THRESHOLD,
 } from "@/lib/constants/matching";
 import type { StoredResults } from "@/lib/career-details/personalization";
 import type { AssessmentResponse, CareerMatch } from "@/lib/types/assessment";
@@ -369,7 +366,7 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-screen bg-[#080A0D] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
-      <div className="container mx-auto px-4 py-8 sm:py-12 max-w-[1150px] space-y-8 sm:space-y-12">
+      <div className="container mx-auto px-4 py-8 sm:py-12 max-w-287.5 space-y-8 sm:space-y-12">
         {/* ─────────────────────────────────────────────────────────────
             1. HERO — YOUR CAREER RESULT
             Immediate focal point: Recommended Career Path

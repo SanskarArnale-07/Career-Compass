@@ -1,22 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Sparkles, BrainCircuit, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
+import { Sparkles, BrainCircuit, ChevronUp, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ContributingTraitsVisualProps {
   traits: Record<string, number>;
   primaryCareerName?: string;
   defaultExpanded?: boolean;
-}
-
-interface TraitItem {
-  code: string;
-  label: string;
-  desc: string;
-  score: number;
-  isTop: boolean;
-  angle: number; // in degrees
 }
 
 // 8 Canonical Dimensions placed in a balanced radial constellation
@@ -230,7 +221,7 @@ export function ContributingTraitsVisual({
     <div className="w-full flex flex-col items-center select-none" id="traits-constellation-section">
       {/* ── Collapsed / Primary Evidence State ──────────────────── */}
       {!isExpanded ? (
-        <div className="w-full max-w-[980px] mx-auto rounded-2xl border border-cyan-500/25 bg-[#0E1217]/90 p-6 sm:p-7 text-center flex flex-col items-center shadow-lg shadow-cyan-950/20">
+        <div className="w-full max-w-245 mx-auto rounded-2xl border border-cyan-500/25 bg-[#0E1217]/90 p-6 sm:p-7 text-center flex flex-col items-center shadow-lg shadow-cyan-950/20">
           <h2 className="font-heading text-xl sm:text-2xl font-bold text-white tracking-tight mb-2">
             Why This Matched You
           </h2>
@@ -282,7 +273,7 @@ export function ContributingTraitsVisual({
         </div>
       ) : (
         /* ── Expanded Full Profile Dimensions & Constellation ─────────── */
-        <div className="w-full max-w-[980px] mx-auto flex flex-col items-center">
+        <div className="w-full max-w-245 mx-auto flex flex-col items-center">
           <div className="text-center max-w-xl mx-auto mb-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs font-mono text-cyan-400 mb-2">
               <span>WHY THIS MATCHED YOU</span>
@@ -308,7 +299,7 @@ export function ContributingTraitsVisual({
           </div>
 
           {/* 8 Core Dimension Score Cards */}
-          <div className="w-full max-w-[980px] mx-auto mb-4">
+          <div className="w-full max-w-245 mx-auto mb-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {[...normalizedTraits]
                 .sort((a, b) => b.score - a.score)
@@ -359,7 +350,7 @@ export function ContributingTraitsVisual({
             transition={{ duration: 0.25 }}
             className="w-full flex flex-col items-center overflow-hidden"
           >
-            <div className="relative w-full max-w-[480px] aspect-square mx-auto flex items-center justify-center my-2">
+            <div className="relative w-full max-w-120 aspect-square mx-auto flex items-center justify-center my-2">
               {/* Ambient cosmic lighting in background */}
               <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgba(0,229,255,0.07),transparent_70%)]" />
               <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_40%_40%_at_50%_50%,rgba(129,140,248,0.06),transparent_65%)]" />

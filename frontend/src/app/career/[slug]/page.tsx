@@ -287,7 +287,7 @@ export default function CareerDetailPage() {
                   <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-40" />
                   <Link
                     href={`/career-map?domain=${hierarchy.domain.id}`}
-                    className="hover:text-primary transition-colors truncate max-w-[90px] sm:max-w-[150px] md:max-w-none shrink"
+                    className="hover:text-primary transition-colors truncate max-w-22.5 sm:max-w-37.5 md:max-w-none shrink"
                     title={`Explore ${hierarchy.domain.name} in Career Tree`}
                   >
                     {hierarchy.domain.name}
@@ -298,7 +298,7 @@ export default function CareerDetailPage() {
                       <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-40" />
                       <Link
                         href={`/career/${hierarchy.path.slug}`}
-                        className="hover:text-primary transition-colors truncate max-w-[100px] sm:max-w-[160px] md:max-w-none shrink"
+                        className="hover:text-primary transition-colors truncate max-w-25 sm:max-w-40 md:max-w-none shrink"
                         title={`Explore ${hierarchy.path.name}`}
                       >
                         {hierarchy.path.name}

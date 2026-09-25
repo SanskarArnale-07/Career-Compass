@@ -18,7 +18,7 @@ export function CareerMeaningSection({
   careerName,
   careerTitle,
   careerSlug,
-  matchPercentage,
+  matchPercentage: _matchPercentage,
   isStrong,
   explanation,
 }: CareerMeaningSectionProps) {
@@ -112,7 +112,7 @@ export function CareerMeaningSection({
   }, [intelligence, hierarchy]);
 
   return (
-    <section className="w-full max-w-[1120px] mx-auto space-y-4 sm:space-y-5 select-none" id="career-meaning-section">
+    <section className="w-full max-w-280 mx-auto space-y-4 sm:space-y-5 select-none" id="career-meaning-section">
       {/* ── 1. WHAT IS THIS CAREER? (Large Prominent Explanation Card) ─ */}
       <div className="rounded-2xl sm:rounded-3xl border border-cyan-500/30 bg-[#0E1217]/95 p-7 sm:p-9 md:p-10 shadow-xl shadow-cyan-950/25">
         <div className="flex items-center gap-3 mb-4 sm:mb-5">

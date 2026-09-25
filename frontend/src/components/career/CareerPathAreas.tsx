@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
 import { CheckCircle2, Briefcase, ArrowRight, Sparkles, Map } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCareerHierarchy, type CareerHierarchyMatch } from "@/lib/career-hierarchy";
@@ -85,9 +84,9 @@ export function CareerPathAreas({ career, hierarchy: propHierarchy }: CareerPath
                   )}
                 </div>
 
-                <div className="min-h-[2.5rem] sm:min-h-[2.85rem] flex items-start mb-1.5">
+                <div className="min-h-10 sm:min-h-[2.85rem] flex items-start mb-1.5">
                   <h3
-                    className={`text-sm sm:text-base font-heading font-bold transition-colors leading-snug break-words ${
+                    className={`text-sm sm:text-base font-heading font-bold transition-colors leading-snug wrap-break-word ${
                       isSelected ? "text-primary" : "text-foreground group-hover:text-primary"
                     }`}
                   >
@@ -149,14 +148,14 @@ export function CareerPathAreas({ career, hierarchy: propHierarchy }: CareerPath
                 >
                   <div className="flex flex-col flex-1">
                     {/* Role Header: Indicator Dot + Full Role Title (no truncate) + Arrow */}
-                    <div className="min-h-[2.65rem] sm:min-h-[3rem] flex items-start justify-between gap-2 mb-2">
+                    <div className="min-h-[2.65rem] sm:min-h-12 flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-start gap-2 flex-1 min-w-0">
                         <span
                           className={`w-2 h-2 rounded-full shrink-0 mt-1.5 ${
                             role.isEntryLevel ? "bg-primary" : "bg-sky-400"
                           }`}
                         />
-                        <h4 className="text-xs sm:text-sm font-heading font-bold text-foreground group-hover:text-primary transition-colors leading-snug break-words">
+                        <h4 className="text-xs sm:text-sm font-heading font-bold text-foreground group-hover:text-primary transition-colors leading-snug wrap-break-word">
                           {role.title}
                         </h4>
                       </div>

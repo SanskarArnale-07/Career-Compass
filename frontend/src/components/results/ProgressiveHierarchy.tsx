@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { CheckCircle2, ChevronRight, Briefcase, ArrowRight } from "lucide-react";
+import { CheckCircle2, Briefcase, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCareerHierarchy } from "@/lib/career-hierarchy";
 import type { CareerMatch } from "@/lib/types/assessment";
@@ -88,9 +88,9 @@ export function ProgressiveHierarchy({
                     </div>
 
                     {/* Specialization title container with consistent 2-line height */}
-                    <div className="min-h-[2.85rem] sm:min-h-[3.25rem] flex items-start mb-2">
+                    <div className="min-h-[2.85rem] sm:min-h-13 flex items-start mb-2">
                       <h3
-                        className={`text-base sm:text-lg font-heading font-bold transition-colors leading-snug break-words ${
+                        className={`text-base sm:text-lg font-heading font-bold transition-colors leading-snug wrap-break-word ${
                           isSelected ? "text-cyan-200" : "text-white group-hover:text-cyan-300"
                         }`}
                       >
@@ -150,14 +150,14 @@ export function ProgressiveHierarchy({
                   >
                     <div className="flex flex-col flex-1">
                       {/* Role Header: Indicator Dot + Complete Title (wraps up to 2 lines, never truncated) + Arrow */}
-                      <div className="min-h-[2.85rem] sm:min-h-[3.25rem] flex items-start justify-between gap-2 mb-2">
+                      <div className="min-h-[2.85rem] sm:min-h-13 flex items-start justify-between gap-2 mb-2">
                         <div className="flex items-start gap-2 flex-1 min-w-0">
                           <span
                             className={`w-2.5 h-2.5 rounded-full shrink-0 mt-1.5 ${
                               role.isEntryLevel ? "bg-cyan-400" : "bg-sky-400"
                             }`}
                           />
-                          <h4 className="text-sm sm:text-base font-heading font-bold text-white group-hover:text-cyan-200 transition-colors leading-snug break-words">
+                          <h4 className="text-sm sm:text-base font-heading font-bold text-white group-hover:text-cyan-200 transition-colors leading-snug wrap-break-word">
                             {role.title}
                           </h4>
                         </div>
@@ -191,7 +191,7 @@ export function ProgressiveHierarchy({
               </div>
 
               {/* Roadmap Preview Bar */}
-              <div className="mt-4 pt-3 border-t border-border/40 w-full flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#0D1117]/60 rounded-xl px-4 py-3 border border-cyan-500/20">
+              <div className="mt-4 w-full flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#0D1117]/60 rounded-xl px-4 py-3 border border-cyan-500/20">
                 <div className="text-left">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">

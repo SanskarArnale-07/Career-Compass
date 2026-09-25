@@ -5,6 +5,7 @@ import {
   getAllCareerPaths,
   getCareerHierarchy,
   getHierarchyBreadcrumbs,
+  getCareerCatalogueStats,
 } from "@/lib/career-hierarchy";
 import {
   CAREER_MATCH_THRESHOLD,
@@ -488,6 +489,22 @@ describe("Meaningful Match Threshold & Scoring Rules", () => {
       const names = paths.map((p) => p.name);
       const uniqueNames = new Set(names);
       expect(uniqueNames.size).toBe(24);
+    });
+
+    it("calculates catalogue statistics dynamically and matches individual path aggregations", () => {
+      const stats = getCareerCatalogueStats();
+      expect(stats.totalDomains).toBe(6);
+      expect(stats.totalPaths).toBe(24);
+      expect(stats.totalSpecializations).toBeGreaterThan(0);
+      expect(stats.totalRoles).toBeGreaterThan(0);
+
+      // Verify that total roles equals sum across all paths and specializations
+      const paths = getAllCareerPaths();
+      const calculatedRoles = paths.reduce(
+        (acc, p) => acc + p.specializations.reduce((sAcc, s) => sAcc + s.roles.length, 0),
+        0
+      );
+      expect(stats.totalRoles).toBe(calculatedRoles);
     });
   });
 });

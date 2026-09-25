@@ -16,6 +16,7 @@ import type {
   CareerDomain,
   CareerPath,
   CareerHierarchyMatch,
+  CareerCatalogueStats,
 } from "./types";
 
 export const CAREER_DOMAINS: CareerDomain[] = [
@@ -1081,6 +1082,32 @@ export function getAllCareerDomains(): CareerDomain[] {
  */
 export function getAllCareerPaths(): CareerPath[] {
   return CAREER_DOMAINS.flatMap((d) => d.paths);
+}
+
+/**
+ * Dynamically computes aggregate catalogue metrics directly from the canonical registry:
+ * Total domains, career paths, specializations, and career roles.
+ */
+export function getCareerCatalogueStats(): CareerCatalogueStats {
+  const paths = getAllCareerPaths();
+  const totalDomains = CAREER_DOMAINS.length;
+  const totalPaths = paths.length;
+  const totalSpecializations = paths.reduce(
+    (acc, p) => acc + p.specializations.length,
+    0
+  );
+  const totalRoles = paths.reduce(
+    (acc, p) =>
+      acc + p.specializations.reduce((sAcc, s) => sAcc + s.roles.length, 0),
+    0
+  );
+
+  return {
+    totalDomains,
+    totalPaths,
+    totalSpecializations,
+    totalRoles,
+  };
 }
 
 /**

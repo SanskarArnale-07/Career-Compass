@@ -1,19 +1,15 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronRight,
   ArrowRight,
-  Layers,
   GitBranch,
   Circle,
-  Sparkles,
   Compass,
-  CheckCircle2,
-  RotateCcw,
 } from "lucide-react";
 import {
   CAREER_DOMAINS,
@@ -207,7 +203,7 @@ export function CareerTreeExplorer({
     setSelectedSpecId(spec.id);
   };
 
-  const handleRoleClick = (role: CareerRole) => {
+  const handleRoleClick = (_role: CareerRole) => {
     if (activePath) {
       router.push(`/career/${activePath.slug}`);
     }
@@ -621,7 +617,7 @@ export function CareerTreeExplorer({
 
           {/* Prominent Next Action Banner */}
           {activePath && (
-            <div className="relative z-10 mt-6 pt-5 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl border border-primary/25 bg-primary/5 max-w-2xl mx-auto">
+            <div className="relative z-10 mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl border border-primary/25 bg-primary/5 max-w-2xl mx-auto">
               <div className="text-left">
                 <p className="text-xs font-semibold text-foreground">
                   Ready to see the learning roadmap for {activePath.name}?

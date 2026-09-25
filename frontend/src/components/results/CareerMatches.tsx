@@ -2,11 +2,8 @@
 
 import { useMemo } from "react";
 import {
-  CAREER_MATCH_THRESHOLD,
-  CAREER_EXPLORATION_THRESHOLD,
   getTieredCareerMatches,
   isStrongMatch,
-  getMatchTierLabel,
 } from "@/lib/constants/matching";
 import type { CareerMatch } from "@/lib/types/assessment";
 
@@ -26,13 +23,11 @@ export function CareerMatches({
   onExploreCareer,
 }: CareerMatchesProps) {
   // Use provided tiers or compute using canonical matching logic
-  const { strongMatches, explorationMatches, allVisibleMatches } = useMemo(() => {
+  const { allVisibleMatches } = useMemo(() => {
     if (propStrong !== undefined) {
       const strong = propStrong;
       const exploration = propExploration ?? [];
       return {
-        strongMatches: strong,
-        explorationMatches: exploration,
         allVisibleMatches: [...strong, ...exploration].slice(0, 3),
       };
     }
@@ -238,7 +233,7 @@ export function CareerMatches({
               >
                 {/* Node dot on vertical line */}
                 <span
-                  className={`absolute -left-[1.125rem] top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border ${
+                  className={`absolute -left-4.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border ${
                     isRecommended || isSelected
                       ? "bg-cyan-400 border-white shadow-xs shadow-cyan-400"
                       : "bg-[#10141A] border-slate-600"
@@ -252,7 +247,7 @@ export function CareerMatches({
                         Recommended
                       </span>
                     )}
-                    <span className={`text-sm font-heading block break-words ${
+                    <span className={`text-sm font-heading block wrap-break-word ${
                       isRecommended ? "font-bold text-white" : isSelected ? "font-semibold text-cyan-200" : "font-medium text-slate-300"
                     }`}>
                       {career.career_name}
