@@ -237,7 +237,7 @@ export default function ResultsPage() {
   // Neutral wording for Worth Exploring vs Strong Match
   const primaryExplanation = useMemo(() => {
     if (!isPrimaryStrong) {
-      return "This path is worth exploring based on your strongest assessment traits.";
+      return "One direction worth exploring based on your assessment.";
     }
     if (primaryCareer?.explanation) {
       return primaryCareer.explanation.replace(
@@ -247,7 +247,7 @@ export default function ResultsPage() {
     }
     return (
       primaryHierarchy?.path.tagline ||
-      "Your assessment patterns demonstrate strong problem-solving and structured thinking aligned directly with this career domain."
+      "A strong directional match based on your assessment patterns."
     );
   }, [isPrimaryStrong, primaryCareer?.explanation, primaryHierarchy?.path.tagline]);
 
@@ -395,73 +395,77 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-screen bg-[#080A0D] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
-      <div className="container mx-auto px-4 py-8 sm:py-10 max-w-4xl space-y-6 sm:space-y-8">
+      <div className="container mx-auto px-4 py-8 sm:py-12 max-w-4xl space-y-10 sm:space-y-14">
         {/* ─────────────────────────────────────────────────────────────
-            1. TOP CAREER PATH
-            Clean, grounded opening for Top Career Path
+            1. HERO — YOUR DIRECTION (Open Composition)
+            No giant generic card. Open visual space with subtle ambient
+            cosmic lighting and celestial telemetry.
             ───────────────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden rounded-3xl border border-cyan-500/30 bg-linear-to-b from-[#10141A] via-[#0E1217] to-[#0A0D12] p-6 sm:p-8 md:p-10 shadow-2xl">
-          {/* Subtle ambient lighting */}
-          <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <section className="relative pt-4 pb-2 sm:pt-8 sm:pb-4 text-center flex flex-col items-center">
+          {/* Subtle cosmic ambient glow */}
+          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-96 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 w-80 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 max-w-2xl">
-            {/* Eyebrow: "TOP CAREER PATH" */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 mb-3.5">
-              <Compass className="h-3.5 w-3.5" />
-              <span>TOP CAREER PATH</span>
-            </div>
-
-            {/* Primary Matched Career Path */}
-            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-3 leading-tight">
-              {primaryTitle}
-            </h1>
-
-            {/* Match Strength + Status */}
-            <div className="flex flex-wrap items-center gap-2.5 mb-4">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>{primaryScore}% Match</span>
-              </span>
-
-              <span
-                className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-mono font-semibold uppercase tracking-wider ${
-                  isPrimaryStrong
-                    ? "bg-cyan-950/60 text-cyan-300 border border-cyan-500/30"
-                    : "bg-sky-950/60 text-sky-300 border border-sky-500/30"
-                }`}
-              >
-                {isPrimaryStrong ? "Strong Match (≥40%)" : "Worth Exploring (25–39%)"}
-              </span>
-
-              {primaryHierarchy?.domain && (
-                <span className="text-xs font-mono text-slate-400">
-                  in {primaryHierarchy.domain.name}
-                </span>
-              )}
-            </div>
-
-            {/* Neutral explanation wording based on match tier */}
-            <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed max-w-xl">
-              {primaryExplanation}
-            </p>
+          {/* Eyebrow: YOUR CAREER DIRECTION */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-cyan-500/30 bg-[#10141A]/90 text-cyan-300 text-xs font-mono font-semibold tracking-widest uppercase mb-4 shadow-sm shadow-cyan-950/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span>YOUR CAREER DIRECTION</span>
           </div>
+
+          {/* Primary Matched Career Path Heading */}
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight max-w-2xl">
+            {primaryTitle}
+          </h1>
+
+          {/* Telemetry Indicator: Percentage · Tier · Domain */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-5">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-mono font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-sm shadow-cyan-950/20">
+              <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+              <span>{primaryScore}% Match</span>
+            </span>
+
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-xl text-xs font-mono font-semibold uppercase tracking-wider border ${
+                isPrimaryStrong
+                  ? "bg-cyan-950/50 text-cyan-300 border-cyan-500/40"
+                  : "bg-sky-950/50 text-sky-300 border-sky-500/30"
+              }`}
+            >
+              {isPrimaryStrong ? "Strong Match (≥40%)" : "Worth Exploring (25–39%)"}
+            </span>
+
+            {primaryHierarchy?.domain && (
+              <span className="text-xs font-mono text-slate-400">
+                in {primaryHierarchy.domain.name}
+              </span>
+            )}
+          </div>
+
+          {/* Neutral explanation based on match tier */}
+          <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed max-w-lg mx-auto">
+            {primaryExplanation}
+          </p>
+
+          {/* Celestial filament descending into the Profile Constellation */}
+          <div className="w-px h-10 bg-linear-to-b from-cyan-400/50 via-cyan-500/20 to-transparent mt-6 pointer-events-none" />
         </section>
 
         {/* ─────────────────────────────────────────────────────────────
-            2. WHY THIS PATH
-            Profile DNA — compact 3 strongest traits + expand
+            2. PROFILE — 8 TRAITS (Constellation Centerpiece)
+            Radial visualization around YOU without bulky side cards
             ───────────────────────────────────────────────────────────── */}
         <section>
           <ContributingTraitsVisual
             traits={result.trait_profile as unknown as Record<string, number>}
             primaryCareerName={primaryTitle}
           />
+          {/* Connector filament to next constellation stage */}
+          <div className="w-px h-10 bg-linear-to-b from-cyan-500/40 via-cyan-500/15 to-transparent mx-auto mt-8 pointer-events-none" />
         </section>
 
         {/* ─────────────────────────────────────────────────────────────
-            3. CAREER PATHS TO EXPLORE
-            Max 3 paths, clickable cards, no separate explore buttons
+            3. CAREER POSSIBILITIES (Connected Paths)
+            Interconnected branching set of paths instead of generic cards
             ───────────────────────────────────────────────────────────── */}
         <section>
           {allVisibleMatches.length > 0 ? (
@@ -500,11 +504,14 @@ export default function ResultsPage() {
               </div>
             </div>
           )}
+          {/* Connector filament to Career Hierarchy */}
+          {activeCareer && (
+            <div className="w-px h-10 bg-linear-to-b from-cyan-500/40 via-cyan-500/15 to-transparent mx-auto mt-8 pointer-events-none" />
+          )}
         </section>
 
         {/* ─────────────────────────────────────────────────────────────
-            4. CAREER HIERARCHY
-            Progressive hierarchy with reduced vertical space
+            4. CAREER HIERARCHY (Spatial Branching Tree)
             Domain → Path → Specialization → Role
             ───────────────────────────────────────────────────────────── */}
         {activeCareer && (
@@ -514,41 +521,83 @@ export default function ResultsPage() {
               allMatches={allVisibleMatches}
               onSelectCareer={(name) => setSelectedCareerName(name)}
             />
+            {/* Connector filament to Next Step */}
+            <div className="w-px h-10 bg-linear-to-b from-cyan-500/40 via-cyan-500/15 to-transparent mx-auto mt-8 pointer-events-none" />
           </section>
         )}
 
         {/* ─────────────────────────────────────────────────────────────
-            5. NEXT ACTION ("Next Step")
-            Compact next action section replacing detailed learning lists
+            5. TRANSITION — NEXT STEP (Direction → Explore → Build)
+            Streamlined 3-stage progress vector without a heavy dashboard
             ───────────────────────────────────────────────────────────── */}
-        <section className="rounded-2xl border border-cyan-500/25 bg-linear-to-b from-[#10141A] to-[#0A0D12] p-6 sm:p-8 text-center max-w-xl mx-auto shadow-xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs font-mono font-semibold text-cyan-400 mb-2">
+        <section className="relative text-center py-4 sm:py-6 flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs font-mono font-semibold text-cyan-400 mb-3">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Next Step</span>
+            <span>TRANSITION · NEXT STEP</span>
           </div>
 
-          <h2 className="font-heading text-lg sm:text-xl font-bold text-slate-100 mb-1.5 tracking-tight">
-            Explore your career path and see what to build next.
+          <h2 className="font-heading text-xl sm:text-2xl font-bold text-slate-100 mb-2 tracking-tight">
+            Explore your career path and build your roadmap.
           </h2>
 
-          <p className="text-xs sm:text-sm text-slate-400 font-light mb-5 max-w-md mx-auto leading-relaxed">
-            Your custom roadmap breaks down required competencies, hands-on projects, and progressive milestones.
+          <p className="text-xs sm:text-sm text-slate-400 font-light mb-6 max-w-md mx-auto leading-relaxed">
+            Detailed learning milestones, projects, and study tracks belong in your personalized roadmap.
           </p>
 
+          {/* 3-Stage Connected Vector: YOUR DIRECTION → EXPLORE → BUILD */}
+          <div className="w-full max-w-md mx-auto mb-8 px-4">
+            <div className="flex items-center justify-between relative">
+              {/* Connecting background filament */}
+              <div className="absolute top-1/2 left-8 right-8 -translate-y-1/2 h-0.5 bg-linear-to-r from-cyan-400 via-sky-400 to-indigo-500 opacity-30" />
+
+              {/* Step 1: YOUR DIRECTION */}
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-7 h-7 rounded-full bg-[#141920] border-2 border-cyan-400 flex items-center justify-center text-cyan-400 shadow-md shadow-cyan-950/40">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                </div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-300 font-bold mt-1.5">
+                  1. Direction
+                </span>
+                <span className="text-[9px] font-mono text-slate-500">Mapped</span>
+              </div>
+
+              {/* Step 2: EXPLORE */}
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-7 h-7 rounded-full bg-[#141920] border-2 border-sky-400 flex items-center justify-center text-sky-400 shadow-md shadow-cyan-950/40">
+                  <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
+                </div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-sky-300 font-bold mt-1.5">
+                  2. Explore
+                </span>
+                <span className="text-[9px] font-mono text-slate-500">In View</span>
+              </div>
+
+              {/* Step 3: BUILD */}
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-7 h-7 rounded-full bg-[#141920] border-2 border-indigo-400 flex items-center justify-center text-indigo-400 shadow-md shadow-indigo-950/40">
+                  <span className="w-2 h-2 rounded-full bg-indigo-400" />
+                </div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-indigo-300 font-bold mt-1.5">
+                  3. Build
+                </span>
+                <span className="text-[9px] font-mono text-slate-500">Roadmap</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {/* Primary Action: View Your Roadmap */}
             <Link
               href={`/career/${primarySlug}#roadmap`}
-              className="inline-flex h-10 sm:h-11 items-center justify-center gap-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 px-5 sm:px-6 text-xs sm:text-sm font-bold text-slate-950 shadow-md shadow-cyan-400/20 transition-all cursor-pointer hover:scale-[1.02]"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 px-6 text-xs sm:text-sm font-bold text-slate-950 shadow-lg shadow-cyan-400/25 transition-all cursor-pointer hover:scale-[1.02]"
             >
               <span>View Your Roadmap</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
 
-            {/* Secondary Action: Explore More Careers */}
             <Link
               href="/careers"
-              className="inline-flex h-10 sm:h-11 items-center justify-center rounded-xl border border-border/70 bg-[#10141A] hover:bg-[#141920] px-5 sm:px-6 text-xs sm:text-sm font-semibold text-slate-200 transition-colors"
+              className="inline-flex h-11 items-center justify-center rounded-xl border border-border/80 bg-[#10141A] hover:bg-[#141920] px-6 text-xs sm:text-sm font-semibold text-slate-200 transition-colors"
             >
               Explore More Careers
             </Link>
@@ -556,22 +605,23 @@ export default function ResultsPage() {
         </section>
 
         {/* ─────────────────────────────────────────────────────────────
-            SECONDARY COLLAPSIBLE: Academic Stream & Skill Development Perspectives
-            Kept strictly secondary/collapsed so it does not compete
+            6. ACADEMIC STREAM & SKILL PERSPECTIVES (Secondary)
+            Kept strictly secondary and collapsed by default.
+            Does not visually compete with the career constellation.
             ───────────────────────────────────────────────────────────── */}
         {result.streams && (
-          <section className="rounded-2xl border border-border/70 bg-[#10141A]/50 overflow-hidden transition-all">
+          <section className="rounded-2xl border border-border/60 bg-[#0D1117]/60 overflow-hidden transition-all max-w-3xl mx-auto">
             <button
               type="button"
               onClick={() => setShowStreamDetails(!showStreamDetails)}
-              className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-[#141920] transition-colors cursor-pointer"
+              className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-[#141920]/60 transition-colors cursor-pointer"
             >
               <div>
-                <h3 className="font-heading text-sm sm:text-base font-semibold text-slate-200">
-                  Academic Stream &amp; Skill Development Perspectives
+                <h3 className="font-heading text-xs sm:text-sm font-semibold text-slate-300">
+                  Academic Stream &amp; Skill Perspectives <span className="text-slate-500 font-normal">(Secondary)</span>
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5 font-light leading-relaxed">
-                  Secondary perspective: explore how Science, Commerce, and Arts align with your responses, plus focus skills and action steps.
+                <p className="text-[11px] text-slate-500 mt-0.5 font-light leading-relaxed">
+                  Optional breakdown: explore how Science, Commerce, and Arts align, plus identified capability focus areas.
                 </p>
               </div>
               <div className="h-7 w-7 rounded-lg bg-[#141920] border border-border/80 flex items-center justify-center text-slate-400 shrink-0 ml-4">
@@ -584,7 +634,7 @@ export default function ResultsPage() {
             </button>
 
             {showStreamDetails && (
-              <div className="p-5 sm:p-6 border-t border-border/70 bg-[#0B0E12] space-y-8 animate-in fade-in duration-200">
+              <div className="p-5 sm:p-6 border-t border-border/60 bg-[#080A0D]/90 space-y-8 animate-in fade-in duration-200">
                 {/* Academic Stream Alignment */}
                 <SuitabilityScores
                   scores={result.streams.scores}
@@ -599,7 +649,7 @@ export default function ResultsPage() {
                   </div>
                 )}
 
-                {/* Your Next Steps */}
+                {/* Next Steps (Secondary) */}
                 {allNextSteps.length > 0 && (
                   <div className="pt-6 border-t border-border/60">
                     <NextSteps steps={allNextSteps} />
@@ -612,7 +662,7 @@ export default function ResultsPage() {
 
         {/* Low-Profile Guest Save Results Prompt */}
         {!isAuthenticated && (
-          <section className="rounded-xl border border-cyan-500/20 bg-[#10141A]/40 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <section className="rounded-xl border border-cyan-500/20 bg-[#10141A]/40 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 max-w-3xl mx-auto">
             <div className="flex items-center gap-2.5">
               <div className="p-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 shrink-0">
                 <Sparkles className="h-3.5 w-3.5" />
