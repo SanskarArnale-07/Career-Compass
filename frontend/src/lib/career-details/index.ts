@@ -40,6 +40,8 @@ export function getAllCareers(): CareerIntelligence[] {
 /** Resolve career from any identifier (slug, ID, backend name). */
 export { resolveCareerIntelligence };
 
+export { getMatchExplanation } from "./personalization";
+
 // ── Re-exports ─────────────────────────────────────────────────────
 export type {
   CareerDetail,

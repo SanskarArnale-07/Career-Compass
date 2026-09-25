@@ -128,17 +128,17 @@ export function AssessmentWizard() {
       // Step 2: traits mapped
       setTimeout(() => {
         setCompletionStep(2);
-      }, 700);
+      }, 300);
 
       // Step 3: career directions identified
       setTimeout(() => {
         setCompletionStep(3);
-      }, 1400);
+      }, 600);
 
-      // Transition to results
+      // Transition to results promptly
       setTimeout(() => {
         router.push("/results");
-      }, 2100);
+      }, 900);
     } else {
       setDirection(1);
       setCurrentStepIndex((prev) => prev + 1);

@@ -122,8 +122,8 @@ export function getDefaultJourneyState(): CareerJourneySourceData {
   const fallbackCareer = getAllCareerIntelligence()[0] || {
     id: "software-development",
     slug: "software-development",
-    title: "Software & App Developer",
-    careerName: "Software & App Developer",
+    title: "Software Development",
+    careerName: "Software Development",
   };
 
   const now = Date.now();
@@ -277,8 +277,8 @@ export function loadCareerJourney(): CareerJourneySourceData {
           },
           selectedCareer: {
             slug: parsed.selectedCareer?.slug || "software-development",
-            title: parsed.selectedCareer?.title || "Software & App Developer",
-            careerName: parsed.selectedCareer?.careerName || "Software & App Developer",
+            title: parsed.selectedCareer?.title || "Software Development",
+            careerName: parsed.selectedCareer?.careerName || "Software Development",
             category: parsed.selectedCareer?.category,
             startedAt: parsed.selectedCareer?.startedAt || Date.now(),
             lastActiveAt: parsed.selectedCareer?.lastActiveAt || Date.now(),

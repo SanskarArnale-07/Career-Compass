@@ -54,8 +54,8 @@ describe("Persistence & Storage Layer", () => {
     saveCareerJourney({
       selectedCareer: {
         slug: "software-development",
-        title: "Software & App Developer",
-        careerName: "Software / App Development",
+        title: "Software Development",
+        careerName: "Software Development",
         category: "Technology",
         startedAt: 1726747200000,
         lastActiveAt: 1726747200000,
@@ -81,7 +81,7 @@ describe("Persistence & Storage Layer", () => {
     setSelectedCareer("software-development");
     let state = loadCareerJourney();
     expect(state.selectedCareer?.slug).toBe("software-development");
-    expect(state.selectedCareer?.title).toBe("Software & App Developer");
+    expect(state.selectedCareer?.title).toBe("Software Development");
 
     // Switch to medicine
     setSelectedCareer("medicine-healthcare");

@@ -1,87 +1,70 @@
 import Link from "next/link";
-import { ArrowRight, Compass, Sparkles, GitBranch } from "lucide-react";
-import { getAllCareerIntelligence, type CareerIntelligence } from "@/lib/career-intelligence";
-import { getCareerIcon } from "@/lib/career-icons";
-import { getCareerHierarchy, CAREER_DOMAINS } from "@/lib/career-hierarchy";
-import { CareerTreeExplorer } from "@/components/career/CareerTreeExplorer";
+import { Compass, Sparkles, CompassIcon } from "lucide-react";
+import { getAllCareerPaths, CAREER_DOMAINS } from "@/lib/career-hierarchy";
 import { CareersDirectoryFilter } from "@/components/career/CareersDirectoryFilter";
 
 export const metadata = {
   title: "Explore More Careers | Career Compass",
   description:
-    "Curious about careers beyond your personalized recommendations? Browse in-depth roadmaps, skill trees, and learning paths across 12 high-impact career domains.",
+    "Explore career directions across technology, business, health, creativity, science, and more. Browse in-depth roadmaps, skill trees, and specialization paths.",
 };
 
 export default function CareersPage() {
-  const careers: CareerIntelligence[] = getAllCareerIntelligence();
+  const paths = getAllCareerPaths();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <main className="flex-1 py-14 md:py-20">
-        <div className="container mx-auto px-4 max-w-5xl">
+      <main className="flex-1 py-12 md:py-16">
+        <div className="container mx-auto px-4 max-w-6xl">
 
-          {/* ── Header ────────────────────────────────────────────── */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          {/* ── Directory Hero Header ───────────────────────────────── */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 pb-6 border-b border-border/60">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-mono font-semibold text-primary mb-3">
                 <Compass className="h-3.5 w-3.5" />
-                <span>{careers.length} Career Domains</span>
+                <span>{CAREER_DOMAINS.length} Domains · {paths.length} Career Paths</span>
               </div>
-              <h1 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
                 Explore More Careers
               </h1>
-              <p className="text-muted-foreground text-sm mt-2 max-w-xl font-light">
-                Browse every career domain. Click any card to see the full roadmap, skills, and resources.
+              <p className="text-muted-foreground text-sm sm:text-base mt-2 max-w-2xl font-light leading-relaxed">
+                Explore career directions across technology, business, health, creativity, science, and more.
               </p>
             </div>
 
-            <Link
-              href="/assessment"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary-hover shadow-md shadow-cyan-950/20 transition-all shrink-0 self-start md:self-auto"
-            >
-              <Sparkles className="h-4 w-4" />
-              <span>Get My Matches</span>
-            </Link>
-          </div>
-
-          {/* ── Interactive Hierarchy Tree ─────────────────────────── */}
-          <div className="mb-10 rounded-2xl border border-border/70 bg-[#080A0D] p-5 sm:p-7 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#00E5FF_1px,transparent_1px),linear-gradient(to_bottom,#00E5FF_1px,transparent_1px)] bg-size-[36px_36px]" />
-
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-5 pb-3 border-b border-border/50">
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground/60">
-                    Career Hierarchy Tree — click to explore
-                  </p>
-                </div>
-                <Link
-                  href="/career-map"
-                  className="inline-flex items-center gap-1 text-[10px] font-mono text-primary hover:underline"
-                >
-                  <GitBranch className="h-3 w-3" />
-                  Full map
-                  <ArrowRight className="h-2.5 w-2.5" />
-                </Link>
+            {/* Product Distinction & CTA: What exists vs What fits me */}
+            <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end gap-3 shrink-0">
+              <div className="hidden lg:flex items-center gap-1.5 text-xs font-mono text-muted-foreground/80 bg-[#12161F] border border-border/70 rounded-lg px-3 py-1.5">
+                <span className="text-primary font-semibold">What exists</span>
+                <span className="text-muted-foreground/40">·</span>
+                <span>Catalogue Directory</span>
               </div>
-
-              <CareerTreeExplorer mode="full" showLines />
+              <Link
+                href="/assessment"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary-hover shadow-md shadow-cyan-950/30 transition-all cursor-pointer"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>Get My Matches</span>
+              </Link>
             </div>
           </div>
 
-          {/* ── Secondary Convenience: Career Directory Search & Filter ── */}
-          <div className="pt-4 border-t border-border/50">
-            <div className="mb-4">
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground/60">
-                Directory Lookup
+          {/* ── Exploration Guidance Banner ─────────────────────────── */}
+          <div className="mb-8 p-4 rounded-xl bg-[#0D1117] border border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5 text-muted-foreground">
+              <CompassIcon className="h-4 w-4 text-primary shrink-0" />
+              <span>
+                <strong className="text-foreground font-semibold">Student Exploration Guide:</strong> Select any career discipline below to drill down into its specializations, roles, and learning roadmaps.
               </span>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Quick filter for direct roadmaps, or explore the tree branches above.
-              </p>
             </div>
-            <CareersDirectoryFilter careers={careers} />
+            <span className="text-[11px] font-mono text-primary/90 shrink-0">
+              {paths.length} disciplines available
+            </span>
           </div>
+
+          {/* ── Career Directory Filter & Path Cards ────────────────── */}
+          <CareersDirectoryFilter paths={paths} />
+
         </div>
       </main>
     </div>

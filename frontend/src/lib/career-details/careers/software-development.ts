@@ -2,8 +2,8 @@ import type { CareerDetail } from "../types";
 
 export const softwareDevelopment: CareerDetail = {
   slug: "software-development",
-  careerName: "Software / App Development",
-  title: "Software & App Developer",
+  careerName: "Software Development",
+  title: "Software Development",
   tagline: "Build applications, websites, and digital tools that power everyday life.",
   category: "Technology",
   icon: "Cpu",

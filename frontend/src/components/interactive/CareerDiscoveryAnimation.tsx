@@ -110,7 +110,7 @@ export function CareerDiscoveryAnimation({
     if (status === "resolving") {
       const t = setTimeout(() => {
         onCompleteRef.current?.();
-      }, 1000);
+      }, 400);
       return () => clearTimeout(t);
     }
   }, [status]);

@@ -31,49 +31,67 @@ describe("Career Hierarchy Taxonomy", () => {
     ]);
   });
 
-  it("contains all 12 canonical career paths across domains", () => {
+  it("contains all 24 canonical career paths across domains", () => {
     const paths = getAllCareerPaths();
-    expect(paths.length).toBe(12);
+    expect(paths.length).toBe(24);
 
-    const expectedSlugs = [
+    const originalSlugs = [
       "software-development",
+      "cloud-infrastructure",
+      "cybersecurity",
+      "robotics-automation",
       "engineering",
       "ai-ml-data-science",
+      "data-engineering-platforms",
+      "data-analytics-bi",
       "design-creative",
+      "visual-brand-communication",
+      "game-multimedia-design",
+      "animation-3d-media",
       "finance-investment",
       "management-product",
       "entrepreneurship",
+      "supply-chain-operations",
       "medicine-healthcare",
       "scientific-research",
+      "biomedical-pharmaceutical",
+      "public-health-epidemiology",
       "marketing-media",
       "law-policy",
       "psychology-social",
+      "journalism-media-production",
     ];
 
     const actualSlugs = paths.map((p) => p.slug);
-    expect(actualSlugs).toEqual(expectedSlugs);
-  });
-
-  it("contains exactly 36 specializations (3 per path)", () => {
-    const paths = getAllCareerPaths();
-    const allSpecs = paths.flatMap((p) => p.specializations);
-    expect(allSpecs.length).toBe(36);
-
-    for (const p of paths) {
-      expect(p.specializations.length).toBe(3);
+    for (const slug of originalSlugs) {
+      expect(actualSlugs).toContain(slug);
     }
   });
 
-  it("contains exactly 108 roles across specializations (3 per specialization)", () => {
+  it("contains multiple specializations per path across all 24 paths", () => {
+    const paths = getAllCareerPaths();
+    const allSpecs = paths.flatMap((p) => p.specializations);
+    expect(allSpecs.length).toBeGreaterThanOrEqual(48);
+
+    for (const p of paths) {
+      expect(p.specializations.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("contains multiple roles across all specializations and ensures all roles have descriptions", () => {
     const paths = getAllCareerPaths();
     const allRoles = paths.flatMap((p) =>
       p.specializations.flatMap((s) => s.roles)
     );
-    expect(allRoles.length).toBe(108);
+    expect(allRoles.length).toBeGreaterThanOrEqual(100);
 
     for (const p of paths) {
       for (const s of p.specializations) {
-        expect(s.roles.length).toBe(3);
+        expect(s.roles.length).toBeGreaterThanOrEqual(2);
+        for (const r of s.roles) {
+          expect(r.description).toBeDefined();
+          expect(r.description!.trim().length).toBeGreaterThan(15);
+        }
       }
     }
   });
@@ -407,6 +425,69 @@ describe("Meaningful Match Threshold & Scoring Rules", () => {
 
       expect(tiered.allVisibleMatches.length).toBe(2);
       expect(tiered.allVisibleMatches.some((m) => m.career_name === "Just Below Exploration")).toBe(false);
+    });
+  });
+
+  describe("Expanded 24-Path Directory System & Exploration Flow", () => {
+    it("ensures all 24 career paths have authentic career intelligence records", () => {
+      const paths = getAllCareerPaths();
+      expect(paths.length).toBe(24);
+
+      for (const path of paths) {
+        expect(path.name).toBeDefined();
+        expect(path.tagline).toBeDefined();
+        expect(path.specializations.length).toBeGreaterThanOrEqual(2);
+
+        for (const spec of path.specializations) {
+          expect(spec.name).toBeDefined();
+          expect(spec.roles.length).toBeGreaterThanOrEqual(2);
+          for (const role of spec.roles) {
+            expect(role.title).toBeDefined();
+            expect(role.description).toBeDefined();
+          }
+        }
+      }
+    });
+
+    it("verifies canonical Artificial Intelligence & Data path structure and roles", () => {
+      const aiPath = getCareerHierarchy("Artificial Intelligence & Data");
+      expect(aiPath).toBeDefined();
+      expect(aiPath?.path.name).toBe("Artificial Intelligence & Data");
+      expect(aiPath?.path.careerName).toBe("Artificial Intelligence & Data");
+
+      const specNames = aiPath?.path.specializations.map((s) => s.name);
+      expect(specNames).toContain("Machine Learning");
+      expect(specNames).toContain("Data Science");
+      expect(specNames).toContain("AI Engineering");
+
+      const mlSpec = aiPath?.path.specializations.find((s) => s.name === "Machine Learning");
+      const mlRoleTitles = mlSpec?.roles.map((r) => r.title);
+      expect(mlRoleTitles).toContain("Machine Learning Engineer");
+      expect(mlRoleTitles).toContain("NLP Engineer");
+      expect(mlRoleTitles).toContain("Computer Vision Engineer");
+
+      const dsSpec = aiPath?.path.specializations.find((s) => s.name === "Data Science");
+      const dsRoleTitles = dsSpec?.roles.map((r) => r.title);
+      expect(dsRoleTitles).toContain("Data Scientist");
+      expect(dsRoleTitles).toContain("Data Analyst");
+      expect(dsRoleTitles).toContain("Business Intelligence Analyst");
+
+      const aieSpec = aiPath?.path.specializations.find((s) => s.name === "AI Engineering");
+      const aieRoleTitles = aieSpec?.roles.map((r) => r.title);
+      expect(aieRoleTitles).toContain("AI Engineer");
+      expect(aieRoleTitles).toContain("Generative AI Engineer");
+      expect(aieRoleTitles).toContain("AI Solutions Engineer");
+    });
+
+    it("verifies that all 24 career path slugs are unique with zero duplicates", () => {
+      const paths = getAllCareerPaths();
+      const slugs = paths.map((p) => p.slug);
+      const uniqueSlugs = new Set(slugs);
+      expect(uniqueSlugs.size).toBe(24);
+
+      const names = paths.map((p) => p.name);
+      const uniqueNames = new Set(names);
+      expect(uniqueNames.size).toBe(24);
     });
   });
 });

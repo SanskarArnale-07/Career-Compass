@@ -8,6 +8,7 @@
 
 import type { CareerDetail, SkillNode, SkillStatus, StrengthGapItem } from "./types";
 import type { TraitProfile, CareerMatch as CareerMatchResult, AssessmentResponse as StoredResults } from "@/lib/types/assessment";
+import { isStrongMatch, isExplorationMatch } from "@/lib/constants/matching";
 export type { StrengthGapItem, TraitProfile, CareerMatchResult, StoredResults };
 
 // Human-readable trait labels
@@ -108,7 +109,7 @@ export function getStrengthsAndGaps(
   } else if (strongCount === 1) {
     summary = `You have a strong foundation in one key area for ${career.title}, with several developing skills that can grow quickly.`;
   } else {
-    summary = `While ${career.title} may require some development, your profile shows emerging traits that align with this direction.`;
+    summary = `Your assessment points to foundational strengths you can build on to explore ${career.title} further.`;
   }
 
   return { strengths, gaps, summary };
@@ -163,28 +164,60 @@ export function getPersonalizedSkills(
   });
 }
 
-// ── Hero match explanation ─────────────────────────────────────────
+function getCareerTraitPhrasing(primaryTraits: string[]): string {
+  const traitMap: Record<string, string> = {
+    TE: "technical",
+    AN: "analytical",
+    CR: "creative",
+    BU: "business and strategic",
+    SO: "social and interpersonal",
+    LE: "leadership and execution",
+    SC: "scientific inquiry",
+    EX: "cross-disciplinary exploration",
+  };
+  const words = primaryTraits.map(
+    (code) => traitMap[code] || (TRAIT_LABELS[code] || code).toLowerCase()
+  );
+  if (words.length >= 2) {
+    return `${words[0]} and ${words[1]} thinking`;
+  }
+  if (words.length === 1) {
+    return `${words[0]} thinking`;
+  }
+  return "core cognitive strengths";
+}
 
 /**
  * Build a personalized explanation for the career hero section.
+ * Aligns strictly with canonical match classifications (Strong Match vs Worth Exploring).
  */
 export function getMatchExplanation(
   traits: TraitProfile,
   career: CareerDetail,
-  _matchPercentage: number
+  matchPercentage?: number
 ): string {
+  const traitsText = getCareerTraitPhrasing(career.primaryTraits);
+
+  if (typeof matchPercentage === "number") {
+    if (isStrongMatch(matchPercentage)) {
+      return `Your profile shows strong alignment with ${career.title}, particularly in ${traitsText}.`;
+    }
+    if (isExplorationMatch(matchPercentage)) {
+      return `Your profile shows this is a direction worth exploring within ${career.title}, with developing alignment in ${traitsText}.`;
+    }
+  }
+
+  // Fallback if matchPercentage is not available directly
   const strongTraits = career.primaryTraits
-    .filter((code) => ((traits as Record<string, number>)[code] ?? 0) >= 50)
+    .filter((code) => ((traits as Record<string, number>)[code] ?? 0) >= 40)
     .map((code) => (TRAIT_LABELS[code] || code).toLowerCase());
 
-  if (strongTraits.length >= 2) {
+  if (strongTraits.length >= 1) {
     const traitStr = strongTraits.slice(0, 2).join(" and ");
-    return `Your assessment indicates strong ${traitStr}, making ${career.title.toLowerCase()} a strong potential fit for your skillset and interests.`;
+    return `Your profile shows strong alignment with ${career.title}, particularly in ${traitStr}.`;
   }
-  if (strongTraits.length === 1) {
-    return `Your ${strongTraits[0]} shows a solid foundation for ${career.title.toLowerCase()}, and your developing skills can grow with focused effort.`;
-  }
-  return `Your profile shows emerging traits that connect with ${career.title.toLowerCase()}. With targeted development, this could become a strong fit.`;
+
+  return `Your profile indicates an exploratory connection with ${career.title}, with meaningful potential to build foundational skills.`;
 }
 
 // ── Alternative careers from results ───────────────────────────────

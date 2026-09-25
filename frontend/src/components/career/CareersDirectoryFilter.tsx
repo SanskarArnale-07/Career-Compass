@@ -2,168 +2,240 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, Search, X } from "lucide-react";
+import { ArrowRight, Search, X, Sparkles, Layers, Compass } from "lucide-react";
 import { getCareerIcon } from "@/lib/career-icons";
-import { getCareerHierarchy, CAREER_DOMAINS } from "@/lib/career-hierarchy";
-import type { CareerIntelligence } from "@/lib/career-intelligence";
+import {
+  getAllCareerPaths,
+  CAREER_DOMAINS,
+  type CareerPath,
+  type CareerDomain,
+} from "@/lib/career-hierarchy";
 
 interface CareersDirectoryFilterProps {
-  careers: CareerIntelligence[];
+  paths?: CareerPath[];
 }
 
-export function CareersDirectoryFilter({ careers }: CareersDirectoryFilterProps) {
+export function CareersDirectoryFilter({
+  paths: propPaths,
+}: CareersDirectoryFilterProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDomain, setSelectedDomain] = useState<string>("all");
 
-  const filteredCareers = useMemo(() => {
-    return careers.filter((c) => {
-      const hierarchy = getCareerHierarchy(c.slug);
-      const domainId = hierarchy?.domain.id;
+  const allPaths: CareerPath[] = useMemo(() => {
+    if (propPaths && propPaths.length > 0) return propPaths;
+    return getAllCareerPaths();
+  }, [propPaths]);
 
+  const filteredPaths = useMemo(() => {
+    return allPaths.filter((path) => {
       const matchesDomain =
-        selectedDomain === "all" || domainId === selectedDomain;
+        selectedDomain === "all" || path.domainId === selectedDomain;
 
       const q = searchQuery.toLowerCase().trim();
+      if (!q) return matchesDomain;
+
+      const allRoles = path.specializations.flatMap((s) =>
+        s.roles.map((r) => r.title.toLowerCase())
+      );
+      const allSpecs = path.specializations.map((s) => s.name.toLowerCase());
+
       const matchesSearch =
-        !q ||
-        c.title.toLowerCase().includes(q) ||
-        c.category.toLowerCase().includes(q) ||
-        c.tagline.toLowerCase().includes(q) ||
-        hierarchy?.path.name.toLowerCase().includes(q) ||
-        hierarchy?.sampleRoles.some((r) => r.toLowerCase().includes(q));
+        path.name.toLowerCase().includes(q) ||
+        path.title.toLowerCase().includes(q) ||
+        path.domainName.toLowerCase().includes(q) ||
+        path.tagline.toLowerCase().includes(q) ||
+        path.careerName.toLowerCase().includes(q) ||
+        allSpecs.some((s) => s.includes(q)) ||
+        allRoles.some((r) => r.includes(q));
 
       return matchesDomain && matchesSearch;
     });
-  }, [careers, searchQuery, selectedDomain]);
+  }, [allPaths, searchQuery, selectedDomain]);
+
+  const isBrowsingAllWithoutSearch =
+    selectedDomain === "all" && searchQuery.trim() === "";
 
   return (
-    <div className="space-y-6">
-      {/* ── Secondary Convenience: Search & Domain Filter Bar ─────── */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[#12100E] border border-border/70">
-        {/* Search Input */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+    <div className="space-y-8 select-none">
+      {/* ── Search & Filter Toolbar ─────────────────────────────────── */}
+      <div className="flex flex-col gap-4 p-4 rounded-2xl bg-[#0D1117] border border-border/80 shadow-md">
+        {/* Search Bar */}
+        <div className="relative w-full">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search specific career, domain, or role..."
-            className="w-full bg-[#10141A] border border-border/80 rounded-lg pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/50 transition-colors"
+            placeholder="What are you interested in? Search paths, specializations, or roles..."
+            className="w-full bg-[#12161F] border border-border rounded-xl pl-10 pr-9 py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/30 transition-all"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded cursor-pointer"
+              title="Clear search"
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-4 w-4" />
             </button>
           )}
         </div>
 
         {/* Domain Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           <button
             onClick={() => setSelectedDomain("all")}
-            className={`px-2.5 py-1.5 rounded-lg text-[11px] font-mono transition-colors shrink-0 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer ${
               selectedDomain === "all"
-                ? "bg-primary text-primary-foreground font-semibold"
-                : "bg-[#10141A] text-muted-foreground hover:text-foreground border border-border/60"
+                ? "bg-primary text-primary-foreground font-semibold shadow-xs"
+                : "bg-[#12161F] text-muted-foreground hover:text-foreground border border-border/60 hover:bg-[#161B24]"
             }`}
           >
-            All
+            All Paths ({allPaths.length})
           </button>
-          {CAREER_DOMAINS.map((d) => (
-            <button
-              key={d.id}
-              onClick={() => setSelectedDomain(d.id)}
-              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-mono transition-colors shrink-0 ${
-                selectedDomain === d.id
-                  ? "bg-primary text-primary-foreground font-semibold"
-                  : "bg-[#10141A] text-muted-foreground hover:text-foreground border border-border/60"
-              }`}
-            >
-              {d.name.split(" ")[0]}
-            </button>
-          ))}
+
+          {CAREER_DOMAINS.map((domain) => {
+            const isSelected = selectedDomain === domain.id;
+            return (
+              <button
+                key={domain.id}
+                onClick={() => setSelectedDomain(domain.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all shrink-0 cursor-pointer ${
+                  isSelected
+                    ? "bg-primary text-primary-foreground font-semibold shadow-xs"
+                    : "bg-[#12161F] text-muted-foreground hover:text-foreground border border-border/60 hover:bg-[#161B24]"
+                }`}
+              >
+                <span>{domain.name.split(" ")[0]}</span>
+                <span className="opacity-60 ml-1">({domain.paths.length})</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* ── Career Cards Grid ──────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+      {/* ── Status Header Bar ───────────────────────────────────────── */}
+      <div className="flex items-center justify-between px-1">
+        <span className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground">
           {selectedDomain === "all"
-            ? "All Career Paths"
+            ? "Full Career Directory"
             : CAREER_DOMAINS.find((d) => d.id === selectedDomain)?.name}
-        </h2>
-        <span className="text-xs font-mono text-muted-foreground/60">
-          Showing {filteredCareers.length} of {careers.length}
+        </span>
+        <span className="text-xs font-mono text-muted-foreground/80">
+          {isBrowsingAllWithoutSearch
+            ? `${allPaths.length} career paths`
+            : `Showing ${filteredPaths.length} of ${allPaths.length} career paths`}
         </span>
       </div>
 
-      {filteredCareers.length === 0 ? (
-        <div className="py-12 text-center rounded-xl border border-border/60 bg-[#12100E] p-6">
-          <p className="text-sm text-muted-foreground mb-3">
-            No career paths found matching &ldquo;{searchQuery}&rdquo;.
+      {/* ── Results Container ───────────────────────────────────────── */}
+      {filteredPaths.length === 0 ? (
+        /* Empty State */
+        <div className="py-16 text-center rounded-2xl border border-border/70 bg-[#0D1117] p-8 max-w-lg mx-auto">
+          <div className="h-12 w-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mx-auto mb-4">
+            <Search className="h-5 w-5" />
+          </div>
+          <h3 className="font-heading text-base font-bold text-foreground mb-1">
+            No career paths found.
+          </h3>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-6 leading-relaxed">
+            Try another search or explore all career paths.
           </p>
           <button
             onClick={() => {
               setSearchQuery("");
               setSelectedDomain("all");
             }}
-            className="text-xs font-mono text-primary hover:underline"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-colors cursor-pointer"
           >
-            Clear filters
+            <span>Explore all career paths</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
+      ) : isBrowsingAllWithoutSearch ? (
+        /* Grouped by Domain for clear scanning without visual overload */
+        <div className="space-y-12">
+          {CAREER_DOMAINS.map((domain) => (
+            <section key={domain.id} className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 pb-2 border-b border-border/60">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-primary" />
+                  <h2 className="font-heading text-lg font-bold text-foreground">
+                    {domain.name}
+                  </h2>
+                </div>
+                <p className="text-xs text-muted-foreground font-light max-w-xl">
+                  {domain.description}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {domain.paths.map((path) => (
+                  <CareerPathCard key={path.id} path={path} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       ) : (
+        /* Flat Grid for Filtered / Search Results */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredCareers.map((career) => {
-            const IconComponent = getCareerIcon(career.careerName);
-            const hierarchy = getCareerHierarchy(career.slug);
-            const domain = hierarchy?.domain.name || career.category;
-
-            return (
-              <Link
-                key={career.slug}
-                href={`/career/${career.slug}`}
-                className="group flex flex-col justify-between gap-3 p-5 rounded-xl bg-card border border-border/70 hover:border-primary/40 hover:bg-card-hover transition-all duration-200"
-              >
-                <div>
-                  {/* Icon + Domain */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="h-9 w-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 transition-transform shrink-0">
-                      <IconComponent className="h-4.5 w-4.5" />
-                    </div>
-                    <span className="text-[10px] font-mono text-muted-foreground bg-[#141920] border border-border/50 rounded-full px-2.5 py-0.5 truncate max-w-35">
-                      {domain}
-                    </span>
-                  </div>
-
-                  {/* Title + tagline */}
-                  <h3 className="font-heading text-base font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
-                    {career.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed font-light">
-                    {career.tagline}
-                  </p>
-                </div>
-
-                {/* Subroles & CTA */}
-                <div className="pt-2 border-t border-border/40">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-muted-foreground/60">
-                      {hierarchy?.sampleRoles?.length ?? 4} roles
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary group-hover:translate-x-0.5 transition-transform">
-                      View roadmap <ArrowRight className="h-3.5 w-3.5" />
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+          {filteredPaths.map((path) => (
+            <CareerPathCard key={path.id} path={path} />
+          ))}
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * Cinematic Career Path Card Component
+ * Strictly conveys: Career Path, Domain, 1-line description, Specialization & Role count, Explore path CTA.
+ */
+function CareerPathCard({ path }: { path: CareerPath }) {
+  const IconComponent = getCareerIcon(path.careerName);
+  const totalRoles = path.specializations.reduce(
+    (acc, s) => acc + s.roles.length,
+    0
+  );
+
+  return (
+    <Link
+      href={`/career/${path.slug}`}
+      className="group flex flex-col justify-between p-5 rounded-2xl bg-[#0D1117] border border-border/80 hover:border-primary/50 hover:bg-[#121622] transition-all duration-200 shadow-xs hover:shadow-md hover:shadow-cyan-950/20"
+    >
+      <div>
+        {/* Top: Icon + Domain Tag */}
+        <div className="flex items-center justify-between mb-3.5">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 group-hover:bg-primary/15 transition-all shrink-0">
+            <IconComponent className="h-5 w-5" />
+          </div>
+          <span className="text-xs font-mono text-muted-foreground bg-[#141920] border border-border/50 rounded-full px-2.5 py-0.5 shrink-0">
+            {path.domainName}
+          </span>
+        </div>
+
+        {/* Path Name */}
+        <h3 className="font-heading text-base font-bold text-foreground group-hover:text-primary transition-colors leading-snug break-words">
+          {path.name}
+        </h3>
+
+        {/* 1-Line Description */}
+        <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed font-light">
+          {path.tagline}
+        </p>
+      </div>
+
+      {/* Footer: Specialization/Role metrics + Explore action */}
+      <div className="mt-5 pt-3 border-t border-border/50 flex items-center justify-between text-xs">
+        <span className="text-[11px] font-mono text-muted-foreground/80">
+          {path.specializations.length} specializations · {totalRoles} roles
+        </span>
+        <span className="inline-flex items-center gap-1 font-semibold text-primary group-hover:translate-x-1 transition-transform">
+          <span>Explore path</span>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </span>
+      </div>
+    </Link>
   );
 }

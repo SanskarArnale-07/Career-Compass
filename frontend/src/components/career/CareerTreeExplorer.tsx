@@ -218,9 +218,9 @@ export function CareerTreeExplorer({
       {/* ── Active Trail Breadcrumb ─────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#12100E] border border-border/70 text-xs font-mono">
         <div className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mr-1 flex items-center gap-1">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mr-1 flex items-center gap-1 font-semibold">
             <Compass className="h-3 w-3 text-primary" />
-            Branch:
+            Exploring:
           </span>
           {activeDomain && (
             <button
@@ -283,8 +283,8 @@ export function CareerTreeExplorer({
           {/* ── LEVEL 1: CAREER DOMAINS (Root Horizontal Row) ────────── */}
           <div className="relative z-10">
             <div className="text-center mb-3">
-              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground/60">
-                Level 1 · Career Domains
+              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground/80 font-semibold">
+                1. Choose a Broad Field
               </span>
             </div>
 
@@ -388,7 +388,7 @@ export function CareerTreeExplorer({
                   className="text-[10px] font-mono uppercase tracking-[0.25em]"
                   style={{ color: theme.accent }}
                 >
-                  Level 2 · {activeDomain.name} Paths
+                  2. Choose a Career Path in {activeDomain.name}
                 </span>
               </div>
 
@@ -493,7 +493,7 @@ export function CareerTreeExplorer({
             <div className="relative z-10">
               <div className="text-center mb-3">
                 <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground/70">
-                  Level 3 · Specializations in {activePath.name}
+                  3. Focus Areas inside {activePath.name}
                 </span>
               </div>
 
@@ -531,7 +531,7 @@ export function CareerTreeExplorer({
                               : "#8C96A3",
                           }}
                         >
-                          Specialization
+                          Focus Area
                         </span>
                         <span className="text-[9px] font-mono text-muted-foreground/60">
                           {spec.roles.length} roles
@@ -575,10 +575,10 @@ export function CareerTreeExplorer({
             >
               <div className="flex items-center justify-between mb-3 px-1 border-b border-border/40 pb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80">
-                  Level 4 · Key Roles in {activeSpec.name}
+                  4. Concrete Roles in {activeSpec.name}
                 </span>
                 <span className="text-[9px] font-mono text-muted-foreground/50">
-                  Click role to view roadmap &amp; skills
+                  Click any role to view detailed roadmap
                 </span>
               </div>
 
@@ -617,6 +617,27 @@ export function CareerTreeExplorer({
                 ))}
               </div>
             </motion.div>
+          )}
+
+          {/* Prominent Next Action Banner */}
+          {activePath && (
+            <div className="relative z-10 mt-6 pt-5 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl border border-primary/25 bg-primary/5 max-w-2xl mx-auto">
+              <div className="text-left">
+                <p className="text-xs font-semibold text-foreground">
+                  Ready to see the learning roadmap for {activePath.name}?
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  View Class 11-12 subject choices, college degrees, and milestone roadmap.
+                </p>
+              </div>
+              <Link
+                href={`/career/${activePath.slug}`}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-mono text-xs font-semibold hover:bg-primary/90 transition-all duration-200 shrink-0 shadow-lg hover:shadow-primary/20 cursor-pointer"
+              >
+                <span>View Your Roadmap</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           )}
         </div>
       </div>
@@ -660,7 +681,7 @@ export function CareerTreeExplorer({
                   />
                   <div>
                     <p className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground/70">
-                      Domain
+                      Broad Field
                     </p>
                     <h3
                       className="text-sm font-bold"
@@ -740,7 +761,7 @@ export function CareerTreeExplorer({
                               />
                               <div>
                                 <p className="text-[8px] font-mono uppercase tracking-widest text-muted-foreground/60">
-                                  Path
+                                  Career Path
                                 </p>
                                 <span className="text-xs font-semibold text-foreground">
                                   {path.name}
@@ -815,7 +836,7 @@ export function CareerTreeExplorer({
                           {isPathOpen && mode === "compact" && (
                             <div className="pt-2 pl-3 border-l-2 border-border/60 space-y-2">
                               <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70">
-                                Specializations:
+                                Focus Areas:
                               </p>
                               <div className="flex flex-wrap gap-1.5">
                                 {path.specializations.map((spec) => (

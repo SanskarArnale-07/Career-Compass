@@ -2,8 +2,8 @@ import type { CareerDetail } from "../types";
 
 export const aiMlDataScience: CareerDetail = {
   slug: "ai-ml-data-science",
-  careerName: "AI / Machine Learning / Data Science",
-  title: "AI & Data Scientist",
+  careerName: "Artificial Intelligence & Data",
+  title: "Artificial Intelligence & Data",
   tagline: "Develop intelligent systems that learn from data and automate decisions.",
   category: "Technology & Research",
   icon: "Brain",

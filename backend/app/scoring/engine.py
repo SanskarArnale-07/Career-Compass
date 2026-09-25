@@ -244,18 +244,29 @@ def _build_career_explanation(
     """Generate a short deterministic explanation per career match."""
     traits_text = " and ".join(top_traits[:2]) if top_traits else "your profile"
 
-    if match_pct >= 75:
+    rounded_pct = round(match_pct)
+    if rounded_pct >= 40:
         strength = "strong"
-    elif match_pct >= 50:
-        strength = "solid"
+    elif rounded_pct >= 25:
+        strength = "exploratory"
     else:
-        strength = "moderate"
+        strength = "developing"
 
-    return (
-        f"Your {traits_text} strengths show a {strength} alignment with "
-        f"{career_name}. This career path leverages your natural inclinations "
-        f"and could be a great fit for your future."
-    )
+    if strength == "strong":
+        return (
+            f"Your {traits_text} profile shows strong alignment with "
+            f"{career_name}. This career direction leverages your natural strengths."
+        )
+    elif strength == "exploratory":
+        return (
+            f"Your {traits_text} profile shows this is a direction worth exploring "
+            f"within {career_name}."
+        )
+    else:
+        return (
+            f"Your {traits_text} profile shows developing connection with "
+            f"{career_name}."
+        )
 
 
 # ── 4. Full Pipeline ─────────────────────────────────────────────────

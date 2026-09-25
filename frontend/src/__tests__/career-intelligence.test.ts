@@ -9,18 +9,18 @@ import {
 } from "@/lib/career-intelligence";
 
 describe("Career Intelligence Registry", () => {
-  it("registers all 12 core careers", () => {
+  it("registers all 24 canonical career paths", () => {
     const all = getAllCareerIntelligence();
-    expect(all.length).toBe(12);
+    expect(all.length).toBe(24);
 
     const slugs = getAllCareerSlugs();
-    expect(slugs.length).toBe(12);
+    expect(slugs.length).toBe(24);
   });
 
   it("resolves career by exact slug", () => {
     const sw = getCareerIntelligence("software-development");
     expect(sw).toBeDefined();
-    expect(sw?.title).toBe("Software & App Developer");
+    expect(sw?.title).toBe("Software Development");
     expect(sw?.category).toBe("Technology");
 
     const med = getCareerIntelligence("medicine-healthcare");

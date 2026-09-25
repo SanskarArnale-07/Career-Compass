@@ -74,10 +74,10 @@ export function SuitabilityScores({
     <div className="w-full space-y-4">
       {/* Section Header - Normalized to established Results-page scale */}
       <div>
-        <h3 className="font-heading text-lg sm:text-xl font-bold tracking-tight text-slate-100">
+        <h3 className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-slate-100">
           Academic Stream Alignment
         </h3>
-        <p className="text-xs sm:text-sm text-slate-400 font-light mt-0.5 leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-300 font-normal mt-1 leading-relaxed max-w-xl">
           Based on your assessment responses, here is how your current interests connect with major foundation pathways.
         </p>
       </div>
@@ -88,29 +88,29 @@ export function SuitabilityScores({
           return (
             <div
               key={stream.key}
-              className={`p-3.5 sm:p-4 rounded-xl border transition-all ${
+              className={`p-4 rounded-xl border transition-all ${
                 index === 0
                   ? "border-cyan-500/40 bg-cyan-950/20 shadow-xs shadow-cyan-950/20"
                   : "border-border/70 bg-[#141920]/60"
               }`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-2.5">
-                <div className="flex items-center gap-2.5">
-                  <div className={`p-2 rounded-lg ${stream.bgClass} shrink-0`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                <div className="flex items-start sm:items-center gap-3">
+                  <div className={`p-2.5 rounded-lg ${stream.bgClass} shrink-0 mt-0.5 sm:mt-0`}>
                     {stream.icon}
                   </div>
                   <div>
-                    <h4 className="font-heading text-xs sm:text-sm font-semibold text-slate-200">
+                    <h4 className="font-heading text-base sm:text-lg font-bold text-slate-100">
                       {stream.name}
                     </h4>
-                    <p className="text-xs text-slate-400 mt-0.5 font-light leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-300 mt-1 font-normal leading-relaxed">
                       {stream.description}
                     </p>
                   </div>
                 </div>
                 <div className="sm:text-right shrink-0">
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold border ${alignment.badge}`}
+                    className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-semibold border ${alignment.badge}`}
                   >
                     {alignment.label}
                   </span>
@@ -118,7 +118,7 @@ export function SuitabilityScores({
               </div>
 
               {/* Relative spectrum indicator */}
-              <div className="h-1.5 w-full bg-[#080A0D] rounded-full overflow-hidden">
+              <div className="h-2 w-full bg-[#080A0D] rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full ${stream.color} transition-all duration-700 ease-out`}
                   style={{
@@ -133,11 +133,11 @@ export function SuitabilityScores({
 
       {/* Stream Recommendation Text */}
       {recommendation && (
-        <div className="p-3.5 sm:p-4 rounded-xl border border-cyan-500/20 bg-cyan-950/15">
-          <h4 className="font-heading text-xs sm:text-sm font-semibold text-cyan-300 mb-1">
+        <div className="p-4 sm:p-5 rounded-xl border border-cyan-500/20 bg-cyan-950/15">
+          <h4 className="font-heading text-base sm:text-lg font-bold text-cyan-300 mb-1.5">
             Stream Recommendation
           </h4>
-          <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-200 font-normal leading-relaxed">
             {recommendation}
           </p>
         </div>

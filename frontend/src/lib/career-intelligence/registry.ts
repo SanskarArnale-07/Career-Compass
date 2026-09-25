@@ -19,8 +19,17 @@ import { designCreative } from "../career-details/careers/design-creative";
 import { lawPolicy } from "../career-details/careers/law-policy";
 import { psychologySocial } from "../career-details/careers/psychology-social";
 
-import type { CareerDetail } from "../career-details/types";
+import type {
+  CareerDetail,
+  SkillNode,
+  RoadmapPhase,
+  ProjectIdea,
+  CareerStage,
+  PreparationItem,
+  SnapshotItem,
+} from "../career-details/types";
 import type { CareerIntelligence, EducationPathway, IndustryInfo } from "./types";
+import { getAllCareerPaths, type CareerPath } from "../career-hierarchy";
 
 /**
  * Creates a fully-typed CareerIntelligence record with safe defaults.
@@ -925,8 +934,349 @@ const psychologySocialIntel = createCareerIntelligence(psychologySocial, {
   },
 });
 
-// ── Registry Map ───────────────────────────────────────────────────────────
-export const CAREER_INTELLIGENCE_REGISTRY: Record<string, CareerIntelligence> = {
+// ── Path Intelligence Synthesizer for Expanded Paths ────────────────────────
+
+function synthesizePathIntelligence(path: CareerPath): CareerIntelligence {
+  const primaryTraitsByDomain: Record<string, string[]> = {
+    "engineering-technology": ["TE", "AN"],
+    "data-ai": ["AN", "TE"],
+    "design-creative": ["CR", "TE"],
+    "business-finance-management": ["BU", "AN"],
+    "healthcare-sciences": ["SC", "AN"],
+    "media-communications-social": ["SO", "CR"],
+  };
+
+  const domainStreamMap: Record<string, { stream: string; degrees: string[]; subjects: string[] }> = {
+    "engineering-technology": {
+      stream: "Science (PCM)",
+      degrees: ["B.Tech / B.E. in Computer Science / Engineering", "B.S. in Applied Technology"],
+      subjects: ["Mathematics", "Physics", "Computer Science", "Systems Architecture"],
+    },
+    "data-ai": {
+      stream: "Science (PCM / Statistics)",
+      degrees: ["B.Tech in Artificial Intelligence / Data Science", "B.S. in Statistics & Computer Science"],
+      subjects: ["Mathematics", "Probability & Statistics", "Computer Science", "Machine Learning"],
+    },
+    "design-creative": {
+      stream: "Any Stream (Design / Arts / Science)",
+      degrees: ["B.Des in Interaction / Visual Communication", "B.F.A. in Digital Arts / Animation"],
+      subjects: ["Visual Arts", "Design Principles", "Digital Tools", "Psychology"],
+    },
+    "business-finance-management": {
+      stream: "Commerce / Humanities / Science with Math",
+      degrees: ["BBA / BBS in Management", "B.Com / B.S. in Finance / Economics"],
+      subjects: ["Economics", "Accounting", "Business Studies", "Applied Mathematics"],
+    },
+    "healthcare-sciences": {
+      stream: "Science (PCB)",
+      degrees: ["MBBS / B.Sc in Biomedical Sciences", "B.Pharm / Public Health Degrees"],
+      subjects: ["Biology", "Chemistry", "Physiology", "Health Systems"],
+    },
+    "media-communications-social": {
+      stream: "Humanities / Any Stream",
+      degrees: ["B.A. in Journalism / Mass Communication", "B.A. in Psychology / Social Policy", "LL.B in Law"],
+      subjects: ["English & Communication", "Political Science", "Psychology", "Media Studies"],
+    },
+  };
+
+  const primaryTraits = primaryTraitsByDomain[path.domainId] || ["TE", "AN"];
+  const edu = domainStreamMap[path.domainId] || {
+    stream: "General",
+    degrees: ["Bachelor's Degree in Related Field"],
+    subjects: ["Core Disciplines", "Applied Methods"],
+  };
+
+  const allRoleTitles = path.specializations.flatMap((s) => s.roles.map((r) => r.title));
+  const primarySpec = path.specializations[0];
+
+  const skills: SkillNode[] = path.specializations.map((spec, idx) => ({
+    id: `${path.slug}-skill-${idx + 1}`,
+    name: spec.name,
+    category: path.name,
+    relevantTraits: primaryTraits,
+    whyItMatters: `Crucial foundation for mastering ${spec.name.toLowerCase()} within ${path.name}.`,
+    whatToKnow: spec.description || `Core principles, practical methodologies, and advanced techniques in ${spec.name}.`,
+    recommendedLevel: idx === 0 ? "Core" : "Advanced",
+  }));
+
+  const roadmap: RoadmapPhase[] = [
+    {
+      id: `${path.slug}-phase-1`,
+      phase: 1,
+      title: "Foundational Principles & Core Concepts",
+      description: `Build rigorous conceptual foundations in ${path.name}. Master core theories, vocabulary, and introductory workflows.`,
+      estimatedDuration: "Months 1–3",
+      skills: [skills[0]?.name || "Core Principles", "Industry Fundamentals"],
+      learn: [
+        `Fundamental concepts and historical principles of ${path.name}`,
+        "Standard development environments and foundational software suites",
+        "Key methodologies and professional problem-solving frameworks",
+      ],
+      practice: [
+        "Hands-on introductory labs and conceptual problem sets",
+        "Analyzing real-world case studies and industry best practices",
+      ],
+      build: `A foundational starter project demonstrating core principles of ${path.name}.`,
+      resources: [
+        {
+          name: `${path.name} Fundamentals Masterclass`,
+          type: "course",
+          difficulty: "beginner",
+          estimatedTime: "25 hours",
+          url: "https://coursera.org",
+        },
+      ],
+    },
+    {
+      id: `${path.slug}-phase-2`,
+      phase: 2,
+      title: "Professional Tools & Intermediate Execution",
+      description: `Transition to industry-standard tools, systems, and collaborative workflows in ${primarySpec?.name || path.name}.`,
+      estimatedDuration: "Months 4–6",
+      skills: [skills[1]?.name || "Specialized Tooling", "Applied Systems"],
+      learn: [
+        "Professional software, hardware frameworks, and automated tooling",
+        "Collaborative workflows, version control, and sprint execution",
+        "Quality assurance, performance optimization, and testing standards",
+      ],
+      practice: [
+        "Building multi-component workflows and intermediate modules",
+        "Optimizing systems for efficiency, reliability, and security",
+      ],
+      build: `A comprehensive portfolio prototype solving a real-world challenge in ${primarySpec?.name || path.name}.`,
+      resources: [
+        {
+          name: `Applied ${path.name} & System Tools`,
+          type: "practice",
+          difficulty: "intermediate",
+          estimatedTime: "35 hours",
+          url: "https://edx.org",
+        },
+      ],
+    },
+    {
+      id: `${path.slug}-phase-3`,
+      phase: 3,
+      title: "Advanced Projects & Production Systems",
+      description: `Execute end-to-end production-grade projects. Handle edge cases, scale constraints, and real-world deployment.`,
+      estimatedDuration: "Months 7–9",
+      skills: ["Production Architecture", "System Optimization"],
+      learn: [
+        "Architecting robust systems capable of scaling under production demands",
+        "Cross-functional collaboration with product, design, and operations teams",
+        "Regulatory compliance, safety protocols, and industry standards",
+      ],
+      practice: [
+        "Deploying end-to-end systems with monitoring and automated failover",
+        "Participating in peer code / design reviews and architectural audits",
+      ],
+      build: `A full-scale, production-ready capstone project ready for industry presentation.`,
+      resources: [
+        {
+          name: `Advanced ${path.name} Production Systems`,
+          type: "documentation",
+          difficulty: "advanced",
+          estimatedTime: "40 hours",
+          url: "https://github.com",
+        },
+      ],
+    },
+    {
+      id: `${path.slug}-phase-4`,
+      phase: 4,
+      title: "Specialization & Career Launch",
+      description: `Deepen your focus in your chosen specialization, prepare your portfolio, and launch your professional career.`,
+      estimatedDuration: "Months 10–12",
+      skills: ["Specialized Domain Expertise", "Interview & Career Launch"],
+      learn: [
+        "Cutting-edge emerging trends, research breakthroughs, and future directions",
+        "Portfolio presentation, technical interviewing, and career positioning",
+        "Mentorship, leadership principles, and strategic impact",
+      ],
+      practice: [
+        "Mock technical interviews and domain case study presentations",
+        "Publishing technical articles or open-source / public contributions",
+      ],
+      build: `A standout professional portfolio showcasing verified domain competencies and completed client-grade projects.`,
+      resources: [
+        {
+          name: "Career Transition & Portfolio Guide",
+          type: "book",
+          difficulty: "advanced",
+          estimatedTime: "20 hours",
+          url: "https://medium.com",
+        },
+      ],
+    },
+  ];
+
+  const projects: ProjectIdea[] = [
+    {
+      title: `${path.name} Foundational Prototype`,
+      difficulty: "beginner",
+      skills: [skills[0]?.name || "Core Skills", "Problem Solving"],
+      description: `An introductory working project exploring the core concepts and mechanics of ${path.name}.`,
+      features: [
+        "Clean, well-structured architecture adhering to domain standards",
+        "Clear documentation explaining decisions and technical trade-offs",
+        "Demonstrated understanding of core inputs, processing, and outputs",
+      ],
+      portfolioValue: "Validates foundational technical literacy and structured thinking to entry-level hiring managers.",
+    },
+    {
+      title: `Applied ${primarySpec?.name || path.name} Solution`,
+      difficulty: "intermediate",
+      skills: [skills[1]?.name || "Systems Design", "Optimization"],
+      description: `A multi-stage solution addressing a specific bottleneck in ${primarySpec?.name || path.name}.`,
+      features: [
+        "Integrates multiple specialized tools and data / asset pipelines",
+        "Addresses real user constraints, edge cases, and performance limits",
+        "Comprehensive validation and testing verification metrics",
+      ],
+      portfolioValue: "Demonstrates practical execution and hands-on competence with professional tools.",
+    },
+    {
+      title: `Full-Scale ${path.name} Production Capstone`,
+      difficulty: "advanced",
+      skills: ["End-to-End Delivery", "Advanced Systems"],
+      description: `An industry-grade, end-to-end system built to professional standards.`,
+      features: [
+        "Full lifecycle implementation from initial discovery to deployment",
+        "Production monitoring, error handling, and performance benchmarks",
+        "Publicly documented case study with measurable impact outcomes",
+      ],
+      portfolioValue: "A flagship portfolio piece that proves you can build and deliver at a professional level.",
+    },
+  ];
+
+  const progression: CareerStage[] = [
+    {
+      title: allRoleTitles[0] || "Junior Associate / Analyst",
+      yearsRange: "0–2 years",
+      responsibilities: [
+        `Execute day-to-day tasks and modules within ${path.name}`,
+        "Collaborate with senior team members on system requirements",
+        "Continuously learn industry tooling and best practices",
+      ],
+      skills: [skills[0]?.name || "Fundamentals", "Tooling Proficiency"],
+      deltaFromPrevious: "Entering the field and translating foundational education into practical team contributions.",
+    },
+    {
+      title: allRoleTitles[1] || "Senior Specialist / Engineer",
+      yearsRange: "2–5 years",
+      responsibilities: [
+        "Independently lead complex modules and feature developments",
+        "Make key technical and design decisions for project sub-systems",
+        "Mentor junior peers and improve team operational efficiency",
+      ],
+      skills: ["Advanced Execution", "System Architecture", "Problem Solving"],
+      deltaFromPrevious: "Moving from guided task execution to independent system ownership and architectural decision-making.",
+    },
+    {
+      title: allRoleTitles[2] || "Principal / Lead Specialist",
+      yearsRange: "5–8 years",
+      responsibilities: [
+        `Set technical and methodological direction for ${path.name} initiatives`,
+        "Align domain strategy with cross-functional business objectives",
+        "Conduct architectural reviews and establish quality benchmarks",
+      ],
+      skills: ["Strategic Vision", "Cross-Functional Leadership", "Domain Mastery"],
+      deltaFromPrevious: "Scaling impact from individual project execution to multi-team strategy and technical leadership.",
+    },
+    {
+      title: "Director / Head of Domain",
+      yearsRange: "8+ years",
+      responsibilities: [
+        `Oversee organization-wide strategy, budget, and talent for ${path.name}`,
+        "Pioneer long-term innovation roadmaps and executive partnerships",
+        "Champion culture, talent development, and industry reputation",
+      ],
+      skills: ["Executive Strategy", "Organizational Leadership", "Industry Influence"],
+      deltaFromPrevious: "Transitioning from technical domain lead to executive leader guiding company-wide direction.",
+    },
+  ];
+
+  const preparation: PreparationItem[] = [
+    {
+      id: `${path.slug}-prep-1`,
+      category: "Portfolio & Projects",
+      task: `Build 3 polished projects demonstrating core competencies in ${path.name}.`,
+      details: "Ensure projects are publicly accessible with clear case studies and documented results.",
+    },
+    {
+      id: `${path.slug}-prep-2`,
+      category: "Technical & Tooling Mastery",
+      task: "Attain professional fluency with primary industry software and tools.",
+      details: "Practice standard workflows until you can execute core tasks rapidly without assistance.",
+    },
+    {
+      id: `${path.slug}-prep-3`,
+      category: "Interview & Case Study Prep",
+      task: "Prepare answers for common domain interview questions and scenario case studies.",
+      details: "Frame your experience around structured problem-solving, measurable results, and lessons learned.",
+    },
+    {
+      id: `${path.slug}-prep-4`,
+      category: "Community & Network",
+      task: `Connect with active professionals and communities in ${path.name}.`,
+      details: "Attend meetups, engage on relevant forums, and seek feedback on your portfolio work.",
+    },
+  ];
+
+  const snapshot: SnapshotItem[] = [
+    { label: "Avg Starting Salary", value: "$75,000 – $95,000", icon: "DollarSign" },
+    { label: "Mid-Career Salary", value: "$130,000 – $165,000", icon: "TrendingUp" },
+    { label: "Job Growth", value: "15% (Much faster than avg)", icon: "Compass" },
+    { label: "Remote Flexibility", value: path.domainId === "healthcare-sciences" ? "Moderate" : "High", icon: "Globe" },
+    { label: "Primary Skill", value: skills[0]?.name || "Core Mastery", icon: "Sparkles" },
+    { label: "Barrier to Entry", value: "Moderate", icon: "Award" },
+  ];
+
+  return {
+    id: path.slug,
+    slug: path.slug,
+    careerName: path.name,
+    title: path.name,
+    tagline: path.tagline,
+    description: path.tagline,
+    category: path.domainName,
+    icon: "Compass",
+    primaryTraits,
+    snapshot,
+    skills,
+    roadmap,
+    projects,
+    progression,
+    preparation,
+    relatedSlugs: [],
+    relatedCareers: [],
+    responsibilities: path.specializations.map((s) => s.description || s.name),
+    educationPath: {
+      recommendedStream: edu.stream,
+      degrees: edu.degrees,
+      keySubjects: edu.subjects,
+    },
+    requiredSkills: skills.map((s) => s.name),
+    beginnerSkills: [skills[0]?.name || "Foundations"],
+    intermediateSkills: skills.slice(1).map((s) => s.name),
+    advancedSkills: ["Industry Specialization", "System Leadership"],
+    toolsTechnologies: allRoleTitles.slice(0, 5),
+    recommendedProjects: projects,
+    certificationsResources: roadmap.flatMap((r) => r.resources),
+    careerProgression: progression,
+    roleProgression: allRoleTitles,
+    industryInfo: {
+      sectors: [path.domainName, "Global Enterprises", "High-Growth Startups"],
+      workEnvironment: "Modern collaborative workplace, flexible or hybrid",
+      difficultyToEnter: "Moderate — requires dedicated portfolio and structured domain learning",
+      growthPotential: "Strong — expanding demand across modern industries and global markets",
+    },
+  };
+}
+
+// ── Registry Map (All 24 Career Paths) ──────────────────────────────────────
+
+const BASE_CAREER_INTELLIGENCE: Record<string, CareerIntelligence> = {
   "software-development": softwareDevelopmentIntel,
   "ai-ml-data-science": aiMlDataScienceIntel,
   "engineering": engineeringIntel,
@@ -941,16 +1291,36 @@ export const CAREER_INTELLIGENCE_REGISTRY: Record<string, CareerIntelligence> = 
   "psychology-social": psychologySocialIntel,
 };
 
+export const CAREER_INTELLIGENCE_REGISTRY: Record<string, CareerIntelligence> = {
+  ...BASE_CAREER_INTELLIGENCE,
+};
+
+// Auto-register full intelligence for all expanded paths from canonical hierarchy
+for (const path of getAllCareerPaths()) {
+  if (!CAREER_INTELLIGENCE_REGISTRY[path.slug]) {
+    CAREER_INTELLIGENCE_REGISTRY[path.slug] = synthesizePathIntelligence(path);
+  }
+}
+
 // ── Backend name -> Slug reverse lookup ────────────────────────────────────
 export const CAREER_NAME_TO_ID: Record<string, string> = {
   ...Object.fromEntries(
     Object.values(CAREER_INTELLIGENCE_REGISTRY).map((c) => [c.careerName, c.id])
+  ),
+  ...Object.fromEntries(
+    Object.values(CAREER_INTELLIGENCE_REGISTRY).map((c) => [c.title, c.id])
+  ),
+  ...Object.fromEntries(
+    Object.values(CAREER_INTELLIGENCE_REGISTRY).map((c) => [c.slug, c.id])
   ),
   // Common aliases & alternate cluster titles
   "Software Development": "software-development",
   "Software Developer": "software-development",
   "Software / App Development": "software-development",
   "Software & App Developer": "software-development",
+  "Artificial Intelligence & Data": "ai-ml-data-science",
+  "AI & Data Science": "ai-ml-data-science",
+  "AI / Machine Learning / Data Science": "ai-ml-data-science",
   "UI/UX & Digital Product Design": "design-creative",
   "Design / Creative": "design-creative",
   "Finance & FinTech": "finance-investment",
@@ -966,17 +1336,20 @@ export const CAREER_NAME_TO_ID: Record<string, string> = {
   "Business Strategy & Operations": "entrepreneurship",
   "Engineering & Hardware": "engineering",
   "Scientific Research & Development": "scientific-research",
-  "Data Analytics & Business Intelligence": "ai-ml-data-science",
-  "AI & Data Science": "ai-ml-data-science",
+  "Data Analytics & Business Intelligence": "data-analytics-bi",
   "Data Scientist & AI Specialist": "ai-ml-data-science",
   // Common slug aliases
   "finance-fintech": "finance-investment",
   "ai-ml-data": "ai-ml-data-science",
   "data-science": "ai-ml-data-science",
   "data-science-ai": "ai-ml-data-science",
-  "data-analytics": "ai-ml-data-science",
+  "data-analytics": "data-analytics-bi",
   "product-management": "management-product",
   "digital-marketing": "marketing-media",
   "healthcare": "medicine-healthcare",
-  "biotech": "medicine-healthcare",
+  "biotech": "biomedical-pharmaceutical",
+  "cloud-infrastructure": "cloud-infrastructure",
+  "animation": "animation-3d-media",
+  "supply-chain": "supply-chain-operations",
+  "public-health": "public-health-epidemiology",
 };

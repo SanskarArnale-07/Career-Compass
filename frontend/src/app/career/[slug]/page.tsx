@@ -48,6 +48,7 @@ import CareerProgression from "@/components/career/CareerProgression";
 import JobPreparation from "@/components/career/JobPreparation";
 import AlternativeCareers from "@/components/career/AlternativeCareers";
 import CareerConstellation from "@/components/career/CareerConstellation";
+import { CareerPathAreas } from "@/components/career/CareerPathAreas";
 
 const emptySubscribe = () => () => {};
 function useIsClient() {
@@ -267,60 +268,51 @@ export default function CareerDetailPage() {
       {/* Top Utility / Breadcrumb bar */}
       <div className="border-b border-border/80 bg-background/80 backdrop-blur-md sticky top-0 z-30">
         <div className="container mx-auto px-4 py-3 max-w-6xl flex items-center justify-between">
-          <nav className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground overflow-x-auto">
-            <Link
-              href="/"
-              className="hover:text-foreground transition-colors shrink-0"
-            >
-              Home
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground min-w-0">
             <Link
               href="/careers"
-              className="hover:text-foreground transition-colors shrink-0"
+              className="hover:text-foreground transition-colors shrink-0 font-medium"
             >
               Careers
             </Link>
             {(() => {
               const hierarchy = getCareerHierarchy(career.slug);
               if (!hierarchy) return null;
+
+              // If current career page represents the path itself
+              const isPathLevel = hierarchy.path.name.toLowerCase() === career.title.toLowerCase();
+
               return (
                 <>
-                  <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-40" />
                   <Link
                     href={`/career-map?domain=${hierarchy.domain.id}`}
-                    className="hover:text-primary transition-colors shrink-0"
+                    className="hover:text-primary transition-colors truncate max-w-[90px] sm:max-w-[150px] md:max-w-none shrink"
                     title={`Explore ${hierarchy.domain.name} in Career Tree`}
                   >
                     {hierarchy.domain.name}
                   </Link>
 
-                  <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
-                  <Link
-                    href={`/career-map?domain=${hierarchy.domain.id}&path=${hierarchy.path.slug}`}
-                    className="hover:text-primary transition-colors shrink-0"
-                    title={`Explore ${hierarchy.path.name} in Career Tree`}
-                  >
-                    {hierarchy.path.name}
-                  </Link>
-
-                  {hierarchy.primarySpecialization && (
+                  {!isPathLevel && (
                     <>
-                      <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
+                      <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-40" />
                       <Link
-                        href={`/career-map?domain=${hierarchy.domain.id}&path=${hierarchy.path.slug}&spec=${hierarchy.primarySpecialization.id}`}
-                        className="hover:text-primary transition-colors shrink-0"
-                        title={`Explore ${hierarchy.primarySpecialization.name} in Career Tree`}
+                        href={`/career/${hierarchy.path.slug}`}
+                        className="hover:text-primary transition-colors truncate max-w-[100px] sm:max-w-[160px] md:max-w-none shrink"
+                        title={`Explore ${hierarchy.path.name}`}
                       >
-                        {hierarchy.primarySpecialization.name}
+                        {hierarchy.path.name}
                       </Link>
                     </>
                   )}
                 </>
               );
             })()}
-            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
-            <span className="text-primary font-semibold truncate max-w-45 sm:max-w-none">
+            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50 text-primary/70" />
+            <span
+              className="text-primary font-semibold shrink-0 whitespace-nowrap"
+              aria-current="page"
+            >
               {career.title}
             </span>
           </nav>
@@ -447,6 +439,9 @@ export default function CareerDetailPage() {
           {/* Overview Tab Content */}
           {(activeTab === "overview" || activeTab === "all") && (
             <div className="space-y-16 sm:space-y-20">
+              {/* Progressive Specialization & Role Exploration */}
+              <CareerPathAreas career={career} />
+
               <section id="snapshot">
                 <CareerSnapshot items={career.snapshot} />
               </section>

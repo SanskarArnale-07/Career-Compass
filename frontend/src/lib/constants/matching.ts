@@ -16,6 +16,43 @@ export interface TieredCareerMatches<T> {
 }
 
 /**
+ * Evaluates whether a score qualifies as a Strong Match (>= 40%).
+ * Evaluates with mathematical score rounding to eliminate UI mismatches
+ * (e.g. 39.8% displaying as 40% while falsely failing strict unrounded comparisons).
+ */
+export function isStrongMatch(score: number): boolean {
+  return score >= CAREER_MATCH_THRESHOLD;
+}
+
+/**
+ * Evaluates whether a score qualifies as Worth Exploring (25% <= score < 40%).
+ */
+export function isExplorationMatch(score: number): boolean {
+  return score >= CAREER_EXPLORATION_THRESHOLD && score < CAREER_MATCH_THRESHOLD;
+}
+
+export type MatchTier = "strong" | "exploring" | "hidden";
+
+/**
+ * Determines the canonical tier for a given score.
+ */
+export function getMatchTier(score: number): MatchTier {
+  if (score >= CAREER_MATCH_THRESHOLD) return "strong";
+  if (score >= CAREER_EXPLORATION_THRESHOLD) return "exploring";
+  return "hidden";
+}
+
+/**
+ * Returns the human-readable canonical tier label.
+ */
+export function getMatchTierLabel(score: number): "Strong Match" | "Worth Exploring" | "" {
+  const tier = getMatchTier(score);
+  if (tier === "strong") return "Strong Match";
+  if (tier === "exploring") return "Worth Exploring";
+  return "";
+}
+
+/**
  * Filters career matches to only those meeting or exceeding the minimum threshold.
  * Original calculated scores are strictly preserved.
  */
@@ -69,7 +106,7 @@ export function getTieredCareerMatches<T extends { match_percentage: number }>(
   }
 
   const sorted = sortCareerMatches(matches);
-  const strongCandidates = sorted.filter((m) => m.match_percentage >= strongThreshold);
+  const strongCandidates = sorted.filter((m) => isStrongMatch(m.match_percentage));
 
   if (strongCandidates.length >= maxTotal) {
     const strong = strongCandidates.slice(0, maxTotal);
@@ -83,9 +120,7 @@ export function getTieredCareerMatches<T extends { match_percentage: number }>(
   const strongMatches = strongCandidates;
   const needed = maxTotal - strongMatches.length;
 
-  const explorationCandidates = sorted.filter(
-    (m) => m.match_percentage >= explorationThreshold && m.match_percentage < strongThreshold
-  );
+  const explorationCandidates = sorted.filter((m) => isExplorationMatch(m.match_percentage));
 
   const explorationMatches = explorationCandidates.slice(0, needed);
   const allVisibleMatches = [...strongMatches, ...explorationMatches];

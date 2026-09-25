@@ -38,7 +38,7 @@ describe("Dashboard Command Center & Information Architecture", () => {
     const hierarchy = getCareerHierarchy(career.slug);
     expect(hierarchy).not.toBeNull();
     expect(hierarchy?.domain.name).toBe("Engineering & Technology");
-    expect(career.title).toBe("Software & App Developer");
+    expect(career.title).toBe("Software Development");
   });
 
   it("Level 2: derives accurate roadmap progress and task counts without fake values", () => {
