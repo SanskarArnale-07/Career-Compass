@@ -64,23 +64,22 @@ export default function CareerHero({
               {career.tagline}
             </p>
 
-            {/* Hierarchy Specializations & Roles */}
+            {/* Hierarchy Specializations & Roles Count Badge */}
             {hierarchy && hierarchy.path.specializations.length > 0 && (
-              <div className="mb-6 p-3.5 rounded-xl bg-[#10141A] border border-border/70 max-w-2xl">
-                <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 mb-1.5">
-                  Hierarchy Specializations &amp; Roles:
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {hierarchy.path.specializations.map((spec) => (
-                    <div
-                      key={spec.id}
-                      className="text-xs px-2.5 py-1 rounded-lg bg-[#141920] border border-border/60 text-secondary-foreground"
-                    >
-                      <span className="font-semibold text-foreground">{spec.name}: </span>
-                      <span className="text-muted-foreground">{spec.roles.map((r) => r.title).join(", ")}</span>
-                    </div>
-                  ))}
-                </div>
+              <div className="mb-6 flex flex-wrap items-center gap-3">
+                <a
+                  href="#specializations"
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#10141A] border border-border/80 hover:border-primary/50 text-xs font-mono text-muted-foreground hover:text-foreground transition-all group shadow-xs"
+                >
+                  <span className="h-2 w-2 rounded-full bg-primary" />
+                  <span className="font-semibold text-foreground">
+                    {hierarchy.path.specializations.length} Specializations ·{" "}
+                    {hierarchy.path.specializations.reduce((acc, s) => acc + s.roles.length, 0)} Roles
+                  </span>
+                  <span className="text-primary group-hover:translate-y-0.5 transition-transform">
+                    ↓ Explore specializations
+                  </span>
+                </a>
               </div>
             )}
 

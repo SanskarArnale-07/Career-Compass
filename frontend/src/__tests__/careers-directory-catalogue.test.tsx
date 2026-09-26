@@ -190,6 +190,21 @@ describe("Career Directory Catalogue Breadth & Global Search", () => {
       expect(results[0].path.slug).toBe("cybersecurity");
     });
 
+    it("'iot' and 'internet of things' match IoT & Connected Systems path, not generic engineering", () => {
+      const iotResults = searchCareerCatalog("iot");
+      expect(iotResults.length).toBeGreaterThanOrEqual(1);
+      expect(iotResults[0].path.slug).toBe("iot-connected-systems");
+      expect(iotResults[0].path.name).toBe("IoT & Connected Systems");
+
+      const iotGrouped = searchCareerCatalogGrouped("iot");
+      const pathGroup = iotGrouped.find((g) => g.label === "Career Paths");
+      expect(pathGroup?.results[0].path.slug).toBe("iot-connected-systems");
+
+      const fullTermResults = searchCareerCatalog("internet of things");
+      expect(fullTermResults.length).toBeGreaterThanOrEqual(1);
+      expect(fullTermResults[0].path.slug).toBe("iot-connected-systems");
+    });
+
     // ── Edge cases ────────────────────────────────────────────────────────
 
     it("empty query restores all paths (one result per path)", () => {

@@ -53,8 +53,8 @@ export function CareersDirectoryFilter({
     if (!debouncedQuery) return [];
     return searchCareerCatalogGrouped(debouncedQuery, {
       domainId: selectedDomain,
-      maxPerGroup: 8,
-      maxTotal: 20,
+      maxPerGroup: 15,
+      maxTotal: 40,
     });
   }, [debouncedQuery, selectedDomain]);
 
@@ -63,6 +63,17 @@ export function CareersDirectoryFilter({
 
   const hasSearchResults = debouncedQuery && flatResults.length > 0;
   const hasNoResults = debouncedQuery && flatResults.length === 0;
+
+  const featuredSpecificRole = useMemo(() => {
+    if (!debouncedQuery) return null;
+    const rolesGroup = groupedResults.find((g) => g.label === "Roles");
+    if (!rolesGroup || rolesGroup.results.length === 0) return null;
+    const topRoleResult = rolesGroup.results[0];
+    if (topRoleResult.isSpecificRoleMatch && topRoleResult.role && topRoleResult.specialization) {
+      return topRoleResult;
+    }
+    return null;
+  }, [debouncedQuery, groupedResults]);
 
   return (
     <div className="space-y-8 select-none">
@@ -184,10 +195,14 @@ export function CareersDirectoryFilter({
             <Search className="h-5 w-5" />
           </div>
           <h3 className="font-heading text-base font-bold text-foreground mb-1">
-            {`No careers found matching "${debouncedQuery}"`}
+            {debouncedQuery.length < 2
+              ? "Type at least 2 characters to search careers."
+              : `No careers found matching "${debouncedQuery}"`}
           </h3>
           <p className="text-xs sm:text-sm text-muted-foreground mb-6 leading-relaxed">
-            Try searching for a different role (e.g. &ldquo;Data Scientist&rdquo;, &ldquo;Frontend Developer&rdquo;), a career discipline (&ldquo;Cybersecurity&rdquo;), or a specialization.
+            {debouncedQuery.length < 2
+              ? "Enter at least 2 characters to search across career paths, specializations, and roles."
+              : "Try searching for a different role (e.g. \u201CData Scientist\u201D, \u201CFrontend Developer\u201D), a career discipline (\u201CCybersecurity\u201D), or a specialization."}
           </p>
           <button
             type="button"
@@ -229,6 +244,65 @@ export function CareersDirectoryFilter({
       ) : hasSearchResults ? (
         /* Grouped Search Results: Career Paths / Specializations / Roles */
         <div className="space-y-10">
+          {/* ── Featured Direct Match Banner (when user searches for a specific role) ────── */}
+          {featuredSpecificRole &&
+            featuredSpecificRole.role &&
+            featuredSpecificRole.specialization && (
+              <div className="relative p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-primary/10 via-[#0E1524] to-[#0D1117] border border-primary/40 shadow-lg">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/40 text-primary text-[11px] font-mono font-semibold uppercase tracking-wider">
+                        Direct Role Match
+                      </span>
+                      <span className="text-xs font-mono text-muted-foreground/75 truncate">
+                        {featuredSpecificRole.path.domainName}
+                      </span>
+                    </div>
+
+                    <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground">
+                      {featuredSpecificRole.role.title}
+                    </h2>
+
+                    {/* Breadcrumb hierarchy */}
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono text-muted-foreground">
+                      <span className="text-foreground/90 font-medium">
+                        {featuredSpecificRole.path.name}
+                      </span>
+                      <span className="text-primary/60">›</span>
+                      <span className="text-primary/90 font-medium">
+                        {featuredSpecificRole.specialization.name}
+                      </span>
+                      <span className="text-primary/60">›</span>
+                      <span className="text-primary font-bold">
+                        {featuredSpecificRole.role.title}
+                      </span>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-muted-foreground/90 max-w-2xl leading-relaxed pt-1">
+                      {featuredSpecificRole.role.description}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
+                    <Link
+                      href={featuredSpecificRole.targetRoadmapUrl}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-xs sm:text-sm hover:bg-primary-hover shadow-md hover:shadow-primary/20 transition-all cursor-pointer"
+                    >
+                      <span>View role roadmap</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                    <Link
+                      href={`/career/${featuredSpecificRole.path.slug}`}
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#141924] hover:bg-[#1c2333] border border-border/70 text-xs font-mono text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+                    >
+                      <span>Explore full path</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+
           {groupedResults.map((group) => (
             <SearchResultGroup key={group.label} group={group} />
           ))}
@@ -240,6 +314,7 @@ export function CareersDirectoryFilter({
             <CareerPathCard
               key={result.path.id}
               path={result.path}
+              targetRoadmapUrl={result.targetRoadmapUrl}
               matchedRoles={result.matchedRoles}
               matchedSpecializations={result.matchedSpecializations}
               matchedAlias={result.matchedAlias}
@@ -300,6 +375,7 @@ function SearchResultGroup({ group }: { group: CareerSearchResultGroup }) {
               <CareerPathCard
                 key={result.path.id}
                 path={result.path}
+                targetRoadmapUrl={result.targetRoadmapUrl}
                 matchedRoles={result.matchedRoles}
                 matchedSpecializations={result.matchedSpecializations}
                 matchedAlias={result.matchedAlias}
@@ -312,6 +388,7 @@ function SearchResultGroup({ group }: { group: CareerSearchResultGroup }) {
                 key={`${result.path.slug}:${result.specialization.id}`}
                 path={result.path}
                 spec={result.specialization}
+                targetRoadmapUrl={result.targetRoadmapUrl}
                 matchedRoles={result.matchedRoles}
                 matchedAlias={result.matchedAlias}
               />
@@ -324,6 +401,8 @@ function SearchResultGroup({ group }: { group: CareerSearchResultGroup }) {
                 path={result.path}
                 spec={result.specialization}
                 role={result.role}
+                targetRoadmapUrl={result.targetRoadmapUrl}
+                isSpecificRoleMatch={result.isSpecificRoleMatch}
                 matchedAlias={result.matchedAlias}
               />
             );
@@ -343,11 +422,13 @@ function SearchResultGroup({ group }: { group: CareerSearchResultGroup }) {
  */
 function CareerPathCard({
   path,
+  targetRoadmapUrl,
   matchedRoles = [],
   matchedSpecializations = [],
   matchedAlias,
 }: {
   path: CareerPath;
+  targetRoadmapUrl?: string;
   matchedRoles?: string[];
   matchedSpecializations?: string[];
   matchedAlias?: string;
@@ -362,9 +443,11 @@ function CareerPathCard({
     matchedRoles.length > 0 ||
     matchedSpecializations.length > 0;
 
+  const url = targetRoadmapUrl || `/career/${path.slug}`;
+
   return (
     <Link
-      href={`/career/${path.slug}`}
+      href={url}
       className="group flex flex-col justify-between p-5 rounded-2xl bg-[#0D1117] border border-border/80 hover:border-primary/50 hover:bg-[#121622] transition-all duration-200 shadow-xs hover:shadow-md hover:shadow-cyan-950/20"
     >
       <div>
@@ -443,17 +526,22 @@ function CareerPathCard({
 function SpecializationCard({
   path,
   spec,
+  targetRoadmapUrl,
   matchedRoles = [],
   matchedAlias,
 }: {
   path: CareerPath;
   spec: CareerSpecialization;
+  targetRoadmapUrl?: string;
   matchedRoles?: string[];
   matchedAlias?: string;
 }) {
+  const url =
+    targetRoadmapUrl || `/career/${path.slug}?tab=roadmap&spec=${spec.id}#roadmap`;
+
   return (
     <Link
-      href={`/career/${path.slug}`}
+      href={url}
       className="group flex flex-col justify-between p-5 rounded-2xl bg-[#0D1117] border border-border/80 hover:border-primary/50 hover:bg-[#121622] transition-all duration-200 shadow-xs hover:shadow-md hover:shadow-cyan-950/20"
     >
       <div>
@@ -503,7 +591,7 @@ function SpecializationCard({
           {spec.roles.length} roles in this area
         </span>
         <span className="inline-flex items-center gap-1 font-semibold text-primary group-hover:translate-x-1 transition-transform">
-          <span>View path</span>
+          <span>View area</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </span>
       </div>
@@ -517,17 +605,29 @@ function RoleCard({
   path,
   spec,
   role,
+  targetRoadmapUrl,
+  isSpecificRoleMatch,
   matchedAlias,
 }: {
   path: CareerPath;
   spec: CareerSpecialization;
   role: CareerRole;
+  targetRoadmapUrl?: string;
+  isSpecificRoleMatch?: boolean;
   matchedAlias?: string;
 }) {
+  const roadmapUrl =
+    targetRoadmapUrl ||
+    `/career/${path.slug}?tab=roadmap&spec=${spec.id}&role=${role.id}#roadmap`;
+
   return (
     <Link
-      href={`/career/${path.slug}`}
-      className="group flex flex-col justify-between p-5 rounded-2xl bg-[#0D1117] border border-border/80 hover:border-primary/50 hover:bg-[#121622] transition-all duration-200 shadow-xs hover:shadow-md hover:shadow-cyan-950/20"
+      href={roadmapUrl}
+      className={`group flex flex-col justify-between p-5 rounded-2xl bg-[#0D1117] border transition-all duration-200 shadow-xs hover:shadow-md hover:shadow-cyan-950/20 ${
+        isSpecificRoleMatch
+          ? "border-primary/60 bg-[#0E1524] hover:border-primary hover:bg-[#121b2f]"
+          : "border-border/80 hover:border-primary/50 hover:bg-[#121622]"
+      }`}
     >
       <div>
         <div className="flex items-center justify-between mb-3.5">
@@ -544,10 +644,15 @@ function RoleCard({
         <h3 className="font-heading text-base font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
           {role.title}
         </h3>
-        <p className="text-[11px] font-mono text-muted-foreground/70 mt-0.5">
-          {spec.name}
+
+        {/* Full Breadcrumbs */}
+        <p className="text-[11px] font-mono text-muted-foreground/75 mt-1 flex items-center gap-1 truncate">
+          <span>{path.name}</span>
+          <span className="text-muted-foreground/40">›</span>
+          <span className="text-foreground/80">{spec.name}</span>
         </p>
-        <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed font-light">
+
+        <p className="text-xs text-muted-foreground mt-2 line-clamp-2 leading-relaxed font-light">
           {role.description}
         </p>
 
@@ -568,7 +673,7 @@ function RoleCard({
           </span>
         )}
         <span className="inline-flex items-center gap-1 font-semibold text-primary group-hover:translate-x-1 transition-transform ml-auto">
-          <span>Explore path</span>
+          <span>View roadmap</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </span>
       </div>

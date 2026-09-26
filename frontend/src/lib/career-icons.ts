@@ -34,6 +34,8 @@ export const CAREER_ICON_MAP: Record<string, LucideIcon> = {
   "Cybersecurity": Shield,
   "Robotics & Automation": Bot,
   "Robotics & Automation Systems": Bot,
+  "IoT & Connected Systems": Radio,
+  "IoT": Radio,
   "Core & Systems Engineering": Lightbulb,
   "Engineering": Lightbulb,
 

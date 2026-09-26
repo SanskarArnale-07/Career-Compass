@@ -32,15 +32,16 @@ describe("Career Hierarchy Taxonomy", () => {
     ]);
   });
 
-  it("contains all 24 canonical career paths across domains", () => {
+  it("contains all 25 canonical career paths across domains", () => {
     const paths = getAllCareerPaths();
-    expect(paths.length).toBe(24);
+    expect(paths.length).toBe(25);
 
     const originalSlugs = [
       "software-development",
       "cloud-infrastructure",
       "cybersecurity",
       "robotics-automation",
+      "iot-connected-systems",
       "engineering",
       "ai-ml-data-science",
       "data-engineering-platforms",
@@ -69,7 +70,7 @@ describe("Career Hierarchy Taxonomy", () => {
     }
   });
 
-  it("contains multiple specializations per path across all 24 paths", () => {
+  it("contains multiple specializations per path across all 25 paths", () => {
     const paths = getAllCareerPaths();
     const allSpecs = paths.flatMap((p) => p.specializations);
     expect(allSpecs.length).toBeGreaterThanOrEqual(48);
@@ -429,10 +430,10 @@ describe("Meaningful Match Threshold & Scoring Rules", () => {
     });
   });
 
-  describe("Expanded 24-Path Directory System & Exploration Flow", () => {
-    it("ensures all 24 career paths have authentic career intelligence records", () => {
+  describe("Expanded 25-Path Directory System & Exploration Flow", () => {
+    it("ensures all 25 career paths have authentic career intelligence records", () => {
       const paths = getAllCareerPaths();
-      expect(paths.length).toBe(24);
+      expect(paths.length).toBe(25);
 
       for (const path of paths) {
         expect(path.name).toBeDefined();
@@ -480,21 +481,21 @@ describe("Meaningful Match Threshold & Scoring Rules", () => {
       expect(aieRoleTitles).toContain("AI Solutions Engineer");
     });
 
-    it("verifies that all 24 career path slugs are unique with zero duplicates", () => {
+    it("verifies that all 25 career path slugs are unique with zero duplicates", () => {
       const paths = getAllCareerPaths();
       const slugs = paths.map((p) => p.slug);
       const uniqueSlugs = new Set(slugs);
-      expect(uniqueSlugs.size).toBe(24);
+      expect(uniqueSlugs.size).toBe(25);
 
       const names = paths.map((p) => p.name);
       const uniqueNames = new Set(names);
-      expect(uniqueNames.size).toBe(24);
+      expect(uniqueNames.size).toBe(25);
     });
 
     it("calculates catalogue statistics dynamically and matches individual path aggregations", () => {
       const stats = getCareerCatalogueStats();
       expect(stats.totalDomains).toBe(6);
-      expect(stats.totalPaths).toBe(24);
+      expect(stats.totalPaths).toBe(25);
       expect(stats.totalSpecializations).toBeGreaterThan(0);
       expect(stats.totalRoles).toBeGreaterThan(0);
 

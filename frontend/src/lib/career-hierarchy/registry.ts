@@ -15,6 +15,8 @@
 import type {
   CareerDomain,
   CareerPath,
+  CareerSpecialization,
+  CareerRole,
   CareerHierarchyMatch,
   CareerCatalogueStats,
 } from "./types";
@@ -41,9 +43,9 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             name: "Web & Application Engineering",
             description: "Building responsive frontends, server-side APIs, and comprehensive full-stack platforms.",
             roles: [
-              { id: "frontend-dev", title: "Frontend Developer", description: "Builds interactive user interfaces, responsive web apps, and design systems.", isEntryLevel: true },
-              { id: "backend-dev", title: "Backend Developer", description: "Develops server APIs, database architectures, and core business logic.", isEntryLevel: true },
-              { id: "fullstack-dev", title: "Full Stack Developer", description: "Connects client-side user experience with scalable server infrastructure.", isEntryLevel: false },
+              { id: "frontend-dev", title: "Frontend Developer", description: "Builds interactive user interfaces, responsive web apps, and design systems.", isEntryLevel: true, aliases: ["Frontend Engineer", "Front End Developer", "UI Developer", "React Developer", "Web Developer"] },
+              { id: "backend-dev", title: "Backend Developer", description: "Develops server APIs, database architectures, and core business logic.", isEntryLevel: true, aliases: ["Backend Engineer", "Back End Developer", "API Engineer", "Server Developer"] },
+              { id: "fullstack-dev", title: "Full Stack Developer", description: "Connects client-side user experience with scalable server infrastructure.", isEntryLevel: false, aliases: ["Full Stack Engineer", "Fullstack Developer", "Software Engineer"] },
             ],
           },
           {
@@ -51,9 +53,9 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             name: "Systems & Cloud Architecture",
             description: "Distributed microservices, cloud infrastructure, container orchestration, and reliability.",
             roles: [
-              { id: "cloud-architect", title: "Cloud Systems Architect", description: "Architects resilient multi-cloud platforms and scalable infrastructure.", isEntryLevel: false },
-              { id: "devops-engineer", title: "DevOps & Infrastructure Engineer", description: "Automates code deployment, container workflows, and system reliability.", isEntryLevel: true },
-              { id: "distributed-systems-eng", title: "Distributed Systems Engineer", description: "Builds fault-tolerant, high-concurrency networked computing systems.", isEntryLevel: false },
+              { id: "cloud-architect", title: "Cloud Systems Architect", description: "Architects resilient multi-cloud platforms and scalable infrastructure.", isEntryLevel: false, aliases: ["Cloud Architect", "Cloud Infrastructure Architect"] },
+              { id: "devops-engineer", title: "DevOps & Infrastructure Engineer", description: "Automates code deployment, container workflows, and system reliability.", isEntryLevel: true, aliases: ["DevOps Engineer", "Site Reliability Engineer", "SRE", "Platform Engineer"] },
+              { id: "distributed-systems-eng", title: "Distributed Systems Engineer", description: "Builds fault-tolerant, high-concurrency networked computing systems.", isEntryLevel: false, aliases: ["Distributed Systems Architect", "Systems Programmer"] },
             ],
           },
           {
@@ -61,9 +63,9 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             name: "Mobile & Platforms",
             description: "Native iOS/Android development, cross-platform runtimes, and client-side performance.",
             roles: [
-              { id: "ios-dev", title: "iOS Application Engineer", description: "Builds high-performance native iOS applications for iPhone and iPad.", isEntryLevel: true },
-              { id: "android-dev", title: "Android Application Engineer", description: "Creates native Android experiences using modern Kotlin and Jetpack Compose.", isEntryLevel: true },
-              { id: "crossplatform-dev", title: "Mobile Systems Specialist", description: "Develops cross-platform client runtimes and universal mobile applications.", isEntryLevel: false },
+              { id: "ios-dev", title: "iOS Application Engineer", description: "Builds high-performance native iOS applications for iPhone and iPad.", isEntryLevel: true, aliases: ["iOS Developer", "Apple Developer", "Swift Developer", "Mobile Developer"] },
+              { id: "android-dev", title: "Android Application Engineer", description: "Creates native Android experiences using modern Kotlin and Jetpack Compose.", isEntryLevel: true, aliases: ["Android Developer", "Kotlin Developer", "Mobile Developer"] },
+              { id: "crossplatform-dev", title: "Mobile Systems Specialist", description: "Develops cross-platform client runtimes and universal mobile applications.", isEntryLevel: false, aliases: ["React Native Developer", "Flutter Developer", "Mobile Engineer"] },
             ],
           },
         ],
@@ -76,36 +78,173 @@ export const CAREER_DOMAINS: CareerDomain[] = [
         careerName: "Cybersecurity",
         domainId: "engineering-technology",
         domainName: "Engineering & Technology",
-        tagline: "Protect digital infrastructure, networks, and sensitive data from modern cyber threats.",
+        tagline: "Protect digital infrastructure, critical networks, and enterprise data through defensive operations, offensive testing, and resilient architectures.",
+        aliases: ["Cyber", "Cybersecurity", "Infosec", "Information Security", "Cyber Defense", "Network Security"],
+        keywords: ["cyber", "security", "infosec", "red team", "blue team", "soc", "siem", "dfir", "grc", "hacking", "pentest", "forensics", "malware"],
         specializations: [
           {
-            id: "sec-operations",
-            name: "Security Operations & Incident Response",
-            description: "Monitoring live network traffic, investigating intrusions, and responding to cyber incidents.",
+            id: "offensive-security",
+            name: "Offensive Security & Red Teaming",
+            description: "Adversary emulation, penetration testing, exploit development, and discovering vulnerabilities before threat actors can exploit them.",
+            aliases: ["Offensive Security", "Red Team", "Ethical Hacking", "Penetration Testing"],
+            keywords: ["red team", "pentest", "offensive", "exploit", "hacker", "ethical hacking", "vulnerability"],
             roles: [
-              { id: "soc-analyst", title: "Security Operations Analyst", description: "Monitors security dashboards 24/7 to detect, analyze, and neutralize incoming cyber threats.", isEntryLevel: true },
-              { id: "incident-responder", title: "Incident Response Specialist", description: "Leads rapid mitigation and forensic investigations when active security breaches occur.", isEntryLevel: false },
-              { id: "threat-hunter", title: "Cyber Threat Intelligence Analyst", description: "Proactively tracks adversary groups and identifies hidden attack vectors before they are exploited.", isEntryLevel: false },
+              {
+                id: "red-team-operator",
+                title: "Red Team Cybersecurity Operator",
+                description: "Simulates realistic multi-stage cyber adversary attacks, stealthy lateral network movement, and advanced persistent threat (APT) tactics.",
+                isEntryLevel: false,
+                aliases: ["Red Team", "Red Teamer", "Adversary Emulation Specialist"],
+                keywords: ["red team", "offensive", "apt", "adversary emulation", "exploit", "c2", "lateral movement"],
+              },
+              {
+                id: "pentester",
+                title: "Penetration Tester (Ethical Hacker)",
+                description: "Systematically assesses enterprise networks, web applications, and physical systems to discover and exploit security weaknesses.",
+                isEntryLevel: true,
+                aliases: ["Pentester", "Ethical Hacker", "Vulnerability Assessor"],
+                keywords: ["pentester", "ethical hacker", "vulnerability", "metasploit", "burp suite", "kali"],
+              },
+              {
+                id: "exploit-researcher",
+                title: "Vulnerability Researcher & Exploit Analyst",
+                description: "Analyzes compiled binaries, identifies zero-day security vulnerabilities, and engineers proof-of-concept exploits for defensive patching.",
+                isEntryLevel: false,
+                aliases: ["Vulnerability Researcher", "Exploit Developer"],
+                keywords: ["zero day", "reverse engineering", "binaries", "exploit", "cve", "fuzzing"],
+              },
             ],
           },
           {
-            id: "offensive-security",
-            name: "Ethical Hacking & Vulnerability Research",
-            description: "Penetration testing, source code auditing, and finding vulnerabilities before adversaries do.",
+            id: "sec-operations",
+            name: "Defensive Security & Blue Teaming (SecOps)",
+            description: "Continuous 24/7 security monitoring, threat detection, incident triage, and real-time defense against active cyber attacks.",
+            aliases: ["Defensive Security", "Blue Team", "SecOps", "Security Operations", "SOC"],
+            keywords: ["blue team", "soc", "siem", "monitoring", "detection", "defensive", "edr"],
             roles: [
-              { id: "pentester", title: "Penetration Tester", description: "Ethically simulates cyberattacks against systems and networks to discover security weaknesses.", isEntryLevel: true },
-              { id: "appsec-engineer", title: "Application Security Engineer", description: "Audits software source code and designs security defenses into application development pipelines.", isEntryLevel: false },
-              { id: "security-auditor", title: "Information Systems Auditor", description: "Evaluates IT infrastructure to ensure compliance with international security standards.", isEntryLevel: true },
+              {
+                id: "soc-analyst",
+                title: "Blue Team & SOC Analyst",
+                description: "Monitors enterprise SIEM telemetry 24/7, triages security alerts, and stops unauthorized intrusions across corporate networks.",
+                isEntryLevel: true,
+                aliases: ["Blue Team", "SOC Analyst", "Security Operations Analyst", "Tier 1 SOC"],
+                keywords: ["blue team", "soc", "siem", "edr", "incident triage", "splunk", "sentinel"],
+              },
+              {
+                id: "incident-responder",
+                title: "Incident Response Specialist",
+                description: "Leads urgent containment, eradication, and post-breach remediation when enterprise systems face active ransomware or network intrusions.",
+                isEntryLevel: false,
+                aliases: ["Incident Responder", "IR Specialist", "Cyber Emergency Lead"],
+                keywords: ["incident response", "ransomware", "containment", "eradication", "forensic triage", "breach"],
+              },
+              {
+                id: "threat-hunter",
+                title: "Cyber Threat Hunter & Detection Engineer",
+                description: "Proactively scours enterprise endpoints and network logs to root out stealthy adversaries that bypass automated security controls.",
+                isEntryLevel: false,
+                aliases: ["Threat Hunter", "Detection Engineer", "APT Hunter"],
+                keywords: ["threat hunting", "detection engineering", "yara", "sigma", "apt", "mitre att&ck"],
+              },
             ],
           },
           {
             id: "cloud-identity-sec",
-            name: "Cloud & Identity Security",
-            description: "Securing cloud workloads, zero-trust network access, and identity management.",
+            name: "Cloud & Application Security (DevSecOps)",
+            description: "Securing cloud-native infrastructure, automated CI/CD pipelines, containerized microservices, and web application code.",
+            aliases: ["AppSec", "DevSecOps", "Cloud Security", "Application Security"],
+            keywords: ["cloud security", "appsec", "devsecops", "sast", "dast", "containers", "kubernetes", "cloud-native"],
             roles: [
-              { id: "cloud-sec-engineer", title: "Cloud Security Specialist", description: "Secures cloud platforms like AWS and Azure against unauthorized access and configuration errors.", isEntryLevel: true },
-              { id: "iam-engineer", title: "Identity & Access Management Engineer", description: "Designs access controls, single sign-on systems, and multi-factor authentication protocols.", isEntryLevel: true },
-              { id: "sec-architect", title: "Cybersecurity Architect", description: "Designs comprehensive end-to-end security architectures for enterprise networks.", isEntryLevel: false },
+              {
+                id: "appsec-engineer",
+                title: "Application Security Engineer (AppSec)",
+                description: "Audits software source code, implements SAST/DAST tooling, and designs secure development lifecycles (SDLC) for modern apps.",
+                isEntryLevel: false,
+                aliases: ["AppSec Engineer", "Software Security Engineer"],
+                keywords: ["appsec", "owasp", "sast", "dast", "secure code", "apis", "code audit"],
+              },
+              {
+                id: "devsecops-engineer",
+                title: "DevSecOps Engineer",
+                description: "Integrates automated vulnerability scanners, secret detection, and policy-as-code gates directly into cloud delivery pipelines.",
+                isEntryLevel: true,
+                aliases: ["DevSecOps", "Security Automation Engineer"],
+                keywords: ["devsecops", "ci/cd", "pipeline security", "docker", "kubernetes", "policy as code"],
+              },
+              {
+                id: "cloud-sec-engineer",
+                title: "Cloud Security Architect",
+                description: "Architects enterprise multi-cloud security guardrails, zero-trust network perimeters, and IAM policies across AWS, Azure, and GCP.",
+                isEntryLevel: false,
+                aliases: ["Cloud Security Architect", "Cloud Security Specialist"],
+                keywords: ["cloud security", "aws security", "azure security", "zero trust", "iam", "cloud posture"],
+              },
+            ],
+          },
+          {
+            id: "digital-forensics-dfir",
+            name: "Digital Forensics & Threat Intelligence (DFIR)",
+            description: "Uncovering digital evidence, dissecting malware samples, and attributing cyber attacks to global threat actor syndicates.",
+            aliases: ["DFIR", "Digital Forensics", "Threat Intelligence", "Malware Analysis"],
+            keywords: ["dfir", "forensics", "malware", "reverse engineering", "threat intelligence", "attribution"],
+            roles: [
+              {
+                id: "digital-forensics-investigator",
+                title: "Digital Forensics Investigator",
+                description: "Extracts volatile forensic artifacts from disks and memory dumps to reconstruct timeline evidence for legal and regulatory proceedings.",
+                isEntryLevel: false,
+                aliases: ["Forensics Investigator", "DFIR Specialist", "Computer Crime Investigator"],
+                keywords: ["forensics", "memory analysis", "chain of custody", "evidence", "disk imaging", "timeline"],
+              },
+              {
+                id: "malware-analyst",
+                title: "Malware Analyst & Reverse Engineer",
+                description: "Deconstructs weaponized Trojans, ransomware, and rootkits in controlled sandboxes to uncover adversary command-and-control protocols.",
+                isEntryLevel: false,
+                aliases: ["Malware Analyst", "Reverse Engineer"],
+                keywords: ["malware", "reverse engineering", "disassembly", "ida pro", "ghidra", "sandbox", "payload"],
+              },
+              {
+                id: "threat-intel-analyst",
+                title: "Cyber Threat Intelligence Analyst",
+                description: "Tracks nation-state and cybercriminal groups, maps attack infrastructure, and delivers strategic threat assessments to leadership.",
+                isEntryLevel: true,
+                aliases: ["Threat Intel Analyst", "CTI Specialist"],
+                keywords: ["threat intelligence", "cti", "mitre att&ck", "adversary attribution", "osint", "threat actor"],
+              },
+            ],
+          },
+          {
+            id: "governance-risk-compliance",
+            name: "Governance, Risk, Compliance (GRC) & Security Architecture",
+            description: "Aligning IT systems with international security standards, managing third-party vendor risks, and designing enterprise security strategy.",
+            aliases: ["GRC", "Security Compliance", "Security Governance", "Risk Management"],
+            keywords: ["grc", "compliance", "iso 27001", "soc 2", "nist", "audit", "security architecture"],
+            roles: [
+              {
+                id: "security-grc-analyst",
+                title: "Cybersecurity GRC Analyst",
+                description: "Translates complex cybersecurity regulations and risk matrices into actionable internal policies and vendor compliance audits.",
+                isEntryLevel: true,
+                aliases: ["GRC Analyst", "Security Compliance Analyst", "Risk Analyst"],
+                keywords: ["grc", "risk management", "iso 27001", "nist", "compliance", "soc 2", "regulatory"],
+              },
+              {
+                id: "security-auditor",
+                title: "Information Systems Auditor",
+                description: "Conducts formal technological audits to verify that organizational controls meet international compliance and data-privacy standards.",
+                isEntryLevel: true,
+                aliases: ["Information Security Auditor", "IT Auditor", "CISA"],
+                keywords: ["auditor", "audit", "controls", "compliance", "cisa", "security audit"],
+              },
+              {
+                id: "sec-architect",
+                title: "Cybersecurity Architect",
+                description: "Designs enterprise-wide defensive architecture frameworks, cryptographic standards, and zero-trust identity ecosystems.",
+                isEntryLevel: false,
+                aliases: ["Enterprise Security Architect", "Security Architect"],
+                keywords: ["security architect", "zero trust", "enterprise architecture", "defense in depth", "cryptography"],
+              },
             ],
           },
         ],
@@ -182,6 +321,66 @@ export const CAREER_DOMAINS: CareerDomain[] = [
               { id: "robotics-commissioner", title: "Robotics Commissioning Lead", description: "Oversees physical deployment, testing, and safety certification of robotics installations.", isEntryLevel: false },
             ],
           },
+          {
+            id: "robotic-perception-ai",
+            name: "Robotic Perception, Vision & Manipulation",
+            description: "Computer vision for robotic arms, SLAM sensor fusion, tactile gripping, and real-time motion planning.",
+            roles: [
+              { id: "robot-vision-engineer", title: "Robot Perception & Computer Vision Engineer", description: "Develops 3D point cloud, SLAM, and visual depth models for robotic environment navigation.", isEntryLevel: true },
+              { id: "manipulation-engineer", title: "Robotic Manipulation & Grasping Specialist", description: "Designs tactile sensory feedback and inverse kinematics algorithms for automated robot hands.", isEntryLevel: false },
+              { id: "hri-specialist", title: "Human-Robot Interaction (HRI) Systems Engineer", description: "Engineers collaborative safety systems, gestures, and intuitive interfaces between operators and cobots.", isEntryLevel: true },
+            ],
+          },
+        ],
+      },
+      {
+        id: "iot-connected-systems",
+        slug: "iot-connected-systems",
+        name: "IoT & Connected Systems",
+        title: "IoT & Connected Systems",
+        careerName: "IoT & Connected Systems",
+        domainId: "engineering-technology",
+        domainName: "Engineering & Technology",
+        tagline: "Design smart connected devices, embedded firmware, sensor telemetry, and edge-to-cloud computing platforms.",
+        aliases: ["IoT", "Internet of Things", "Connected Devices", "IIoT", "Smart Systems", "Embedded IoT"],
+        keywords: ["iot", "internet of things", "embedded", "firmware", "smart devices", "sensors", "edge computing", "microcontroller", "iiot", "smart home"],
+        specializations: [
+          {
+            id: "embedded-iot-firmware",
+            name: "Embedded Systems & IoT Firmware",
+            description: "Low-level microcontroller firmware, RTOS architectures, sensor drivers, and board-level hardware integration.",
+            aliases: ["Embedded Firmware", "Microcontroller Engineering"],
+            keywords: ["firmware", "embedded", "c", "c++", "rtos", "microcontroller", "stm32", "esp32"],
+            roles: [
+              { id: "iot-firmware-engineer", title: "IoT Firmware & Embedded Systems Engineer", description: "Develops low-latency RTOS firmware, driver routines, and hardware abstraction layers for connected devices.", isEntryLevel: true },
+              { id: "embedded-hardware-engineer", title: "Microcontroller & Circuit Design Engineer", description: "Designs low-power microcontroller schematics, PCB board layouts, and power management circuits.", isEntryLevel: true },
+              { id: "sensor-integration-specialist", title: "Sensor Systems & Telemetry Engineer", description: "Calibrates environmental, biometric, and inertial sensors, streaming high-precision telemetry packets.", isEntryLevel: false },
+            ],
+          },
+          {
+            id: "connected-edge-cloud",
+            name: "Connected Edge & Cloud Platforms",
+            description: "Edge gateway processing, MQTT/CoAP telemetry protocols, distributed device fleets, and wireless IoT networking.",
+            aliases: ["Edge Computing", "IoT Cloud Platforms"],
+            keywords: ["edge", "mqtt", "coap", "lorawan", "ble", "zigbee", "device fleet", "aws iot"],
+            roles: [
+              { id: "iot-cloud-architect", title: "IoT Solutions & Cloud Architect", description: "Architects scalable multi-million device fleet ingestion, digital twin platforms, and IoT cloud pipelines.", isEntryLevel: false },
+              { id: "edge-computing-engineer", title: "Edge Computing & Gateway Specialist", description: "Deploys on-device machine learning models and local gateway analytics to filter high-velocity telemetry.", isEntryLevel: true },
+              { id: "wireless-iot-engineer", title: "Wireless IoT & RF Communications Engineer", description: "Optimizes Bluetooth Low Energy (BLE), LoRaWAN, Cellular IoT, and satellite device communications.", isEntryLevel: false },
+            ],
+          },
+          {
+            id: "industrial-iot-smart-systems",
+            name: "Industrial IoT (IIoT) & Smart Infrastructure",
+            description: "Industry 4.0 smart manufacturing, SCADA connected equipment, smart city grids, and connected device cybersecurity.",
+            aliases: ["IIoT", "Industry 4.0", "Smart Infrastructure"],
+            keywords: ["iiot", "industry 4.0", "scada", "smart grid", "connected infrastructure", "iot security"],
+            roles: [
+              { id: "industrial-iot-engineer", title: "Industrial IoT (IIoT) Systems Engineer", description: "Integrates factory floor equipment with cloud dashboards for predictive maintenance and digital twins.", isEntryLevel: true },
+              { id: "smart-infrastructure-architect", title: "Smart Infrastructure & Connected Systems Architect", description: "Designs connected building automation, smart water grids, and intelligent traffic management systems.", isEntryLevel: false },
+              { id: "iot-security-specialist", title: "Connected Device & IoT Security Specialist", description: "Hardens embedded device firmware against side-channel exploits and secures end-to-end device-to-cloud cryptography.", isEntryLevel: false },
+            ],
+          },
         ],
       },
       {
@@ -205,12 +404,12 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             ],
           },
           {
-            id: "electrical-embedded",
-            name: "Electrical & Embedded Hardware",
-            description: "Microcontroller architecture, firmware development, circuit analysis, and IoT sensors.",
+            id: "electrical-power-systems",
+            name: "Electrical & Power Systems",
+            description: "Power grid distribution, renewable energy circuits, high-voltage transformers, and PCB hardware prototyping.",
             roles: [
-              { id: "embedded-systems-eng", title: "Embedded Systems Engineer", description: "Writes low-level code directly onto microcontrollers inside smart devices and vehicles.", isEntryLevel: true },
-              { id: "firmware-engineer", title: "Firmware Developer", description: "Builds operating firmware that bridges physical computer chips with software layers.", isEntryLevel: false },
+              { id: "electrical-systems-eng", title: "Electrical Systems Engineer", description: "Designs electrical power distribution, analog/digital circuits, and control systems.", isEntryLevel: true },
+              { id: "power-systems-eng", title: "Power Systems & Grid Engineer", description: "Manages renewable energy integration, transformer substations, and high-voltage transmission grids.", isEntryLevel: false },
               { id: "pcb-hardware-eng", title: "Hardware Prototyping Engineer", description: "Designs and solders printed circuit boards (PCBs) for cutting-edge electronics.", isEntryLevel: true },
             ],
           },
@@ -250,9 +449,9 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             name: "Machine Learning",
             description: "Designing neural network architectures, predictive algorithms, and self-learning models.",
             roles: [
-              { id: "ml-engineer", title: "Machine Learning Engineer", description: "Builds and trains predictive models and neural network algorithms.", isEntryLevel: true },
-              { id: "nlp-engineer", title: "NLP Engineer", description: "Specializes in natural language processing, semantic models, and conversational systems.", isEntryLevel: false },
-              { id: "cv-engineer", title: "Computer Vision Engineer", description: "Develops visual recognition, object detection, and spatial camera models.", isEntryLevel: true },
+              { id: "ml-engineer", title: "Machine Learning Engineer", description: "Builds and trains predictive models and neural network algorithms.", isEntryLevel: true, aliases: ["Machine Learning Engineer", "ML Engineer", "ML Specialist"] },
+              { id: "nlp-engineer", title: "NLP Engineer", description: "Specializes in natural language processing, semantic models, and conversational systems.", isEntryLevel: false, aliases: ["NLP Engineer", "Natural Language Processing Engineer", "LLM Specialist"] },
+              { id: "cv-engineer", title: "Computer Vision Engineer", description: "Develops visual recognition, object detection, and spatial camera models.", isEntryLevel: true, aliases: ["Computer Vision Engineer", "Vision AI Engineer"] },
             ],
           },
           {
@@ -260,9 +459,9 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             name: "Data Science",
             description: "Extracting actionable insights from vast datasets, statistical modeling, and predictive intelligence.",
             roles: [
-              { id: "data-scientist", title: "Data Scientist", description: "Discovers patterns and builds statistical forecasts to guide business strategy.", isEntryLevel: true },
-              { id: "data-analyst", title: "Data Analyst", description: "Analyzes metrics, builds data dashboards, and identifies operational trends.", isEntryLevel: true },
-              { id: "bi-analyst", title: "Business Intelligence Analyst", description: "Creates executive reporting dashboards and data models to inform executive decisions.", isEntryLevel: false },
+              { id: "data-scientist", title: "Data Scientist", description: "Discovers patterns and builds statistical forecasts to guide business strategy.", isEntryLevel: true, aliases: ["Data Scientist", "Applied Data Scientist", "Data Science Specialist"] },
+              { id: "data-analyst", title: "Data Analyst", description: "Analyzes metrics, builds data dashboards, and identifies operational trends.", isEntryLevel: true, aliases: ["Data Analyst", "Data Analytics Specialist"] },
+              { id: "bi-analyst", title: "Business Intelligence Analyst", description: "Creates executive reporting dashboards and data models to inform executive decisions.", isEntryLevel: false, aliases: ["Business Intelligence Analyst", "BI Analyst", "BI Developer"] },
             ],
           },
           {
@@ -270,9 +469,9 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             name: "AI Engineering",
             description: "Foundation models, computer vision, natural language processing, and autonomous agent systems.",
             roles: [
-              { id: "ai-engineer", title: "AI Engineer", description: "Integrates machine learning models into scalable production applications and APIs.", isEntryLevel: true },
-              { id: "generative-ai-engineer", title: "Generative AI Engineer", description: "Develops LLM applications, prompt pipelines, RAG systems, and generative agents.", isEntryLevel: false },
-              { id: "ai-solutions-engineer", title: "AI Solutions Engineer", description: "Designs customized AI architectures and enterprise integrations for business domains.", isEntryLevel: true },
+              { id: "ai-engineer", title: "AI Engineer", description: "Integrates machine learning models into scalable production applications and APIs.", isEntryLevel: true, aliases: ["AI Engineer", "Artificial Intelligence Engineer", "AI Developer"] },
+              { id: "generative-ai-engineer", title: "Generative AI Engineer", description: "Develops LLM applications, prompt pipelines, RAG systems, and generative agents.", isEntryLevel: false, aliases: ["Generative AI Engineer", "GenAI Engineer", "LLM Engineer", "Prompt Engineer"] },
+              { id: "ai-solutions-engineer", title: "AI Solutions Engineer", description: "Designs customized AI architectures and enterprise integrations for business domains.", isEntryLevel: true, aliases: ["AI Solutions Engineer", "AI Architect", "Enterprise AI Specialist"] },
             ],
           },
         ],
@@ -292,7 +491,7 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             name: "Data Pipelines & Lakehouse Architecture",
             description: "Building ETL/ELT data pipelines, distributed storage, and lakehouse storage platforms.",
             roles: [
-              { id: "data-engineer", title: "Data Infrastructure Engineer", description: "Builds automated data pipelines that extract, transform, and load massive data streams.", isEntryLevel: true },
+              { id: "data-engineer", title: "Data Infrastructure Engineer", description: "Builds automated data pipelines that extract, transform, and load massive data streams.", isEntryLevel: true, aliases: ["Data Engineer", "Data Infrastructure Engineer", "Big Data Engineer", "ETL Engineer"] },
               { id: "warehouse-architect", title: "Data Warehouse Architect", description: "Designs structured database schemas and high-performance analytical data warehouses.", isEntryLevel: false },
               { id: "etl-developer", title: "Pipeline Optimization Engineer", description: "Optimizes query efficiency and eliminates bottlenecks in large data processing jobs.", isEntryLevel: true },
             ],
@@ -304,6 +503,17 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             roles: [
               { id: "stream-architect", title: "Real-Time Stream Architect", description: "Architects low-latency message streaming platforms like Kafka for immediate data processing.", isEntryLevel: false },
               { id: "event-broker-eng", title: "Event Systems Engineer", description: "Maintains real-time event brokers handling millions of events per second.", isEntryLevel: true },
+              { id: "event-stream-dev", title: "Real-Time Event Stream Developer", description: "Builds low-latency event-driven microservices consuming Apache Flink and Kafka streams.", isEntryLevel: true },
+            ],
+          },
+          {
+            id: "data-platform-reliability",
+            name: "Data Platform Reliability & Governance",
+            description: "Data observability, schema validation, privacy compliance, and automated pipeline quality monitoring.",
+            roles: [
+              { id: "data-reliability-eng", title: "Data Reliability Engineer (DRE)", description: "Monitors pipeline uptime, data drift, SLA budgets, and automated failure recovery across warehouses.", isEntryLevel: true },
+              { id: "data-governance-spec", title: "Data Governance & Privacy Specialist", description: "Enforces data lineage, classification standards, and compliance across analytics stores.", isEntryLevel: false },
+              { id: "dataops-engineer", title: "DataOps Automation Engineer", description: "Automates CI/CD testing, schema migrations, and versioning for data transformation models.", isEntryLevel: true },
             ],
           },
         ],
@@ -323,7 +533,7 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             name: "Business Intelligence & Analytics",
             description: "SQL modeling, cohort analyses, executive metric dashboards, and KPI tracking.",
             roles: [
-              { id: "data-analyst", title: "Data Analyst", description: "Queries databases and creates executive dashboards to guide business decision-making.", isEntryLevel: true },
+              { id: "bi-data-analyst", title: "Data Analyst", description: "Queries databases and creates executive dashboards to guide business decision-making.", isEntryLevel: true, aliases: ["Data Analyst", "BI Analyst", "Business Data Analyst"] },
               { id: "bi-developer", title: "Business Intelligence Developer", description: "Builds automated reporting systems, metric dashboards, and KPI tracking tools.", isEntryLevel: true },
               { id: "analytics-manager", title: "Decision Intelligence Lead", description: "Translates statistical business intelligence into high-level strategic company roadmaps.", isEntryLevel: false },
             ],
@@ -335,6 +545,17 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             roles: [
               { id: "quantitative-analyst", title: "Quantitative Insights Analyst", description: "Applies statistical formulas and regression models to uncover market and user behavior.", isEntryLevel: true },
               { id: "statistical-modeler", title: "Statistical Modeler", description: "Designs probabilistic models and randomized A/B experiments to evaluate key outcomes.", isEntryLevel: false },
+              { id: "ab-testing-analyst", title: "Experimentation & A/B Testing Analyst", description: "Formulates randomized control trials and multi-armed bandit experiments to validate product features.", isEntryLevel: true },
+            ],
+          },
+          {
+            id: "product-growth-analytics",
+            name: "Product Analytics & Growth Insights",
+            description: "Funnel conversion analysis, customer lifetime value modeling, user cohort retention, and growth metrics.",
+            roles: [
+              { id: "product-analyst", title: "Product Data Analyst", description: "Analyzes user onboarding funnels, feature adoption rates, and behavioral engagement metrics.", isEntryLevel: true },
+              { id: "growth-analyst", title: "Growth & Retention Analyst", description: "Models customer acquisition costs, churn prediction, and revenue expansion strategies.", isEntryLevel: true },
+              { id: "analytics-translator", title: "Analytics Translator & Strategy Lead", description: "Bridges executive business goals with statistical findings to drive data-informed company decisions.", isEntryLevel: false },
             ],
           },
         ],
@@ -378,6 +599,16 @@ export const CAREER_DOMAINS: CareerDomain[] = [
               { id: "design-system-spec", title: "Design System Specialist", description: "Maintains unified design tokens and reusable component libraries across large teams.", isEntryLevel: true },
             ],
           },
+          {
+            id: "accessibility-service-design",
+            name: "Accessibility, Usability & Service Design",
+            description: "Inclusive digital design, WCAG compliance standards, screen-reader optimization, and end-to-end service blueprints.",
+            roles: [
+              { id: "accessibility-specialist", title: "Digital Accessibility & Inclusive Designer", description: "Audits interfaces against WCAG accessibility standards ensuring barrier-free digital access.", isEntryLevel: true },
+              { id: "information-architect", title: "Information Architect & Content Strategist", description: "Organizes complex navigation taxonomies, metadata structures, and user mental models.", isEntryLevel: false },
+              { id: "service-designer", title: "Service Systems Designer", description: "Maps multi-stakeholder service ecosystems, digital-to-physical touchpoints, and customer journeys.", isEntryLevel: false },
+            ],
+          },
         ],
       },
       {
@@ -407,6 +638,17 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             roles: [
               { id: "motion-designer", title: "Motion Graphics Designer", description: "Animates vector graphics, kinetic typography, and promotional video sequences.", isEntryLevel: true },
               { id: "3d-visualizer", title: "3D Spatial Visualizer", description: "Creates photorealistic 3D models and spatial environments for architecture and exhibits.", isEntryLevel: true },
+              { id: "creative-technologist", title: "Creative Technologist", description: "Prototypes interactive installations, sensory experiential brand designs, and creative coding.", isEntryLevel: false },
+            ],
+          },
+          {
+            id: "packaging-editorial-design",
+            name: "Packaging, Print & Publication Design",
+            description: "Structural packaging engineering, sustainable material typography, and editorial publication layouts.",
+            roles: [
+              { id: "packaging-designer", title: "Packaging & Materials Designer", description: "Engineers 3D structural boxes, dielines, and sustainable printed consumer goods packaging.", isEntryLevel: true },
+              { id: "editorial-designer", title: "Publication & Editorial Designer", description: "Typesets books, magazines, and long-form visual journalism for print and digital editions.", isEntryLevel: true },
+              { id: "environmental-graphic-designer", title: "Environmental Graphic & Signage Designer", description: "Designs wayfinding signage, architectural typography, and branded spatial environments.", isEntryLevel: false },
             ],
           },
         ],
@@ -438,6 +680,17 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             roles: [
               { id: "tech-artist", title: "Technical Artist", description: "Optimizes 3D shaders, character rigs, and graphical rendering pipelines in game engines.", isEntryLevel: true },
               { id: "xr-developer", title: "XR / Virtual Reality Creator", description: "Develops interactive virtual and augmented reality experiences with spatial controls.", isEntryLevel: false },
+              { id: "game-vfx-artist", title: "Real-Time Game VFX Artist", description: "Authors particle simulations, magic effects, and dynamic graphical combat shaders in game engines.", isEntryLevel: true },
+            ],
+          },
+          {
+            id: "game-systems-audio",
+            name: "Game Systems, Economy & Audio Design",
+            description: "In-game virtual economies, algorithmic combat balancing, dynamic sound effects, and adaptive music scoring.",
+            roles: [
+              { id: "game-economy-designer", title: "Game Economy & Systems Designer", description: "Balances virtual currencies, player progression math, reward drop tables, and in-game markets.", isEntryLevel: false },
+              { id: "game-audio-designer", title: "Interactive Game Audio Designer", description: "Implements adaptive audio engines, dynamic spatial sound effects, and interactive orchestral cues.", isEntryLevel: true },
+              { id: "gameplay-programmer", title: "Gameplay Systems Programmer", description: "Codes core game loop mechanics, camera controllers, and responsive character physics in C++.", isEntryLevel: true },
             ],
           },
         ],
@@ -784,6 +1037,16 @@ export const CAREER_DOMAINS: CareerDomain[] = [
               { id: "pharma-analyst", title: "Drug Safety & Regulatory Analyst", description: "Monitors drug efficacy reports and files regulatory documentation with health authorities.", isEntryLevel: true },
             ],
           },
+          {
+            id: "bioinformatics-precision-therapeutics",
+            name: "Bioinformatics & Precision Therapeutics",
+            description: "Computational drug discovery, genomic target screening, cellular gene therapy, and personalized oncology.",
+            roles: [
+              { id: "genomics-data-scientist", title: "Genomics & Computational Biologist", description: "Processes next-generation sequencing data to identify therapeutic disease targets.", isEntryLevel: true },
+              { id: "biomarker-discovery-scientist", title: "Precision Oncology & Biomarker Scientist", description: "Identifies molecular biomarkers for personalized patient targeted therapy responses.", isEntryLevel: false },
+              { id: "bioprocess-engineer", title: "Bioprocess & Cell Therapy Engineer", description: "Scales bioreactor fermentation and mRNA cell therapy manufacturing pipelines.", isEntryLevel: true },
+            ],
+          },
         ],
       },
       {
@@ -888,35 +1151,39 @@ export const CAREER_DOMAINS: CareerDomain[] = [
         domainId: "media-communications-social",
         domainName: "Media, Communications & Social Impact",
         tagline: "Uphold justice, draft legislative policies, and advise organizations on regulatory compliance.",
+        aliases: ["Law", "Legal", "Public Policy", "Legal Studies", "Jurisprudence", "Lawyer", "Attorney", "Legal Counsel"],
         specializations: [
           {
             id: "corporate-commercial-law",
             name: "Corporate & Commercial Law",
             description: "Contractual negotiation, securities law, intellectual property protection, and corporate governance.",
+            aliases: ["Corporate Law", "Business Law", "Commercial Law"],
             roles: [
-              { id: "corporate-associate", title: "Corporate Legal Associate", description: "Drafts contracts, reviews commercial leases, and assists on financing transactions.", isEntryLevel: true },
-              { id: "ip-lawyer", title: "Intellectual Property Specialist", description: "Files patent and trademark applications to legally protect innovations and creative work.", isEntryLevel: false },
-              { id: "compliance-officer", title: "Regulatory Compliance Counsel", description: "Ensures business operations adhere to privacy, financial, and employment regulations.", isEntryLevel: true },
+              { id: "corporate-associate", title: "Corporate Legal Associate", description: "Drafts contracts, reviews commercial leases, and assists on financing transactions.", isEntryLevel: true, aliases: ["Corporate Lawyer", "Corporate Counsel", "Commercial Lawyer", "Business Attorney"] },
+              { id: "ip-lawyer", title: "Intellectual Property Specialist", description: "Files patent and trademark applications to legally protect innovations and creative work.", isEntryLevel: false, aliases: ["IP Lawyer", "Intellectual Property Lawyer", "Patent Lawyer", "Patent Attorney", "Trademark Lawyer"] },
+              { id: "compliance-officer", title: "Regulatory Compliance Counsel", description: "Ensures business operations adhere to privacy, financial, and employment regulations.", isEntryLevel: true, aliases: ["Compliance Lawyer", "Legal Counsel", "Regulatory Attorney"] },
             ],
           },
           {
             id: "public-policy-governance",
             name: "Public Policy & Legislative Governance",
             description: "Socioeconomic policy research, regulatory impact assessments, and legislative drafting.",
+            aliases: ["Public Policy", "Government & Law", "Policy Making"],
             roles: [
-              { id: "policy-analyst", title: "Public Policy Research Fellow", description: "Researches public policy issues, analyzes economic data, and drafts policy recommendations.", isEntryLevel: true },
-              { id: "government-affairs", title: "Government Affairs Strategist", description: "Advocates for industry perspectives with legislative committees and regulatory bodies.", isEntryLevel: false },
-              { id: "legislative-aide", title: "Legislative Analyst", description: "Briefs elected lawmakers on bill language, constituent concerns, and voting agendas.", isEntryLevel: true },
+              { id: "policy-analyst", title: "Public Policy Research Fellow", description: "Researches public policy issues, analyzes economic data, and drafts policy recommendations.", isEntryLevel: true, aliases: ["Policy Analyst", "Policy Researcher", "Legal Policy Specialist"] },
+              { id: "government-affairs", title: "Government Affairs Strategist", description: "Advocates for industry perspectives with legislative committees and regulatory bodies.", isEntryLevel: false, aliases: ["Government Relations Lead", "Lobbyist", "Policy Strategist"] },
+              { id: "legislative-aide", title: "Legislative Analyst", description: "Briefs elected lawmakers on bill language, constituent concerns, and voting agendas.", isEntryLevel: true, aliases: ["Legislative Aide", "Legislative Counsel", "Law Drafting Specialist"] },
             ],
           },
           {
             id: "litigation-dispute",
             name: "Litigation & Dispute Resolution",
             description: "Courtroom advocacy, discovery review, legal memorandum writing, and dispute mediation.",
+            aliases: ["Litigation", "Criminal Law", "Dispute Resolution", "Trial Advocacy"],
             roles: [
-              { id: "litigation-associate", title: "Litigation Associate", description: "Drafts courtroom pleadings, conducts discovery review, and assists senior trial counsel.", isEntryLevel: true },
-              { id: "arbitrator", title: "Commercial Dispute Arbitrator", description: "Presides over out-of-court dispute resolutions and renders binding commercial settlements.", isEntryLevel: false },
-              { id: "public-defender", title: "Public Defense & Rights Advocate", description: "Represents individuals in criminal court proceedings ensuring constitutional rights are upheld.", isEntryLevel: true },
+              { id: "litigation-associate", title: "Litigation Associate", description: "Drafts courtroom pleadings, conducts discovery review, and assists senior trial counsel.", isEntryLevel: true, aliases: ["Litigation Lawyer", "Trial Lawyer", "Litigator", "Courtroom Advocate"] },
+              { id: "arbitrator", title: "Commercial Dispute Arbitrator", description: "Presides over out-of-court dispute resolutions and renders binding commercial settlements.", isEntryLevel: false, aliases: ["Dispute Arbitrator", "Legal Mediator", "ADR Specialist"] },
+              { id: "public-defender", title: "Public Defense & Rights Advocate", description: "Represents individuals in criminal court proceedings ensuring constitutional rights are upheld.", isEntryLevel: true, aliases: ["Public Defender", "Defense Attorney", "Criminal Defense Lawyer"] },
             ],
           },
         ],
@@ -990,6 +1257,17 @@ export const CAREER_DOMAINS: CareerDomain[] = [
             roles: [
               { id: "broadcast-producer", title: "Broadcast Media Producer", description: "Produces live television or radio newscasts, booking guests and directing live studio crews.", isEntryLevel: true },
               { id: "documentary-director", title: "Documentary Director", description: "Directs long-form documentary films telling powerful visual real-world human stories.", isEntryLevel: false },
+              { id: "podcast-audio-producer", title: "Narrative Podcast & Audio Producer", description: "Records, edits, and mixes investigative audio documentaries and episodic narrative podcasts.", isEntryLevel: true },
+            ],
+          },
+          {
+            id: "interactive-data-journalism",
+            name: "Interactive & Data Storytelling",
+            description: "Visual news graphics, algorithmic accountability, data investigations, and multimedia web features.",
+            roles: [
+              { id: "data-journalist", title: "Data Journalist & Visual Investigator", description: "Cleans public records, builds interactive charts, and codes data-driven investigative news stories.", isEntryLevel: true },
+              { id: "multimedia-storyteller", title: "Multimedia Narrative Producer", description: "Combines interactive web graphics, video, and audio into immersive digital news specials.", isEntryLevel: false },
+              { id: "editorial-strategy-lead", title: "Digital Publishing & Content Strategist", description: "Leads multi-platform distribution, audience engagement, and newsroom digital innovation.", isEntryLevel: false },
             ],
           },
         ],
@@ -1000,9 +1278,29 @@ export const CAREER_DOMAINS: CareerDomain[] = [
 
 // ── Lookup Indices ─────────────────────────────────────────────────────────
 
+export interface CareerRoleContext {
+  role: CareerRole;
+  spec: CareerSpecialization;
+  specialization: CareerSpecialization;
+  path: CareerPath;
+  domain: CareerDomain;
+}
+
+export interface CareerSpecContext {
+  spec: CareerSpecialization;
+  specialization: CareerSpecialization;
+  path: CareerPath;
+  domain: CareerDomain;
+}
+
 const PATH_BY_SLUG: Record<string, CareerPath> = {};
 const PATH_BY_CAREER_NAME: Record<string, CareerPath> = {};
 const DOMAIN_BY_PATH_ID: Record<string, CareerDomain> = {};
+
+const ROLE_LOOKUP_BY_ID: Record<string, CareerRoleContext> = {};
+const ROLE_LOOKUP_BY_TITLE: Record<string, CareerRoleContext> = {};
+const SPEC_LOOKUP_BY_ID: Record<string, CareerSpecContext> = {};
+const SPEC_LOOKUP_BY_NAME: Record<string, CareerSpecContext> = {};
 
 for (const domain of CAREER_DOMAINS) {
   for (const path of domain.paths) {
@@ -1013,6 +1311,26 @@ for (const domain of CAREER_DOMAINS) {
     PATH_BY_CAREER_NAME[path.name.toLowerCase().trim()] = path;
     DOMAIN_BY_PATH_ID[path.id] = domain;
     DOMAIN_BY_PATH_ID[path.slug] = domain;
+
+    for (const spec of path.specializations) {
+      SPEC_LOOKUP_BY_ID[spec.id] = { spec, specialization: spec, path, domain };
+      SPEC_LOOKUP_BY_NAME[spec.name.toLowerCase().trim()] = { spec, specialization: spec, path, domain };
+      if (spec.aliases) {
+        for (const a of spec.aliases) {
+          SPEC_LOOKUP_BY_NAME[a.toLowerCase().trim()] = { spec, specialization: spec, path, domain };
+        }
+      }
+
+      for (const role of spec.roles) {
+        ROLE_LOOKUP_BY_ID[role.id] = { role, spec, specialization: spec, path, domain };
+        ROLE_LOOKUP_BY_TITLE[role.title.toLowerCase().trim()] = { role, spec, specialization: spec, path, domain };
+        if (role.aliases) {
+          for (const a of role.aliases) {
+            ROLE_LOOKUP_BY_TITLE[a.toLowerCase().trim()] = { role, spec, specialization: spec, path, domain };
+          }
+        }
+      }
+    }
   }
 }
 
@@ -1078,10 +1396,55 @@ export function getAllCareerDomains(): CareerDomain[] {
 }
 
 /**
- * Returns all registered career paths across all domains (20 paths).
+ * Returns all registered career paths across all domains (25 paths).
  */
 export function getAllCareerPaths(): CareerPath[] {
   return CAREER_DOMAINS.flatMap((d) => d.paths);
+}
+
+/**
+ * Returns a specific role with full parent context (spec, path, domain).
+ */
+export function getRoleHierarchy(roleIdOrTitle: string): CareerRoleContext | undefined {
+  if (!roleIdOrTitle) return undefined;
+  const key = roleIdOrTitle.toLowerCase().trim();
+  return (
+    ROLE_LOOKUP_BY_ID[roleIdOrTitle] ||
+    ROLE_LOOKUP_BY_ID[key] ||
+    ROLE_LOOKUP_BY_TITLE[key] ||
+    Object.values(ROLE_LOOKUP_BY_ID).find(
+      (r) =>
+        r.role.id.toLowerCase() === key ||
+        r.role.title.toLowerCase() === key ||
+        r.role.aliases?.some((a: string) => a.toLowerCase() === key)
+    )
+  );
+}
+
+/**
+ * Returns a specific specialization with full parent context (path, domain).
+ */
+export function getSpecializationHierarchy(specIdOrName: string): CareerSpecContext | undefined {
+  if (!specIdOrName) return undefined;
+  const key = specIdOrName.toLowerCase().trim();
+  return (
+    SPEC_LOOKUP_BY_ID[specIdOrName] ||
+    SPEC_LOOKUP_BY_ID[key] ||
+    SPEC_LOOKUP_BY_NAME[key] ||
+    Object.values(SPEC_LOOKUP_BY_ID).find(
+      (s) =>
+        s.spec.id.toLowerCase() === key ||
+        s.spec.name.toLowerCase() === key ||
+        s.spec.aliases?.some((a: string) => a.toLowerCase() === key)
+    )
+  );
+}
+
+/**
+ * Returns all roles across the entire catalogue with their full hierarchy context.
+ */
+export function getAllRolesWithContext(): CareerRoleContext[] {
+  return Object.values(ROLE_LOOKUP_BY_ID);
 }
 
 /**
@@ -1111,13 +1474,16 @@ export function getCareerCatalogueStats(): CareerCatalogueStats {
 }
 
 /**
- * Resolves a career identifier (slug, ID, backend career name, or title)
- * into its full hierarchy mapping: Domain -> Path -> Specializations -> Roles.
+ * Resolves any career identifier (path slug, role ID, role title, specialization ID,
+ * backend career name) into its full hierarchy mapping:
+ * Domain -> Path -> Specialization -> Role.
  */
 export function getCareerHierarchy(identifier: string): CareerHierarchyMatch | undefined {
   if (!identifier) return undefined;
 
   const key = identifier.toLowerCase().trim();
+
+  // 1. Direct or fuzzy path lookup
   const path =
     PATH_BY_SLUG[identifier] ||
     PATH_BY_SLUG[key] ||
@@ -1133,31 +1499,78 @@ export function getCareerHierarchy(identifier: string): CareerHierarchyMatch | u
         key.includes(p.name.toLowerCase())
     );
 
-  if (!path) return undefined;
+  if (path) {
+    const domain = DOMAIN_BY_PATH_ID[path.id] || DOMAIN_BY_PATH_ID[path.slug];
+    if (domain) {
+      const primarySpecialization = path.specializations[0];
+      const sampleRoles = primarySpecialization
+        ? primarySpecialization.roles.map((r) => r.title)
+        : [];
 
-  const domain = DOMAIN_BY_PATH_ID[path.id] || DOMAIN_BY_PATH_ID[path.slug];
-  if (!domain) return undefined;
+      const breadcrumbs: string[] = [domain.name, path.name];
+      if (primarySpecialization) {
+        breadcrumbs.push(primarySpecialization.name);
+        if (sampleRoles[0]) {
+          breadcrumbs.push(sampleRoles[0]);
+        }
+      }
 
-  const primarySpecialization = path.specializations[0];
-  const sampleRoles = primarySpecialization
-    ? primarySpecialization.roles.map((r) => r.title)
-    : [];
-
-  const breadcrumbs: string[] = [domain.name, path.name];
-  if (primarySpecialization) {
-    breadcrumbs.push(primarySpecialization.name);
-    if (sampleRoles[0]) {
-      breadcrumbs.push(sampleRoles[0]);
+      return {
+        domain,
+        path,
+        primarySpecialization,
+        sampleRoles,
+        breadcrumbs,
+      };
     }
   }
 
-  return {
-    domain,
-    path,
-    primarySpecialization,
-    sampleRoles,
-    breadcrumbs,
-  };
+  // 2. Role lookup (by ID or Title/Alias)
+  const roleEntry =
+    ROLE_LOOKUP_BY_ID[identifier] ||
+    ROLE_LOOKUP_BY_ID[key] ||
+    ROLE_LOOKUP_BY_TITLE[key] ||
+    Object.values(ROLE_LOOKUP_BY_ID).find(
+      (r) =>
+        r.role.id.toLowerCase() === key ||
+        r.role.title.toLowerCase() === key ||
+        r.role.title.toLowerCase().includes(key) ||
+        r.role.aliases?.some((a: string) => a.toLowerCase() === key || a.toLowerCase().includes(key))
+    );
+
+  if (roleEntry) {
+    return {
+      domain: roleEntry.domain,
+      path: roleEntry.path,
+      primarySpecialization: roleEntry.spec,
+      sampleRoles: [roleEntry.role.title, ...roleEntry.spec.roles.filter((r: CareerRole) => r.id !== roleEntry.role.id).map((r: CareerRole) => r.title)],
+      breadcrumbs: [roleEntry.domain.name, roleEntry.path.name, roleEntry.spec.name, roleEntry.role.title],
+    };
+  }
+
+  // 3. Specialization lookup (by ID or Name/Alias)
+  const specEntry =
+    SPEC_LOOKUP_BY_ID[identifier] ||
+    SPEC_LOOKUP_BY_ID[key] ||
+    SPEC_LOOKUP_BY_NAME[key] ||
+    Object.values(SPEC_LOOKUP_BY_ID).find(
+      (s) =>
+        s.spec.id.toLowerCase() === key ||
+        s.spec.name.toLowerCase() === key ||
+        s.spec.name.toLowerCase().includes(key)
+    );
+
+  if (specEntry) {
+    return {
+      domain: specEntry.domain,
+      path: specEntry.path,
+      primarySpecialization: specEntry.spec,
+      sampleRoles: specEntry.spec.roles.map((r: CareerRole) => r.title),
+      breadcrumbs: [specEntry.domain.name, specEntry.path.name, specEntry.spec.name],
+    };
+  }
+
+  return undefined;
 }
 
 /**

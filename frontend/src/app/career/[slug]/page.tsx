@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, useSyncExternalStore, useMemo, Suspense } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -26,7 +26,11 @@ import {
   type CareerIntelligence,
 } from "@/lib/career-intelligence";
 import { getCareerSlug } from "@/lib/career-details";
-import { getCareerHierarchy } from "@/lib/career-hierarchy";
+import {
+  getCareerHierarchy,
+  getRoleHierarchy,
+  type CareerRole,
+} from "@/lib/career-hierarchy";
 import {
   getStrengthsAndGaps,
   getPersonalizedSkills,
@@ -59,9 +63,10 @@ function useIsClient() {
   );
 }
 
-export default function CareerDetailPage() {
+function CareerDetailContent() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<"overview" | "skills" | "roadmap" | "projects" | "all">("overview");
 
   const slug =
@@ -71,12 +76,43 @@ export default function CareerDetailPage() {
       ? params.slug[0]
       : "";
 
+  const roleParam = searchParams?.get("role");
+  const tabParam = searchParams?.get("tab");
+
+  const targetedRole = useMemo(() => {
+    if (!roleParam) return null;
+    const hierarchy = getRoleHierarchy(roleParam);
+    if (hierarchy?.role) {
+      return {
+        role: hierarchy.role,
+        specialization: hierarchy.specialization,
+        path: hierarchy.path,
+      };
+    }
+    return null;
+  }, [roleParam]);
+
   const isClient = useIsClient();
   const [copied, setCopied] = useState(false);
   const [results, setResults] = useState<StoredResults | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
 
   const career: CareerIntelligence | undefined = resolveCareerIntelligence(slug);
+
+  // Sync activeTab and scroll to #roadmap when deep-linked
+  useEffect(() => {
+    if (tabParam === "roadmap" || tabParam === "skills" || tabParam === "projects" || tabParam === "all") {
+      setActiveTab(tabParam);
+    }
+    if (tabParam === "roadmap" || (typeof window !== "undefined" && window.location.hash === "#roadmap")) {
+      setTimeout(() => {
+        const el = document.getElementById("roadmap");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 150);
+    }
+  }, [tabParam]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -109,6 +145,16 @@ export default function CareerDetailPage() {
       console.error("Failed to update progress", e);
     }
     router.push("/dashboard");
+  };
+
+  const handleSelectRole = (_role: CareerRole) => {
+    setActiveTab("roadmap");
+    setTimeout(() => {
+      const el = document.getElementById("roadmap");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
   };
 
   const handleShare = async () => {
@@ -440,7 +486,7 @@ export default function CareerDetailPage() {
           {(activeTab === "overview" || activeTab === "all") && (
             <div className="space-y-16 sm:space-y-20">
               {/* Progressive Specialization & Role Exploration */}
-              <CareerPathAreas career={career} />
+              <CareerPathAreas career={career} onSelectRole={handleSelectRole} />
 
               <section id="snapshot">
                 <CareerSnapshot items={career.snapshot} />
@@ -470,6 +516,34 @@ export default function CareerDetailPage() {
           {/* Roadmap Tab Content */}
           {(activeTab === "roadmap" || activeTab === "all") && (
             <section id="roadmap">
+              {targetedRole && (
+                <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-primary/20 text-primary font-semibold uppercase tracking-wider">
+                        Role Roadmap Focus
+                      </span>
+                      {targetedRole.specialization && (
+                        <span className="text-xs font-mono text-muted-foreground">
+                          {targetedRole.specialization.name}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-heading text-base font-bold text-foreground">
+                      {targetedRole.role.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground font-light max-w-xl">
+                      {targetedRole.role.description}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/career/${career.slug}`}
+                    className="text-xs font-mono text-muted-foreground hover:text-foreground shrink-0 underline decoration-muted-foreground/40 underline-offset-4"
+                  >
+                    View entire path
+                  </Link>
+                </div>
+              )}
               <LearningRoadmap phases={career.roadmap} completedPhases={completedPhases} />
             </section>
           )}
@@ -535,5 +609,24 @@ export default function CareerDetailPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+export default function CareerDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <p className="text-xs text-muted-foreground font-mono">
+              Loading career insights...
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <CareerDetailContent />
+    </Suspense>
   );
 }

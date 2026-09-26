@@ -9,12 +9,12 @@ import {
 } from "@/lib/career-intelligence";
 
 describe("Career Intelligence Registry", () => {
-  it("registers all 24 canonical career paths", () => {
+  it("registers all 25 canonical career paths", () => {
     const all = getAllCareerIntelligence();
-    expect(all.length).toBe(24);
+    expect(all.length).toBe(25);
 
     const slugs = getAllCareerSlugs();
-    expect(slugs.length).toBe(24);
+    expect(slugs.length).toBe(25);
   });
 
   it("resolves career by exact slug", () => {
