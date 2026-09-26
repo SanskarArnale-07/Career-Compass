@@ -1,30 +1,29 @@
 import { describe, it } from "vitest";
-import { getAllCareerDomains } from "@/lib/career-hierarchy";
+import { getAllCareerDomains, getAllCareerPaths, getRoleHierarchy } from "@/lib/career-hierarchy";
 import { resolveCareerIntelligence } from "@/lib/career-intelligence";
 import fs from "fs";
+import path from "path";
 
 describe("Role -> Roadmap Comprehensive Audit", () => {
   it("audits every single concrete role across all domains and paths", () => {
     const domains = getAllCareerDomains();
+    const allPaths = getAllCareerPaths();
 
-    // 1. Inspect what resolveCareerIntelligence returns for each of the 25 paths
-    console.log("=== PATH ROADMAP RESOLUTION AUDIT ===");
-    const pathResolutions: Record<string, any> = {};
-    for (const d of domains) {
-      for (const p of d.paths) {
-        const intel = resolveCareerIntelligence(p.slug);
-        const phases = intel?.roadmap || [];
-        pathResolutions[p.slug] = {
-          domain: d.name,
-          pathName: p.name,
-          resolvedId: intel?.id,
-          resolvedTitle: intel?.title,
-          isSynthesized: intel?.id === p.slug && intel?.category === d.name,
-          phasesCount: phases.length,
-          phases: phases.map((ph) => `[Phase ${ph.phase}] ${ph.title}`),
-        };
-      }
-    }
+    // 12 curated career paths with handcrafted roadmaps in src/lib/career-details/careers/
+    const CURATED_SLUGS = new Set([
+      "software-development",
+      "ai-ml-data",
+      "design-creative",
+      "engineering",
+      "medicine",
+      "law-policy",
+      "finance",
+      "management",
+      "marketing-media",
+      "psychology-social",
+      "scientific-research",
+      "entrepreneurship",
+    ]);
 
     interface RoleAuditRecord {
       roleId: string;
@@ -41,6 +40,7 @@ describe("Role -> Roadmap Comprehensive Audit", () => {
       pathRoadmapExists: boolean;
       pathRoadmapPhasesCount: number;
       pathRoadmapPhaseTitles: string[];
+      isCuratedPath: boolean;
       status: "Correct" | "Missing" | "Broken" | "Incorrect" | "Shared-Valid" | "Shared-Questionable";
       classificationReason: string;
       priority: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "NONE";
@@ -48,15 +48,25 @@ describe("Role -> Roadmap Comprehensive Audit", () => {
 
     const auditRecords: RoleAuditRecord[] = [];
 
-    for (const domain of domains) {
-      for (const cPath of domain.paths) {
-        const resolvedPathCareer = resolveCareerIntelligence(cPath.slug);
-        const pathRoadmap = resolvedPathCareer?.roadmap || [];
-        const isCuratedDirect = Boolean(resolvedPathCareer && resolvedPathCareer.id !== cPath.slug);
+    // First, inspect what resolveCareerIntelligence returns for each of the 25 paths:
+    console.log("=== PATH ROADMAP RESOLUTION AUDIT ===");
+    for (const d of domains) {
+      console.log(`\nDomain: ${d.name} (${d.paths.length} paths)`);
+      for (const p of d.paths) {
+        const intel = resolveCareerIntelligence(p.slug);
+        const isFromBase = Boolean(intel && intel.id !== p.slug);
+        const phases = intel?.roadmap || [];
+        console.log(`  Path: [${p.slug}] "${p.name}"`);
+        console.log(`    Resolved to: id="${intel?.id}", title="${intel?.title}", isFromBase=${isFromBase}, phasesCount=${phases.length}`);
+        console.log(`    Phases: ${phases.map((ph) => `[${ph.phase}] ${ph.title}`).join(" -> ")}`);
+      }
+    }
 
-        for (const spec of cPath.specializations) {
-          for (const role of spec.roles) {
-            const navUrl = `/career/${cPath.slug}?tab=roadmap&spec=${spec.id}&role=${role.id}#roadmap`;
+            // Check if there is any role-specific roadmap directly in registry
+            // (resolveCareerIntelligence by default falls back to path if passed role ID,
+            // so we check whether resolveCareerIntelligence(role.id) returns a role-specific ID or the path ID)
+            const roleIntel = resolveCareerIntelligence(role.id);
+            const directRoleRoadmapExists = Boolean(roleIntel && roleIntel.id === role.id && roleIntel.id !== cPath.slug);
 
             const pathRoadmapExists = pathRoadmap.length > 0;
             const phaseTitles = pathRoadmap.map((p) => `Phase ${p.phase}: ${p.title}`);
@@ -70,8 +80,8 @@ describe("Role -> Roadmap Comprehensive Audit", () => {
               reason = `No roadmap exists for parent career path ${cPath.slug}`;
               priority = "HIGH";
             } else if (cPath.slug === "software-development") {
-              if (spec.id === "mobile-platforms") {
-                // iOS Developer, Android Developer, Mobile Systems Specialist
+              if (spec.id === "mobile-app-eng") {
+                // iOS Developer, Android Developer, Cross-Platform Mobile Engineer
                 status = "Incorrect";
                 reason = "Mobile development role points to Web Backend SWE roadmap (Phase 4: Node/Express/Django Backend APIs) with ZERO mobile platform milestones (Swift, SwiftUI, Kotlin, Jetpack Compose, Flutter).";
                 priority = "CRITICAL";
@@ -90,19 +100,6 @@ describe("Role -> Roadmap Comprehensive Audit", () => {
                 reason = "Shared foundational software development roadmap covers algorithms, databases, backend APIs, and systems design appropriately.";
                 priority = "LOW";
               }
-            } else if (cPath.slug === "cybersecurity") {
-              // Offensive, Defensive, GRC
-              // Path has synthesized roadmap with 4 phases
-              const isPrimary = cPath.specializations[0]?.id === spec.id;
-              if (isPrimary) {
-                status = "Shared-Valid";
-                reason = "Offensive security role aligns with Phase 2 offensive security specialization milestones.";
-                priority = "LOW";
-              } else {
-                status = "Shared-Questionable";
-                reason = `Role in ${spec.name} receives a roadmap whose Phase 2 specifically focuses on ${cPath.specializations[0]?.name}, rather than ${spec.name} workflows.`;
-                priority = "MEDIUM";
-              }
             } else if (cPath.slug === "ai-ml-data-science") {
               if (spec.id === "data-science-analytics" && (role.id === "business-intelligence-analyst" || role.id === "data-analyst")) {
                 status = "Shared-Questionable";
@@ -113,36 +110,61 @@ describe("Role -> Roadmap Comprehensive Audit", () => {
                 reason = "AI/ML and Data Science roles share appropriate statistical learning, ML modeling, and production deployment milestones.";
                 priority = "LOW";
               }
-            } else if (cPath.slug === "cloud-infrastructure") {
-              const isPrimary = cPath.specializations[0]?.id === spec.id;
-              if (isPrimary) {
-                status = "Shared-Valid";
-                reason = "Cloud architecture role aligns with cloud platforms and infrastructure curriculum.";
-                priority = "LOW";
-              } else {
+            } else if (cPath.slug === "core-systems-engineering") {
+              if (spec.id === "iot-edge-engineering") {
                 status = "Shared-Questionable";
-                reason = `Role in ${spec.name} receives a roadmap whose Phase 2 focuses primarily on ${cPath.specializations[0]?.name}.`;
+                reason = "IoT / Edge Engineering roles receive Core Systems Engineering roadmap which emphasizes general mechanical and embedded systems rather than connected IoT protocols, edge computing, and cloud telemetry.";
                 priority = "MEDIUM";
+              } else {
+                status = "Shared-Valid";
+                reason = "Physical systems and hardware engineering roles share core engineering and CAD/fabrication curriculum.";
+                priority = "LOW";
+              }
+            } else if (cPath.slug === "legal-practice-advocacy") {
+              if (spec.id === "policy-governance") {
+                status = "Shared-Questionable";
+                reason = "Public policy and regulatory roles receive courtroom litigation / bar prep curriculum instead of policy drafting, public administration, and regulatory analysis.";
+                priority = "MEDIUM";
+              } else {
+                status = "Shared-Valid";
+                reason = "Litigation, corporate law, and defense roles share common foundational LLB curriculum, bar prep, and case analysis.";
+                priority = "LOW";
+              }
+            } else if (cPath.slug === "clinical-medicine-healthcare") {
+              if (spec.id === "allied-health-diagnostics") {
+                status = "Shared-Questionable";
+                reason = "Radiology and diagnostic technology roles share physician MBBS / medical residency roadmap with medical entrance and surgical rotations.";
+                priority = "MEDIUM";
+              } else {
+                status = "Shared-Valid";
+                reason = "Core medical doctor roles appropriately share foundational MBBS, clinical rotations, and medical licensing milestones.";
+                priority = "LOW";
               }
             } else if (cPath.slug === "visual-ui-ux-design") {
-              const isPrimary = cPath.specializations[0]?.id === spec.id;
-              if (isPrimary) {
-                status = "Shared-Valid";
-                reason = "UI/UX and Product Design roles share appropriate digital product design, prototyping, and user research milestones.";
-                priority = "LOW";
-              } else {
+              if (spec.id === "game-3d-visual-design") {
                 status = "Shared-Questionable";
-                reason = `Role in ${spec.name} receives a roadmap whose Phase 2 focuses primarily on ${cPath.specializations[0]?.name}.`;
+                reason = "3D Game Environment Artist and 3D Asset Artists receive a 2D Product UI/UX roadmap (Figma, user interviews, journey mapping, WCAG design systems) rather than 3D modeling (Blender/Maya, Unreal Engine, shaders, texturing).";
                 priority = "MEDIUM";
+              } else {
+                status = "Shared-Valid";
+                reason = "UI/UX, Product Design, and Design Systems roles share appropriate product design, prototyping, and user research milestones.";
+                priority = "LOW";
               }
             } else {
-              // General synthesized paths
+              // For all other synthesized paths in the 25-path hierarchy:
+              // Check if the path's synthesized roadmap aligns well with this specialization.
+              // In buildCareerIntelligenceFromHierarchy:
+              // Phase 1 has general foundation
+              // Phase 2 has skills from primarySpecialization (the first specialization in the path!)
+              // Phase 3 has senior roles
+              // Phase 4 has capstone
               const isPrimarySpec = cPath.specializations[0]?.id === spec.id;
               if (isPrimarySpec) {
                 status = "Shared-Valid";
                 reason = `Role belongs to the primary specialization (${spec.name}) directly highlighted in Phase 2 of this career path roadmap.`;
                 priority = "LOW";
               } else {
+                // Secondary/tertiary specialization under a synthesized path
                 status = "Shared-Questionable";
                 reason = `Role is in secondary specialization (${spec.name}), but the path roadmap specifically hardcodes Phase 2 focus onto the primary specialization (${cPath.specializations[0]?.name}).`;
                 priority = "MEDIUM";
@@ -160,10 +182,11 @@ describe("Role -> Roadmap Comprehensive Audit", () => {
               specId: spec.id,
               specName: spec.name,
               navigationUrl: navUrl,
-              directRoleRoadmapExists: false,
+              directRoleRoadmapExists,
               pathRoadmapExists,
               pathRoadmapPhasesCount: pathRoadmap.length,
               pathRoadmapPhaseTitles: phaseTitles,
+              isCuratedPath: isCurated,
               status,
               classificationReason: reason,
               priority,
@@ -250,7 +273,6 @@ describe("Role -> Roadmap Comprehensive Audit", () => {
         mediumCount: mediumRoles.length,
         lowCount: lowRoles.length,
       },
-      pathResolutions,
       domainBreakdown: domainStats,
       criticalRoles: criticalRoles.map((r) => ({
         role: r.roleTitle,
@@ -281,6 +303,12 @@ describe("Role -> Roadmap Comprehensive Audit", () => {
       console.log(`Incorrect: ${dData.incorrect}`);
       console.log(`Shared but valid: ${dData.sharedValid}`);
       console.log(`Shared/questionable: ${dData.sharedQuestionable}`);
+      if (dData.problemRoles.length > 0) {
+        console.log(`Problematic roles (${dData.problemRoles.length}):`);
+        dData.problemRoles.forEach((pr) => {
+          console.log(`  - [${pr.priority}] ${pr.role} (${pr.path} -> ${pr.spec}): ${pr.status} - ${pr.reason}`);
+        });
+      }
     }
   });
 });
