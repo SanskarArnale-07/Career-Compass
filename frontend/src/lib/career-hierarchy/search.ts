@@ -803,6 +803,8 @@ export function searchCareerCatalog(
     const pathTokens = tokenize(`${path.name} ${path.title} ${path.careerName}`);
     const domainTokens = tokenize(path.domainName);
 
+    const aliasKey = query.toLowerCase();
+    const aliasData = CANONICAL_CAREER_ALIASES[aliasKey];
 
     // ── 1. CANONICAL ALIAS MATCH ─────────────────────────────────────────────
     for (const v of variations) {
