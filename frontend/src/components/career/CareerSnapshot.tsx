@@ -36,7 +36,7 @@ export default function CareerSnapshot({ items }: CareerSnapshotProps) {
                   {item.label}
                 </h3>
               </div>
-              <p className="font-sans text-sm text-foreground leading-relaxed">{item.value}</p>
+              <p className="font-sans text-base text-foreground leading-relaxed">{item.value}</p>
             </motion.div>
           );
         })}

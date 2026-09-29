@@ -27,33 +27,33 @@ describe("Results Page Redesign Specifications", () => {
     expect(ProgressiveHierarchy).toBeDefined();
   });
 
-  it("strictly enforces matching tiers and thresholds: Strong (>=40%), Worth Exploring (25-39%)", () => {
-    expect(CAREER_MATCH_THRESHOLD).toBe(40);
-    expect(CAREER_EXPLORATION_THRESHOLD).toBe(25);
+  it("strictly enforces matching tiers and thresholds: Worth Exploring (>=60%), Maybe Explore (40-59%), <40% hidden", () => {
+    expect(CAREER_MATCH_THRESHOLD).toBe(60);
+    expect(CAREER_EXPLORATION_THRESHOLD).toBe(40);
     expect(MAX_VISIBLE_CAREER_MATCHES).toBe(3);
 
     const mockCandidates = [
       { career_name: "Software / App Development", match_percentage: 85 },
-      { career_name: "Data Science & AI", match_percentage: 60 },
-      { career_name: "Design & Creative Strategy", match_percentage: 35 },
-      { career_name: "Finance & Accounting", match_percentage: 20 }, // hidden
+      { career_name: "Data Science & AI", match_percentage: 65 },
+      { career_name: "Design & Creative Strategy", match_percentage: 45 },
+      { career_name: "Finance & Accounting", match_percentage: 20 }, // hidden (<40)
     ];
 
     const { strongMatches, explorationMatches, allVisibleMatches } = getTieredCareerMatches(mockCandidates);
 
-    // Strong matches: >= 40%
+    // Strong matches: >= 60%
     expect(strongMatches.length).toBe(2);
     expect(strongMatches.map((m) => m.career_name)).toEqual([
       "Software / App Development",
       "Data Science & AI",
     ]);
 
-    // Exploration matches: 25-39%
+    // Exploration matches: 40-59%
     expect(explorationMatches.length).toBe(1);
     expect(explorationMatches[0].career_name).toBe("Design & Creative Strategy");
 
-    // Hidden careers (< 25%) must never be visible
-    expect(allVisibleMatches.some((m) => m.match_percentage < 25)).toBe(false);
+    // Hidden careers (< 40%) must never be visible
+    expect(allVisibleMatches.some((m) => m.match_percentage < 40)).toBe(false);
     expect(allVisibleMatches.length).toBe(3);
   });
 
@@ -109,10 +109,10 @@ describe("Results Page Redesign Specifications", () => {
     expect(pathNames).not.toContain("Data Science");
   });
 
-  it("detects when all visible results are within the 25–39% exploration range", () => {
+  it("detects when all visible results are within the 40–59% exploration range", () => {
     const mockExplorationOnly = [
-      { career_name: "Software / App Development", match_percentage: 35 },
-      { career_name: "Design & Creative Strategy", match_percentage: 28 },
+      { career_name: "Software / App Development", match_percentage: 55 },
+      { career_name: "Design & Creative Strategy", match_percentage: 48 },
     ];
 
     const { strongMatches, explorationMatches } = getTieredCareerMatches(mockExplorationOnly);
@@ -138,23 +138,23 @@ describe("Results Page Redesign Specifications", () => {
     const isStrongMatch = (score: number) => score >= CAREER_MATCH_THRESHOLD;
     const getExplanation = (score: number, career: string) => {
       if (isStrongMatch(score)) {
-        return `Your profile shows strong alignment with ${career}.`;
+        return `Your profile shows this is a direction worth exploring within ${career}.`;
       }
-      return `Your profile shows this is a direction worth exploring within ${career}.`;
+      return `Your profile shows you may explore ${career}.`;
     };
 
-    // 43% score must be classified as Strong Match and have strong alignment wording
-    const score = 43;
+    // 68% score must be classified as Worth Exploring (>= 60%)
+    const score = 68;
     expect(isStrongMatch(score)).toBe(true);
     const explanation = getExplanation(score, "Software Development");
-    expect(explanation).toContain("strong alignment");
+    expect(explanation).toContain("worth exploring");
     expect(explanation).not.toContain("moderate alignment");
 
-    // 32% score must be classified as Worth Exploring
-    const exploreScore = 32;
+    // 48% score must be classified as Maybe Explore (40-59%)
+    const exploreScore = 48;
     expect(isStrongMatch(exploreScore)).toBe(false);
     const exploreExplanation = getExplanation(exploreScore, "Software Development");
-    expect(exploreExplanation).toContain("worth exploring");
+    expect(exploreExplanation).toContain("may explore");
     expect(exploreExplanation).not.toContain("moderate alignment");
   });
 
@@ -206,34 +206,42 @@ describe("Results Page Redesign Specifications", () => {
     expect(academicSection.description).toContain("Class 11–12 stream choices");
   });
 
-  it("strictly tests boundary cases: 39 -> Worth Exploring, 40 -> Strong Match, 41 -> Strong Match", () => {
+  it("strictly tests boundary cases: 39 -> hidden, 40 -> MAYBE EXPLORE, 59 -> MAYBE EXPLORE, 60 -> WORTH EXPLORING", () => {
     // Exact boundaries
     expect(isStrongMatch(39)).toBe(false);
-    expect(isExplorationMatch(39)).toBe(true);
-    expect(getMatchTierLabel(39)).toBe("Worth Exploring");
+    expect(isExplorationMatch(39)).toBe(false);
+    expect(getMatchTierLabel(39)).toBe("");
 
-    expect(isStrongMatch(40)).toBe(true);
-    expect(isExplorationMatch(40)).toBe(false);
-    expect(getMatchTierLabel(40)).toBe("Strong Match");
+    expect(isStrongMatch(40)).toBe(false);
+    expect(isExplorationMatch(40)).toBe(true);
+    expect(getMatchTierLabel(40)).toBe("MAYBE EXPLORE");
 
-    expect(isStrongMatch(41)).toBe(true);
-    expect(isExplorationMatch(41)).toBe(false);
-    expect(getMatchTierLabel(41)).toBe("Strong Match");
+    expect(isStrongMatch(59)).toBe(false);
+    expect(isExplorationMatch(59)).toBe(true);
+    expect(getMatchTierLabel(59)).toBe("MAYBE EXPLORE");
+
+    expect(isStrongMatch(60)).toBe(true);
+    expect(isExplorationMatch(60)).toBe(false);
+    expect(getMatchTierLabel(60)).toBe("WORTH EXPLORING");
+
+    expect(isStrongMatch(61)).toBe(true);
+    expect(isExplorationMatch(61)).toBe(false);
+    expect(getMatchTierLabel(61)).toBe("WORTH EXPLORING");
 
     // Strict mathematical boundary behavior
     expect(isStrongMatch(39.9)).toBe(false);
-    expect(isExplorationMatch(39.9)).toBe(true);
-    expect(getMatchTierLabel(39.9)).toBe("Worth Exploring");
+    expect(isExplorationMatch(39.9)).toBe(false);
+    expect(getMatchTierLabel(39.9)).toBe("");
 
-    expect(isStrongMatch(40.0)).toBe(true);
-    expect(isExplorationMatch(40.0)).toBe(false);
-    expect(getMatchTierLabel(40.0)).toBe("Strong Match");
+    expect(isStrongMatch(40.0)).toBe(false);
+    expect(isExplorationMatch(40.0)).toBe(true);
+    expect(getMatchTierLabel(40.0)).toBe("MAYBE EXPLORE");
 
-    expect(isExplorationMatch(24.9)).toBe(false);
-    expect(getMatchTierLabel(24.9)).toBe("");
+    expect(isExplorationMatch(39.0)).toBe(false);
+    expect(getMatchTierLabel(39.0)).toBe("");
 
-    expect(isExplorationMatch(25.0)).toBe(true);
-    expect(getMatchTierLabel(25.0)).toBe("Worth Exploring");
+    expect(isStrongMatch(60.0)).toBe(true);
+    expect(getMatchTierLabel(60.0)).toBe("WORTH EXPLORING");
   });
 
   it("verifies canonical Software Development naming across path, specializations, and roles", () => {
@@ -275,15 +283,15 @@ describe("Results Page Redesign Specifications", () => {
       EX: 15,
     };
 
-    // 43% score -> Strong Match explanation
-    const strongExplanation = getMatchExplanation(mockTraits, swCareer!, 43);
+    // 68% score -> Strong Match explanation
+    const strongExplanation = getMatchExplanation(mockTraits, swCareer!, 68);
     expect(strongExplanation).toContain("strong alignment with Software Development");
     expect(strongExplanation).toContain("technical and analytical thinking");
     expect(strongExplanation).not.toContain("emerging traits");
     expect(strongExplanation).not.toContain("targeted development");
 
-    // 35% score -> Worth Exploring explanation
-    const exploreExplanation = getMatchExplanation(mockTraits, swCareer!, 35);
+    // 45% score -> Worth Exploring explanation
+    const exploreExplanation = getMatchExplanation(mockTraits, swCareer!, 45);
     expect(exploreExplanation).toContain("worth exploring within Software Development");
     expect(exploreExplanation).not.toContain("emerging traits");
   });

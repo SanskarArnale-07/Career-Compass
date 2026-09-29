@@ -26,11 +26,18 @@ export function ProgressiveHierarchy({
     [hierarchy]
   );
 
+  const [prevSlug, setPrevSlug] = useState(hierarchy?.path.slug);
   const [selectedSpecId, setSelectedSpecId] = useState<string>(() => {
     return specializations[0]?.id ?? "";
   });
 
-  // Keep selectedSpecId synced when active career changes
+  // When active career changes, reset selected specialization to the new path's first specialization
+  if (hierarchy?.path.slug !== prevSlug) {
+    setPrevSlug(hierarchy?.path.slug);
+    setSelectedSpecId(specializations[0]?.id ?? "");
+  }
+
+  // Ensure selected specialization always belongs to the current active career
   const activeSpec = useMemo(() => {
     return (
       specializations.find((s) => s.id === selectedSpecId) ||

@@ -86,6 +86,36 @@ def _compute_theoretical_max() -> dict[str, float]:
 THEORETICAL_MAX = _compute_theoretical_max()
 
 
+def _compute_career_theoretical_max() -> dict[str, float]:
+    """
+    Computes the true theoretical maximum weighted score each career cluster
+    can achieve given the 20 single-choice questions in the assessment.
+
+    For each question, a student selects at most one option. We find the option
+    that yields the highest weighted trait contribution for the career, and sum
+    these maxima across all 20 questions.
+    """
+    career_maxes: dict[str, float] = {}
+    for cluster in CAREER_CLUSTERS:
+        total_max = 0.0
+        for qid, options in QUESTION_OPTIONS.items():
+            best_opt = 0.0
+            for opt_text, weights in options.items():
+                opt_val = 0.0
+                for tc, w in cluster.trait_weights.items():
+                    pts = weights.get(tc, 0.0)
+                    t_max = THEORETICAL_MAX.get(tc.value if hasattr(tc, "value") else tc, 1.0)
+                    opt_val += (pts / t_max) * 100.0 * w
+                if opt_val > best_opt:
+                    best_opt = opt_val
+            total_max += best_opt
+        career_maxes[cluster.name] = total_max
+    return career_maxes
+
+
+CAREER_THEORETICAL_MAX = _compute_career_theoretical_max()
+
+
 # ── 2. Stream Scoring ────────────────────────────────────────────────
 
 # Weighted formulas from the spec
@@ -192,11 +222,8 @@ def compute_career_matches(traits: TraitProfile) -> list[CareerMatch]:
             for tc, w in cluster.trait_weights.items()
         )
         
-        # Calculate theoretical maximum assuming every relevant trait is 100
-        career_max = sum(
-            100.0 * w
-            for w in cluster.trait_weights.values()
-        )
+        # Calculate theoretical maximum possible for this cluster
+        career_max = CAREER_THEORETICAL_MAX.get(cluster.name, 0.0)
         
         if career_max > 0:
             match_pct = round(min((student_weighted_score / career_max) * 100, 100), 1)
@@ -245,9 +272,9 @@ def _build_career_explanation(
     traits_text = " and ".join(top_traits[:2]) if top_traits else "your profile"
 
     rounded_pct = round(match_pct)
-    if rounded_pct >= 40:
+    if rounded_pct >= 60:
         strength = "strong"
-    elif rounded_pct >= 25:
+    elif rounded_pct >= 40:
         strength = "exploratory"
     else:
         strength = "developing"

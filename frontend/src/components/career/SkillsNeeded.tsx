@@ -71,8 +71,8 @@ export default function SkillsNeeded({ skills, hasAssessment }: SkillsNeededProp
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-heading text-sm font-bold text-foreground">{skill.name}</h3>
-                        <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground bg-background/50 px-2 py-0.5 rounded-full border border-border">
+                        <h3 className="font-heading text-base font-bold text-foreground">{skill.name}</h3>
+                        <span className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground bg-background/50 px-2.5 py-0.5 rounded-full border border-border">
                           {skill.category}
                         </span>
                       </div>

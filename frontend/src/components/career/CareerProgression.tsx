@@ -103,7 +103,7 @@ export default function CareerProgression({ stages }: CareerProgressionProps) {
                           <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Key Skills</h4>
                           <div className="flex flex-wrap gap-1.5">
                             {stage.skills.map((s) => (
-                              <span key={s} className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                              <span key={s} className="text-xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                                 {s}
                               </span>
                             ))}

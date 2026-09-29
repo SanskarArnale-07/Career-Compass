@@ -26,6 +26,37 @@
   --color-destructive: var(--destructive);
   --font-sans: var(--font-sans);
   --font-heading: var(--font-heading);
+
+  /* Typography Scale Overrides — Student-Friendly Comfortable Baseline */
+  --text-2xs: 0.75rem;          /* 12px - metadata / small badges */
+  --text-2xs--line-height: 1.4;
+
+  --text-xs: 0.875rem;          /* 14px (was 12px) - secondary/supporting text, nav, buttons, badges */
+  --text-xs--line-height: 1.45;
+
+  --text-sm: 1rem;              /* 16px (was 14px) - primary body text, tabs, card values, inputs */
+  --text-sm--line-height: 1.55;
+
+  --text-base: 1.125rem;        /* 18px (was 16px) - prominent body, card headings, featured copy */
+  --text-base--line-height: 1.65;
+
+  --text-lg: 1.25rem;           /* 20px (was 18px) - card/component titles, sub-section headers */
+  --text-lg--line-height: 1.5;
+
+  --text-xl: 1.4375rem;         /* 23px (was 20px) - component titles, sub-section headers */
+  --text-xl--line-height: 1.4;
+
+  --text-2xl: 1.6875rem;        /* 27px (was 24px) - major section headings */
+  --text-2xl--line-height: 1.35;
+
+  --text-3xl: 2.125rem;         /* 34px (was 30px) - page / hero titles */
+  --text-3xl--line-height: 1.25;
+
+  --text-4xl: 2.625rem;         /* 42px (was 36px) - prominent hero titles */
+  --text-4xl--line-height: 1.2;
+
+  --text-5xl: 3.125rem;         /* 50px (was 48px) - display titles */
+  --text-5xl--line-height: 1.15;
 }
 
 :root {
@@ -65,10 +96,17 @@
   --radius: 0.5rem;
 }
 
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-size: var(--text-base);
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
@@ -105,9 +143,22 @@ body::before {
   color: #F4F7FA;
 }
 
-/* Base resets */
+/* Base resets & typography floors */
 * {
   border-color: var(--border);
+}
+
+/* Safety floor: Prevent microscopic hardcoded font utilities from making text illegible in HTML */
+:not(svg *)[class*="text-[8px]"],
+:not(svg *)[class*="text-[9px]"],
+:not(svg *)[class*="text-[10px]"] {
+  font-size: 0.8125rem !important; /* Minimum 13px floor */
+  line-height: 1.35 !important;
+}
+
+:not(svg *)[class*="text-[11px]"] {
+  font-size: 0.84375rem !important; /* Minimum ~13.5px */
+  line-height: 1.4 !important;
 }
 
 /* Shimmer animation keyframes for primary CTA */

@@ -59,14 +59,14 @@ export function Navbar() {
             <span className="font-heading text-sm font-bold tracking-[0.14em] uppercase text-foreground leading-tight">
               Career Compass
             </span>
-            <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-muted-foreground/60 leading-none">
+            <span className="text-xs font-mono tracking-[0.16em] uppercase text-muted-foreground/60 leading-none">
               Navigation Instrument
             </span>
           </div>
         </Link>
 
         {/* Center: Editorial Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8 text-xs font-mono uppercase tracking-widest">
+        <nav className="hidden lg:flex items-center gap-8 text-sm font-mono uppercase tracking-wider">
           <Link
             href="/"
             className="text-muted-foreground hover:text-foreground transition-colors py-1 relative group"
@@ -172,7 +172,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1.5 rounded-lg hover:bg-[#10141A]"
+              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-mono uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1.5 rounded-lg hover:bg-[#10141A]"
             >
               <LogIn className="h-3.5 w-3.5 text-primary/80" />
               <span>Login</span>
@@ -182,7 +182,7 @@ export function Navbar() {
           {/* Primary Masthead CTA: Start Assessment */}
           <Link
             href="/assessment"
-            className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-xs font-semibold tracking-tight text-primary-foreground transition-all hover:bg-primary-hover shadow-sm shadow-primary/20 cursor-pointer"
+            className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold tracking-tight text-primary-foreground transition-all hover:bg-primary-hover shadow-sm shadow-primary/20 cursor-pointer"
           >
             Start Assessment
           </Link>
@@ -201,7 +201,7 @@ export function Navbar() {
       {/* Mobile Navigation Drawer */}
       {mobileOpen && (
         <div className="lg:hidden border-t border-border/60 bg-[#080A0D]/95 backdrop-blur-xl">
-          <nav className="container mx-auto px-4 py-4 flex flex-col gap-3 font-mono text-xs uppercase tracking-wider">
+          <nav className="container mx-auto px-4 py-4 flex flex-col gap-3 font-mono text-sm uppercase tracking-wider">
             {isAuthenticated && user && (
               <div className="p-2.5 rounded-lg bg-[#10141A] border border-border/60 mb-1">
                 <div className="flex items-center justify-between">
@@ -213,7 +213,7 @@ export function Navbar() {
                       <p className="text-xs font-semibold text-foreground">
                         {user.name}
                       </p>
-                      <p className="text-[10px] text-muted-foreground truncate max-w-42.5">
+                      <p className="text-xs text-muted-foreground truncate max-w-42.5">
                         {user.email}
                       </p>
                     </div>

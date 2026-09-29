@@ -30,6 +30,7 @@ import type {
 
 export * from "./types";
 export * from "../career-hierarchy";
+export * from "../career-roadmap";
 export { CAREER_INTELLIGENCE_REGISTRY, CAREER_NAME_TO_ID };
 
 /**

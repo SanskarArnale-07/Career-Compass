@@ -130,11 +130,11 @@ export function CareerPathAreas({
               >
                 <div className="flex flex-col flex-1">
                   <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-primary font-semibold">
+                    <span className="text-xs font-mono uppercase tracking-wider text-primary font-semibold">
                       Specialization
                     </span>
                     {isSelected && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-primary/20 text-primary border border-primary/40 shrink-0">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-mono font-bold uppercase bg-primary/20 text-primary border border-primary/40 shrink-0">
                         <CheckCircle2 className="h-3 w-3" />
                         Exploring
                       </span>
@@ -221,7 +221,7 @@ export function CareerPathAreas({
                             role.isEntryLevel ? "bg-primary" : "bg-sky-400"
                           }`}
                         />
-                        <h4 className="text-sm font-heading font-bold text-foreground group-hover:text-primary transition-colors leading-snug wrap-break-word">
+                        <h4 className="text-base font-heading font-bold text-foreground group-hover:text-primary transition-colors leading-snug wrap-break-word">
                           {role.title}
                         </h4>
                       </div>
@@ -233,7 +233,7 @@ export function CareerPathAreas({
                     </p>
                   </div>
 
-                  <div className="mt-3.5 pt-3 border-t border-border/50 flex items-center justify-between text-[10px] font-mono">
+                  <div className="mt-3.5 pt-3 border-t border-border/50 flex items-center justify-between text-xs font-mono">
                     <span
                       className={`px-2 py-0.5 rounded uppercase font-semibold shrink-0 ${
                         role.isEntryLevel
@@ -254,7 +254,7 @@ export function CareerPathAreas({
 
             {/* Quick Navigation to the Curriculum Roadmap */}
             <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-t border-border/30">
-              <span className="text-muted-foreground text-[11px]">
+              <span className="text-muted-foreground text-xs">
                 Ready to review the learning milestones for {activeSpec.name}?
               </span>
               <a

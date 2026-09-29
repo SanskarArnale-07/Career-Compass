@@ -19,7 +19,7 @@ import { CareerDiscoveryAnimation } from "@/components/interactive/CareerDiscove
 import { assessmentQuestions } from "@/lib/assessment-data";
 import { saveAssessmentResult, loadCareerJourney } from "@/lib/persistence";
 import { useAuth } from "@/context/AuthContext";
-import { getCareerHierarchy } from "@/lib/career-hierarchy";
+import { getCareerHierarchy, getAllCareerPaths } from "@/lib/career-hierarchy";
 import { getCareerSlug } from "@/lib/career-details";
 import {
   getTieredCareerMatches,
@@ -232,7 +232,7 @@ export default function ResultsPage() {
     : 0;
   const isCurrentStrong = isStrongMatch(currentScore);
 
-  // Consistent explanation: strictly enforces Strong Match vs Worth Exploring
+  // Consistent explanation: strictly enforces Worth Exploring vs Maybe Explore
   const currentExplanation = useMemo(() => {
     const topTraits = currentCareer?.top_traits || [];
     const traitsText = topTraits.length >= 2
@@ -240,9 +240,9 @@ export default function ResultsPage() {
       : "technical and analytical";
 
     if (isCurrentStrong) {
-      return `Your ${traitsText} profile shows strong alignment with ${currentTitle}. This career direction leverages your natural strengths.`;
+      return `Your ${traitsText} profile shows strong alignment with ${currentTitle}. This career direction is worth exploring based on your natural strengths.`;
     }
-    return `Your ${traitsText} profile shows this is a direction worth exploring within ${currentTitle}.`;
+    return `Your ${traitsText} profile shows you may explore this direction within ${currentTitle}.`;
   }, [isCurrentStrong, currentTitle, currentCareer?.top_traits]);
 
 
@@ -410,7 +410,7 @@ export default function ResultsPage() {
                   : "bg-sky-950/50 text-sky-300 border-sky-500/30"
               }`}
             >
-              {isCurrentStrong ? "Strong Match" : "Worth Exploring"}
+              {isCurrentStrong ? "Worth Exploring" : "Maybe Explore"}
             </span>
           </div>
 
@@ -579,7 +579,7 @@ export default function ResultsPage() {
             Looking for other career directions?
           </h3>
           <p className="text-sm sm:text-base text-slate-300 font-normal mb-5 max-w-xl mx-auto leading-relaxed">
-            Discover all 24 career paths across technology, business, health, creativity, science, and more in our complete directory.
+            Discover all {getAllCareerPaths().length} career paths across technology, business, health, creativity, science, and more in our complete directory.
           </p>
           <Link
             href="/careers"

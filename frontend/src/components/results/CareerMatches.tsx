@@ -133,18 +133,18 @@ export function CareerMatches({
                   key={career.career_name}
                   type="button"
                   onClick={() => onExploreCareer?.(career.career_name)}
-                  className={`group relative flex items-center justify-between gap-3 rounded-full border transition-all duration-200 cursor-pointer ${
+                  className={`group relative flex items-center justify-between gap-3.5 rounded-2xl border transition-all duration-200 cursor-pointer w-full text-left ${
                     isRecommended
                       ? isSelected
-                        ? "px-4 py-2.5 bg-[#161D26] border-cyan-400 shadow-lg shadow-cyan-950/60 ring-2 ring-cyan-400/40 text-white scale-[1.02]"
-                        : "px-4 py-2.5 bg-[#12161E] border-cyan-500/50 shadow-md shadow-cyan-950/30 text-slate-100 hover:border-cyan-400"
+                        ? "px-4 py-3 bg-[#161D26] border-cyan-400 shadow-lg shadow-cyan-950/60 ring-2 ring-cyan-400/40 text-white scale-[1.01]"
+                        : "px-4 py-3 bg-[#12161E] border-cyan-500/50 shadow-md shadow-cyan-950/30 text-slate-100 hover:border-cyan-400"
                       : isSelected
-                        ? "px-4 py-2 bg-[#141920] border-cyan-500/70 shadow-md shadow-cyan-950/40 text-white ring-1 ring-cyan-400/30"
-                        : "px-4 py-2 bg-[#0B0E12]/80 border-border/50 text-slate-400 hover:border-border/80 hover:text-slate-200"
+                        ? "px-4 py-2.5 bg-[#141920] border-cyan-500/70 shadow-md shadow-cyan-950/40 text-white ring-1 ring-cyan-400/30"
+                        : "px-4 py-2.5 bg-[#0B0E12]/80 border-border/50 text-slate-400 hover:border-border/80 hover:text-slate-200"
                   }`}
                 >
-                  {/* Left Joint Marker + Badge */}
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  {/* Left Joint Marker + Badge + Flexible Career Title */}
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <span
                       className={`rounded-full shrink-0 transition-all ${
                         isRecommended
@@ -155,38 +155,43 @@ export function CareerMatches({
                       }`}
                     />
                     {isRecommended && (
-                      <span className="px-2 py-0.5 rounded text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider bg-cyan-400/20 text-cyan-300 border border-cyan-400/40 shrink-0">
+                      <span className="px-2 py-0.5 rounded text-xs font-mono font-bold uppercase tracking-wider bg-cyan-400/20 text-cyan-300 border border-cyan-400/40 shrink-0">
                         Recommended
                       </span>
                     )}
-                    {/* Career Path Title */}
+                    {/* Career Path Title (Flexible, graceful truncation, never wraps under score) */}
                     <span
-                      className={`font-heading transition-colors whitespace-nowrap ${
-                        isRecommended
-                          ? "text-sm sm:text-base font-bold text-white"
-                          : isSelected
-                            ? "text-sm sm:text-base font-semibold text-cyan-200"
-                            : "text-xs sm:text-sm font-medium text-slate-300 group-hover:text-slate-100"
+                      className={`font-heading font-bold text-sm sm:text-base leading-tight truncate flex-1 min-w-0 ${
+                        isSelected
+                          ? "text-white"
+                          : isRecommended
+                            ? "text-slate-100 group-hover:text-white"
+                            : "text-slate-300 group-hover:text-slate-100"
                       }`}
+                      title={career.career_name}
                     >
                       {career.career_name}
                     </span>
                   </div>
 
-                  {/* Right: Match % and Tier Badge */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className={`font-mono font-bold ${
-                      isRecommended ? "text-sm sm:text-base text-cyan-300" : "text-xs sm:text-sm text-slate-300"
-                    }`}>
-                      {score}%
-                    </span>
-                    <span className="text-slate-600 text-xs">·</span>
+                  {/* Right: Dedicated Non-Overlapping Area for Score & Tier Badge */}
+                  <div className="flex items-center gap-2 shrink-0 pl-2 text-right">
                     <span
-                      className={`text-xs font-mono uppercase tracking-wider ${
-                        isStrong ? "text-cyan-400 font-semibold" : "text-sky-300/80"
+                      className={`font-mono font-bold text-sm sm:text-base ${
+                        isRecommended || isSelected ? "text-cyan-300" : "text-slate-200"
                       }`}
                     >
-                      {isStrong ? "Strong Match" : "Worth Exploring"}
+                      {score}%
+                    </span>
+                    <span className="text-slate-600 text-xs select-none">·</span>
+                    <span
+                      className={`text-xs font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded border whitespace-nowrap ${
+                        isStrong
+                          ? "text-cyan-300 bg-cyan-950/40 border-cyan-500/30"
+                          : "text-sky-300 bg-sky-950/40 border-sky-500/30"
+                      }`}
+                    >
+                      {isStrong ? "WORTH EXPLORING" : "MAYBE EXPLORE"}
                     </span>
                   </div>
                 </button>
@@ -223,12 +228,12 @@ export function CareerMatches({
                 key={career.career_name}
                 type="button"
                 onClick={() => onExploreCareer?.(career.career_name)}
-                className={`w-full text-left rounded-xl transition-all cursor-pointer border relative flex items-center justify-between gap-2 ${
+                className={`w-full text-left rounded-xl transition-all cursor-pointer border relative flex items-center justify-between gap-3 p-3.5 ${
                   isRecommended
-                    ? "p-3 bg-[#141920] border-cyan-400/90 shadow-md shadow-cyan-950/40 text-white"
+                    ? "bg-[#141920] border-cyan-400/90 shadow-md shadow-cyan-950/40 text-white"
                     : isSelected
-                      ? "p-2.5 bg-[#141920] border-cyan-500/60 shadow-sm shadow-cyan-950/30 text-white"
-                      : "p-2.5 bg-[#0B0E12]/80 border-border/50 text-slate-400"
+                      ? "bg-[#141920] border-cyan-500/60 shadow-sm shadow-cyan-950/30 text-white"
+                      : "bg-[#0B0E12]/80 border-border/50 text-slate-400"
                 }`}
               >
                 {/* Node dot on vertical line */}
@@ -240,31 +245,42 @@ export function CareerMatches({
                   }`}
                 />
 
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5">
+                <div className="flex-1 min-w-0 pr-2">
+                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                     {isRecommended && (
-                      <span className="px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider bg-cyan-400/20 text-cyan-300 border border-cyan-400/30 shrink-0">
+                      <span className="px-2 py-0.5 rounded text-xs font-mono font-bold uppercase tracking-wider bg-cyan-400/20 text-cyan-300 border border-cyan-400/30 shrink-0">
                         Recommended
                       </span>
                     )}
-                    <span className={`text-sm font-heading block wrap-break-word ${
-                      isRecommended ? "font-bold text-white" : isSelected ? "font-semibold text-cyan-200" : "font-medium text-slate-300"
-                    }`}>
-                      {career.career_name}
+                    <span
+                      className={`text-xs font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded border whitespace-nowrap ${
+                        isStrong
+                          ? "text-cyan-300 bg-cyan-950/40 border-cyan-500/30"
+                          : "text-sky-300 bg-sky-950/40 border-sky-500/30"
+                      }`}
+                    >
+                      {isStrong ? "WORTH EXPLORING" : "MAYBE EXPLORE"}
                     </span>
                   </div>
-                  <span className={`text-xs font-mono uppercase ${isStrong ? "text-cyan-400" : "text-sky-300/80"}`}>
-                    {isStrong ? "Strong Match" : "Worth Exploring"}
-                  </span>
+                  <h3
+                    className="text-sm font-heading font-bold text-white truncate leading-tight"
+                    title={career.career_name}
+                  >
+                    {career.career_name}
+                  </h3>
                 </div>
 
-                <span className={`px-2 py-0.5 rounded text-xs sm:text-sm font-mono font-bold shrink-0 ${
-                  isRecommended
-                    ? "bg-cyan-400/20 text-cyan-300 border border-cyan-400/40"
-                    : "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30"
-                }`}>
-                  {score}%
-                </span>
+                <div className="shrink-0 text-right">
+                  <span
+                    className={`px-2.5 py-1 rounded-lg text-sm font-mono font-bold border inline-block ${
+                      isRecommended
+                        ? "bg-cyan-400/20 text-cyan-300 border-cyan-400/40"
+                        : "bg-cyan-500/15 text-cyan-300 border-cyan-500/30"
+                    }`}
+                  >
+                    {score}%
+                  </span>
+                </div>
               </button>
             );
           })}

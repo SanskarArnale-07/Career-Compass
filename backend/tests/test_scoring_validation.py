@@ -366,10 +366,11 @@ class TestCareerMatching:
             assert len(cluster.next_steps) >= 1
 
     def test_career_explanation_strength_tiers(self):
-        """Verify explanation text uses correct strength labels aligned with >=40% Strong Match."""
+        """Verify explanation text uses correct strength labels aligned with >=60% and 40-59%."""
         assert "strong alignment" in _build_career_explanation("Test", ["Analytical"], 80)
-        assert "strong alignment" in _build_career_explanation("Test", ["Analytical"], 43)
-        assert "worth exploring" in _build_career_explanation("Test", ["Analytical"], 30)
+        assert "strong alignment" in _build_career_explanation("Test", ["Analytical"], 60)
+        assert "worth exploring" in _build_career_explanation("Test", ["Analytical"], 43)
+        assert "developing" in _build_career_explanation("Test", ["Analytical"], 30)
 
     def test_career_match_percentage_bounded(self):
         """No career match can exceed 100% or go below 0%."""

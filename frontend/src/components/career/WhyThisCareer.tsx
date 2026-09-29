@@ -18,7 +18,7 @@ function StatusBadge({ status }: { status: SkillStatus }) {
   };
   const { label, className } = config[status];
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${className}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${className}`}>
       {label}
     </span>
   );

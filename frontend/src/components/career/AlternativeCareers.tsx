@@ -48,7 +48,7 @@ export default function AlternativeCareers({ alternatives }: AlternativeCareersP
                       {Math.round(alt.matchPercentage)}%
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-muted-foreground bg-secondary/30 border border-border">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-muted-foreground bg-secondary/30 border border-border">
                       Related
                     </span>
                   )}

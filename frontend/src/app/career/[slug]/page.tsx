@@ -31,6 +31,7 @@ import {
   getRoleHierarchy,
   type CareerRole,
 } from "@/lib/career-hierarchy";
+import { resolveRoleRoadmap } from "@/lib/career-roadmap";
 import {
   getStrengthsAndGaps,
   getPersonalizedSkills,
@@ -77,6 +78,7 @@ function CareerDetailContent() {
       : "";
 
   const roleParam = searchParams?.get("role");
+  const specParam = searchParams?.get("spec");
   const tabParam = searchParams?.get("tab");
 
   const targetedRole = useMemo(() => {
@@ -91,6 +93,14 @@ function CareerDetailContent() {
     }
     return null;
   }, [roleParam]);
+
+  const resolvedRoadmap = useMemo(() => {
+    return resolveRoleRoadmap({
+      pathSlug: slug,
+      specId: specParam || targetedRole?.specialization?.id || null,
+      roleId: roleParam || null,
+    });
+  }, [slug, specParam, roleParam, targetedRole]);
 
   const isClient = useIsClient();
   const [copied, setCopied] = useState(false);
@@ -147,8 +157,22 @@ function CareerDetailContent() {
     router.push("/dashboard");
   };
 
-  const handleSelectRole = (_role: CareerRole) => {
+  const handleSelectRole = (role: CareerRole) => {
     setActiveTab("roadmap");
+    const hierarchy = getRoleHierarchy(role.id);
+    const targetSpecId = hierarchy?.specialization?.id;
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("role", role.id);
+      if (targetSpecId) {
+        url.searchParams.set("spec", targetSpecId);
+      }
+      url.searchParams.set("tab", "roadmap");
+      url.hash = "#roadmap";
+      router.replace(url.pathname + url.search + url.hash, { scroll: false });
+    }
+
     setTimeout(() => {
       const el = document.getElementById("roadmap");
       if (el) {
@@ -516,21 +540,21 @@ function CareerDetailContent() {
           {/* Roadmap Tab Content */}
           {(activeTab === "roadmap" || activeTab === "all") && (
             <section id="roadmap">
-              {targetedRole && (
+              {targetedRole ? (
                 <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-primary/20 text-primary font-semibold uppercase tracking-wider">
                         Role Roadmap Focus
                       </span>
-                      {targetedRole.specialization && (
+                      {(resolvedRoadmap.specName || targetedRole.specialization) && (
                         <span className="text-xs font-mono text-muted-foreground">
-                          {targetedRole.specialization.name}
+                          {resolvedRoadmap.specName || targetedRole.specialization?.name}
                         </span>
                       )}
                     </div>
                     <h3 className="font-heading text-base font-bold text-foreground">
-                      {targetedRole.role.title}
+                      {resolvedRoadmap.roleTitle || targetedRole.role.title}
                     </h3>
                     <p className="text-xs text-muted-foreground font-light max-w-xl">
                       {targetedRole.role.description}
@@ -543,8 +567,33 @@ function CareerDetailContent() {
                     View entire path
                   </Link>
                 </div>
-              )}
-              <LearningRoadmap phases={career.roadmap} completedPhases={completedPhases} />
+              ) : resolvedRoadmap.specName && resolvedRoadmap.granularity === "SPECIALIZATION" ? (
+                <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-primary/20 text-primary font-semibold uppercase tracking-wider">
+                        Specialization Track Focus
+                      </span>
+                      <span className="text-xs font-mono text-muted-foreground">
+                        {resolvedRoadmap.specName}
+                      </span>
+                    </div>
+                    <h3 className="font-heading text-base font-bold text-foreground">
+                      {resolvedRoadmap.specName} Curriculum
+                    </h3>
+                    <p className="text-xs text-muted-foreground font-light max-w-xl">
+                      Phased track tailored for {resolvedRoadmap.specName} within {resolvedRoadmap.pathName}.
+                    </p>
+                  </div>
+                  <Link
+                    href={`/career/${career.slug}`}
+                    className="text-xs font-mono text-muted-foreground hover:text-foreground shrink-0 underline decoration-muted-foreground/40 underline-offset-4"
+                  >
+                    View general path
+                  </Link>
+                </div>
+              ) : null}
+              <LearningRoadmap phases={resolvedRoadmap.phases} completedPhases={completedPhases} />
             </section>
           )}
 

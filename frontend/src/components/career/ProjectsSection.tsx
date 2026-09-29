@@ -52,7 +52,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
               {/* Skills */}
               <div className="flex flex-wrap gap-1.5 mb-4">
                 {project.skills.map((skill) => (
-                  <span key={skill} className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  <span key={skill} className="text-xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                     {skill}
                   </span>
                 ))}
@@ -63,7 +63,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Key Features</h4>
                 <ul className="space-y-1">
                   {project.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-xs text-foreground/80">
+                    <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
                       <span className={`h-1.5 w-1.5 rounded-full ${config.color.replace("text-", "bg-")} shrink-0 mt-1.5`} />
                       {f}
                     </li>
@@ -73,8 +73,8 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
 
               {/* Portfolio Value */}
               <div className="pt-3 border-t border-border/60">
-                <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Portfolio Value</h4>
-                <p className="text-xs text-foreground/80 leading-relaxed">{project.portfolioValue}</p>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Portfolio Value</h4>
+                <p className="text-sm text-foreground/80 leading-relaxed">{project.portfolioValue}</p>
               </div>
             </motion.div>
           );

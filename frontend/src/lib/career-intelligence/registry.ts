@@ -30,6 +30,7 @@ import type {
 } from "../career-details/types";
 import type { CareerIntelligence, EducationPathway, IndustryInfo } from "./types";
 import { getAllCareerPaths, type CareerPath } from "../career-hierarchy";
+import { resolveRoleRoadmap } from "../career-roadmap";
 
 /**
  * Creates a fully-typed CareerIntelligence record with safe defaults.
@@ -999,116 +1000,7 @@ function synthesizePathIntelligence(path: CareerPath): CareerIntelligence {
     recommendedLevel: idx === 0 ? "Core" : "Advanced",
   }));
 
-  const roadmap: RoadmapPhase[] = [
-    {
-      id: `${path.slug}-phase-1`,
-      phase: 1,
-      title: "Foundational Principles & Core Concepts",
-      description: `Build rigorous conceptual foundations in ${path.name}. Master core theories, vocabulary, and introductory workflows.`,
-      estimatedDuration: "Months 1–3",
-      skills: [skills[0]?.name || "Core Principles", "Industry Fundamentals"],
-      learn: [
-        `Fundamental concepts and historical principles of ${path.name}`,
-        "Standard development environments and foundational software suites",
-        "Key methodologies and professional problem-solving frameworks",
-      ],
-      practice: [
-        "Hands-on introductory labs and conceptual problem sets",
-        "Analyzing real-world case studies and industry best practices",
-      ],
-      build: `A foundational starter project demonstrating core principles of ${path.name}.`,
-      resources: [
-        {
-          name: `${path.name} Fundamentals Masterclass`,
-          type: "course",
-          difficulty: "beginner",
-          estimatedTime: "25 hours",
-          url: "https://coursera.org",
-        },
-      ],
-    },
-    {
-      id: `${path.slug}-phase-2`,
-      phase: 2,
-      title: "Professional Tools & Intermediate Execution",
-      description: `Transition to industry-standard tools, systems, and collaborative workflows in ${primarySpec?.name || path.name}.`,
-      estimatedDuration: "Months 4–6",
-      skills: [skills[1]?.name || "Specialized Tooling", "Applied Systems"],
-      learn: [
-        "Professional software, hardware frameworks, and automated tooling",
-        "Collaborative workflows, version control, and sprint execution",
-        "Quality assurance, performance optimization, and testing standards",
-      ],
-      practice: [
-        "Building multi-component workflows and intermediate modules",
-        "Optimizing systems for efficiency, reliability, and security",
-      ],
-      build: `A comprehensive portfolio prototype solving a real-world challenge in ${primarySpec?.name || path.name}.`,
-      resources: [
-        {
-          name: `Applied ${path.name} & System Tools`,
-          type: "practice",
-          difficulty: "intermediate",
-          estimatedTime: "35 hours",
-          url: "https://edx.org",
-        },
-      ],
-    },
-    {
-      id: `${path.slug}-phase-3`,
-      phase: 3,
-      title: "Advanced Projects & Production Systems",
-      description: `Execute end-to-end production-grade projects. Handle edge cases, scale constraints, and real-world deployment.`,
-      estimatedDuration: "Months 7–9",
-      skills: ["Production Architecture", "System Optimization"],
-      learn: [
-        "Architecting robust systems capable of scaling under production demands",
-        "Cross-functional collaboration with product, design, and operations teams",
-        "Regulatory compliance, safety protocols, and industry standards",
-      ],
-      practice: [
-        "Deploying end-to-end systems with monitoring and automated failover",
-        "Participating in peer code / design reviews and architectural audits",
-      ],
-      build: `A full-scale, production-ready capstone project ready for industry presentation.`,
-      resources: [
-        {
-          name: `Advanced ${path.name} Production Systems`,
-          type: "documentation",
-          difficulty: "advanced",
-          estimatedTime: "40 hours",
-          url: "https://github.com",
-        },
-      ],
-    },
-    {
-      id: `${path.slug}-phase-4`,
-      phase: 4,
-      title: "Specialization & Career Launch",
-      description: `Deepen your focus in your chosen specialization, prepare your portfolio, and launch your professional career.`,
-      estimatedDuration: "Months 10–12",
-      skills: ["Specialized Domain Expertise", "Interview & Career Launch"],
-      learn: [
-        "Cutting-edge emerging trends, research breakthroughs, and future directions",
-        "Portfolio presentation, technical interviewing, and career positioning",
-        "Mentorship, leadership principles, and strategic impact",
-      ],
-      practice: [
-        "Mock technical interviews and domain case study presentations",
-        "Publishing technical articles or open-source / public contributions",
-      ],
-      build: `A standout professional portfolio showcasing verified domain competencies and completed client-grade projects.`,
-      resources: [
-        {
-          name: "Career Transition & Portfolio Guide",
-          type: "book",
-          difficulty: "advanced",
-          estimatedTime: "20 hours",
-          url: "https://medium.com",
-        },
-      ],
-    },
-  ];
+  const roadmap: RoadmapPhase[] = resolveRoleRoadmap({ pathSlug: path.slug }).phases;
 
   const projects: ProjectIdea[] = [
     {
