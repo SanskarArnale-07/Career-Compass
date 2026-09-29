@@ -65,7 +65,7 @@ export function GlobeOverlay({ progress }: GlobeOverlayProps) {
             First, we understand you.
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 font-light max-w-sm mx-auto leading-relaxed">
-            20 questions map 8 core dimensions around the globe.
+            28 questions map 8 core dimensions around the globe.
           </p>
         </motion.div>
 

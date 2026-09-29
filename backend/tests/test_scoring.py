@@ -159,26 +159,15 @@ class TestMixedProfile:
     @pytest.fixture(autouse=True)
     def setup(self):
         self.answers = _answers_from_positions({
-            "q1": 1,   # Building apps or websites          → TE, AN
-            "q2": 1,   # Solving problems                   → AN, SC
-            "q3": 5,   # Building something meaningful      → TE, CR, LE
-            "q4": 5,   # You always find solutions           → AN, TE
-            "q5": 1,   # AI & Robotics Lab                  → TE, SC
-            "q6": 2,   # Solving difficult challenges       → AN, TE
-            "q7": 2,   # Tech help                          → TE, AN
-            "q8": 2,   # Coding                             → TE, AN
-            "q9": 1,   # Technical problems                 → TE, AN
-            "q10": 1,  # Remote from anywhere               → EX, TE
-            "q11": 5,  # Artificial Intelligence            → TE, SC
-            "q12": 1,  # I enjoy building things             → TE, AN
-            "q13": 1,  # Technology                         → TE, SC
-            "q14": 2,  # Start a company                    → BU, LE
-            "q15": 1,  # Curious                            → SC, EX
-            "q16": 5,  # Inventing something revolutionary  → SC, TE
-            "q17": 2,  # Building an app from scratch       → TE, AN
-            "q18": 6,  # Opportunity to grow                → SC, LE
-            "q19": 4,  # Inventing something useful         → TE, SC
-            "q20": 4,  # I solved important problems        → AN, SC
+            "q1": 2, "q2": 3, "q3": 1,
+            "q4": 2, "q5": 1, "q6": 2,
+            "q7": 1, "q8": 4, "q9": 2,
+            "q10": 1, "q11": 4, "q12": 2,
+            "q13": 4, "q14": 1, "q15": 1,
+            "q16": 4, "q17": 4, "q18": 4,
+            "q19": 2, "q20": 1, "q21": 2,
+            "q22": 1, "q23": 4, "q24": 3,
+            "q25": 1, "q26": 1, "q27": 2, "q28": 1,
         })
         self.result = score_assessment(self.answers).model_dump()
 
@@ -226,7 +215,7 @@ class TestMissingAnswers:
         assert resp.status_code == 422
         body = resp.json()
         assert body["detail"]["error"] == "missing_answers"
-        assert len(body["detail"]["missing_question_ids"]) == 10
+        assert len(body["detail"]["missing_question_ids"]) == 18
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -243,7 +232,7 @@ class TestInvalidAnswers:
         assert resp.status_code == 422
         body = resp.json()
         assert body["detail"]["error"] == "invalid_answers"
-        assert len(body["detail"]["invalid_answers"]) == 20
+        assert len(body["detail"]["invalid_answers"]) == 28
 
 
 # ═══════════════════════════════════════════════════════════════════

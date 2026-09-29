@@ -20,12 +20,12 @@ Deterministic, transparent trait scoring across 8 psychological dimensions (Anal
 
 ## Operating Context
 
-Web application accessible on desktop, tablet, and mobile. Students typically engage in a guided 5-minute assessment (20 questions), review directional alignment and academic stream suitability (Science/Commerce/Arts), inspect phased skill roadmaps and project ideas, track adaptive weekly milestones on a personal dashboard, and consult a context-grounded AI Career Coach.
+Web application accessible on desktop, tablet, and mobile. Students typically engage in a guided 5-minute assessment (28 questions), review directional alignment and academic stream suitability (Science/Commerce/Arts), inspect phased skill roadmaps and project ideas, track adaptive weekly milestones on a personal dashboard, and consult a context-grounded AI Career Coach.
 
 ## Capabilities and Constraints
 
 - Next.js 16 (App Router) + React 19 + Tailwind CSS 4 frontend; FastAPI Python backend.
-- Pure deterministic scoring engine: 20 validated questions, 8 traits, 3 academic streams, 12 career domains.
+- Pure deterministic scoring engine: 28 validated questions, 8 traits, 3 academic streams, 12 career domains.
 - Local journey persistence (`localStorage` with in-memory fallback) preserving student progress across sessions without forced authentication.
 - Strict rate-limiting and payload validation at all API boundaries.
 - Non-prescriptive framing: Results are exploratory directions, not rigid career destinies.
@@ -40,7 +40,7 @@ Web application accessible on desktop, tablet, and mobile. Students typically en
 ## Evidence on Hand
 
 - 12 comprehensive career intelligence curricula and roadmaps in `frontend/src/lib/career-intelligence/`.
-- 20-question psychological trait assessment instrument in `frontend/src/lib/assessment-data.ts` and `backend/app/scoring/traits.py`.
+- 28-question psychological trait assessment instrument in `frontend/src/lib/assessment-data.ts` and `backend/app/scoring/traits.py`.
 - 98 automated backend tests verifying deterministic scoring and input validation.
 - Complete responsive web interface across all 11 routes.
 

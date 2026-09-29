@@ -32,7 +32,7 @@ def compute_trait_scores(answers: dict[str, str]) -> TraitProfile:
     """
     Accumulate raw trait scores from the answered questions, then
     normalise each trait to a 0-100 scale based on the theoretical
-    maximum any single trait can achieve across all 20 questions.
+    maximum any single trait can achieve across all 28 questions.
     
     Unanswered or unrecognised answers are silently skipped (the
     route layer validates completeness before calling this).
@@ -89,11 +89,11 @@ THEORETICAL_MAX = _compute_theoretical_max()
 def _compute_career_theoretical_max() -> dict[str, float]:
     """
     Computes the true theoretical maximum weighted score each career cluster
-    can achieve given the 20 single-choice questions in the assessment.
+    can achieve given the 28 single-choice questions in the assessment.
 
     For each question, a student selects at most one option. We find the option
     that yields the highest weighted trait contribution for the career, and sum
-    these maxima across all 20 questions.
+    these maxima across all 28 questions.
     """
     career_maxes: dict[str, float] = {}
     for cluster in CAREER_CLUSTERS:

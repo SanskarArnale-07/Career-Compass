@@ -2,7 +2,7 @@
 Assessment scoring API route.
 
 POST /api/v1/assessment/score
-  → Accepts the 20 answers, returns the full scored result.
+  → Accepts the 28 answers, returns the full scored result.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ def score(request: AssessmentRequest) -> AssessmentResponse:
     Score a completed Class 10 career assessment.
 
     Validates that:
-      - All 20 question IDs (q1-q20) are present.
+      - All 28 question IDs (q1-q28) are present.
       - Every answer text matches a known option for its question.
 
     Returns 422 with descriptive errors for any validation failures.

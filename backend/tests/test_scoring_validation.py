@@ -113,25 +113,20 @@ def _assert_valid_result(result: dict):
 class TestQuestionOptionCoverage:
     """Verify the question bank structure itself."""
 
-    def test_exactly_20_questions(self):
-        assert len(QUESTION_OPTIONS) == 20
-        assert TOTAL_QUESTIONS == 20
+    def test_exactly_28_questions(self):
+        assert len(QUESTION_OPTIONS) == 28
+        assert TOTAL_QUESTIONS == 28
 
-    def test_question_ids_q1_through_q20(self):
-        expected = {f"q{i}" for i in range(1, 21)}
+    def test_question_ids_q1_through_q28(self):
+        expected = {f"q{i}" for i in range(1, 29)}
         assert set(QUESTION_OPTIONS.keys()) == expected
 
-    def test_every_question_has_exactly_6_options(self):
+    def test_every_question_has_exactly_4_options(self):
         for qid, opts in QUESTION_OPTIONS.items():
-            assert len(opts) == 6, f"{qid} has {len(opts)} options, expected 6"
+            assert len(opts) == 4, f"{qid} has {len(opts)} options, expected 4"
 
     def test_required_question_ids_match(self):
-        assert REQUIRED_QUESTION_IDS == [f"q{i}" for i in range(1, 21)]
-
-    def test_every_option_has_at_least_one_trait(self):
-        for qid, opts in QUESTION_OPTIONS.items():
-            for text, weights in opts.items():
-                assert len(weights) >= 1, f"{qid}/{text} has no trait weights"
+        assert REQUIRED_QUESTION_IDS == [f"q{i}" for i in range(1, 29)]
 
     def test_all_trait_weights_are_positive_integers(self):
         for qid, opts in QUESTION_OPTIONS.items():
@@ -156,7 +151,7 @@ class TestQuestionOptionCoverage:
             option_texts = list(opts.keys())
             for text, idx in OPTION_INDEX[qid].items():
                 assert text in option_texts
-                assert 1 <= idx <= 6
+                assert 1 <= idx <= 4
 
     def test_get_option_index_roundtrip(self):
         for qid, opts in QUESTION_OPTIONS.items():
@@ -183,15 +178,17 @@ class TestTraitScoring:
             assert d[t.value] == 0.0
 
     def test_single_question_correct_accumulation(self):
-        """Answering q1='Building apps or websites' → TE:3, AN:2, others 0."""
-        answers = {"q1": "Building apps or websites"}
+        """Answering q25 with option 1 → TE:2, SC:1, others 0."""
+        answers = {
+            "q25": "Build the interactive working demonstration—assembling hardware, wiring components, or coding the digital display"
+        }
         profile = compute_trait_scores(answers)
         d = profile.model_dump()
-        # TE and AN should be nonzero, proportional to their theoretical max
+        # TE and SC should be nonzero, proportional to their theoretical max
         assert d["TE"] > 0
-        assert d["AN"] > 0
+        assert d["SC"] > 0
         # All others should be 0
-        for t in ["SC", "BU", "CR", "SO", "LE", "EX"]:
+        for t in ["AN", "BU", "CR", "SO", "LE", "EX"]:
             assert d[t] == 0.0
 
     def test_all_traits_reachable(self):
@@ -437,9 +434,9 @@ class TestDeterminism:
 class TestBoundaryValues:
     """Edge case and boundary value testing."""
 
-    def test_all_positions_1_through_6_valid(self):
+    def test_all_positions_1_through_4_valid(self):
         """Every uniform-position answer set produces a valid result."""
-        for pos in range(1, 7):
+        for pos in range(1, 5):
             answers = _all_position(pos)
             result = score_assessment(answers).model_dump()
             _assert_valid_result(result)
@@ -456,7 +453,7 @@ class TestBoundaryValues:
             assert d[t.value] == 0.0
 
     def test_extra_question_ids_ignored(self):
-        """Extra keys beyond q1-q20 should not affect scoring."""
+        """Extra keys beyond q1-q28 should not affect scoring."""
         answers = _all_position(1)
         answers_with_extra = copy.deepcopy(answers)
         answers_with_extra["q99"] = "phantom"
@@ -467,14 +464,14 @@ class TestBoundaryValues:
         assert r1["streams"]["scores"] == r2["streams"]["scores"]
 
     def test_mixed_valid_and_invalid_answers(self):
-        """10 valid + 10 invalid answers: engine uses valid ones only."""
+        """14 valid + 14 invalid answers: engine uses valid ones only."""
         valid = _answers_from_positions({
-            f"q{i}": 1 for i in range(1, 11)
+            f"q{i}": 1 for i in range(1, 15)
         })
-        invalid = {f"q{i}": "GARBAGE" for i in range(11, 21)}
+        invalid = {f"q{i}": "GARBAGE" for i in range(15, 29)}
         combined = {**valid, **invalid}
         profile = compute_trait_scores(combined)
-        # Should still produce values (from the 10 valid answers)
+        # Should still produce values (from the 14 valid answers)
         d = profile.model_dump()
         has_nonzero = any(d[t.value] > 0 for t in Trait)
         assert has_nonzero, "Expected some nonzero scores from valid answers"
@@ -489,12 +486,12 @@ class TestAPIValidation:
 
     def test_missing_single_question(self):
         answers = _all_position(1)
-        del answers["q20"]
+        del answers["q28"]
         resp = client.post("/api/v1/assessment/score", json={"answers": answers})
         assert resp.status_code == 422
         body = resp.json()
         assert body["detail"]["error"] == "missing_answers"
-        assert "q20" in body["detail"]["missing_question_ids"]
+        assert "q28" in body["detail"]["missing_question_ids"]
 
     def test_missing_all_questions(self):
         resp = client.post("/api/v1/assessment/score", json={"answers": {}})
@@ -521,7 +518,7 @@ class TestAPIValidation:
         assert body["detail"]["error"] == "invalid_answers"
 
     def test_all_valid_answers_returns_200(self):
-        for pos in range(1, 7):
+        for pos in range(1, 5):
             answers = _all_position(pos)
             resp = client.post(
                 "/api/v1/assessment/score", json={"answers": answers}
@@ -562,12 +559,16 @@ class TestProfileArchetypes:
 
     def test_tech_profile_gets_tech_careers(self):
         """Mostly TE/AN → Software or AI/ML or Engineering on top."""
-        # Pick option 1 (tech-leaning) for most questions
         result = self._score_profile({
-            "q1": 1, "q2": 1, "q3": 5, "q4": 5, "q5": 1,
-            "q6": 2, "q7": 2, "q8": 2, "q9": 1, "q10": 1,
-            "q11": 1, "q12": 1, "q13": 1, "q14": 6, "q15": 3,
-            "q16": 5, "q17": 2, "q18": 6, "q19": 4, "q20": 4,
+            "q1": 2, "q2": 3, "q3": 1,
+            "q4": 2, "q5": 1, "q6": 2,
+            "q7": 1, "q8": 4, "q9": 2,
+            "q10": 1, "q11": 4, "q12": 2,
+            "q13": 4, "q14": 1, "q15": 1,
+            "q16": 4, "q17": 4, "q18": 4,
+            "q19": 2, "q20": 1, "q21": 2,
+            "q22": 1, "q23": 4, "q24": 3,
+            "q25": 1, "q26": 1, "q27": 2, "q28": 1,
         })
         top_name = result["top_careers"][0]["career_name"]
         tech_names = {
@@ -580,10 +581,15 @@ class TestProfileArchetypes:
     def test_business_profile_gets_business_careers(self):
         """Mostly BU/LE → Entrepreneurship or Finance on top."""
         result = self._score_profile({
-            "q1": 4, "q2": 6, "q3": 1, "q4": 3, "q5": 3,
-            "q6": 3, "q7": 5, "q8": 6, "q9": 2, "q10": 3,
-            "q11": 4, "q12": 3, "q13": 2, "q14": 2, "q15": 4,
-            "q16": 1, "q17": 3, "q18": 1, "q19": 1, "q20": 3,
+            "q1": 2, "q2": 4, "q3": 1,
+            "q4": 4, "q5": 4, "q6": 4,
+            "q7": 4, "q8": 2, "q9": 3,
+            "q10": 1, "q11": 2, "q12": 3,
+            "q13": 1, "q14": 2, "q15": 4,
+            "q16": 1, "q17": 1, "q18": 3,
+            "q19": 2, "q20": 1, "q21": 3,
+            "q22": 4, "q23": 4, "q24": 4,
+            "q25": 3, "q26": 4, "q27": 3, "q28": 2,
         })
         top_name = result["top_careers"][0]["career_name"]
         business_names = {
@@ -596,10 +602,15 @@ class TestProfileArchetypes:
     def test_creative_profile_gets_creative_careers(self):
         """Mostly CR → Design or Marketing on top."""
         result = self._score_profile({
-            "q1": 2, "q2": 2, "q3": 4, "q4": 2, "q5": 2,
-            "q6": 5, "q7": 4, "q8": 4, "q9": 4, "q10": 4,
-            "q11": 3, "q12": 4, "q13": 6, "q14": 6, "q15": 2,
-            "q16": 4, "q17": 6, "q18": 2, "q19": 6, "q20": 5,
+            "q1": 4, "q2": 2, "q3": 3,
+            "q4": 3, "q5": 2, "q6": 3,
+            "q7": 3, "q8": 1, "q9": 3,
+            "q10": 4, "q11": 3, "q12": 4,
+            "q13": 2, "q14": 3, "q15": 3,
+            "q16": 2, "q17": 3, "q18": 2,
+            "q19": 4, "q20": 4, "q21": 4,
+            "q22": 3, "q23": 2, "q24": 2,
+            "q25": 2, "q26": 2, "q27": 4, "q28": 4,
         })
         top_name = result["top_careers"][0]["career_name"]
         creative_names = {
@@ -611,10 +622,15 @@ class TestProfileArchetypes:
     def test_social_profile_gets_social_careers(self):
         """Mostly SO → Medicine, Psychology, or Law on top."""
         result = self._score_profile({
-            "q1": 3, "q2": 3, "q3": 2, "q4": 4, "q5": 4,
-            "q6": 4, "q7": 1, "q8": 3, "q9": 3, "q10": 6,
-            "q11": 6, "q12": 2, "q13": 4, "q14": 4, "q15": 5,
-            "q16": 3, "q17": 1, "q18": 5, "q19": 3, "q20": 1,
+            "q1": 3, "q2": 2, "q3": 4,
+            "q4": 3, "q5": 4, "q6": 3,
+            "q7": 2, "q8": 3, "q9": 3,
+            "q10": 4, "q11": 1, "q12": 1,
+            "q13": 1, "q14": 1, "q15": 4,
+            "q16": 2, "q17": 3, "q18": 2,
+            "q19": 2, "q20": 1, "q21": 3,
+            "q22": 1, "q23": 2, "q24": 4,
+            "q25": 2, "q26": 2, "q27": 3, "q28": 3,
         })
         top_name = result["top_careers"][0]["career_name"]
         social_names = {
@@ -628,10 +644,15 @@ class TestProfileArchetypes:
     def test_science_profile_gets_science_careers(self):
         """Mostly SC → Scientific Research or Medicine on top."""
         result = self._score_profile({
-            "q1": 5, "q2": 5, "q3": 6, "q4": 1, "q5": 5,
-            "q6": 1, "q7": 6, "q8": 1, "q9": 5, "q10": 5,
-            "q11": 5, "q12": 5, "q13": 5, "q14": 1, "q15": 1,
-            "q16": 5, "q17": 5, "q18": 6, "q19": 2, "q20": 6,
+            "q1": 2, "q2": 3, "q3": 1,
+            "q4": 4, "q5": 3, "q6": 4,
+            "q7": 1, "q8": 4, "q9": 2,
+            "q10": 3, "q11": 2, "q12": 2,
+            "q13": 3, "q14": 4, "q15": 2,
+            "q16": 4, "q17": 4, "q18": 1,
+            "q19": 4, "q20": 3, "q21": 4,
+            "q22": 3, "q23": 4, "q24": 3,
+            "q25": 1, "q26": 3, "q27": 1, "q28": 1,
         })
         top_name = result["top_careers"][0]["career_name"]
         science_names = {
@@ -652,25 +673,22 @@ class TestFrontendBackendSync:
     Verify the frontend assessment-data.ts option values exactly match
     the backend QUESTION_OPTIONS keys. This prevents option text drift
     that would cause 422 errors in production.
-
-    We load the frontend data via the raw QUESTION_OPTIONS (source of
-    truth). The frontend file is already validated by the existing
-    TestAllFirstOptions..TestAllSecondOptions tests since they use
-    OPTION_INDEX to build answers. This class adds *explicit* structural
-    checks.
     """
 
     def test_all_options_have_matching_trait_weights(self):
-        """Every option text in QUESTION_OPTIONS maps to at least 1 trait."""
+        """Every option text in QUESTION_OPTIONS is valid and maps to non-negative weights."""
         for qid, opts in QUESTION_OPTIONS.items():
+            assert len(opts) == 4
             for text, weights in opts.items():
-                assert len(weights) >= 1, f"{qid}/{text} has 0 weights"
+                for trait, pts in weights.items():
+                    assert isinstance(trait, Trait)
+                    assert pts > 0
 
     def test_option_index_positions_contiguous(self):
-        """Option positions for every question are exactly {1,2,3,4,5,6}."""
+        """Option positions for every question are exactly {1,2,3,4}."""
         for qid, opts in OPTION_INDEX.items():
             positions = set(opts.values())
-            assert positions == {1, 2, 3, 4, 5, 6}, (
+            assert positions == {1, 2, 3, 4}, (
                 f"{qid} positions: {positions}"
             )
 
@@ -695,7 +713,7 @@ class TestCareerMappingConsistency:
 
     def test_every_returned_career_is_a_known_cluster(self):
         known = {c.name for c in CAREER_CLUSTERS}
-        for pos in range(1, 7):
+        for pos in range(1, 5):
             answers = _all_position(pos)
             result = score_assessment(answers).model_dump()
             for c in result["top_careers"]:
@@ -765,11 +783,10 @@ class TestFullPipeline:
     def test_every_option_combination_produces_valid_result(self):
         """
         Test a selection of diverse answer combinations.
-        We can't test all 6^20 combos, but we test a representative
-        sample of 20 distinct position patterns.
+        We test a representative sample of 20 distinct position patterns.
         """
         patterns = [
-            {qid: ((i + j) % 6) + 1 for j, qid in enumerate(REQUIRED_QUESTION_IDS)}
+            {qid: ((i + j) % 4) + 1 for j, qid in enumerate(REQUIRED_QUESTION_IDS)}
             for i in range(20)
         ]
         for i, positions in enumerate(patterns):

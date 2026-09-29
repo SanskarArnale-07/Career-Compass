@@ -16,7 +16,7 @@ export const MAX_VISIBLE_CAREER_MATCHES = 3;
 
 /**
  * Static theoretical maxima for the 12 assessment career clusters.
- * Derived deterministically from the 20 single-choice questions.
+ * Derived deterministically from the 28 single-choice questions.
  */
 export const CAREER_THEORETICAL_MAX: Record<string, number> = {
   "Software / App Development": 82.66,

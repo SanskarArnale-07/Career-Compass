@@ -3,12 +3,25 @@ import { assessmentQuestions } from "@/lib/assessment-data";
 import { LEGACY_ASSESSMENT_KEY } from "@/lib/persistence/storage";
 
 describe("Assessment Experience Redesign & Integrity", () => {
-  it("contains exactly 20 curated questions", () => {
-    expect(assessmentQuestions.length).toBe(20);
+  it("contains exactly 28 curated questions", () => {
+    expect(assessmentQuestions.length).toBe(28);
     assessmentQuestions.forEach((q, idx) => {
       expect(q.id).toBe(`q${idx + 1}`);
       expect(q.question.length).toBeGreaterThan(10);
-      expect(q.options.length).toBeGreaterThanOrEqual(4);
+      expect(q.options.length).toBe(4);
+    });
+  });
+
+  it("ensures exactly 24 core questions and 4 scenario questions", () => {
+    const coreQuestions = assessmentQuestions.slice(0, 24);
+    const scenarioQuestions = assessmentQuestions.slice(24);
+
+    expect(coreQuestions.length).toBe(24);
+    expect(scenarioQuestions.length).toBe(4);
+
+    // Scenario questions start with Scenario 1, Scenario 2, etc.
+    scenarioQuestions.forEach((q, idx) => {
+      expect(q.question).toContain(`Scenario ${idx + 1}:`);
     });
   });
 
@@ -19,19 +32,21 @@ describe("Assessment Experience Redesign & Integrity", () => {
         expect(opt.label).toBeDefined();
         expect(opt.value.trim().length).toBeGreaterThan(0);
         expect(opt.label.trim().length).toBeGreaterThan(0);
+        expect(opt.value).toBe(opt.label);
       });
     });
   });
 
-  it("calculates progress percentage accurately across all 20 steps", () => {
+  it("calculates progress percentage accurately across all 28 steps", () => {
     const percentages = assessmentQuestions.map((_, idx) =>
       Math.round(((idx + 1) / assessmentQuestions.length) * 100)
     );
 
-    expect(percentages[0]).toBe(5); // Q1: 5%
-    expect(percentages[5]).toBe(30); // Q6: 30%
-    expect(percentages[9]).toBe(50); // Q10: 50%
-    expect(percentages[19]).toBe(100); // Q20: 100%
+    expect(percentages[0]).toBe(4); // Q1: 4%
+    expect(percentages[6]).toBe(25); // Q7: 25%
+    expect(percentages[13]).toBe(50); // Q14: 50%
+    expect(percentages[20]).toBe(75); // Q21: 75%
+    expect(percentages[27]).toBe(100); // Q28: 100%
   });
 
   it("uses the canonical storage key for seamless handoff to results page", () => {
@@ -47,8 +62,8 @@ describe("Assessment Experience Redesign & Integrity", () => {
     const serialized = JSON.stringify(mockAnswers);
     const parsed = JSON.parse(serialized);
 
-    expect(Object.keys(parsed).length).toBe(20);
+    expect(Object.keys(parsed).length).toBe(28);
     expect(parsed.q1).toBe(assessmentQuestions[0].options[0].value);
-    expect(parsed.q20).toBe(assessmentQuestions[19].options[0].value);
+    expect(parsed.q28).toBe(assessmentQuestions[27].options[0].value);
   });
 });

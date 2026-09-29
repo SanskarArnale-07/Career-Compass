@@ -9,7 +9,6 @@ import {
   Sparkles,
   Layers,
   CheckCircle2,
-  LockOpen,
   RotateCcw,
 } from "lucide-react";
 import { assessmentQuestions } from "@/lib/assessment-data";
@@ -92,7 +91,7 @@ export default function AssessmentIntroPage() {
         <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10141A] border border-border/80 text-xs font-mono font-medium text-foreground">
             <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-            <span>20 Questions</span>
+            <span>28 Questions</span>
           </div>
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10141A] border border-border/80 text-xs font-mono font-medium text-foreground">
@@ -135,11 +134,6 @@ export default function AssessmentIntroPage() {
             </Link>
           )}
 
-          {/* Secondary subtle text: No login required (Requirement 2 & 19) */}
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80 font-mono mt-2">
-            <LockOpen className="h-3.5 w-3.5 text-primary/70" />
-            <span>No login required · Completely free &amp; private</span>
-          </div>
         </div>
       </motion.div>
     </div>

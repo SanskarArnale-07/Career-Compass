@@ -11,13 +11,13 @@ from pydantic import BaseModel, Field, field_validator
 
 class AssessmentRequest(BaseModel):
     """
-    Payload sent from the frontend after a student completes the 20-question
-    assessment. Keys are question IDs (q1 … q20), values are the selected
+    Payload sent from the frontend after a student completes the 28-question
+    assessment. Keys are question IDs (q1 … q28), values are the selected
     option text exactly as stored in sessionStorage.
     """
     answers: dict[str, str] = Field(
         ...,
-        description="Map of question ID (q1-q20) to selected option text.",
+        description="Map of question ID (q1-q28) to selected option text.",
         min_length=1,
     )
 

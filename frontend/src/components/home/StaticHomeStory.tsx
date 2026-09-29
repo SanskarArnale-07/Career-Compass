@@ -85,7 +85,7 @@ export function StaticHomeStory() {
           </div>
 
           <div className="mt-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-[#10141A] border border-border/70 text-muted-foreground text-xs">
-            <span className="text-foreground font-semibold font-mono">20 Questions</span>
+            <span className="text-foreground font-semibold font-mono">28 Questions</span>
             <ArrowRight className="h-3 w-3 text-primary" />
             <span className="text-primary font-semibold font-mono">8 Dimensions</span>
           </div>

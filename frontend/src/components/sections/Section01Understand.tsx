@@ -64,12 +64,12 @@ export function Section01Understand() {
             </h2>
 
             <p className="text-base sm:text-lg text-secondary-foreground leading-relaxed mb-6 font-light max-w-md">
-              20 questions help map your interests, strengths and preferences across 8 dimensions.
+              28 questions help map your interests, strengths and preferences across 8 dimensions.
             </p>
 
-            {/* Simple concept pill: 20 Questions → 8 Traits */}
+            {/* Simple concept pill: 28 Questions → 8 Traits */}
             <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#10141A] border border-border/70 text-xs font-mono text-muted-foreground">
-              <span className="text-foreground font-semibold">20 Questions</span>
+              <span className="text-foreground font-semibold">28 Questions</span>
               <ArrowRight className="h-3 w-3 text-primary" />
               <span className="text-primary font-semibold">8 Dimensions</span>
             </div>
