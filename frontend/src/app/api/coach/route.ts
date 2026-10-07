@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import {
   generateLocalCoachResponse,
   buildCoachSystemPrompt,
+  isGreeting,
+  isAcknowledgement,
+  isGoodbye,
 } from "@/lib/coach/coach-engine";
 import type { CareerCoachContext } from "@/lib/career-details/career-context";
 
@@ -131,7 +134,17 @@ export async function POST(request: Request) {
       }
     }
 
-    // 6. External LLM (if configured in environment)
+    // 6. Conversational Fast-Path (instant natural response for greetings & acknowledgements)
+    if (isGreeting(cleanMessage) || isAcknowledgement(cleanMessage) || isGoodbye(cleanMessage)) {
+      const conversationalResponse = await generateLocalCoachResponse(cleanMessage, context);
+      return NextResponse.json({
+        response: conversationalResponse,
+        timestamp: Date.now(),
+        engine: "conversational-fast-path",
+      });
+    }
+
+    // 7. External LLM (if configured in environment)
     const apiKey = process.env.OPENAI_API_KEY;
     if (apiKey && apiKey.trim()) {
       try {

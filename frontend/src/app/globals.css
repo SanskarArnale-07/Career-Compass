@@ -266,10 +266,53 @@ body::before {
   .animate-pulse-glow,
   .animate-float-gentle,
   .animate-float-subtle,
-  .animate-fade-in-up {
+  .animate-fade-in-up,
+  .animate-pulse-slow {
     animation: none !important;
   }
   body::before {
     display: none;
+  }
+}
+
+/* ─── Career Companion ───────────────────────────────────────────────── */
+
+.companion-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.companion-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.companion-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.15);
+  border-radius: 2px;
+}
+.companion-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.3);
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@media (max-width: 640px) {
+  #career-companion-trigger {
+    bottom: 1rem !important;
+    right: 1rem !important;
+  }
+  #career-companion-trigger > div {
+    height: 3rem !important;
+    width: 3rem !important;
+  }
+  #career-companion-panel {
+    bottom: 4.5rem !important;
+    right: 0.75rem !important;
+    width: calc(100vw - 1.5rem) !important;
+    max-width: 100% !important;
+    height: min(420px, 60vh) !important;
   }
 }

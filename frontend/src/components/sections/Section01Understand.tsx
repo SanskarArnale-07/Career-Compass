@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Compass } from "lucide-react";
+import { assessmentQuestions } from "@/lib/assessment-data";
 
 interface TraitDimension {
   code: string;
@@ -64,12 +65,12 @@ export function Section01Understand() {
             </h2>
 
             <p className="text-base sm:text-lg text-secondary-foreground leading-relaxed mb-6 font-light max-w-md">
-              28 questions help map your interests, strengths and preferences across 8 dimensions.
+              {assessmentQuestions.length} questions help map your interests, strengths and preferences across 8 dimensions.
             </p>
 
-            {/* Simple concept pill: 28 Questions → 8 Traits */}
+            {/* Simple concept pill: Questions → 8 Traits */}
             <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#10141A] border border-border/70 text-xs font-mono text-muted-foreground">
-              <span className="text-foreground font-semibold">28 Questions</span>
+              <span className="text-foreground font-semibold">{assessmentQuestions.length} Questions</span>
               <ArrowRight className="h-3 w-3 text-primary" />
               <span className="text-primary font-semibold">8 Dimensions</span>
             </div>

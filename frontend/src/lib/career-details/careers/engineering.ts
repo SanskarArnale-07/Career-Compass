@@ -6,7 +6,7 @@ export const engineering: CareerDetail = {
   title: "Engineer",
   tagline: "Design, build, and optimize systems — from civil structures and electronics to aerospace and robotics.",
   category: "Engineering & Applied Sciences",
-  icon: "Lightbulb",
+  icon: "Building2",
   primaryTraits: ["AN", "TE", "SC"],
   relatedSlugs: ["software-development", "scientific-research", "ai-ml-data-science"],
   snapshot: [

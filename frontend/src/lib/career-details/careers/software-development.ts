@@ -6,7 +6,7 @@ export const softwareDevelopment: CareerDetail = {
   title: "Software Development",
   tagline: "Build applications, websites, and digital tools that power everyday life.",
   category: "Technology",
-  icon: "Cpu",
+  icon: "Code2",
   primaryTraits: ["TE", "AN"],
   relatedSlugs: ["ai-ml-data-science", "engineering", "design-creative"],
 

@@ -74,13 +74,13 @@ export function Navbar() {
             <span>Home</span>
             <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
           </Link>
-          <Link
-            href="/coach"
-            className="text-muted-foreground hover:text-foreground transition-colors py-1 flex items-center gap-1.5 relative group"
+          <button
+            onClick={() => document.getElementById('career-companion-trigger')?.click()}
+            className="text-muted-foreground hover:text-foreground transition-colors py-1 flex items-center gap-1.5 relative group cursor-pointer bg-transparent border-0 font-mono uppercase tracking-wider text-sm"
           >
-            <span>Career Coach</span>
+            <span>Companion</span>
             <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
-          </Link>
+          </button>
           <Link
             href="/assessment"
             className="text-muted-foreground hover:text-primary transition-colors py-1 relative group"
@@ -98,13 +98,13 @@ export function Navbar() {
 
         {/* Right: Actions & Primary CTA */}
         <div className="flex items-center gap-3">
-          <Link
-            href="/coach"
-            className="lg:hidden inline-flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
+          <button
+            onClick={() => document.getElementById('career-companion-trigger')?.click()}
+            className="lg:hidden inline-flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-0"
           >
             <Sparkles className="h-3 w-3 text-primary" />
-            <span>Coach</span>
-          </Link>
+            <span>Companion</span>
+          </button>
 
           {/* Desktop Auth: Compact Profile Dropdown or Login Button */}
           {isAuthenticated && user ? (
@@ -254,14 +254,13 @@ export function Navbar() {
             >
               Home
             </Link>
-            <Link
-              href="/coach"
-              className="text-muted-foreground hover:text-foreground transition-colors py-1.5 flex items-center gap-1.5"
-              onClick={() => setMobileOpen(false)}
+            <button
+              onClick={() => { setMobileOpen(false); setTimeout(() => document.getElementById('career-companion-trigger')?.click(), 150); }}
+              className="text-muted-foreground hover:text-foreground transition-colors py-1.5 flex items-center gap-1.5 w-full text-left bg-transparent border-0 font-mono uppercase tracking-wider text-sm cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary/70" />
-              Career Coach
-            </Link>
+              Companion
+            </button>
             <Link
               href="/assessment"
               className="text-muted-foreground hover:text-primary transition-colors py-1.5"

@@ -6,7 +6,7 @@ export const aiMlDataScience: CareerDetail = {
   title: "Artificial Intelligence & Data",
   tagline: "Develop intelligent systems that learn from data and automate decisions.",
   category: "Technology & Research",
-  icon: "Brain",
+  icon: "BrainCircuit",
   primaryTraits: ["TE", "SC", "AN"],
   relatedSlugs: ["software-development", "scientific-research", "engineering"],
 

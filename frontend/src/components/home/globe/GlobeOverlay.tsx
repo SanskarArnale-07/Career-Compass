@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { motion, type MotionValue, useTransform, useMotionValueEvent } from "framer-motion";
+import { assessmentQuestions } from "@/lib/assessment-data";
 
 interface GlobeOverlayProps {
   progress: MotionValue<number>;
@@ -65,7 +66,7 @@ export function GlobeOverlay({ progress }: GlobeOverlayProps) {
             First, we understand you.
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 font-light max-w-sm mx-auto leading-relaxed">
-            28 questions map 8 core dimensions around the globe.
+            {assessmentQuestions.length} questions map 8 core dimensions around the globe.
           </p>
         </motion.div>
 

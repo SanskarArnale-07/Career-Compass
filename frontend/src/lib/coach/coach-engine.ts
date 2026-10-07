@@ -189,8 +189,7 @@ export function formatStructuredCoachContext(
   // 4. PROGRESS DATA
   const progressDataLines = [
     "=== PROGRESS DATA ===",
-    `- Overall Readiness Score: ${readiness.overallScore}% (Tier ${readiness.tierLevel}: ${readiness.tierName})`,
-    `- Readiness Breakdown: Foundations ${readiness.foundationsScore}%, Skills ${readiness.skillsScore}%, Portfolio ${readiness.portfolioScore}%`,
+    `- Progress Level: Level ${readiness.tierLevel} (${readiness.tierName})`,
     `- Next Tier Requirement: ${readiness.nextTierRequirement}`,
     `- Mastered Skills: ${skills.mastered.length > 0 ? skills.mastered.join(", ") : "None yet verified"}`,
     `- Priority Missing Skill Gaps: ${skills.priorityGaps.length > 0 ? skills.priorityGaps.map((g) => `${g.name} [${g.category}] (${g.whyItMatters})`).join("; ") : "No immediate gaps identified"}`,
@@ -217,22 +216,61 @@ export function formatStructuredCoachContext(
 }
 
 /**
+ * Detects if a message is a simple, standalone greeting.
+ */
+export function isGreeting(text: string): boolean {
+  const clean = text.trim().toLowerCase().replace(/[!.,?]+$/, "").trim();
+  return /^(hello|hi|hey|hey there|good morning|good afternoon|good evening|howdy|hiya|yo|greetings)(\s+(there|companion|bot|friend))?$/i.test(clean);
+}
+
+/**
+ * Detects if a message is a simple acknowledgement or thank you.
+ */
+export function isAcknowledgement(text: string): boolean {
+  const clean = text.trim().toLowerCase().replace(/[!.,?]+$/, "").trim();
+  return /^(thanks|thank you|thx|ty|thanks a lot|thank you so much|many thanks|cool|got it|okay|ok|great|awesome|perfect|sounds good|nice)$/i.test(clean);
+}
+
+/**
+ * Detects if a message is a simple farewell/goodbye.
+ */
+export function isGoodbye(text: string): boolean {
+  const clean = text.trim().toLowerCase().replace(/[!.,?]+$/, "").trim();
+  return /^(bye|goodbye|see ya|cya|take care|have a good day)$/i.test(clean);
+}
+
+/**
  * Format the structured system prompt for the coach with anti-hallucination guardrails.
  */
 export function buildCoachSystemPrompt(context: CareerCoachContext): string {
   const structuredContext = formatStructuredCoachContext(context);
+  const matchPct = context.career.matchPercentage ? Math.round(context.career.matchPercentage) : 0;
 
-  return `You are Career Compass AI, the student's personal career intelligence coach.
-You have real-time access to the student's actual Career Compass journey.
+  return `You are Career Companion, a friendly, encouraging AI guide for Class 9–10 school students (ages 14–16).
+You have access to the student's journey in Career Compass:
 
 ${structuredContext}
 
-ANTI-HALLUCINATION & COACHING PRINCIPLES:
-1. STRICT DATA FIDELITY: You must NOT invent Career Compass-specific facts, unverified milestones, fake percentages, or imaginary courses. Always base numbers, active milestones, and progress on the structured data provided above.
-2. MISSING DATA HANDLING: If the student has not completed an assessment, or if specific data is unavailable, clearly acknowledge that rather than inventing answers.
-3. GROUNDED GUIDANCE: Ground every recommendation in their specific targeted career (${context.career.title}), active roadmap phase (Phase ${context.roadmap.currentPhaseNumber}), priority skill gaps, and next project.
-4. ACTIONABLE & HIGH-AGENCY: Be encouraging, pragmatic, direct, and structured. Use bullet points, bold text, and markdown tables when appropriate.
-5. CONCISE: Keep answers focused and actionable (typically 2–4 short sections or bulleted milestones).`;
+CONVERSATIONAL BEHAVIOR & GUIDELINES:
+1. NATURAL CONVERSATION:
+   - For greetings ("hello", "hi", "hey"), acknowledgements ("thanks", "thank you", "cool", "ok"), or casual talk, respond naturally and briefly (1-2 sentences).
+   - Example greeting: "Hey! 👋 What can I help you with?"
+   - Example thanks: "You're welcome! Want to explore anything else?"
+   - NEVER generate a career report just because career context is available.
+2. CONTEXT SHOULD INFORM ANSWERS, NOT OVERRIDE:
+   - Use the student's current career (${context.career.title}) only when the question is relevant to it.
+   - Do NOT force every response into a career report.
+3. REMOVE REPORT-LIKE RESPONSE STYLE:
+   - Do NOT generate enterprise dashboard headings like "Career Compass Guidance for...", "Skill Gap Analysis", "Priority Missing Skills", "Immediate Bottlenecks", or "Transparent Skill Inventory".
+   - Keep answers conversational, warm, and easy to read.
+4. SIMPLIFY LANGUAGE FOR CLASS 9–10:
+   - Use student-friendly wording: use "Skills you can work on next" (not "Priority missing skills"), "Good areas to focus on" (not "Immediate bottlenecks").
+   - Avoid enterprise or corporate jargon like "transparent skill inventory", "verified progress", "readiness analysis".
+5. CONCISE LENGTH:
+   - Default responses should be 2–5 sentences, concise, easy to scan in a small 320px chat panel.
+   - Use short bullet lists (2–3 items) only when helpful.
+6. MATCH SCORE CONSISTENCY:
+   - If referencing career match, always use the rounded integer (${matchPct}% match). Never invent decimals (like 75.1%) or a conflicting readiness score.`;
 }
 
 /**
@@ -274,6 +312,7 @@ function extractComparisonCareer(
 /**
  * Generate a grounded coach response deterministically.
  * Guarantees zero hallucinations and 100% reliable advice without external dependencies.
+ * Tailored specifically for Class 9–10 students: conversational, concise, and supportive.
  */
 export async function generateLocalCoachResponse(
   userQuery: string,
@@ -283,21 +322,153 @@ export async function generateLocalCoachResponse(
   const context = normalizeCoachContext(rawContext);
   const {
     career,
-    readiness,
     roadmap,
     roadmapPlan,
     skills,
     projects,
-    jobPrep,
     studyPace,
     nextAction,
     recommendations,
     userProfile,
     assessmentInterpretation,
-    progressReport,
   } = context;
 
-  // ── 1. "What should I learn next?" ───────────────────────────────────
+  // ── 0. Natural Conversation (Greetings, Thanks, Acknowledgements, Casual) ─
+  if (isGreeting(userQuery)) {
+    return "Hey! 👋 What can I help you with?";
+  }
+
+  if (isAcknowledgement(userQuery)) {
+    return "You're welcome! Want to explore anything else?";
+  }
+
+  if (isGoodbye(userQuery)) {
+    return "Bye! Come back anytime you want to explore more careers. 👋";
+  }
+
+  if (query.includes("how are you")) {
+    return "I'm doing great, thanks for asking! Ready to help you explore careers and roadmaps. What's on your mind?";
+  }
+
+  if (query.includes("who are you") || query.includes("what are you")) {
+    return "I'm your Career Companion! I help Class 9–10 students explore careers, understand what skills they need, and plan what to study after 10th. What would you like to know?";
+  }
+
+  // ── 1. "What does this career involve?" ──────────────────────────────
+  if (
+    query.includes("what does this career involve") ||
+    query.includes("career involve") ||
+    query.includes("what does this involve") ||
+    query.includes("what does this career do") ||
+    query.includes("what do they do") ||
+    query.includes("day to day") ||
+    query.includes("responsibilities")
+  ) {
+    const responsibilities = career.responsibilities || [];
+    const coreTasks = responsibilities.slice(0, 3);
+    const summary = career.overview
+      ? career.overview.split(".")[0].trim() + "."
+      : career.tagline;
+
+    let response = `As a **${career.title}**, you ${summary.toLowerCase().startsWith("as a") ? summary : summary.charAt(0).toLowerCase() + summary.slice(1)}`;
+    if (!response.endsWith(".")) response += ".";
+
+    if (coreTasks.length > 0) {
+      response += `\n\n**Here is what daily work typically looks like:**\n`;
+      response += coreTasks.map((r) => `- ${r}`).join("\n");
+    }
+
+    response += `\n\nWould you like to know what skills or subjects are needed for this path?`;
+    return response.trim();
+  }
+
+  // ── 2. "Why did I get this career?" / "Why was this career recommended?" ─
+  if (
+    query.includes("why did i get this career") ||
+    query.includes("why did i get") ||
+    query.includes("why i got") ||
+    query.includes("why was this career recommended") ||
+    query.includes("why this career") ||
+    query.includes("why recommended") ||
+    query.includes("why did i match") ||
+    query.includes("why am i matched")
+  ) {
+    const matchPct = career.matchPercentage !== undefined ? Math.round(career.matchPercentage) : undefined;
+
+    if (!userProfile?.hasAssessment || matchPct === undefined || matchPct === 0) {
+      return `You're currently exploring **${career.title}** in discovery mode.\n\nThis pathway is great for students who enjoy problem-solving, science experiments, and analytical thinking. If you take the short Career Compass assessment, I can show you your personalized match percentage and strength breakdown!`;
+    }
+
+    const dominantTrait = userProfile.topTrait || "analytical thinking";
+    const strengths = assessmentInterpretation.strengths?.slice(0, 2).map((s) => s.title) || [];
+    const strengthsMention = strengths.length > 0 ? ` and ${strengths.join(", ").toLowerCase()}` : "";
+
+    return `**${career.title}** was recommended with a **${matchPct}% match** based on your assessment results.\n\nYour profile showed strong strengths in **${dominantTrait}**${strengthsMention}. You naturally enjoy asking how things work, testing ideas, and finding evidence — which is the core mindset of a researcher!\n\nWould you like to see what subjects you should take in Class 11–12 for this?`;
+  }
+
+  // ── 3. "What should I study after 10th?" / "What subjects should I focus on?" ──
+  if (
+    query.includes("after 10th") ||
+    query.includes("what should i study after 10th") ||
+    query.includes("study after 10th") ||
+    query.includes("what stream") ||
+    query.includes("which stream") ||
+    query.includes("stream after 10th") ||
+    query.includes("stream") ||
+    query.includes("what subjects should i focus on") ||
+    query.includes("what subjects") ||
+    query.includes("which subjects") ||
+    query.includes("subjects to focus on") ||
+    query.includes("subjects")
+  ) {
+    const stream = career.educationPath?.recommendedStream || "Science stream";
+    const degrees = career.educationPath?.degrees || [];
+    const targetDegree = degrees[0] || "a Bachelor's degree in science or a related discipline";
+
+    return `After 10th, the best route for **${career.title}** is taking the **${stream}** in Class 11–12.\n\nFocus on building strong conceptual understanding in math and science fundamentals rather than just memorizing formulas. Later on, you'll typically pursue ${targetDegree.includes("Bachelor") || targetDegree.includes("B.Sc") ? targetDegree : `a ${targetDegree}`} followed by specialized higher studies.\n\nWant to know what hands-on skills or projects you can start exploring right now?`;
+  }
+
+  // ── 4. "What skills do I need?" / "What skills does this career need?" ────
+  if (
+    query.includes("what skills do i need") ||
+    query.includes("what skills are needed") ||
+    query.includes("what skills does this career need") ||
+    query.includes("what skills does it need") ||
+    query.includes("skills needed") ||
+    query.includes("skills do i need") ||
+    query.includes("what skills am i missing") ||
+    query.includes("skills missing") ||
+    query.includes("missing skills") ||
+    query.includes("what am i missing") ||
+    query.includes("skill gaps") ||
+    query.includes("my gaps") ||
+    query.includes("skills")
+  ) {
+    const gaps = skills.priorityGaps.slice(0, 3);
+    const mastered = skills.mastered.slice(0, 3);
+
+    let response = `To build a strong foundation for **${career.title}**, here are key skills to focus on:\n\n`;
+
+    if (gaps.length > 0) {
+      response += `**Skills you can work on next:**\n`;
+      response += gaps
+        .map((g) => `- **${g.name}**: ${g.whyItMatters || "Helps build core problem-solving capability."}`)
+        .join("\n");
+    } else {
+      const topSkills = career.toolsTechnologies?.slice(0, 3) || [];
+      response += `**Good areas to focus on:**\n`;
+      response += topSkills.map((s) => `- **${s}**`).join("\n");
+    }
+
+    if (mastered.length > 0) {
+      response += `\n\n**Skills you've already started:** ${mastered.join(", ")}.`;
+    }
+
+    response += `\n\nYou can start practicing these right now through school science projects! Would you like some project ideas?`;
+    return response.trim();
+  }
+
+  // ── 5. "What should I learn next?" ───────────────────────────────────
   if (
     query.includes("what should i learn next") ||
     query.includes("what to learn next") ||
@@ -311,109 +482,11 @@ export async function generateLocalCoachResponse(
 
     const targetTitle = primaryRec?.title || (topGap ? topGap.name : nextMilestone?.title || nextAction.title);
     const reasonText = primaryRec?.reason || (topGap ? topGap.whyItMatters : nextAction.reasoning);
-    const effort = primaryRec?.estimatedEffort || nextMilestone?.estimatedEffort.durationText || nextAction.estimatedTime;
 
-    return `### ⚡ What to Learn Next for **${career.title}**
-
-Based on your current progress (**Phase ${roadmap.currentPhaseNumber}: ${roadmap.currentPhaseTitle}**), here is your highest-leverage learning target:
-
-1. **Immediate Focus**: **${targetTitle}**
-   - **Why This Matters**: ${reasonText}
-   - **Estimated Time**: \`${effort}\`
-   ${primaryRec?.sourceContext ? `- **Engine Context**: ${primaryRec.sourceContext}` : ""}
-
-2. **How to Learn This Effectively**:
-   - Review the curated learning resources in Phase ${roadmap.currentPhaseNumber} of your roadmap.
-   - Build a mini hands-on exercise rather than only watching tutorials.
-   - Once understood, verify it in your **Skill Mastery Matrix** on the dashboard to immediately boost your Skill Competency score (currently **${readiness.skillsScore}%**).
-
-${topGap ? `> 💡 **Next In Queue**: After mastering this, your next priority bottleneck will be **${skills.priorityGaps[1]?.name || "applied milestone projects"}**.` : ""}`;
+    return `Right now in **Phase ${roadmap.currentPhaseNumber}: ${roadmap.currentPhaseTitle}**, your best next step is to focus on **${targetTitle}**.\n\n${reasonText}\n\nTry working through a small hands-on exercise or school experiment to practice it. Once you feel confident, you can mark it complete on your roadmap!`;
   }
 
-  // ── 2. "Why was this career recommended?" ────────────────────────────
-  if (
-    query.includes("why was this career recommended") ||
-    query.includes("why this career") ||
-    query.includes("why recommended") ||
-    query.includes("why did i match") ||
-    query.includes("why am i matched")
-  ) {
-    if (!userProfile?.hasAssessment) {
-      const targetIntel = resolveCareerIntelligence(career.slug);
-      const traitFit = targetIntel?.primaryTraits?.join(", ") || "Analytical & Technical";
-
-      return `### 🧭 Target Track: **${career.title}**
-
-You haven't completed the Career Compass psychometric assessment yet — **${career.title}** is currently your actively selected target track.
-
-- **Typical Trait Fit**: This domain strongly rewards students with high **${traitFit}** aptitude.
-- **Entry Characteristics**: ${career.difficultyToEnter} barrier to entry, ${career.growthPotential} industry trajectory.
-
-> 📝 **Recommendation**: Take the **15-minute Career Assessment** to get your exact personalized suitability score, strength mapping, and trait alignment breakdown!`;
-    }
-
-    const strengthsText = assessmentInterpretation.strengths?.length
-      ? assessmentInterpretation.strengths.slice(0, 3).map((s) => `- **${s.title}**: ${s.explanation}`).join("\n")
-      : `- **Core Trait Alignment**: Matches your dominant **${userProfile.topTrait}** trait profile.`;
-
-    const gapsText = assessmentInterpretation.gaps?.length
-      ? assessmentInterpretation.gaps.slice(0, 2).map((g) => `- **${g.title}**: ${g.explanation}`).join("\n")
-      : "- **Hands-on Proof**: Building practical portfolio artifacts.";
-
-    const matchSentence = career.matchPercentage !== undefined
-      ? `Your assessment results scored a **${career.matchPercentage}% Alignment** with this career direction.`
-      : `You are exploring **${career.title}** in open discovery mode (assessment not yet completed).`;
-
-    return `### 🎯 Why **${career.title}** Was Recommended
-
-${matchSentence} Here is the breakdown:
-
-#### 1. Trait Synergy & Match Rationale
-${assessmentInterpretation.whyCareerMatches}
-
-- **Dominant Trait**: **${userProfile.topTrait}**
-- **Your Top Traits**: ${userProfile.primaryTraits?.length ? userProfile.primaryTraits.slice(0, 3).map((t) => `${t.label} (${t.score}/100)`).join(", ") : "Not yet assessed"}
-
-#### 2. Key Strengths in Your Favor
-${strengthsText}
-
-#### 3. Growth Areas to Address
-${gapsText}
-
-> **Summary**: Your natural cognitive profile provides a strong foundation for **${career.title}**. The personalized roadmap is designed specifically to bridge your growth areas into job-ready strengths!`;
-  }
-
-  // ── 3. "What skills am I missing?" ───────────────────────────────────
-  if (
-    query.includes("what skills am i missing") ||
-    query.includes("skills missing") ||
-    query.includes("missing skills") ||
-    query.includes("what am i missing") ||
-    query.includes("skill gaps") ||
-    query.includes("my gaps")
-  ) {
-    const priorityGaps = skills.priorityGaps;
-    const mastered = skills.mastered;
-
-    return `### 🔍 Skill Gap Analysis for **${career.title}**
-
-Here is your transparent skill inventory based on your Career Compass roadmap and verified progress:
-
-#### ⚠️ Priority Missing Skills (Immediate Bottlenecks):
-${priorityGaps.length > 0 ? priorityGaps.map((g, i) => `${i + 1}. **${g.name}** (\`${g.category}\`)\n   - *Why it matters*: ${g.whyItMatters}`).join("\n") : "- No immediate priority skill gaps! All Phase " + roadmap.currentPhaseNumber + " core skills are verified."}
-
-${progressReport ? `#### 📊 Curriculum Tier Coverage:
-- **Beginner Fundamentals**: ${progressReport.skills.coverageByTier.beginner.completed}/${progressReport.skills.coverageByTier.beginner.total} (${progressReport.skills.coverageByTier.beginner.percentage}%)
-- **Intermediate Competencies**: ${progressReport.skills.coverageByTier.intermediate.completed}/${progressReport.skills.coverageByTier.intermediate.total} (${progressReport.skills.coverageByTier.intermediate.percentage}%)
-- **Advanced Specialization**: ${progressReport.skills.coverageByTier.advanced.completed}/${progressReport.skills.coverageByTier.advanced.total} (${progressReport.skills.coverageByTier.advanced.percentage}%)` : ""}
-
-#### ✅ Verified / Mastered Skills (${mastered.length}):
-${mastered.length > 0 ? mastered.map((s) => `• ${s}`).join(", ") : "*None verified yet on your dashboard.*"}
-
-> 🎯 **Action Plan**: Focus on mastering **${priorityGaps[0]?.name || "your active phase concepts"}** first. Checking this off will directly raise your Skill Competency score from **${readiness.skillsScore}%**!`;
-  }
-
-  // ── 4. "What project should I build?" ─────────────────────────────────
+  // ── 6. "What project should I build?" ─────────────────────────────────
   if (
     query.includes("what project should i build") ||
     query.includes("which project") ||
@@ -425,66 +498,33 @@ ${mastered.length > 0 ? mastered.map((s) => `• ${s}`).join(", ") : "*None veri
     const proj = projects.nextToBuild;
 
     if (!proj) {
-      return `### 🏆 Core Portfolio Projects Completed!
-
-You have marked all core milestone projects for **${career.title}** as built!
-
-#### Recommended Next Steps:
-1. **Deploy & Polish**: Ensure all projects have live demos, clean GitHub repositories, and architectural diagrams in their READMEs.
-2. **Case Study**: Write a short technical breakdown explaining the design decisions, trade-offs, and performance optimizations.
-3. **Advanced Open Source**: Contribute a feature or bug fix to a notable open-source project in the ${career.title} ecosystem.`;
+      return `You've already built all the recommended milestone projects for **${career.title}**! 🎉\n\nA great next step is to polish your project notes, create a simple poster or summary, and share what you discovered with your teachers or classmates.`;
     }
 
-    const techStack = career.toolsTechnologies?.slice(0, 4).join(", ") || "Domain tools";
+    const featureHighlights = proj.features.slice(0, 3).map((f) => `- ${f}`).join("\n");
 
-    return `### 🛠️ Recommended Project to Build: **${proj.title}**
-
-- **Difficulty Tier**: \`${proj.difficulty.toUpperCase()}\`
-- **Portfolio Value**: High yield — directly proves to recruiters you can architect and ship real solutions in ${career.title}.
-- **Suggested Toolchain**: ${techStack}
-
-#### Core Features to Implement:
-${proj.features.map((f, idx) => `${idx + 1}. **${f}**`).join("\n")}
-
-#### Why this project matters now:
-${proj.description}
-
-> 📈 **Readiness Payoff**: Your Portfolio & Proof score is currently **${readiness.portfolioScore}%** (${projects.completed.length}/${projects.total} projects built). Shipping this project will provide the single largest boost toward internship readiness!`;
+    return `A great project to start with is **${proj.title}** (${proj.difficulty} level).\n\n${proj.description}\n\n**Key things to include:**\n${featureHighlights}\n\nBuilding this gives you real hands-on proof of how science works! Would you like help planning the first step?`;
   }
 
-  // ── 5. "What should I focus on this month?" ───────────────────────────
+  // ── 7. "What should I focus on this month?" / "What should I do today?" ─
   if (
     query.includes("what should i focus on this month") ||
     query.includes("focus this month") ||
     query.includes("month focus") ||
     query.includes("monthly plan") ||
-    query.includes("this month")
+    query.includes("this month") ||
+    query.includes("what should i do today") ||
+    query.includes("what to do today") ||
+    query.includes("today")
   ) {
-    const monthlyHours = Math.round(studyPace.weeklyHours * 4.3);
-    const activeMilestone = roadmapPlan?.completionState.nextMilestone?.title || roadmap.nextMilestone;
-    const topGap = skills.priorityGaps[0]?.name || "Core concepts";
-    const projName = projects.nextToBuild?.title || "Milestone deliverable";
+    const weeklyHours = studyPace.weeklyHours || 10;
+    const topGap = skills.priorityGaps[0]?.name || "core fundamentals";
+    const projName = projects.nextToBuild?.title || "a hands-on project";
 
-    return `### 📅 Your Monthly Sprint Plan (~${monthlyHours} Hours Budget)
-
-At your current pace of **${studyPace.weeklyHours} hours/week**, you have approximately **${monthlyHours} hours** of dedicated study time this month. Here is your structured 4-week roadmap:
-
-| Week | Focus Area | Goal / Deliverable |
-|---|---|---|
-| **Week 1** | **Foundations & Skill Gap** | Close bottleneck: **${topGap}**. Complete 3 exercises and verify in Skill Matrix. |
-| **Week 2** | **Milestone Execution** | Master **${activeMilestone}** from Phase ${roadmap.currentPhaseNumber}. |
-| **Week 3** | **Project Feature Sprint** | Build core architecture and initial features of **${projName}**. |
-| **Week 4** | **Project Polish & Review** | Test, document README, deploy, and mark project as built on dashboard. |
-
-#### Milestone Target for Month-End:
-- **Project Target**: Complete **${projName}**
-- **Readiness Target**: Advance readiness score from **${readiness.overallScore}%** toward **${Math.min(100, readiness.overallScore + 15)}%**
-- **Target Completion**: On track for graduation by **${studyPace.targetMonthYear}**
-
-> 💡 **Coach's Rule**: Protect your ${studyPace.weeklyHours} hours each week by scheduling fixed study blocks. Consistency beats cramming every time!`;
+    return `At your pace of about **${weeklyHours} hours per week**, here's a simple focus plan:\n\n1. **First 2 weeks**: Focus on understanding **${topGap}** through quick daily study sessions.\n2. **Next 2 weeks**: Apply what you learned by starting **${projName}**.\n\nSpending just 1–2 hours consistently a few days a week is the best way to make steady progress!`;
   }
 
-  // ── 6. "How does this career compare with another career?" ────────────
+  // ── 8. "How does this career compare with another career?" ────────────
   if (
     query.includes("compare with") ||
     query.includes("compared to") ||
@@ -497,57 +537,40 @@ At your current pace of **${studyPace.weeklyHours} hours/week**, you have approx
     const comparisonCareer = extractComparisonCareer(query, career.slug);
 
     if (!comparisonCareer) {
-      return `### ⚖️ Career Comparison
-
-You are currently targeting **${career.title}** (${career.category}).
-
-To compare with another pathway, ask me something like:
-- *"How does this career compare with AI & Data Science?"*
-- *"How does Software Development compare with Product Management?"*
-- *"Compare this career with Finance & Investment."*`;
+      return `You're currently exploring **${career.title}** (${career.category}).\n\nTo compare with another path, ask me something like:\n- *"How does this career compare with AI & Data Science?"*\n- *"How does Software Development compare with Product Management?"*`;
     }
 
-    const currentTools = career.toolsTechnologies?.slice(0, 4).join(", ") || "Standard toolchain";
-    const compareTools = comparisonCareer.toolsTechnologies?.slice(0, 4).join(", ") || "Standard toolchain";
-    const targetIntel = resolveCareerIntelligence(career.slug);
+    const compTools = comparisonCareer.toolsTechnologies?.slice(0, 3).join(", ") || "specialized tools";
+    const currentTools = career.toolsTechnologies?.slice(0, 3).join(", ") || "domain tools";
 
-    const compDifficulty =
-      comparisonCareer.industryInfo?.difficultyToEnter ||
-      comparisonCareer.snapshot.find((s) => s.label.toLowerCase().includes("difficulty"))?.value ||
-      "Moderate to High";
-
-    const compGrowth =
-      comparisonCareer.industryInfo?.growthPotential ||
-      comparisonCareer.snapshot.find((s) => s.label.toLowerCase().includes("growth"))?.value ||
-      "Expanding";
-
-    const overlapTraits = targetIntel?.primaryTraits?.join(" & ") || "analytical thinking";
-
-    return `### ⚖️ Career Comparison: **${career.title}** vs. **${comparisonCareer.title}**
-
-Here is a side-by-side breakdown of how your current track compares with **${comparisonCareer.title}**:
-
-| Dimension | **${career.title}** (Your Track) | **${comparisonCareer.title}** |
-|---|---|---|
-| **Domain** | ${career.category} | ${comparisonCareer.category} |
-| **Core Focus** | ${career.tagline} | ${comparisonCareer.tagline} |
-| **Barrier to Entry** | ${career.difficultyToEnter} | ${compDifficulty} |
-| **Growth Potential** | ${career.growthPotential} | ${compGrowth} |
-| **Key Toolchain** | ${currentTools} | ${compareTools} |
-| **Primary Roles** | ${career.roleProgression?.slice(0, 2).join(", ") || "Entry practitioners"} | ${comparisonCareer.roleProgression?.slice(0, 2).join(", ") || "Entry practitioners"} |
-
-#### Key Strategic Differences:
-1. **Core Problem-Solving**:
-   - **${career.title}**: Focuses on ${career.responsibilities?.[0] || "specialized domain execution"}.
-   - **${comparisonCareer.title}**: Focuses on ${comparisonCareer.responsibilities?.[0] || "domain-specific specialized outcomes"}.
-
-2. **Transition Overlap**:
-   - If you ever decide to pivot, shared fundamentals in ${overlapTraits} give you transferable advantage.
-
-> 🧭 **Bottom Line**: Both pathways offer strong long-term career growth. ${career.matchPercentage !== undefined ? `Your current **${career.matchPercentage}% match** indicates strong alignment with **${career.title}**.` : `You are exploring **${career.title}** in open discovery mode.`}`;
+    return `Here is how **${career.title}** compares with **${comparisonCareer.title}**:\n\n- **${career.title}**: Focuses on ${career.tagline.toLowerCase().replace(/\.$/, "")}, using tools like ${currentTools}.\n- **${comparisonCareer.title}**: Focuses on ${comparisonCareer.tagline.toLowerCase().replace(/\.$/, "")}, using tools like ${compTools}.\n\nBoth are exciting paths with great growth! Which of these two areas sparks your curiosity more?`;
   }
 
-  // ── 7. "What should I do after completing this milestone?" ────────────
+  // ── 9. "Am I ready for internships / jobs?" ───────────────────────────
+  if (
+    query.includes("ready for internship") ||
+    query.includes("internship") ||
+    query.includes("ready for a job")
+  ) {
+    return `Since you're currently in school, you don't need to worry about formal internships or jobs just yet! 😊\n\nAt this stage, the best way to prepare is participating in school science exhibitions, competitions (like Olympiads), and hands-on projects. Those experiences build real confidence and look amazing on college applications later on.`;
+  }
+
+  // ── 10. "What tools and technologies should I learn?" ─────────────────
+  if (
+    query.includes("tool") ||
+    query.includes("technology") ||
+    query.includes("technologies") ||
+    query.includes("tech stack")
+  ) {
+    const tools = career.toolsTechnologies?.slice(0, 4) || [];
+    if (tools.length === 0) {
+      return `For **${career.title}**, you'll typically use specialized tools for observation, data recording, and analysis. In school, getting comfortable with spreadsheets and basic computer tools is a great first step!`;
+    }
+
+    return `For **${career.title}**, here are some of the most useful tools to get familiar with:\n\n${tools.map((t) => `- **${t}**`).join("\n")}\n\nIn Class 9–10, you don't need to master all of them right away — just exploring beginner tutorials or spreadsheets is a great way to start!`;
+  }
+
+  // ── 11. "After completing this milestone?" ────────────────────────────
   if (
     query.includes("after completing this milestone") ||
     query.includes("after this milestone") ||
@@ -562,150 +585,29 @@ Here is a side-by-side breakdown of how your current track compares with **${com
     const nextMilestoneInSeq = currentIndex >= 0 && currentIndex < allMilestones.length - 1
       ? allMilestones[currentIndex + 1]
       : null;
-
     const nextTitle = nextMilestoneInSeq?.title || `Phase ${roadmap.currentPhaseNumber + 1} Specialization`;
-    const nextReason = nextMilestoneInSeq?.relevance.reason || "Advancing toward applied project execution";
-    const nextHours = nextMilestoneInSeq?.estimatedEffort.hours || 15;
 
-    return `### 🏁 What to Do After Completing **${currentMilestoneTitle}**
-
-Once you finish your active milestone, follow this checklist to lock in your progress:
-
-#### 1. Completion & Verification Checklist:
-- [ ] **Document & Archive**: Save your notes, project artifacts, or summary to your portfolio or repository.
-- [ ] **Mark Done on Dashboard**: Toggle this milestone or task in your dashboard to immediately increase your Roadmap Progress (currently **${roadmap.phaseProgressPercent}%**).
-- [ ] **Check Skill Matrix**: If this milestone covered **${skills.priorityGaps[0]?.name || "core skills"}**, toggle it to **Mastered**.
-
-#### 2. Your Next Sequential Milestone: **${nextTitle}**
-- **Why this is next**: ${nextReason}
-- **Estimated Effort**: ~\`${nextHours} hours\`
-- **What this unblocks**: Fulfills prerequisite competency for upcoming applied portfolio deliverables.
-
-> 🚀 **Keep the momentum going**: Take a short break, then preview the core objectives of **${nextTitle}** before your next study session!`;
+    return `Once you complete **${currentMilestoneTitle}**, make sure to toggle it as done on your roadmap to track your progress!\n\nYour next milestone after that will be **${nextTitle}**. Take a short break, review what you learned, and then dive into the next phase when you're ready!`;
   }
 
-  // ── 8. "What should I do today?" ─────────────────────────────────────
-  if (
-    query.includes("what should i do today") ||
-    query.includes("what to do today") ||
-    query.includes("today")
-  ) {
-    const topGap = skills.priorityGaps[0];
-    const primaryRec = recommendations?.primaryRecommendation;
-    const actionTitle = primaryRec?.title || nextAction.title;
-    const actionReason = primaryRec?.reason || nextAction.reasoning;
-    const actionEffort = primaryRec?.estimatedEffort || nextAction.estimatedTime;
-
-    return `### 🎯 Your Focus for Today
-
-Based on your current progress in **${career.title}**, here is your highest-leverage plan:
-
-1. **Primary Objective**: **${actionTitle}**
-   - **Rationale**: ${actionReason}
-   - **Time Commitment**: \`${actionEffort}\`
-   ${primaryRec?.sourceContext ? `- **Why Recommended**: ${primaryRec.sourceContext}` : ""}
-
-2. **Skill Gap Workout**:
-   ${topGap ? `- Dedicate 30–45 minutes to **${topGap.name}** (${topGap.category}). ${topGap.whyItMatters}` : "- Spend 30 minutes practicing exercises from your active phase."}
-
-3. **Weekly Velocity**:
-   - You're on track at **${studyPace.weeklyHours} hrs/week** targeting readiness by **${studyPace.targetMonthYear}**. Completing today's task pushes your Readiness Score past **${readiness.overallScore}%**.
-
-> **Quick Action**: Head to your active phase in the roadmap and mark off the current concepts once you've reviewed them!`;
-  }
-
-  // ── 9. "Am I ready for internships?" ─────────────────────────────────
-  if (
-    query.includes("ready for internship") ||
-    query.includes("internship") ||
-    query.includes("ready for a job")
-  ) {
-    const isReady = jobPrep.isInternshipReady;
-    const completedProjectsCount = projects.completed.length;
-
-    if (isReady) {
-      return `### 🚀 Internship Readiness Assessment: **Ready to Apply!**
-
-Great news! Your profile currently shows strong readiness for introductory internships in **${career.title}**:
-
-- **Readiness Index**: **${readiness.overallScore}%** (Level ${readiness.tierLevel}: ${readiness.tierName})
-- **Portfolio Proof**: You have built **${completedProjectsCount} practical projects**, giving evaluators verifiable work to review.
-- **Foundations**: You have completed **${roadmap.phaseProgressPercent}%** of the core curriculum.
-
-#### What to do this week:
-1. **Polish your Portfolio & Artifacts**: Ensure your top project (**${projects.completed[0] || "Capstone"}**) has a clear description, methodology, and outcome summary.
-2. **Apply to 3–5 early-career / student roles** highlighting your verified competencies (${skills.mastered.slice(0, 3).join(", ") || "core tools"}).
-3. **Practice domain-specific problem solving** for interview screening rounds.`;
-    }
-
-    return `### 📋 Internship Readiness Assessment: **In Progress (${readiness.overallScore}%)**
-
-You are currently at **Level ${readiness.tierLevel}: ${readiness.tierName}**. While you've made meaningful progress, you aren't quite ready for technical interviews yet. Here is exactly what is missing:
-
-1. **Portfolio Proof (Current: ${completedProjectsCount} projects built)**:
-   - Evaluators need to see at least 1–2 complete, functional projects or verified case studies.
-   - **Next Target**: Build **${projects.nextToBuild?.title || "your first capstone project"}** (${projects.nextToBuild?.difficulty || "beginner"}).
-
-2. **Core Skill Gap**:
-   ${skills.priorityGaps.length > 0 ? `- You still have gaps in **${skills.priorityGaps.map((g) => g.name).join(" & ")}**. Closing these is critical before technical screening calls.` : "- Complete verification for your remaining domain skills."}
-
-3. **Next Level Milestone**:
-   - ${readiness.nextTierRequirement}
-
-> **Bottom Line**: Focus on shipping **${projects.nextToBuild?.title || "Project 1"}**. That will unlock internship eligibility!`;
-  }
-
-  // ── 10. "How can I improve my readiness score?" ──────────────────────
+  // ── 12. "How to improve skills / readiness?" ──────────────────────────
   if (
     query.includes("improve my readiness") ||
     query.includes("readiness score") ||
-    query.includes("increase score")
+    query.includes("increase score") ||
+    query.includes("improve my skills") ||
+    query.includes("strengthen my profile")
   ) {
-    return `### 📈 How to Boost Your Readiness Score (Currently ${readiness.overallScore}%)
+    const topGap = skills.priorityGaps[0]?.name || "foundation skills";
+    const proj = projects.nextToBuild?.title || "your next hands-on project";
 
-Your Career Readiness Index is calculated across **3 transparent pillars**. Here is the fastest path to gain points right now:
-
-1. **Portfolio & Proof (+15–25 pts)** — *Highest Yield!*
-   - Build **${projects.nextToBuild?.title || "your next capstone project"}**. Checking off this project delivers an immediate jump in your Portfolio score (currently ${readiness.portfolioScore}%).
-
-2. **Skill Mastery (+10–15 pts)**:
-   ${skills.priorityGaps[0] ? `- Master and verify **${skills.priorityGaps[0].name}** in the Skill Matrix on your dashboard.` : "- Verify all remaining core skills in your active phase."}
-
-3. **Foundations (+10 pts)**:
-   - Complete the remaining tasks in **Phase ${roadmap.currentPhaseNumber}** (${roadmap.currentPhaseTitle}).
-
-> **Next Tier Target**: Reaching **${readiness.tierLevel < 4 ? "Level " + (readiness.tierLevel + 1) : "Maximum Mastery"}** requires: *${readiness.nextTierRequirement}*`;
+    return `Here are the top two ways to build your skills right now:\n\n1. **Practice Key Skills**: Work on **${topGap}** using exercises from your current roadmap phase.\n2. **Build Hands-On Projects**: Start working on **${proj}** to put what you've learned into practice.\n\nCompleting hands-on projects is the single best way to prove your abilities!`;
   }
 
-  // ── 11. "What tools and technologies should I learn?" ────────────────
-  if (
-    query.includes("tool") ||
-    query.includes("technology") ||
-    query.includes("technologies") ||
-    query.includes("tech stack")
-  ) {
-    const tools = career.toolsTechnologies || [];
-    return `### 🛠️ Key Tools & Technologies for **${career.title}**
+  // ── 13. General Conversational Fallback ───────────────────────────────
+  const matchStr = career.matchPercentage && career.matchPercentage > 0
+    ? ` (${Math.round(career.matchPercentage)}% match)`
+    : "";
 
-Industry standards prioritize mastering the following tools and technologies:
-
-${tools.length > 0 ? tools.map((t, idx) => `${idx + 1}. **${t}**`).join("\n") : "- Industry-standard software and development suites"}
-
-#### How to prioritize them:
-1. **Focus on your current phase**: In **Phase ${roadmap.currentPhaseNumber} (${roadmap.currentPhaseTitle})**, get hands-on experience by building your milestone projects with these tools.
-2. **Portfolio Integration**: Highlight these specific tools in your project READMEs so recruiters can verify your technical fluency.`;
-  }
-
-  // ── 12. General / Free-form Query Fallback ───────────────────────────
-  return `### 🧭 Career Compass Guidance for ${career.title}
-
-Regarding your question about **"${userQuery}"**:
-
-In the context of your journey as an aspiring **${career.title}** (currently **Level ${readiness.tierLevel}: ${readiness.tierName}**, **${readiness.overallScore}% Readiness**):
-
-- **Current Stage**: You are actively progressing through **Phase ${roadmap.currentPhaseNumber}: ${roadmap.currentPhaseTitle}**.
-- **Key Bottleneck**: ${skills.priorityGaps[0] ? `Make sure to build solid competence in **${skills.priorityGaps[0].name}**.` : "Maintain consistent weekly project cadence."}
-- **Immediate Recommended Action**: **${nextAction.title}** (${nextAction.estimatedTime}).
-
-> Feel free to ask me to drill into any specific technical concept, compare careers, explain what project to build, or plan your study month!`;
+  return `Since you're exploring **${career.title}**${matchStr}, I can help you understand what this career involves, what skills you need, or what to study after 10th.\n\nWhat specifically would you like to explore?`;
 }

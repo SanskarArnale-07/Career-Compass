@@ -130,7 +130,7 @@ export function resolveRoleRoadmap({
 }: ResolveRoleRoadmapParams): ComposedRoleRoadmap {
   let resolvedPathSlug = (pathSlug || "").trim();
   let resolvedSpecId = (specId || "").trim() || undefined;
-  let resolvedRoleId = (roleId || "").trim() || undefined;
+  const resolvedRoleId = (roleId || "").trim() || undefined;
 
   // 1. If roleId is provided, attempt to infer missing pathSlug or specId from the career registry
   if (resolvedRoleId) {

@@ -2,8 +2,8 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Search, X, Layers, Briefcase, User } from "lucide-react";
-import { getCareerIcon } from "@/lib/career-icons";
+import { ArrowRight, Search, X, Layers, User } from "lucide-react";
+import { getCareerIcon, getSpecializationIcon } from "@/lib/career-icons";
 import {
   getAllCareerPaths,
   CAREER_DOMAINS,
@@ -337,7 +337,7 @@ const GROUP_META: Record<
     description: "Matched career directions",
   },
   Specializations: {
-    icon: Briefcase,
+    icon: Layers,
     description: "Matched areas of focus",
   },
   Roles: {
@@ -538,6 +538,7 @@ function SpecializationCard({
 }) {
   const url =
     targetRoadmapUrl || `/career/${path.slug}?tab=roadmap&spec=${spec.id}#roadmap`;
+  const SpecIcon = getSpecializationIcon(spec.id, path.slug);
 
   return (
     <Link
@@ -547,7 +548,7 @@ function SpecializationCard({
       <div>
         <div className="flex items-center justify-between mb-3.5">
           <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 group-hover:bg-primary/15 transition-all shrink-0">
-            <Briefcase className="h-5 w-5" />
+            <SpecIcon className="h-5 w-5" />
           </div>
           <span className="text-xs font-mono text-muted-foreground bg-[#141920] border border-border/50 rounded-full px-2.5 py-0.5 shrink-0 truncate max-w-[140px]">
             {path.name}

@@ -2,9 +2,10 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { CheckCircle2, Briefcase, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCareerHierarchy } from "@/lib/career-hierarchy";
+import { getSpecializationIcon } from "@/lib/career-icons";
 import type { CareerMatch } from "@/lib/types/assessment";
 
 interface ProgressiveHierarchyProps {
@@ -46,6 +47,10 @@ export function ProgressiveHierarchy({
     );
   }, [specializations, selectedSpecId]);
 
+  const ActiveSpecIcon = useMemo(() => {
+    return activeSpec && hierarchy ? getSpecializationIcon(activeSpec.id, hierarchy.path.slug) : null;
+  }, [activeSpec, hierarchy]);
+
   if (!hierarchy) return null;
 
   return (
@@ -70,6 +75,7 @@ export function ProgressiveHierarchy({
           <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 items-stretch">
             {specializations.map((spec) => {
               const isSelected = activeSpec?.id === spec.id;
+              const SpecIcon = getSpecializationIcon(spec.id, hierarchy.path.slug);
               return (
                 <button
                   key={spec.id}
@@ -83,7 +89,8 @@ export function ProgressiveHierarchy({
                 >
                   <div className="flex flex-col flex-1">
                     <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                      <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">
+                      <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold flex items-center gap-1.5">
+                        <SpecIcon className="h-3.5 w-3.5 text-cyan-400/80" />
                         Career Area
                       </span>
                       {isSelected && (
@@ -138,7 +145,7 @@ export function ProgressiveHierarchy({
               className="w-full flex flex-col items-center"
             >
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs font-mono text-cyan-400 mb-2">
-                <Briefcase className="h-3.5 w-3.5 text-cyan-400" />
+                {ActiveSpecIcon && <ActiveSpecIcon className="h-3.5 w-3.5 text-cyan-400" />}
                 <span>CAREERS YOU COULD EXPLORE</span>
               </div>
               <h3 className="font-heading text-xl sm:text-2xl font-bold text-white tracking-tight mb-2 text-center">

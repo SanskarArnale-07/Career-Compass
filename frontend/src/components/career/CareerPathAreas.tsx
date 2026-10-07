@@ -3,7 +3,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import {
   CheckCircle2,
-  Briefcase,
   ArrowRight,
   Sparkles,
   Map,
@@ -18,6 +17,7 @@ import {
   type CareerRole,
 } from "@/lib/career-hierarchy";
 import type { CareerIntelligence } from "@/lib/career-intelligence";
+import { getSpecializationIcon } from "@/lib/career-icons";
 
 interface CareerPathAreasProps {
   career: CareerIntelligence;
@@ -70,6 +70,10 @@ export function CareerPathAreas({
       null
     );
   }, [specializations, selectedSpecId]);
+
+  const ActiveSpecIcon = useMemo(() => {
+    return activeSpec && hierarchy ? getSpecializationIcon(activeSpec.id, hierarchy.path.slug) : Layers;
+  }, [activeSpec, hierarchy]);
 
   if (!hierarchy || specializations.length === 0) return null;
 
@@ -130,9 +134,15 @@ export function CareerPathAreas({
               >
                 <div className="flex flex-col flex-1">
                   <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                    <span className="text-xs font-mono uppercase tracking-wider text-primary font-semibold">
-                      Specialization
-                    </span>
+                    {(() => {
+                      const SpecItemIcon = getSpecializationIcon(spec.id, hierarchy.path.slug);
+                      return (
+                        <span className="text-xs font-mono uppercase tracking-wider text-primary font-semibold flex items-center gap-1.5">
+                          <SpecItemIcon className="h-3.5 w-3.5" />
+                          Specialization
+                        </span>
+                      );
+                    })()}
                     {isSelected && (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-mono font-bold uppercase bg-primary/20 text-primary border border-primary/40 shrink-0">
                         <CheckCircle2 className="h-3 w-3" />
@@ -188,7 +198,7 @@ export function CareerPathAreas({
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3.5 border-b border-border/50">
               <div className="flex items-start gap-2.5">
                 <div className="h-8 w-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
-                  <Briefcase className="h-4 w-4" />
+                  <ActiveSpecIcon className="h-4 w-4" />
                 </div>
                 <div>
                   <h3 className="font-heading text-base sm:text-lg font-bold text-foreground">

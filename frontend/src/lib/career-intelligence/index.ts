@@ -9,6 +9,7 @@ import {
   CAREER_NAME_TO_ID,
 } from "./registry";
 import { getAllCareerPaths, getCareerHierarchy } from "../career-hierarchy";
+import { getCareerIconName } from "../career-icons";
 import type {
   CareerIntelligence,
   EducationPathway,
@@ -114,7 +115,7 @@ function buildCareerIntelligenceFromHierarchy(
 
   // Snapshot cards
   const snapshot: SnapshotItem[] = [
-    { label: "Specializations", value: `${path.specializations.length} Areas`, icon: "Briefcase" },
+    { label: "Specializations", value: `${path.specializations.length} Areas`, icon: "Layers" },
     { label: "Career Roles", value: `${allRoles.length} Distinct Roles`, icon: "Users" },
     { label: "Domain Focus", value: domain.name, icon: "GraduationCap" },
     { label: "Hiring Demand", value: "High Growth", icon: "TrendingUp" },
@@ -293,7 +294,7 @@ function buildCareerIntelligenceFromHierarchy(
     tagline: path.tagline,
     description: path.tagline,
     category: domain.name,
-    icon: path.slug === "cybersecurity" ? "Shield" : "Briefcase",
+    icon: getCareerIconName(path.slug),
     primaryTraits: ["TI", "AC", "PS"],
     snapshot,
     skills,

@@ -6,7 +6,7 @@ export const financeInvestment: CareerDetail = {
   title: "Finance & Investment Professional",
   tagline: "Manage money, assess risk, and grow wealth across markets and institutions.",
   category: "Business & Finance",
-  icon: "DollarSign",
+  icon: "ChartNoAxesCombined",
   primaryTraits: ["BU", "AN"],
   relatedSlugs: ["entrepreneurship", "management-product", "ai-ml-data-science"],
 

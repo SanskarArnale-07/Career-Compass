@@ -78,7 +78,8 @@ export default function CoachPage() {
 
 I'm synced with your actual progress toward becoming a **${initialContext.career.title}**.
 
-- **Current Readiness**: **${initialContext.readiness.overallScore}%** (Level ${initialContext.readiness.tierLevel}: ${initialContext.readiness.tierName})
+- **Target Career**: **${initialContext.career.title}**${initialContext.career.matchPercentage && initialContext.career.matchPercentage > 0 ? ` (${initialContext.career.matchPercentage}% match)` : ""}
+- **Progression Stage**: Level ${initialContext.readiness.tierLevel} (${initialContext.readiness.tierName})
 - **Active Phase**: **Phase ${initialContext.roadmap.currentPhaseNumber}: ${initialContext.roadmap.currentPhaseTitle}**
 - **Recommended Next Step**: **${initialContext.nextAction.title}**
 

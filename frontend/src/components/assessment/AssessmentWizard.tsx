@@ -258,7 +258,7 @@ export function AssessmentWizard() {
                 {completionStep >= 1 ? <Check className="h-3 w-3 stroke-[2.5]" /> : "1"}
               </div>
               <span className="text-xs sm:text-sm font-medium">
-                Responses collected (20 of 20)
+                Responses collected ({Math.min(Object.keys(answers).length || assessmentQuestions.length, assessmentQuestions.length)} of {assessmentQuestions.length})
               </span>
             </div>
 

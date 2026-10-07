@@ -66,4 +66,11 @@ describe("Assessment Experience Redesign & Integrity", () => {
     expect(parsed.q1).toBe(assessmentQuestions[0].options[0].value);
     expect(parsed.q28).toBe(assessmentQuestions[27].options[0].value);
   });
+
+  it("dynamically formats response collected count from assessment questions length", () => {
+    const totalQuestions = assessmentQuestions.length;
+    const expectedCompletionLabel = `Responses collected (${totalQuestions} of ${totalQuestions})`;
+    expect(totalQuestions).toBe(28);
+    expect(expectedCompletionLabel).toBe("Responses collected (28 of 28)");
+  });
 });

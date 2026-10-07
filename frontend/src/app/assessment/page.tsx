@@ -91,7 +91,7 @@ export default function AssessmentIntroPage() {
         <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10141A] border border-border/80 text-xs font-mono font-medium text-foreground">
             <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-            <span>28 Questions</span>
+            <span>{assessmentQuestions.length} Questions</span>
           </div>
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10141A] border border-border/80 text-xs font-mono font-medium text-foreground">

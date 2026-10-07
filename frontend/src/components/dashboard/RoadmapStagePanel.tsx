@@ -92,6 +92,13 @@ const RESOURCE_TYPE_STYLE: Record<
   },
 };
 
+// ── Helper: Format Duration for Student-Age Guidance ──────────────────
+function formatDuration(duration: string): string {
+  return duration
+    .replace(/Ongoing\s*\([Cc]lass\s*11[-–]12\)/gi, "Foundations (Prep for Class 11–12)")
+    .replace(/\([Cc]lass\s*11[-–]12\)/gi, "(Prep for Class 11–12)");
+}
+
 // ── Skill Drawer ──────────────────────────────────────────────────────
 
 interface SkillDrawerProps {
@@ -101,7 +108,9 @@ interface SkillDrawerProps {
   phasePractice: string[];
   phaseResources: LearningResource[];
   isCompleted: boolean;
-  onToggle: () => void;
+  isOpen: boolean;
+  onToggleOpen: () => void;
+  onToggleMastery: () => void;
 }
 
 function SkillDrawer({
@@ -111,26 +120,24 @@ function SkillDrawer({
   phasePractice,
   phaseResources,
   isCompleted,
-  onToggle,
+  isOpen,
+  onToggleOpen,
+  onToggleMastery,
 }: SkillDrawerProps) {
-  const [open, setOpen] = useState(false);
-
   const resources = getSkillResources(skillName, phaseResources);
 
   // Derive 2-3 contextual "learn" tasks from the phase's learn array
-  // We cycle through them per skill index to give variety
   const learnTasks = phaseLearn.slice(0, 3);
   const practiceTasks = phasePractice.slice(0, 2);
 
-  const typeStyle =
-    RESOURCE_TYPE_STYLE["course"]; // default fallback
+  const typeStyle = RESOURCE_TYPE_STYLE["course"]; // default fallback
 
   return (
     <div
-      className={`rounded-xl border transition-all duration-200 ${
+      className={`rounded-xl border transition-all duration-200 w-full ${
         isCompleted
           ? "border-border/70 bg-[#10141A]"
-          : open
+          : isOpen
           ? "border-primary/35 bg-[#141920]"
           : "border-border/60 bg-[#10141A] hover:border-primary/25 hover:bg-[#141920]"
       }`}
@@ -138,8 +145,8 @@ function SkillDrawer({
       {/* Skill Header Row */}
       <button
         type="button"
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-3.5 py-2.5 gap-3 cursor-pointer select-none text-left"
+        onClick={onToggleOpen}
+        className="w-full flex items-center justify-between px-3.5 py-3 gap-3 cursor-pointer select-none text-left"
       >
         <div className="flex items-center gap-2.5 min-w-0">
           {/* Completion toggle */}
@@ -147,20 +154,20 @@ function SkillDrawer({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onToggle();
+              onToggleMastery();
             }}
-            className="shrink-0 transition-transform active:scale-90"
-            title={isCompleted ? "Mark as in-progress" : "Mark as mastered"}
+            className="shrink-0 transition-transform active:scale-90 cursor-pointer"
+            title={isCompleted ? "Mark as in-progress" : "Mark complete"}
           >
             {isCompleted ? (
-              <CheckCircle2 className="h-4 w-4 text-primary/70 fill-primary/10" />
+              <CheckCircle2 className="h-4 w-4 text-emerald-400 fill-emerald-500/10" />
             ) : (
               <Circle className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
             )}
           </button>
 
           <span
-            className={`text-xs font-medium leading-snug truncate transition-colors ${
+            className={`text-xs sm:text-sm font-medium leading-snug truncate transition-colors ${
               isCompleted
                 ? "text-muted-foreground line-through"
                 : "text-foreground"
@@ -171,14 +178,9 @@ function SkillDrawer({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {open && (
-            <span className="text-[10px] font-mono text-muted-foreground hidden sm:inline">
-              {resources.length} resource{resources.length !== 1 ? "s" : ""}
-            </span>
-          )}
           <ChevronDown
             className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${
-              open ? "rotate-180 text-primary" : ""
+              isOpen ? "rotate-180 text-primary" : ""
             }`}
           />
         </div>
@@ -186,7 +188,7 @@ function SkillDrawer({
 
       {/* Skill Drawer Content */}
       <AnimatePresence initial={false}>
-        {open && (
+        {isOpen && (
           <motion.div
             key={`drawer-${sid}`}
             initial={{ height: 0, opacity: 0 }}
@@ -195,57 +197,69 @@ function SkillDrawer({
             transition={{ duration: 0.22, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-3.5 pb-4 pt-1 border-t border-border/50 space-y-4">
-              {/* Learn Tasks */}
+            <div className="px-4 pb-4 pt-2 border-t border-border/50 space-y-4">
+              {/* Step 1: WHAT TO LEARN */}
               {learnTasks.length > 0 && (
-                <div>
-                  <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
-                    <Lightbulb className="h-3 w-3 text-sky-400" />
-                    What to learn
-                  </p>
-                  <ul className="space-y-1.5">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-sky-500/15 text-[10px] font-mono font-bold text-sky-400">
+                      1
+                    </span>
+                    <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-400">
+                      What to Learn
+                    </p>
+                  </div>
+                  <ul className="space-y-1.5 pl-6 border-l border-sky-500/20 ml-2">
                     {learnTasks.map((item, i) => (
                       <li
                         key={i}
                         className="flex items-start gap-2 text-xs text-secondary-foreground leading-relaxed"
                       >
-                        <ArrowRight className="h-3 w-3 text-primary shrink-0 mt-0.5" />
-                        {item}
+                        <ArrowRight className="h-3 w-3 text-sky-400 shrink-0 mt-0.5" />
+                        <span>{item}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {/* Practice Tasks */}
+              {/* Step 2: HOW TO PRACTICE */}
               {practiceTasks.length > 0 && (
-                <div>
-                  <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
-                    <Wrench className="h-3 w-3 text-primary" />
-                    How to practice
-                  </p>
-                  <ul className="space-y-1.5">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary/15 text-[10px] font-mono font-bold text-primary">
+                      2
+                    </span>
+                    <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-primary">
+                      How to Practice
+                    </p>
+                  </div>
+                  <ul className="space-y-1.5 pl-6 border-l border-primary/20 ml-2">
                     {practiceTasks.map((item, i) => (
                       <li
                         key={i}
                         className="flex items-start gap-2 text-xs text-secondary-foreground leading-relaxed"
                       >
                         <ArrowRight className="h-3 w-3 text-primary shrink-0 mt-0.5" />
-                        {item}
+                        <span>{item}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
 
-              {/* Resources */}
+              {/* Step 3: RESOURCES */}
               {resources.length > 0 && (
-                <div>
-                  <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
-                    <BookOpen className="h-3 w-3 text-primary" />
-                    Curated resources
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-indigo-500/15 text-[10px] font-mono font-bold text-indigo-400">
+                      3
+                    </span>
+                    <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-indigo-400">
+                      Curated Resources
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-6 border-l border-indigo-500/20 ml-2">
                     {resources.map((res) => {
                       const style =
                         RESOURCE_TYPE_STYLE[res.type] || typeStyle;
@@ -255,13 +269,13 @@ function SkillDrawer({
                           href={res.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-start justify-between gap-2 p-2.5 rounded-lg border border-border/60 bg-card hover:border-primary/40 hover:bg-card-hover transition-colors group"
+                          className="flex items-center justify-between gap-3 p-2.5 rounded-lg border border-border/60 bg-[#10141A] hover:border-primary/40 hover:bg-[#141920] transition-colors group"
                         >
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
                             <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors leading-snug truncate">
                               {res.name}
                             </p>
-                            <div className="flex items-center gap-1.5 mt-1">
+                            <div className="flex items-center gap-2 mt-1">
                               <span
                                 className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold uppercase border ${style.bg} ${style.text} ${style.border}`}
                               >
@@ -272,7 +286,7 @@ function SkillDrawer({
                               </span>
                             </div>
                           </div>
-                          <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary shrink-0 mt-0.5" />
+                          <ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />
                         </a>
                       );
                     })}
@@ -280,10 +294,14 @@ function SkillDrawer({
                 </div>
               )}
 
-              {/* Mark skill button */}
-              <div className="pt-1">
+              {/* Mark Complete button */}
+              <div className="pt-1 pl-2">
                 <button
-                  onClick={onToggle}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleMastery();
+                  }}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     isCompleted
                       ? "border border-border bg-card text-muted-foreground hover:text-foreground"
@@ -291,7 +309,7 @@ function SkillDrawer({
                   }`}
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  {isCompleted ? "Mark as In Progress" : "Mark as Mastered"}
+                  {isCompleted ? "Mark Incomplete" : "Mark Complete"}
                 </button>
               </div>
             </div>
@@ -315,26 +333,27 @@ export default function RoadmapStagePanel({
   onToggleSkill,
 }: RoadmapStagePanelProps) {
   const [isExpanded, setIsExpanded] = useState(isActive);
+  const [expandedSkillId, setExpandedSkillId] = useState<string | null>(null);
 
-  // Sync expand state when parent changes isActive (e.g. after progress loads)
+  // Sync expand state when parent changes isActive (e.g. after progress loads or stage selection)
   useEffect(() => {
-    if (isActive) setIsExpanded(true);
+    setIsExpanded(isActive);
   }, [isActive]);
 
   const skillsCompleted = phase.skills.filter((s) =>
     completedSkills.has(skillId(phase.title, s))
   ).length;
 
-  const isLocked = !isCompleted && phaseIndex > 0 && false; // phases are not locked — all accessible
-
   return (
     <motion.div
       layout
       className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
         isCompleted
-          ? "border-border/70 bg-card/60"
+          ? "border-border/60 bg-card/40 opacity-95"
+          : isActive && !isCompleted
+          ? "border-primary/40 bg-card ring-1 ring-primary/20 shadow-lg shadow-primary/5 border-l-4 border-l-primary"
           : isExpanded
-          ? "border-primary/35 bg-card shadow-md shadow-primary/5"
+          ? "border-primary/30 bg-card shadow-md shadow-primary/5"
           : "border-border bg-card hover:border-primary/25"
       }`}
     >
@@ -356,31 +375,50 @@ export default function RoadmapStagePanel({
             title={isCompleted ? "Mark as in-progress" : "Mark stage complete"}
           >
             {isCompleted ? (
-              <CheckCircle2 className="h-5 w-5 text-primary/70 fill-primary/10" />
+              <CheckCircle2 className="h-5 w-5 text-emerald-400 fill-emerald-500/10" />
             ) : (
               <Circle className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
             )}
           </button>
 
+          {/* Consistent Stage Numbering Badge */}
+          <div
+            className={`w-8 h-8 rounded-lg flex items-center justify-center font-heading font-bold text-xs shrink-0 transition-colors ${
+              isCompleted
+                ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-400"
+                : isActive
+                ? "bg-primary/15 border border-primary/30 text-primary"
+                : "bg-muted/40 border border-border/80 text-muted-foreground"
+            }`}
+          >
+            {isCompleted ? "✓" : `0${phase.phase}`}
+          </div>
+
           <div className="min-w-0">
             {/* Stage meta row */}
             <div className="flex flex-wrap items-center gap-2 mb-0.5">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-                Stage {phase.phase} of {totalPhases}
+              <span
+                className={`text-[10px] font-mono font-semibold uppercase tracking-wider ${
+                  isActive && !isCompleted
+                    ? "text-primary flex items-center gap-1.5"
+                    : isCompleted
+                    ? "text-emerald-400"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {isActive && !isCompleted && (
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                )}
+                {isCompleted
+                  ? `Stage ${phase.phase} Complete`
+                  : isActive
+                  ? `Active Journey • Stage ${phase.phase} of ${totalPhases}`
+                  : `Next Up • Stage ${phase.phase} of ${totalPhases}`}
               </span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono bg-primary/10 text-primary border border-primary/20">
-                {phase.estimatedDuration}
+              <span className="text-[10px] font-mono text-muted-foreground">•</span>
+              <span className="text-[10px] font-mono text-muted-foreground">
+                {formatDuration(phase.estimatedDuration)}
               </span>
-              {isActive && !isCompleted && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 text-[10px] font-mono font-semibold text-primary">
-                  ● Active
-                </span>
-              )}
-              {isCompleted && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#141920] border border-border/80 text-[10px] font-mono text-muted-foreground">
-                  ✓ Complete
-                </span>
-              )}
             </div>
 
             {/* Stage title */}
@@ -396,10 +434,10 @@ export default function RoadmapStagePanel({
           </div>
         </div>
 
-        {/* Right side — skill progress + chevron */}
+        {/* Right side — completed counter + chevron */}
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[10px] font-mono text-muted-foreground hidden sm:inline">
-            {skillsCompleted}/{phase.skills.length} skills
+          <span className="text-[11px] font-mono text-muted-foreground hidden sm:inline">
+            {skillsCompleted}/{phase.skills.length} completed
           </span>
           <ChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
@@ -425,13 +463,19 @@ export default function RoadmapStagePanel({
                 {phase.description}
               </p>
 
-              {/* Skill list with progressive disclosure */}
+              {/* Skills in this stage — stacked full-width layout */}
               {phase.skills.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                    Skills in this stage — click to explore
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+                      Skills in this stage — click to explore
+                    </p>
+                    <span className="text-[10px] font-mono text-muted-foreground sm:hidden">
+                      {skillsCompleted}/{phase.skills.length} completed
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5">
                     {phase.skills.map((skillName) => {
                       const sid = skillId(phase.title, skillName);
                       return (
@@ -443,7 +487,11 @@ export default function RoadmapStagePanel({
                           phasePractice={phase.practice}
                           phaseResources={phase.resources}
                           isCompleted={completedSkills.has(sid)}
-                          onToggle={() => onToggleSkill(sid)}
+                          isOpen={expandedSkillId === sid}
+                          onToggleOpen={() =>
+                            setExpandedSkillId((prev) => (prev === sid ? null : sid))
+                          }
+                          onToggleMastery={() => onToggleSkill(sid)}
                         />
                       );
                     })}
@@ -451,20 +499,37 @@ export default function RoadmapStagePanel({
                 </div>
               )}
 
-              {/* Milestone project */}
+              {/* Step 4: Milestone project */}
               {phase.build && (
-                <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20">
-                  <p className="text-[10px] font-mono font-semibold text-primary uppercase tracking-wider mb-1">
-                    Stage Milestone Project
-                  </p>
-                  <p className="text-xs text-foreground font-medium leading-relaxed">
+                <div className="p-4 rounded-xl bg-amber-500/[0.04] border border-amber-500/20 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500/15 text-[10px] font-mono font-bold text-amber-400">
+                      4
+                    </span>
+                    <p className="text-[11px] font-mono font-semibold text-amber-400 uppercase tracking-wider">
+                      Stage Milestone Project
+                    </p>
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground font-medium leading-relaxed pl-6">
                     {phase.build}
                   </p>
                 </div>
               )}
 
-              {/* Mark stage complete button */}
-              <div className="flex justify-end pt-1">
+              {/* Next stage teaser & Mark stage complete button */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-border/40">
+                <div className="text-xs text-muted-foreground">
+                  {phase.phase < totalPhases ? (
+                    <span className="font-mono text-[11px] text-muted-foreground">
+                      Up next: Stage {phase.phase + 1} of {totalPhases}
+                    </span>
+                  ) : (
+                    <span className="font-mono text-[11px] text-emerald-400">
+                      Final Stage • Advanced Foundations & Projects
+                    </span>
+                  )}
+                </div>
+
                 <button
                   onClick={() => onTogglePhase(phase.phase)}
                   className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
@@ -474,7 +539,7 @@ export default function RoadmapStagePanel({
                   }`}
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  {isCompleted ? "Mark as Incomplete" : "Mark Stage Complete"}
+                  {isCompleted ? "Mark Stage Incomplete" : "Mark Stage Complete"}
                 </button>
               </div>
             </div>

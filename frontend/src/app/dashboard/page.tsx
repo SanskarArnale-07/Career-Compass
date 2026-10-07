@@ -379,7 +379,7 @@ export default function DashboardPage() {
         <div className="flex flex-col items-center gap-3">
           <div className="h-9 w-9 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
           <p className="text-xs text-muted-foreground animate-pulse">
-            Loading your personal learning command center...
+            Loading your roadmap...
           </p>
         </div>
       </div>
@@ -622,7 +622,7 @@ export default function DashboardPage() {
             </Link>
             <span className="text-border">|</span>
             <span className="text-xs font-semibold text-primary">
-              Personal Learning Command Center
+              {career.title} Roadmap
             </span>
           </div>
 
@@ -1413,10 +1413,10 @@ export default function DashboardPage() {
                 </button>
                 <h2 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
                   <Map className="h-6 w-6 text-primary" />
-                  Detailed Learning Roadmap
+                  Your {career.title} Roadmap
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Phased curriculum from initial fundamentals to full industry readiness for {career.title}.
+                  Phased foundation journey to build core skills, practice projects, and prepare for {career.title}.
                 </p>
               </div>
 
@@ -1426,6 +1426,52 @@ export default function DashboardPage() {
                   {career.roadmap.length} Stages Complete
                 </span>
               </div>
+            </div>
+
+            {/* Subtle 3-stage progression sequence */}
+            <div className="flex items-center gap-2 p-1.5 rounded-xl bg-[#10141A] border border-border/60 overflow-x-auto text-xs">
+              {career.roadmap.map((p, i) => {
+                const isDone = completedPhases.has(p.phase);
+                const isCur = expandedPhase === p.phase;
+                return (
+                  <div key={p.phase} className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setExpandedPhase(p.phase)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                        isCur
+                          ? "bg-primary/15 text-primary border border-primary/30 font-semibold shadow-sm"
+                          : isDone
+                          ? "text-emerald-400 hover:bg-emerald-500/10 border border-transparent"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/30 border border-transparent"
+                      }`}
+                    >
+                      <span
+                        className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
+                          isCur
+                            ? "bg-primary text-primary-foreground"
+                            : isDone
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                            : "bg-muted/40 text-muted-foreground border border-border/60"
+                        }`}
+                      >
+                        {isDone ? "✓" : p.phase}
+                      </span>
+                      <span className="text-xs font-medium">
+                        Stage {p.phase}: {p.title}
+                      </span>
+                      {isCur && (
+                        <span className="hidden md:inline-block text-[9px] font-mono uppercase px-1.5 py-0.5 bg-primary/20 text-primary rounded-full">
+                          Current Focus
+                        </span>
+                      )}
+                    </button>
+                    {i < career.roadmap.length - 1 && (
+                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30 shrink-0" />
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             <div id="roadmap-phases" className="space-y-3">

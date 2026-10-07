@@ -2,6 +2,7 @@
 
 import { motion, useTransform, type MotionValue } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { assessmentQuestions } from "@/lib/assessment-data";
 import { CenterBadge, OrbitRings, SpokeLine, SpokeNode } from "../Constellation";
 import { sceneBody, sceneHeading, smallLabel } from "../typography";
 
@@ -39,7 +40,7 @@ export function SceneUnderstand({ progress }: { progress: MotionValue<number> })
           Your responses map the interests, strengths, and preferences that shape your direction.
         </p>
         <div className={`inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#10141A] border border-border/70 text-muted-foreground ${smallLabel} normal-case tracking-normal`}>
-          <span className="text-foreground font-semibold font-mono text-xs">28 Questions</span>
+          <span className="text-foreground font-semibold font-mono text-xs">{assessmentQuestions.length} Questions</span>
           <ArrowRight className="h-3 w-3 text-primary" />
           <span className="text-primary font-semibold font-mono text-xs">8 Dimensions</span>
         </div>

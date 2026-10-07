@@ -1,6 +1,6 @@
 import type { CareerDetail } from "../types";
 export const managementProduct: CareerDetail = {
-  slug: "management-product", careerName: "Management / Product Management", title: "Manager & Product Leader", tagline: "Coordinate people, strategy, and execution to build products and organizations that thrive.", category: "Business & Management", icon: "ClipboardList", primaryTraits: ["LE", "BU"], relatedSlugs: ["entrepreneurship", "marketing-media", "finance-investment"],
+  slug: "management-product", careerName: "Management / Product Management", title: "Manager & Product Leader", tagline: "Coordinate people, strategy, and execution to build products and organizations that thrive.", category: "Business & Management", icon: "Target", primaryTraits: ["LE", "BU"], relatedSlugs: ["entrepreneurship", "marketing-media", "finance-investment"],
   snapshot: [
     { label: "What You Do", value: "Define product strategy, coordinate teams, manage roadmaps, and ensure products meet user needs and business goals.", icon: "Target" },
     { label: "Entry-Level Roles", value: "Associate PM, Business Analyst, Operations Associate, Strategy Intern, Project Coordinator", icon: "Briefcase" },
