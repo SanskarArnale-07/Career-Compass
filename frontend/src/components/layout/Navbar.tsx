@@ -66,7 +66,7 @@ export function Navbar() {
         </Link>
 
         {/* Center: Editorial Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8 text-sm font-mono uppercase tracking-wider">
+        <nav className="hidden lg:flex items-center gap-7 text-xs font-mono uppercase tracking-wider">
           <Link
             href="/"
             className="text-muted-foreground hover:text-foreground transition-colors py-1 relative group"
@@ -74,13 +74,6 @@ export function Navbar() {
             <span>Home</span>
             <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
           </Link>
-          <button
-            onClick={() => document.getElementById('career-companion-trigger')?.click()}
-            className="text-muted-foreground hover:text-foreground transition-colors py-1 flex items-center gap-1.5 relative group cursor-pointer bg-transparent border-0 font-mono uppercase tracking-wider text-sm"
-          >
-            <span>Companion</span>
-            <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
-          </button>
           <Link
             href="/assessment"
             className="text-muted-foreground hover:text-primary transition-colors py-1 relative group"
@@ -90,10 +83,32 @@ export function Navbar() {
           </Link>
           <Link
             href="/careers"
-            className="text-muted-foreground/60 hover:text-muted-foreground transition-colors py-1 relative group"
+            className="text-muted-foreground hover:text-foreground transition-colors py-1 relative group"
           >
-            <span>Explore More Careers</span>
+            <span>Careers</span>
+            <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
           </Link>
+          <Link
+            href="/resources"
+            className="text-muted-foreground hover:text-foreground transition-colors py-1 relative group"
+          >
+            <span>Resources</span>
+            <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
+          </Link>
+          <Link
+            href="/research"
+            className="text-muted-foreground hover:text-foreground transition-colors py-1 relative group"
+          >
+            <span>Research</span>
+            <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
+          </Link>
+          <button
+            onClick={() => document.getElementById('career-companion-trigger')?.click()}
+            className="text-muted-foreground hover:text-foreground transition-colors py-1 flex items-center gap-1.5 relative group cursor-pointer bg-transparent border-0 font-mono uppercase tracking-wider text-xs"
+          >
+            <span>Companion</span>
+            <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full" />
+          </button>
         </nav>
 
         {/* Right: Actions & Primary CTA */}
@@ -270,10 +285,24 @@ export function Navbar() {
             </Link>
             <Link
               href="/careers"
-              className="text-muted-foreground/60 hover:text-muted-foreground transition-colors py-1.5"
+              className="text-muted-foreground hover:text-foreground transition-colors py-1.5"
               onClick={() => setMobileOpen(false)}
             >
-              Explore More Careers
+              Careers
+            </Link>
+            <Link
+              href="/resources"
+              className="text-muted-foreground hover:text-foreground transition-colors py-1.5"
+              onClick={() => setMobileOpen(false)}
+            >
+              Resources
+            </Link>
+            <Link
+              href="/research"
+              className="text-muted-foreground hover:text-foreground transition-colors py-1.5"
+              onClick={() => setMobileOpen(false)}
+            >
+              Research
             </Link>
 
             {!isAuthenticated && (

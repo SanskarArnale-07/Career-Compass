@@ -8,10 +8,17 @@ import type { ScoredTrait } from "@/lib/profile/profile-utils";
 interface TopTraitsSectionProps {
   topStrengths: ScoredTrait[];
   allTraits: ScoredTrait[];
+  limit?: number;
 }
 
-export function TopTraitsSection({ topStrengths, allTraits }: TopTraitsSectionProps) {
+export function TopTraitsSection({
+  topStrengths,
+  allTraits,
+  limit = 3,
+}: TopTraitsSectionProps) {
   const [showAll, setShowAll] = useState(false);
+  const initialStrengths = topStrengths.slice(0, limit);
+  const displayedTraits = showAll ? allTraits : initialStrengths;
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6 space-y-5">
@@ -26,7 +33,9 @@ export function TopTraitsSection({ topStrengths, allTraits }: TopTraitsSectionPr
               Strongest Traits & Cognitive Fingerprint
             </h2>
             <p className="text-xs text-muted-foreground">
-              Core psychometric aptitudes that drive your career suitability
+              {showAll
+                ? "Complete 8-dimension psychometric profile"
+                : `Top ${limit} core aptitudes that drive your career suitability`}
             </p>
           </div>
         </div>
@@ -35,14 +44,14 @@ export function TopTraitsSection({ topStrengths, allTraits }: TopTraitsSectionPr
           onClick={() => setShowAll((prev) => !prev)}
           className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:text-primary-hover font-semibold transition-colors cursor-pointer self-start sm:self-auto"
         >
-          <span>{showAll ? "Show Top Strengths" : "View All 8 Dimensions"}</span>
+          <span>{showAll ? `Show Top ${limit} Strengths` : "View All 8 Dimensions"}</span>
           {showAll ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
         </button>
       </div>
 
       {/* Primary Top Strengths Grid */}
       <div className="space-y-3.5">
-        {(showAll ? allTraits : topStrengths).map((trait) => (
+        {displayedTraits.map((trait) => (
           <div
             key={trait.code}
             className="p-3.5 rounded-xl border border-border/60 bg-[#0B0E12]/80 hover:border-border transition-colors space-y-2"

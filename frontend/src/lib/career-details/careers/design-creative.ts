@@ -6,7 +6,7 @@ export const designCreative: CareerDetail = {
   title: "Designer & Creative Artist",
   tagline: "Create visual and experiential design that shapes how people interact with the world.",
   category: "Design & Arts",
-  icon: "Palette",
+  icon: "PanelsTopLeft",
   primaryTraits: ["CR", "EX"],
   relatedSlugs: ["marketing-media", "software-development", "entrepreneurship"],
 

@@ -15,6 +15,10 @@ import {
   X,
   AlertCircle,
 } from "lucide-react";
+import {
+  trackAssessmentStarted,
+  trackAssessmentCompleted,
+} from "@/lib/analytics/tracker";
 
 interface QuestionMeta {
   dimension: string;
@@ -77,6 +81,7 @@ export function AssessmentWizard() {
 
   // ── Restore saved progress from sessionStorage on mount ───────────
   useEffect(() => {
+    trackAssessmentStarted(assessmentQuestions.length);
     try {
       const saved = sessionStorage.getItem("careerCompassAssessment");
       if (saved) {
@@ -129,6 +134,7 @@ export function AssessmentWizard() {
       // Trigger cinematic completion mapping sequence before routing
       setIsCompleting(true);
       saveAnswers(answers);
+      trackAssessmentCompleted();
 
       // Step 1: responses collected
       setCompletionStep(1);

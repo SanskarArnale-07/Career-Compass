@@ -201,7 +201,7 @@ describe("Career Results Hierarchy, Calibration & Layout Validation", () => {
   describe("Dynamic Career Count", () => {
     it("derives career count dynamically from canonical registry", () => {
       const paths = getAllCareerPaths();
-      expect(paths.length).toBe(25);
+      expect(paths.length).toBe(28);
     });
   });
 });

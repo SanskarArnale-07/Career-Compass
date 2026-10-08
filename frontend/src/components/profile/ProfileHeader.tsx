@@ -95,8 +95,12 @@ export function ProfileHeader({
             <span className="font-semibold text-primary">{persona.archetype}</span>
           </div>
 
-          {/* Concise Career Summary Box */}
-          <div className="p-4 rounded-xl bg-[#0B0E12]/80 border border-border/80 text-xs sm:text-sm text-secondary-foreground leading-relaxed">
+          {/* 1. Career Snapshot Box */}
+          <div className="p-4 rounded-xl bg-[#0B0E12]/80 border border-border/80 text-xs sm:text-sm text-secondary-foreground leading-relaxed space-y-1.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-primary font-semibold uppercase tracking-wider">
+              <Sparkles className="h-3 w-3" />
+              <span>Career Snapshot</span>
+            </div>
             <p className="text-slate-200">
               {persona.executiveSummary}
             </p>

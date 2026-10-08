@@ -284,6 +284,271 @@ export function deriveStreamSuitability(
   };
 }
 
+export interface WorkLearningStyle {
+  environmentPreference: {
+    title: string;
+    description: string;
+    tag: string;
+  };
+  problemSolvingMode: {
+    title: string;
+    description: string;
+    tag: string;
+  };
+  collaborationDynamic: {
+    title: string;
+    description: string;
+    tag: string;
+  };
+  structureVsFlexibility: {
+    title: string;
+    description: string;
+    score: number; // 0-100 (high = structured, low = flexible)
+  };
+  cognitiveDimensions: {
+    category: string;
+    insight: string;
+    actionableTip: string;
+  }[];
+}
+
+/**
+ * Derives practical work and learning style tendencies from student psychometrics.
+ */
+export function deriveWorkLearningStyle(
+  traits: TraitProfile | Record<string, number> | null | undefined
+): WorkLearningStyle {
+  const safe = traits || {};
+  const te = safe.TE ?? 50;
+  const an = safe.AN ?? 50;
+  const sc = safe.SC ?? 50;
+  const bu = safe.BU ?? 50;
+  const cr = safe.CR ?? 50;
+  const so = safe.SO ?? 50;
+  const le = safe.LE ?? 50;
+  const ex = safe.EX ?? 50;
+
+  // Environment Preference
+  let envTitle = "Structured Technical & Analytical Lab";
+  let envDesc = "Thrives in focused, distraction-free workspaces equipped with modern tooling, clear objectives, and deterministic feedback loops.";
+  let envTag = "Deep Focus & High Signal";
+
+  if (so > 65 || le > 65) {
+    envTitle = "Collaborative Team & Stakeholder Hub";
+    envDesc = "Energized by dynamic group discussions, cross-functional standups, mentorship, and high-context organizational interactions.";
+    envTag = "Interpersonal & Dynamic";
+  } else if (cr > 65 && ex > 60) {
+    envTitle = "Creative Studio & Exploratory Sandbox";
+    envDesc = "Performs at peak in open, iterative environments encouraging rapid prototyping, aesthetic experimentation, and visual ideation.";
+    envTag = "Agile & Experimental";
+  } else if (sc > 65 || an > 70) {
+    envTitle = "Research & Rigorous Investigation Workspace";
+    envDesc = "Excels when given uninterrupted time to explore source material, test empirical hypotheses, and build robust proof-of-concepts.";
+    envTag = "Empirical & Rigorous";
+  }
+
+  // Problem Solving Mode
+  let solveTitle = "Deconstructive & Algorithmic";
+  let solveDesc = "Breaks complex, multi-variable challenges into modular sub-tasks, addressing root causes sequentially with logical clarity.";
+  let solveTag = "First-Principles Logic";
+
+  if (cr > 70) {
+    solveTitle = "Divergent & Human-Centered";
+    solveDesc = "Approaches problems from unconventional angles, reframing user needs, and producing elegant, intuitive solutions.";
+    solveTag = "Design-Led Synthesis";
+  } else if (bu > 65 && an > 60) {
+    solveTitle = "Strategic & Value-Oriented";
+    solveDesc = "Assesses risk-reward trade-offs, prioritizing high-leverage bottlenecks that create the greatest long-term impact.";
+    solveTag = "ROI & Systems Optimization";
+  }
+
+  // Collaboration Dynamic
+  let collabTitle = "Focused Autonomous Contributor with Async Alignment";
+  let collabDesc = "Prefers deep individual concentration on complex execution, paired with clear documentation, structured code reviews, and concise syncs.";
+  let collabTag = "Independent Mastery";
+
+  if (so > 60 && le > 55) {
+    collabTitle = "Active Team Orchestrator & Facilitator";
+    collabDesc = "Excels at bridging technical and non-technical stakeholders, clarifying group goals, and motivating collaborative velocity.";
+    collabTag = "Cross-Functional Bridge";
+  } else if (so > 65) {
+    collabTitle = "Empathetic Peer Collaborator";
+    collabDesc = "Champions psychological safety, pair programming, active listening, and constructive team knowledge-sharing.";
+    collabTag = "High-Trust Partner";
+  }
+
+  // Structure vs Flexibility Score
+  // Technical, Analytical, and Scientific favor structure; Exploration and Creative favor flexibility
+  const structureWeight = (te * 0.35 + an * 0.35 + sc * 0.3);
+  const flexWeight = (ex * 0.5 + cr * 0.5);
+  const normalizedStructure = Math.max(10, Math.min(95, Math.round(50 + (structureWeight - flexWeight) * 0.4)));
+
+  let structTitle = normalizedStructure >= 60 ? "Structured & Methodical" : normalizedStructure <= 40 ? "Fluid & Adaptive" : "Balanced Hybrid";
+  let structDesc = normalizedStructure >= 60
+    ? "Benefits most from defined syllabi, reproducible workflows, clear rubrics, and modular milestone tracking."
+    : normalizedStructure <= 40
+    ? "Thrives when allowed autonomy to discover learning paths organically, experiment across domains, and pivot based on discovery."
+    : "Comfortable balancing systematic operational roadmaps with self-directed exploratory sprints.";
+
+  // Key Cognitive Insights
+  const cognitiveDimensions = [
+    {
+      category: "Learning Retention Mode",
+      insight: te >= 60 || sc >= 60
+        ? "Hands-on implementation and immediate project experimentation yield 3x higher retention than passive reading."
+        : "Conceptual frameworks, visual mind-mapping, and contextual case studies accelerate comprehension fastest.",
+      actionableTip: "Pair every theoretical concept with a concrete miniature build or portfolio artifact.",
+    },
+    {
+      category: "Cognitive Stamina & Focus",
+      insight: an >= 65
+        ? "High endurance for complex analytical debugging and long-horizon problem decomposition."
+        : "Best focus sustained through 25-minute Pomodoro bursts interspersed with creative synthesis breaks.",
+      actionableTip: "Protect 90-minute uninterrupted focus blocks for complex engineering or quantitative topics.",
+    },
+    {
+      category: "Feedback & Growth Vector",
+      insight: le >= 55 || so >= 55
+        ? "Rapidly incorporates peer code reviews, public demonstrations, and stakeholder feedback into iterative refinements."
+        : "Excels when self-evaluating against objective automated benchmarks, unit tests, and empirical metrics.",
+      actionableTip: "Share work publicly on GitHub or in developer communities early to test real-world resonance.",
+    },
+  ];
+
+  return {
+    environmentPreference: {
+      title: envTitle,
+      description: envDesc,
+      tag: envTag,
+    },
+    problemSolvingMode: {
+      title: solveTitle,
+      description: solveDesc,
+      tag: solveTag,
+    },
+    collaborationDynamic: {
+      title: collabTitle,
+      description: collabDesc,
+      tag: collabTag,
+    },
+    structureVsFlexibility: {
+      title: structTitle,
+      description: structDesc,
+      score: normalizedStructure,
+    },
+    cognitiveDimensions,
+  };
+}
+
+export interface NextStepAction {
+  id: string;
+  category: "academic" | "skill" | "roadmap" | "feedback";
+  title: string;
+  description: string;
+  actionLabel: string;
+  href: string;
+  isExternal?: boolean;
+  urgency: "Immediate Focus" | "Recommended" | "Next Horizon";
+}
+
+/**
+ * Builds actionable, non-generic next steps guiding the student from profile insights into real momentum.
+ */
+export function deriveNextSteps(
+  persona: StudentPersona,
+  topCareerTitle?: string,
+  selectedSlug: string = "software-development"
+): NextStepAction[] {
+  const top1 = persona.topStrengths[0]?.short || "Technical";
+  const career = topCareerTitle || "Software Development";
+
+  const isCivilServices =
+    career.toLowerCase().includes("civil") ||
+    career.toLowerCase().includes("public") ||
+    career.toLowerCase().includes("ias") ||
+    selectedSlug.includes("civil");
+
+  if (isCivilServices) {
+    return [
+      {
+        id: "step-civil-foundation",
+        category: "academic",
+        urgency: "Immediate Focus",
+        title: "Build Constitutional & Public Administration Foundations",
+        description: "Review foundational NCERT humanities frameworks (Polity, Governance, Indian Economy) and establish a disciplined daily national editorial reading habit.",
+        actionLabel: "View Verified UPSC Resources",
+        href: "/resources?category=government",
+      },
+      {
+        id: "step-civil-service-discernment",
+        category: "skill",
+        urgency: "Recommended",
+        title: "Understand Exam Route vs. Service vs. Functional Roles",
+        description: "Study how the competitive exam selection process relates to real-world administrative postings across IAS, IPS, IFS, and State Civil Services.",
+        actionLabel: "Explore Civil Services Tree",
+        href: "/career-map?domain=civil-services-public-admin",
+      },
+      {
+        id: "step-roadmap-start",
+        category: "roadmap",
+        urgency: "Recommended",
+        title: "Activate Milestone Tracking in Your Journey",
+        description: "Track stages from general studies foundation to optional subject mastery and public policy research methodologies.",
+        actionLabel: "Open Roadmap Dashboard",
+        href: "/dashboard",
+      },
+      {
+        id: "step-feedback",
+        category: "feedback",
+        urgency: "Immediate Focus",
+        title: "Help Us Improve: Complete Student Guidance Feedback",
+        description: "Share 60 seconds of honest evaluation on clarity, career relevance, and roadmap usability to refine Career Compass research.",
+        actionLabel: "Share Your Feedback",
+        href: "#feedback",
+      },
+    ];
+  }
+
+  return [
+    {
+      id: "step-core-skill",
+      category: "skill",
+      urgency: "Immediate Focus",
+      title: `Build Hands-On Projects in ${career}`,
+      description: `Translate your strong ${top1} aptitude into verified GitHub repositories, functional prototypes, or interactive system demos.`,
+      actionLabel: "View Learning Resources",
+      href: "/resources",
+    },
+    {
+      id: "step-roadmap-progress",
+      category: "roadmap",
+      urgency: "Immediate Focus",
+      title: "Work Through Active Stage Milestones",
+      description: `Complete stage-by-stage skills for ${career} to validate competency before entering intermediate concepts.`,
+      actionLabel: "Go to Roadmap Dashboard",
+      href: "/dashboard",
+    },
+    {
+      id: "step-career-intel",
+      category: "academic",
+      urgency: "Recommended",
+      title: "Inspect Deep Industry Insights & Salary Trends",
+      description: `Understand the complete hierarchy, entry requirements, certifications, and top employers in ${career}.`,
+      actionLabel: "Read Career Guide",
+      href: `/career/${selectedSlug}`,
+    },
+    {
+      id: "step-feedback",
+      category: "feedback",
+      urgency: "Immediate Focus",
+      title: "Evaluate Your Recommendations (Student Feedback)",
+      description: "Take 60 seconds to rate accuracy, guidance clarity, and confidence change to help our open research program.",
+      actionLabel: "Give Feedback",
+      href: "#feedback",
+    },
+  ];
+}
+
 export interface WhyFitReasoning {
   headline: string;
   narrative: string;
@@ -311,25 +576,40 @@ export function deriveWhyFitReasoning(
   const top2 = sorted[1] || CANONICAL_TRAIT_CONFIG[1];
   const career = primaryCareerTitle || "Software Development";
 
+  const isCivilServices =
+    career.toLowerCase().includes("civil") ||
+    career.toLowerCase().includes("public") ||
+    career.toLowerCase().includes("ias");
+
   const headline = `Natural alignment driven by high ${top1.short} and ${top2.short} synergy`;
 
-  const narrative = `Your assessment reveals an exceptional synergy between ${top1.label} (${top1.score}%) and ${top2.label} (${top2.score}%). Instead of relying on surface memorization, you naturally look for foundational mechanisms, logical continuity, and structured systems. In careers like ${career}, this cognitive pattern translates into rapid problem resolution, high technical velocity, and durable professional growth.`;
+  let narrative = `Your assessment reveals an exceptional synergy between ${top1.label} (${top1.score}%) and ${top2.label} (${top2.score}%). Instead of relying on surface memorization, you naturally look for foundational mechanisms, logical continuity, and structured systems. In careers like ${career}, this cognitive pattern translates into rapid problem resolution, high technical velocity, and durable professional growth.`;
+
+  if (isCivilServices) {
+    narrative = `Your assessment reveals strong synergy between ${top1.label} (${top1.score}%) and ${top2.label} (${top2.score}%). Public administration, constitutional governance, and public policy demand sustained analytical stamina, ethical judgment, and complex system coordination. In careers like ${career}, these strengths enable you to synthesize policy trade-offs, lead cross-departmental initiatives, and deliver public accountability.`;
+  }
 
   const pillars = [
     {
       iconName: "Target" as const,
-      title: "Systematic Problem Solving",
-      body: `You naturally excel at breaking complicated challenges into clean, structured components rather than relying on trial-and-error.`,
+      title: isCivilServices ? "Systemic Policy & Governance Decomposition" : "Systematic Problem Solving",
+      body: isCivilServices
+        ? `You naturally excel at dissecting multi-stakeholder challenges, legal-regulatory frameworks, and administrative workflows into clear procedural steps.`
+        : `You naturally excel at breaking complicated challenges into clean, structured components rather than relying on trial-and-error.`,
     },
     {
       iconName: "Sparkles" as const,
-      title: "High Learning Velocity",
-      body: `Your strong ${top1.short.toLowerCase()} aptitude accelerates hands-on mastery of modern tools, frameworks, and real-world workflows.`,
+      title: isCivilServices ? "Sustained Synthesis & Retention" : "High Learning Velocity",
+      body: isCivilServices
+        ? `Your strong ${top1.short.toLowerCase()} aptitude enables deep contextual absorption across history, economics, ethics, and contemporary governance affairs.`
+        : `Your strong ${top1.short.toLowerCase()} aptitude accelerates hands-on mastery of modern tools, frameworks, and real-world workflows.`,
     },
     {
       iconName: "GitBranch" as const,
-      title: "Transferable Career Core",
-      body: `These core strengths provide long-term career resilience across engineering, specialized technical leadership, and product architecture.`,
+      title: isCivilServices ? "Public Stewardship & High-Impact Leadership" : "Transferable Career Core",
+      body: isCivilServices
+        ? `These traits form the bedrock for decisive leadership across district administration, policy design, diplomacy, and regulatory enforcement.`
+        : `These core strengths provide long-term career resilience across engineering, specialized technical leadership, and product architecture.`,
     },
   ];
 
@@ -339,3 +619,4 @@ export function deriveWhyFitReasoning(
     pillars,
   };
 }
+

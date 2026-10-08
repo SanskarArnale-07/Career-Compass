@@ -21,6 +21,9 @@ import {
   LogOut,
   LayoutDashboard,
   ClipboardCheck,
+  MessageSquare,
+  FolderArchive,
+  BarChart3,
 } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
@@ -39,14 +42,23 @@ import {
   deriveStudentPersona,
   deriveStreamSuitability,
   deriveWhyFitReasoning,
+  deriveWorkLearningStyle,
+  deriveNextSteps,
 } from "@/lib/profile/profile-utils";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileMetricsRow } from "@/components/profile/ProfileMetricsRow";
 import { TopTraitsSection } from "@/components/profile/TopTraitsSection";
 import { StreamSuitabilitySection } from "@/components/profile/StreamSuitabilitySection";
+import { WorkLearningStyleSection } from "@/components/profile/WorkLearningStyleSection";
 import { WhyFitSection } from "@/components/profile/WhyFitSection";
 import { GroupedCareerMatchesSection } from "@/components/profile/GroupedCareerMatchesSection";
+import { NextStepsSection } from "@/components/profile/NextStepsSection";
 import { RoadmapMomentumSection } from "@/components/profile/RoadmapMomentumSection";
+import { TopCareerDirectionsSection } from "@/components/profile/TopCareerDirectionsSection";
+import { NextStepCTA } from "@/components/profile/NextStepCTA";
+import { ProgressiveInsightsDisclosure } from "@/components/profile/ProgressiveInsightsDisclosure";
+import { StudentFeedbackModal } from "@/components/feedback/StudentFeedbackModal";
+import { trackProfileViewed } from "@/lib/analytics/tracker";
 
 // ── SSR-safe hooks ───────────────────────────────────────────────────
 const emptySubscribe = () => () => {};
@@ -153,6 +165,8 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "roadmap" | "skills" | "activity"
   >("overview");
+  const [isDeepDiveOpen, setIsDeepDiveOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   // Auth guard
   useEffect(() => {
@@ -252,6 +266,22 @@ export default function ProfilePage() {
     traits,
     topCareerIntel?.title || career?.title
   );
+
+  const workLearningStyle = deriveWorkLearningStyle(traits);
+  const nextSteps = deriveNextSteps(
+    persona,
+    topCareerIntel?.title || career?.title,
+    selectedSlug
+  );
+
+  useEffect(() => {
+    if (assessmentDone && persona?.archetype) {
+      trackProfileViewed(
+        persona.archetype,
+        topCareerIntel?.title || career?.title
+      );
+    }
+  }, [assessmentDone, persona?.archetype]);
 
   // Roadmap progress
   const totalPhases = career?.roadmap?.length ?? 0;
@@ -353,7 +383,11 @@ export default function ProfilePage() {
   // ── FULL POLISHED PROFILE ─────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
-      <ProfileTopBar user={user} onLogout={logout} />
+      <ProfileTopBar
+        user={user}
+        onLogout={logout}
+        onOpenFeedback={() => setIsFeedbackOpen(true)}
+      />
 
       <div className="container mx-auto px-4 max-w-5xl pt-8 space-y-6">
         {/* 1. Stronger Profile Header: Student Identity + Persona + Concise Summary */}
@@ -367,22 +401,11 @@ export default function ProfilePage() {
           careerTitle={topCareerIntel?.title || career?.title}
         />
 
-        {/* 2. High-Signal Profile Metrics Row */}
-        <ProfileMetricsRow
-          roadmapPercent={overallPercent}
-          topCareerName={topCareerIntel?.title || career?.title || "Software Development"}
-          topCareerScore={topMatch?.match_percentage}
-          topTraitLabel={persona.topStrengths[0]?.label || "Technical Aptitude"}
-          topTraitScore={persona.topStrengths[0]?.score}
-          primaryStream={streamSuitability.primaryRecommendation}
-          weeklyPaceHours={progress?.weeklyPaceHours ?? 10}
-        />
-
-        {/* 3. Tab Navigation */}
+        {/* 2. Tab Navigation */}
         <div className="flex items-center gap-1 p-1 rounded-xl bg-[#10141A] border border-border/70 w-full sm:w-auto">
           {(
             [
-              { id: "overview", label: "Overview", icon: User },
+              { id: "overview", label: "Snapshot", icon: User },
               { id: "roadmap", label: "Journey", icon: Map },
               { id: "skills", label: "Skills", icon: Layers },
               { id: "activity", label: "Activity", icon: Flame },
@@ -404,14 +427,54 @@ export default function ProfilePage() {
         </div>
 
         {/* ══════════════════════════════════════════════════════ */}
-        {/* TAB: OVERVIEW (Comprehensive Personalized Profile)    */}
+        {/* TAB: SNAPSHOT & OVERVIEW (Minimal-First Approach)     */}
         {/* ══════════════════════════════════════════════════════ */}
         {activeTab === "overview" && (
           <div className="space-y-6">
-            {/* Active Roadmap Progress & Next Milestone Focus */}
-            <RoadmapMomentumSection
-              career={career}
+            {/* 1. Career Snapshot is established in ProfileHeader (Who am I?) */}
+
+            {/* 2. Top Strengths: strictly top 3 traits with short interpretations (What am I strongest at?) */}
+            <TopTraitsSection
+              topStrengths={persona.topStrengths}
+              allTraits={persona.allTraits}
+              limit={3}
+            />
+
+            {/* 3. Top Career Directions: strictly 3-5 strongest pathways (What career directions should I explore?) */}
+            <TopCareerDirectionsSection
+              matches={allVisibleMatches}
+              limit={4}
+              exploreAllHref="/results"
+              onExploreAll={() => setIsDeepDiveOpen(true)}
+            />
+
+            {/* 4. Next Step: Prominent CTA to explore career matches */}
+            <NextStepCTA
+              exploreMatchesHref="/results"
+              roadmapHref="/dashboard"
+              activeCareerTitle={topCareerIntel?.title || career?.title}
+              isDeepDiveOpen={isDeepDiveOpen}
+              onToggleDeepDive={() => setIsDeepDiveOpen((prev) => !prev)}
+            />
+
+            {/* 5. Progressive Disclosure: Full In-Depth Intelligence on Demand */}
+            <ProgressiveInsightsDisclosure
+              isOpen={isDeepDiveOpen}
+              onToggle={() => setIsDeepDiveOpen((prev) => !prev)}
               overallPercent={overallPercent}
+              topCareerName={topCareerIntel?.title || career?.title || "Software Development"}
+              topCareerScore={topMatch?.match_percentage}
+              topTraitLabel={persona.topStrengths[0]?.label || "Technical Aptitude"}
+              topTraitScore={persona.topStrengths[0]?.score}
+              primaryStream={streamSuitability.primaryRecommendation}
+              weeklyPaceHours={progress?.weeklyPaceHours ?? 10}
+              rankedStreams={streamSuitability.rankedStreams}
+              whyFitReasoning={whyFitReasoning}
+              workLearningStyle={workLearningStyle}
+              strongMatches={strongMatches}
+              explorationMatches={explorationMatches}
+              allVisibleMatches={allVisibleMatches}
+              career={career}
               completedPhases={completedPhases}
               totalPhases={totalPhases}
               masteredSkills={masteredSkills}
@@ -424,87 +487,6 @@ export default function ProfilePage() {
               nextMilestone={nextMilestone}
               selectedSlug={selectedSlug}
             />
-
-            {/* Side-by-side: Top Traits & Strengths + Academic Stream Suitability */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <TopTraitsSection
-                topStrengths={persona.topStrengths}
-                allTraits={persona.allTraits}
-              />
-              <StreamSuitabilitySection
-                rankedStreams={streamSuitability.rankedStreams}
-                primaryRecommendation={streamSuitability.primaryRecommendation}
-              />
-            </div>
-
-            {/* Compact "Why These Careers Fit You" Explanation */}
-            <WhyFitSection reasoning={whyFitReasoning} />
-
-            {/* Personalized Career Matches Grouped by Relevance */}
-            <GroupedCareerMatchesSection
-              strongMatches={strongMatches}
-              explorationMatches={explorationMatches}
-              allMatches={allVisibleMatches}
-            />
-
-            {/* Ecosystem Navigation Hub */}
-            <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6 space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
-                  Navigation & Exploration Hub
-                </p>
-                <span className="text-[10px] font-mono text-muted-foreground/60">
-                  Career Compass Ecosystem
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-                {[
-                  {
-                    href: "/dashboard",
-                    icon: LayoutDashboard,
-                    label: "My Roadmap Dashboard",
-                    sub: "Full stage → skill → task journey",
-                  },
-                  {
-                    href: "/results",
-                    icon: ClipboardCheck,
-                    label: "Assessment Results",
-                    sub: "Detailed psychometric responses",
-                  },
-                  {
-                    href: `/career/${selectedSlug}`,
-                    icon: BookOpen,
-                    label: "Career Guide",
-                    sub: career?.title ?? "Full deep-dive",
-                  },
-                  {
-                    href: "/coach",
-                    icon: Sparkles,
-                    label: "Career Coach AI",
-                    sub: "Interactive path advisory",
-                  },
-                ].map(({ href, icon: Icon, label, sub }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-[#0B0E12] hover:border-primary/40 hover:bg-[#10141A] transition-all group"
-                  >
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
-                        {label}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground truncate">
-                        {sub}
-                      </p>
-                    </div>
-                    <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary ml-auto shrink-0" />
-                  </Link>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
@@ -776,6 +758,14 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
+
+      {/* Student Feedback Modal */}
+      <StudentFeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        sessionId={`session-${user?.id || "anon"}`}
+        sourceContext="profile"
+      />
     </div>
   );
 }
@@ -785,9 +775,11 @@ export default function ProfilePage() {
 function ProfileTopBar({
   user,
   onLogout,
+  onOpenFeedback,
 }: {
   user: { name: string; email: string };
   onLogout: () => void;
+  onOpenFeedback?: () => void;
 }) {
   return (
     <div className="sticky top-14 z-30 border-b border-border/80 bg-background/80 backdrop-blur-md">
@@ -802,13 +794,24 @@ function ProfileTopBar({
             {user.name}
           </span>
         </div>
-        <button
-          onClick={onLogout}
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-400 font-mono transition-colors cursor-pointer"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Log Out</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {onOpenFeedback && (
+            <button
+              onClick={onOpenFeedback}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-secondary/10 border border-secondary/25 text-xs font-mono text-secondary hover:bg-secondary/20 transition-colors cursor-pointer"
+            >
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Give Feedback</span>
+            </button>
+          )}
+          <button
+            onClick={onLogout}
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-400 font-mono transition-colors cursor-pointer"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Log Out</span>
+          </button>
+        </div>
       </div>
     </div>
   );

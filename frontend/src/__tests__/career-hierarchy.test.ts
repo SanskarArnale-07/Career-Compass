@@ -19,9 +19,9 @@ import {
 import type { CareerMatch } from "@/lib/types/assessment";
 
 describe("Career Hierarchy Taxonomy", () => {
-  it("defines exactly 6 top-level career domains", () => {
+  it("defines top-level career domains including Civil Services & Public Administration", () => {
     const domains = getAllCareerDomains();
-    expect(domains.length).toBe(6);
+    expect(domains.length).toBe(7);
     expect(domains.map((d) => d.id)).toEqual([
       "engineering-technology",
       "data-ai",
@@ -29,12 +29,13 @@ describe("Career Hierarchy Taxonomy", () => {
       "business-finance-management",
       "healthcare-sciences",
       "media-communications-social",
+      "civil-services-public-admin",
     ]);
   });
 
-  it("contains all 25 canonical career paths across domains", () => {
+  it("contains all 28 canonical career paths across domains", () => {
     const paths = getAllCareerPaths();
-    expect(paths.length).toBe(25);
+    expect(paths.length).toBe(28);
 
     const originalSlugs = [
       "software-development",
@@ -62,6 +63,9 @@ describe("Career Hierarchy Taxonomy", () => {
       "law-policy",
       "psychology-social",
       "journalism-media-production",
+      "upsc-civil-services",
+      "state-public-service-commissions",
+      "public-policy-governance-path",
     ];
 
     const actualSlugs = paths.map((p) => p.slug);
@@ -430,10 +434,10 @@ describe("Meaningful Match Threshold & Scoring Rules", () => {
     });
   });
 
-  describe("Expanded 25-Path Directory System & Exploration Flow", () => {
-    it("ensures all 25 career paths have authentic career intelligence records", () => {
+  describe("Expanded Directory System & Exploration Flow", () => {
+    it("ensures all career paths have authentic career intelligence records", () => {
       const paths = getAllCareerPaths();
-      expect(paths.length).toBe(25);
+      expect(paths.length).toBe(28);
 
       for (const path of paths) {
         expect(path.name).toBeDefined();
@@ -481,21 +485,21 @@ describe("Meaningful Match Threshold & Scoring Rules", () => {
       expect(aieRoleTitles).toContain("AI Solutions Engineer");
     });
 
-    it("verifies that all 25 career path slugs are unique with zero duplicates", () => {
+    it("verifies that all career path slugs are unique with zero duplicates", () => {
       const paths = getAllCareerPaths();
       const slugs = paths.map((p) => p.slug);
       const uniqueSlugs = new Set(slugs);
-      expect(uniqueSlugs.size).toBe(25);
+      expect(uniqueSlugs.size).toBe(28);
 
       const names = paths.map((p) => p.name);
       const uniqueNames = new Set(names);
-      expect(uniqueNames.size).toBe(25);
+      expect(uniqueNames.size).toBe(28);
     });
 
     it("calculates catalogue statistics dynamically and matches individual path aggregations", () => {
       const stats = getCareerCatalogueStats();
-      expect(stats.totalDomains).toBe(6);
-      expect(stats.totalPaths).toBe(25);
+      expect(stats.totalDomains).toBe(7);
+      expect(stats.totalPaths).toBe(28);
       expect(stats.totalSpecializations).toBeGreaterThan(0);
       expect(stats.totalRoles).toBeGreaterThan(0);
 

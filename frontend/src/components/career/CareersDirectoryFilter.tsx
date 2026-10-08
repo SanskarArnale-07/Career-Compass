@@ -454,7 +454,7 @@ function CareerPathCard({
         {/* Top: Icon + Domain Tag */}
         <div className="flex items-center justify-between mb-3.5">
           <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-105 group-hover:bg-primary/15 transition-all shrink-0">
-            {React.createElement(getCareerIcon(path.careerName), { className: "h-5 w-5" })}
+            {React.createElement(getCareerIcon(path.slug || path.name || path.careerName), { className: "h-5 w-5" })}
           </div>
           <span className="text-xs font-mono text-muted-foreground bg-[#141920] border border-border/50 rounded-full px-2.5 py-0.5 shrink-0">
             {path.domainName}

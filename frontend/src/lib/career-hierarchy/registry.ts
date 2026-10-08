@@ -1274,6 +1274,146 @@ export const CAREER_DOMAINS: CareerDomain[] = [
       },
     ],
   },
+  // ── 7. Civil Services & Public Administration ──────────────────────
+  {
+    id: "civil-services-public-admin",
+    name: "Civil Services & Public Administration",
+    description: "Public governance, constitutional administration, internal security, diplomatic representation, and policy execution across India.",
+    paths: [
+      {
+        id: "upsc-civil-services",
+        slug: "upsc-civil-services",
+        name: "UPSC Civil Services",
+        title: "Union Public Service Commission (UPSC) Civil Services",
+        careerName: "UPSC Civil Services",
+        domainId: "civil-services-public-admin",
+        domainName: "Civil Services & Public Administration",
+        tagline: "Constitutional administrative, policing, diplomatic, and revenue leadership recruited via the UPSC Civil Services Examination.",
+        aliases: ["UPSC", "UPSC CSE", "Civil Services", "IAS", "IPS", "IFS", "IRS", "Indian Administrative Service", "Indian Police Service"],
+        keywords: ["upsc", "cse", "civil services", "ias", "ips", "ifs", "irs", "governance", "district magistrate", "policing", "foreign service", "revenue"],
+        specializations: [
+          {
+            id: "ias-administration",
+            name: "Indian Administrative Service (IAS) & Public Governance",
+            description: "District administration, state secretariat policy execution, developmental schemes implementation, and inter-departmental coordination.",
+            aliases: ["IAS", "Administrative Service", "District Administration"],
+            keywords: ["ias", "collector", "magistrate", "secretariat", "administration", "public service"],
+            roles: [
+              { id: "sdm-sub-divisional", title: "Sub-Divisional Magistrate (SDM) / Assistant Collector", description: "Administers sub-divisional law and order, revenue disputes, and grassroots government scheme delivery.", isEntryLevel: true, aliases: ["SDM", "Sub Divisional Magistrate", "Assistant Collector", "Sub Collector"] },
+              { id: "district-collector", title: "District Magistrate & Collector (DM)", description: "Leads district-level administrative machinery, disaster mitigation, regulatory oversight, and development projects.", isEntryLevel: false, aliases: ["District Magistrate", "DM", "District Collector", "Deputy Commissioner"] },
+              { id: "joint-secretary-gov", title: "Joint Secretary / Ministry Policy Director", description: "Directs national policy formulations, regulatory frameworks, and central statutory missions within ministries.", isEntryLevel: false, aliases: ["Joint Secretary", "Director Ministry", "Secretary Government of India"] },
+            ],
+          },
+          {
+            id: "ips-internal-security",
+            name: "Indian Police Service (IPS) & Law Enforcement",
+            description: "Internal security management, district policing, intelligence analysis, crime prevention, and public order maintenance.",
+            aliases: ["IPS", "Police Service", "Law Enforcement & Security"],
+            keywords: ["ips", "police", "superintendent of police", "sp", "dcp", "crime prevention", "internal security"],
+            roles: [
+              { id: "asp-police-lead", title: "Assistant Superintendent of Police (ASP)", description: "Supervises sub-divisional police stations, leads investigation squads, and manages field riot control.", isEntryLevel: true, aliases: ["ASP", "Assistant Superintendent of Police", "ACP"] },
+              { id: "sp-district-police", title: "Superintendent of Police (SP / DCP)", description: "Commands district police operations, criminal investigation wings, and traffic enforcement infrastructure.", isEntryLevel: false, aliases: ["Superintendent of Police", "SP", "DCP", "Deputy Commissioner of Police"] },
+              { id: "dig-ig-police", title: "Inspector General / Joint Commissioner of Police", description: "Provides strategic police leadership across ranges, orchestrating anti-terror operations and modernization.", isEntryLevel: false, aliases: ["DIG", "IGP", "Inspector General of Police", "Additional Commissioner"] },
+            ],
+          },
+          {
+            id: "ifs-diplomatic-relations",
+            name: "Indian Foreign Service (IFS) & Diplomacy",
+            description: "International relations, bilateral trade negotiations, consular services, and global diplomatic representation.",
+            aliases: ["IFS", "Foreign Service", "Diplomacy"],
+            keywords: ["ifs", "diplomat", "foreign service", "embassy", "consulate", "international relations", "ambassador"],
+            roles: [
+              { id: "third-secretary-ifs", title: "Third Secretary / Diplomatic Attache", description: "Serves in overseas Indian diplomatic missions handling trade inquiries, cultural exchange, and consular assistance.", isEntryLevel: true, aliases: ["Third Secretary", "Diplomatic Attache", "Under Secretary MEA"] },
+              { id: "first-secretary-counsel", title: "First Secretary / Embassy Counselor", description: "Leads bilateral political divisions, treaty negotiations, and commercial partnerships in strategic embassies.", isEntryLevel: false, aliases: ["First Secretary", "Counselor", "Consul General"] },
+              { id: "ambassador-high-commissioner", title: "Ambassador / High Commissioner of India", description: "Represents the Republic of India as chief diplomatic envoy, conducting head-of-state summits and bilateral accords.", isEntryLevel: false, aliases: ["Ambassador", "High Commissioner", "Permanent Representative to UN"] },
+            ],
+          },
+          {
+            id: "irs-revenue-governance",
+            name: "Indian Revenue Service (IRS) & Financial Administration",
+            description: "Direct and indirect taxation administration, customs enforcement, financial forensics, and revenue governance.",
+            aliases: ["IRS", "Revenue Service", "Income Tax & Customs"],
+            keywords: ["irs", "income tax", "gst", "customs", "revenue", "financial intelligence", "tax commissioner"],
+            roles: [
+              { id: "assistant-commissioner-it", title: "Assistant Commissioner of Income Tax / GST", description: "Assesses commercial corporate tax filings, enforces compliance, and investigates financial anomalies.", isEntryLevel: true, aliases: ["Assistant Commissioner", "ACIT", "Assistant Commissioner Central Tax"] },
+              { id: "joint-commissioner-revenue", title: "Joint Commissioner of Revenue", description: "Oversees regional audit divisions, anti-evasion intelligence operations, and dispute tribunals.", isEntryLevel: false, aliases: ["Joint Commissioner", "JCIT", "Additional Commissioner"] },
+              { id: "principal-commissioner", title: "Principal Commissioner of Income Tax / CBIC Member", description: "Shapes nationwide revenue policies, apex taxation audits, and cross-border transfer pricing regulations.", isEntryLevel: false, aliases: ["Principal Commissioner", "Chief Commissioner of Income Tax"] },
+            ],
+          },
+        ],
+      },
+      {
+        id: "state-public-service-commissions",
+        slug: "state-public-service-commissions",
+        name: "State Public Service Commissions",
+        title: "State Public Service Commissions (State PSCs)",
+        careerName: "State Civil Services",
+        domainId: "civil-services-public-admin",
+        domainName: "Civil Services & Public Administration",
+        tagline: "State-level administrative governance, revenue execution, and district policing recruited through State PSC examinations.",
+        aliases: ["State PSC", "PCS", "State Civil Services", "Provincial Civil Services", "MPSC", "UPPSC", "BPSC", "TNPSC", "KPSC"],
+        keywords: ["state psc", "pcs", "deputy collector", "dsp", "bdo", "state administration", "provincial services"],
+        specializations: [
+          {
+            id: "state-administrative-services",
+            name: "State Administrative Services (SAS / Provincial Civil Services)",
+            description: "Tehsil and sub-divisional administration, municipal governance, state department program execution, and land records management.",
+            aliases: ["State Administrative Service", "Provincial Civil Service", "PCS"],
+            roles: [
+              { id: "deputy-collector-sao", title: "Deputy Collector / Sub-Divisional Officer (SDO)", description: "Directs sub-divisional administrative affairs, land tenure settlements, and local regulatory licensing.", isEntryLevel: true, aliases: ["Deputy Collector", "SDO", "Sub Divisional Officer"] },
+              { id: "block-development-officer", title: "Block Development & Panchayati Raj Officer (BDO)", description: "Orchestrates rural infrastructure works, welfare entitlements, and village panchayat program execution.", isEntryLevel: true, aliases: ["BDO", "Block Development Officer"] },
+              { id: "additional-district-magistrate", title: "Additional District Magistrate (ADM)", description: "Assists the District Collector in managing district revenue courts, general administration, and protocol.", isEntryLevel: false, aliases: ["ADM", "Additional District Magistrate", "Joint Collector"] },
+            ],
+          },
+          {
+            id: "state-police-services",
+            name: "State Police Services (SPS / Deputy SP)",
+            description: "Sub-divisional police supervision, law & order deployment, cybercrime stations, and traffic commands under state government.",
+            aliases: ["State Police Service", "SPS", "State Police"],
+            roles: [
+              { id: "deputy-sp-state", title: "Deputy Superintendent of Police (DSP / ACP)", description: "Commands sub-divisional police circles, leads homicide/serious crime inquiries, and supervises station house officers.", isEntryLevel: true, aliases: ["DSP", "Deputy SP", "Assistant Commissioner of Police", "ACP"] },
+              { id: "additional-sp-state", title: "Additional Superintendent of Police (Addl. SP)", description: "Coordinates district police headquarters operations, reserve battalions, and emergency dispatch networks.", isEntryLevel: false, aliases: ["Additional SP", "Addl SP", "Deputy Commissioner of Police"] },
+            ],
+          },
+        ],
+      },
+      {
+        id: "public-policy-governance-path",
+        slug: "public-policy-governance-path",
+        name: "Public Administration & Policy Pathways",
+        title: "Public Administration, Policy Analysis & Governance",
+        careerName: "Public Policy & Administration",
+        domainId: "civil-services-public-admin",
+        domainName: "Civil Services & Public Administration",
+        tagline: "Independent policy research, institutional governance, development analytics, and public enterprise administration.",
+        aliases: ["Public Administration", "Public Policy", "Governance", "Development Studies", "Think Tanks", "PSU Management"],
+        keywords: ["public administration", "public policy", "governance", "think tank", "psu", "policy analyst", "regulatory affairs"],
+        specializations: [
+          {
+            id: "policy-research-governance",
+            name: "Government Policy & Regulatory Impact",
+            description: "Evidence-driven policy evaluations, legislative briefings, think tank publications, and developmental program research.",
+            aliases: ["Policy Research", "Governance Analysis", "Development Policy"],
+            roles: [
+              { id: "public-policy-fellow", title: "Public Policy Research Fellow", description: "Performs quantitative and qualitative policy assessments, authoring evidence-backed whitepapers for state agencies.", isEntryLevel: true, aliases: ["Policy Analyst", "Policy Fellow", "Governance Researcher"] },
+              { id: "governance-specialist", title: "Development Governance Specialist", description: "Designs performance dashboards, anti-corruption safeguards, and citizen service delivery metrics for institutions.", isEntryLevel: false, aliases: ["Governance Advisor", "Public Sector Consultant"] },
+              { id: "regulatory-affairs-lead", title: "Public Regulatory Affairs Officer", description: "Analyzes compliance impact of new government statutes on economic sectors and coordinates stakeholder feedback.", isEntryLevel: false, aliases: ["Regulatory Affairs Director", "Public Affairs Manager"] },
+            ],
+          },
+          {
+            id: "psu-public-enterprises",
+            name: "Public Sector Enterprises & Institutional Management",
+            description: "Operations, project execution, procurement, and commercial management within statutory bodies and public enterprises.",
+            aliases: ["PSU Management", "Public Enterprises", "Government Undertakings"],
+            roles: [
+              { id: "management-trainee-psu", title: "Public Sector Management Trainee (PSU Executive)", description: "Coordinates supply chains, capital project sites, and corporate compliance across public sector undertakings.", isEntryLevel: true, aliases: ["PSU Executive", "Management Trainee", "Junior Administrative Officer"] },
+              { id: "psu-administrative-manager", title: "Public Sector Operations & Institutional Manager", description: "Oversees strategic infrastructure procurement, energy grids, or statutory public enterprise operations.", isEntryLevel: false, aliases: ["PSU General Manager", "Chief Operations Officer Public Sector"] },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 // ── Lookup Indices ─────────────────────────────────────────────────────────
@@ -1389,6 +1529,20 @@ const ALIASES: Record<string, string> = {
   "supply chain": "supply-chain-operations",
   "public health & global epidemiology": "public-health-epidemiology",
   "public health": "public-health-epidemiology",
+  "civil services": "upsc-civil-services",
+  "civil services & public administration": "upsc-civil-services",
+  "upsc": "upsc-civil-services",
+  "upsc cse": "upsc-civil-services",
+  "upsc civil services": "upsc-civil-services",
+  "ias": "upsc-civil-services",
+  "ips": "upsc-civil-services",
+  "ifs": "upsc-civil-services",
+  "irs": "upsc-civil-services",
+  "state psc": "state-public-service-commissions",
+  "state public service commissions": "state-public-service-commissions",
+  "state civil services": "state-public-service-commissions",
+  "public administration": "public-policy-governance-path",
+  "government jobs": "upsc-civil-services",
 };
 
 for (const [alias, targetSlug] of Object.entries(ALIASES)) {

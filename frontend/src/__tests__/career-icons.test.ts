@@ -16,6 +16,7 @@ import {
   Stethoscope,
   Scale,
   Building2,
+  PanelsTopLeft,
   Palette,
   PenTool,
   Brush,
@@ -71,28 +72,53 @@ describe("Career Compass Central Icon Mapping (career-icons.ts)", () => {
       expect(getCareerIconName("engineering")).toBe("Building2");
     });
 
-    it("assigns Palette for UI/UX & Digital Product Design", () => {
-      expect(getCareerIcon("design-creative")).toBe(Palette);
-      expect(getCareerIcon("Digital Product & UI/UX Design")).toBe(Palette);
-      expect(getCareerIconName("design-creative")).toBe("Palette");
+    it("assigns PanelsTopLeft for UI/UX & Product Design", () => {
+      expect(getCareerIcon("design-creative")).toBe(PanelsTopLeft);
+      expect(getCareerIcon("UI/UX & Product Design")).toBe(PanelsTopLeft);
+      expect(getCareerIcon("Digital Product & UI/UX Design")).toBe(PanelsTopLeft);
+      expect(getCareerIconName("design-creative")).toBe("PanelsTopLeft");
+      expect(getCareerIconName("UI/UX & Product Design")).toBe("PanelsTopLeft");
     });
 
-    it("assigns Brush for Visual Brand Communication", () => {
+    it("assigns Brush for Visual Brand & Spatial Design", () => {
       expect(getCareerIcon("visual-brand-communication")).toBe(Brush);
       expect(getCareerIcon("Visual Brand & Spatial Design")).toBe(Brush);
+      expect(getCareerIcon("Brand & Visual Design")).toBe(Brush);
       expect(getCareerIconName("visual-brand-communication")).toBe("Brush");
+      expect(getCareerIconName("Visual Brand & Spatial Design")).toBe("Brush");
     });
 
-    it("assigns Gamepad2 for Game Development", () => {
+    it("assigns Gamepad2 for Game & Interactive Media", () => {
       expect(getCareerIcon("game-multimedia-design")).toBe(Gamepad2);
       expect(getCareerIcon("Game & Interactive Media")).toBe(Gamepad2);
+      expect(getCareerIcon("Game Design")).toBe(Gamepad2);
       expect(getCareerIconName("game-multimedia-design")).toBe("Gamepad2");
+      expect(getCareerIconName("Game Design")).toBe("Gamepad2");
     });
 
-    it("assigns Film for Animation & 3D Media", () => {
-      expect(getCareerIcon("animation-3d-media")).toBe(Film);
-      expect(getCareerIcon("Animation & 3D Media")).toBe(Film);
-      expect(getCareerIconName("animation-3d-media")).toBe("Film");
+    it("assigns Clapperboard for Animation & 3D Media", () => {
+      expect(getCareerIcon("animation-3d-media")).toBe(Clapperboard);
+      expect(getCareerIcon("Animation & 3D Media")).toBe(Clapperboard);
+      expect(getCareerIconName("animation-3d-media")).toBe("Clapperboard");
+      expect(getCareerIconName("Animation & 3D Media")).toBe("Clapperboard");
+    });
+
+    it("assigns distinct, unique semantic icons to all creative category paths (no shared generic Palette icon)", () => {
+      const uiUxIcon = getCareerIcon("UI/UX & Product Design");
+      const visualBrandIcon = getCareerIcon("Visual Brand & Spatial Design");
+      const gameMediaIcon = getCareerIcon("Game & Interactive Media");
+      const animationIcon = getCareerIcon("Animation & 3D Media");
+
+      expect(uiUxIcon).toBe(PanelsTopLeft);
+      expect(visualBrandIcon).toBe(Brush);
+      expect(gameMediaIcon).toBe(Gamepad2);
+      expect(animationIcon).toBe(Clapperboard);
+
+      // Verify each path has its unique semantic icon
+      const icons = [uiUxIcon, visualBrandIcon, gameMediaIcon, animationIcon];
+      const uniqueIcons = new Set(icons);
+      expect(uniqueIcons.size).toBe(4);
+      expect(icons).not.toContain(Palette);
     });
   });
 

@@ -15,6 +15,8 @@ from app.database import init_db
 from app.routes.assessment import router as assessment_router
 from app.routes.auth import router as auth_router
 from app.routes.user import router as user_router
+from app.routes.feedback import router as feedback_router
+from app.routes.analytics import router as analytics_router
 
 # ── Logging Configuration ────────────────────────────────────────────
 logging.basicConfig(
@@ -172,6 +174,8 @@ async def global_unhandled_exception_handler(request: Request, exc: Exception) -
 app.include_router(assessment_router)
 app.include_router(auth_router)
 app.include_router(user_router)
+app.include_router(feedback_router)
+app.include_router(analytics_router)
 
 
 # ── Public Endpoints ─────────────────────────────────────────────────

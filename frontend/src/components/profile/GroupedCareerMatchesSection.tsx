@@ -76,7 +76,7 @@ export function GroupedCareerMatchesSection({
             const intel = getCareerIntelligence(match.career_name);
             const slug = intel?.slug || getCareerSlug(match.career_name);
             const hierarchy = getCareerHierarchy(slug);
-            const IconComp = intel ? getCareerIcon(intel.careerName) : Compass;
+            const IconComp = getCareerIcon(slug || intel?.slug || match.career_name);
             const isTop = idx === 0;
 
             return (
@@ -180,7 +180,7 @@ export function GroupedCareerMatchesSection({
             {secondaryTier.map((match) => {
               const intel = getCareerIntelligence(match.career_name);
               const slug = intel?.slug || getCareerSlug(match.career_name);
-              const IconComp = intel ? getCareerIcon(intel.careerName) : Compass;
+              const IconComp = getCareerIcon(slug || intel?.slug || match.career_name);
 
               return (
                 <div

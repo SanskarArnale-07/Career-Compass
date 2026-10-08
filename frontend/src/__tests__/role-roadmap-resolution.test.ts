@@ -10,12 +10,12 @@ import {
 
 describe("Hybrid Roadmap Architecture & Resolver (Phase R3)", () => {
   // ── 1. Canonical Inventory Integrity ─────────────────────────────────────
-  it("maintains the canonical inventory of 25 Paths, 77 Specializations, 231 Roles", () => {
+  it("maintains the canonical catalogue inventory including Civil Services & Public Administration", () => {
     const stats = getCareerCatalogueStats();
-    expect(stats.totalDomains).toBe(6);
-    expect(stats.totalPaths).toBe(25);
-    expect(stats.totalSpecializations).toBe(77);
-    expect(stats.totalRoles).toBe(231);
+    expect(stats.totalDomains).toBe(7);
+    expect(stats.totalPaths).toBe(28);
+    expect(stats.totalSpecializations).toBe(85);
+    expect(stats.totalRoles).toBe(253);
 
     const roadmapStats = getRoadmapInventoryStats();
     expect(roadmapStats.totalPaths).toBe(25);

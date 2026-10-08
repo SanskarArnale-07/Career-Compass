@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import type { CareerDetail } from "@/lib/career-details/types";
 import { getCareerHierarchy } from "@/lib/career-hierarchy";
+import { getCareerIcon } from "@/lib/career-icons";
 
 interface CareerHeroProps {
   career: CareerDetail;
@@ -20,7 +21,9 @@ export default function CareerHero({
 }: CareerHeroProps) {
   const hierarchy = getCareerHierarchy(career.slug);
   const IconComponent =
-    (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[career.icon] ?? LucideIcons.Compass;
+    getCareerIcon(career.slug || career.careerName || career.icon) ??
+    (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[career.icon] ??
+    LucideIcons.Compass;
 
   return (
     <section className="relative overflow-hidden rounded-2xl border border-border bg-linear-to-br from-card via-card to-primary/5">

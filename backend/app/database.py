@@ -69,8 +69,40 @@ def init_db(db_path: str | None = None) -> None:
                 FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
             );
 
+            CREATE TABLE IF NOT EXISTS student_feedback (
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                session_id TEXT NOT NULL,
+                submitted_at INTEGER NOT NULL,
+                profile_clarity_score INTEGER NOT NULL,
+                career_relevance_score INTEGER NOT NULL,
+                strengths_understanding_score INTEGER NOT NULL,
+                career_exploration_usefulness_score INTEGER NOT NULL,
+                confidence_before INTEGER NOT NULL,
+                confidence_after INTEGER NOT NULL,
+                recommendation_explanation_score INTEGER NOT NULL,
+                discovered_new_career INTEGER NOT NULL,
+                recommend_to_others INTEGER NOT NULL,
+                most_useful TEXT,
+                improvement_suggestion TEXT,
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS analytics_events (
+                id TEXT PRIMARY KEY,
+                event_name TEXT NOT NULL,
+                user_id TEXT,
+                session_id TEXT NOT NULL,
+                timestamp INTEGER NOT NULL,
+                properties TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
+            );
+
             CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
             CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON user_sessions(user_id);
             CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON user_sessions(expires_at);
+            CREATE INDEX IF NOT EXISTS idx_feedback_submitted_at ON student_feedback(submitted_at);
+            CREATE INDEX IF NOT EXISTS idx_analytics_event_name ON analytics_events(event_name);
+            CREATE INDEX IF NOT EXISTS idx_analytics_timestamp ON analytics_events(timestamp);
             """
         )

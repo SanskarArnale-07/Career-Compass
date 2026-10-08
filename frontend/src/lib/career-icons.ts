@@ -37,15 +37,19 @@ import {
   TrendingUp,
   Palette,
   PenTool,
+  PanelsTopLeft,
+  MousePointer2,
   CheckCircle,
   Brush,
   Layers,
+  Layers3,
   Package,
   Gamepad2,
   Glasses,
   Headphones,
   Film,
   Boxes,
+  Box,
   Clapperboard,
   Flame,
   ChartNoAxesCombined,
@@ -73,6 +77,8 @@ import {
   Newspaper,
   Mic,
   BarChart2,
+  ScrollText,
+  Gavel,
   type LucideIcon,
 } from "lucide-react";
 
@@ -124,24 +130,39 @@ export const CAREER_ICON_MAP: Record<string, LucideIcon> = {
   "Data Analytics & Insights": BarChart3,
 
   // Digital Product & UI/UX Design
-  "design-creative": Palette,
-  "Digital Product & UI/UX Design": Palette,
-  "UI/UX & Product Design": Palette,
-  "Design & Creative Arts": Palette,
+  "design-creative": PanelsTopLeft,
+  "Digital Product & UI/UX Design": PanelsTopLeft,
+  "UI/UX & Product Design": PanelsTopLeft,
+  "UI/UX Design": PanelsTopLeft,
+  "Product & UX Design": PanelsTopLeft,
+  "UI/UX": PanelsTopLeft,
+  "Design & Creative Arts": PanelsTopLeft,
+  "Design / Creative Arts": PanelsTopLeft,
+  "Design & Creative": PanelsTopLeft,
 
   // Visual Brand & Spatial Design
   "visual-brand-communication": Brush,
   "Visual Brand & Spatial Design": Brush,
   "Visual & Brand Communication": Brush,
+  "Brand & Visual Design": Brush,
+  "Visual Brand": Brush,
+  "Visual Branding": Brush,
+  "Brand Design": Brush,
 
   // Game & Interactive Media
   "game-multimedia-design": Gamepad2,
   "Game & Interactive Media": Gamepad2,
   "Game & Interactive Media Design": Gamepad2,
+  "Game Design": Gamepad2,
+  "Game Development": Gamepad2,
 
   // Animation & 3D Media
-  "animation-3d-media": Film,
-  "Animation & 3D Media": Film,
+  "animation-3d-media": Clapperboard,
+  "Animation & 3D Media": Clapperboard,
+  "Animation & 3D": Clapperboard,
+  "Animation": Clapperboard,
+  "3D Animation": Clapperboard,
+  "3D Media": Clapperboard,
 
   // Finance & FinTech
   "finance-investment": ChartNoAxesCombined,
@@ -204,11 +225,25 @@ export const CAREER_ICON_MAP: Record<string, LucideIcon> = {
   "Psychology & Behavioral Sciences": Users,
   "Psychology / Social Impact": Users,
 
-  // Journalism & Media Broadcasting
   "journalism-media-production": Newspaper,
   "Journalism & Media Broadcasting": Newspaper,
   "Journalism & Media Production": Newspaper,
   Journalism: Newspaper,
+
+  // Civil Services & Public Administration
+  "civil-services-public-admin": Landmark,
+  "Civil Services & Public Administration": Landmark,
+  "upsc-civil-services": Landmark,
+  "UPSC Civil Services": Landmark,
+  "Union Public Service Commission (UPSC) Civil Services": Landmark,
+  "Civil Services": Landmark,
+  "state-public-service-commissions": Building2,
+  "State Public Service Commissions": Building2,
+  "State Civil Services": Building2,
+  "public-policy-governance-path": ScrollText,
+  "Public Administration & Policy Pathways": ScrollText,
+  "Public Administration, Policy Analysis & Governance": ScrollText,
+  "Public Policy & Administration": ScrollText,
 };
 
 // ── 2. String Icon Names Mapping (for serialized components) ───────────
@@ -244,19 +279,36 @@ export const CAREER_ICON_NAME_MAP: Record<string, string> = {
   "data-analytics-bi": "BarChart3",
   "Business Intelligence & Analytics": "BarChart3",
 
-  "design-creative": "Palette",
-  "Digital Product & UI/UX Design": "Palette",
-  "UI/UX & Product Design": "Palette",
-  "Design & Creative Arts": "Palette",
+  "design-creative": "PanelsTopLeft",
+  "Digital Product & UI/UX Design": "PanelsTopLeft",
+  "UI/UX & Product Design": "PanelsTopLeft",
+  "UI/UX Design": "PanelsTopLeft",
+  "Product & UX Design": "PanelsTopLeft",
+  "UI/UX": "PanelsTopLeft",
+  "Design & Creative Arts": "PanelsTopLeft",
+  "Design / Creative Arts": "PanelsTopLeft",
+  "Design & Creative": "PanelsTopLeft",
 
   "visual-brand-communication": "Brush",
   "Visual Brand & Spatial Design": "Brush",
+  "Visual & Brand Communication": "Brush",
+  "Brand & Visual Design": "Brush",
+  "Visual Brand": "Brush",
+  "Visual Branding": "Brush",
+  "Brand Design": "Brush",
 
   "game-multimedia-design": "Gamepad2",
   "Game & Interactive Media": "Gamepad2",
+  "Game & Interactive Media Design": "Gamepad2",
+  "Game Design": "Gamepad2",
+  "Game Development": "Gamepad2",
 
-  "animation-3d-media": "Film",
-  "Animation & 3D Media": "Film",
+  "animation-3d-media": "Clapperboard",
+  "Animation & 3D Media": "Clapperboard",
+  "Animation & 3D": "Clapperboard",
+  "Animation": "Clapperboard",
+  "3D Animation": "Clapperboard",
+  "3D Media": "Clapperboard",
 
   "finance-investment": "ChartNoAxesCombined",
   "Financial Markets & Quantitative Investment": "ChartNoAxesCombined",
@@ -306,6 +358,19 @@ export const CAREER_ICON_NAME_MAP: Record<string, string> = {
 
   "journalism-media-production": "Newspaper",
   "Journalism & Media Broadcasting": "Newspaper",
+
+  // Civil Services & Public Administration
+  "civil-services-public-admin": "Landmark",
+  "Civil Services & Public Administration": "Landmark",
+  "upsc-civil-services": "Landmark",
+  "UPSC Civil Services": "Landmark",
+  "Union Public Service Commission (UPSC) Civil Services": "Landmark",
+  "state-public-service-commissions": "Building2",
+  "State Public Service Commissions": "Building2",
+  "State Civil Services": "Building2",
+  "public-policy-governance-path": "ScrollText",
+  "Public Administration & Policy Pathways": "ScrollText",
+  "Public Administration, Policy Analysis & Governance": "ScrollText",
 };
 
 // ── 3. Specializations Mapping (all 77 specializations) ────────────────
@@ -513,6 +578,24 @@ export const SPECIALIZATION_ICON_MAP: Record<string, LucideIcon> = {
   "Broadcast & Audio Storytelling": Mic,
   "interactive-data-journalism": BarChart2,
   "Interactive & Data Storytelling": BarChart2,
+
+  // Civil Services Specializations
+  "ias-administration": Landmark,
+  "Indian Administrative Service (IAS) & Public Governance": Landmark,
+  "ips-internal-security": ShieldCheck,
+  "Indian Police Service (IPS) & Law Enforcement": ShieldCheck,
+  "ifs-diplomatic-relations": Globe,
+  "Indian Foreign Service (IFS) & Diplomacy": Globe,
+  "irs-revenue-governance": ChartNoAxesCombined,
+  "Indian Revenue Service (IRS) & Financial Administration": ChartNoAxesCombined,
+  "state-administrative-services": Landmark,
+  "State Administrative Services (SAS / Provincial Civil Services)": Landmark,
+  "state-police-services": ShieldCheck,
+  "State Police Services (SPS / Deputy SP)": ShieldCheck,
+  "policy-research-governance": ScrollText,
+  "Government Policy & Regulatory Impact": ScrollText,
+  "psu-public-enterprises": Building2,
+  "Public Sector Enterprises & Institutional Management": Building2,
 };
 
 // ── 4. Domains / Categories Mapping ───────────────────────────────────
@@ -532,6 +615,8 @@ export const DOMAIN_ICON_MAP: Record<string, LucideIcon> = {
   "media-communications-social-impact": Megaphone,
   "Media, Communications & Social Impact": Megaphone,
   "Media & Communications": Megaphone,
+  "civil-services-public-admin": Landmark,
+  "Civil Services & Public Administration": Landmark,
 };
 
 // ── Helper: Normalizer ───────────────────────────────────────────────
@@ -547,9 +632,53 @@ function normalizeKey(str: string): string {
 export function getCareerIcon(identifier?: string | null): LucideIcon {
   if (!identifier) return Compass;
 
-  // Direct exact match
+  // Direct exact match in career map
   if (CAREER_ICON_MAP[identifier]) {
     return CAREER_ICON_MAP[identifier];
+  }
+
+  // Direct Lucide component name match if identifier is already an icon name
+  const DIRECT_ICONS: Record<string, LucideIcon> = {
+    PanelsTopLeft,
+    MousePointer2,
+    Brush,
+    Layers,
+    Layers3,
+    Gamepad2,
+    Clapperboard,
+    Box,
+    Boxes,
+    Film,
+    Code2,
+    ShieldCheck,
+    Cloud,
+    Bot,
+    Radio,
+    Building2,
+    BrainCircuit,
+    Database,
+    BarChart3,
+    ChartNoAxesCombined,
+    Target,
+    Rocket,
+    Truck,
+    Stethoscope,
+    FlaskConical,
+    Dna,
+    Activity,
+    Megaphone,
+    Scale,
+    Users,
+    Newspaper,
+    Palette,
+    PenTool,
+    Landmark,
+    ScrollText,
+    Gavel,
+    Compass,
+  };
+  if (DIRECT_ICONS[identifier]) {
+    return DIRECT_ICONS[identifier];
   }
 
   // Normalized key match
@@ -570,30 +699,92 @@ export function getCareerIcon(identifier?: string | null): LucideIcon {
     return DOMAIN_ICON_MAP[identifier];
   }
 
-  // Partial substring matches
+  // Partial substring matches (prioritize specific disciplines over broad catch-all words)
   const lower = identifier.toLowerCase();
-  if (lower.includes("software") || lower.includes("developer") || lower.includes("coding")) return Code2;
-  if (lower.includes("security") || lower.includes("cyber")) return ShieldCheck;
-  if (lower.includes("cloud") || lower.includes("devops")) return Cloud;
-  if (lower.includes("robot") || lower.includes("automation")) return Bot;
-  if (lower.includes("ai") || lower.includes("intelligence") || lower.includes("machine learning")) return BrainCircuit;
-  if (lower.includes("data engineer") || lower.includes("database")) return Database;
-  if (lower.includes("data") || lower.includes("analytics")) return BarChart3;
-  if (lower.includes("design") || lower.includes("ui") || lower.includes("ux")) return Palette;
-  if (lower.includes("game")) return Gamepad2;
-  if (lower.includes("animation") || lower.includes("3d")) return Film;
-  if (lower.includes("finance") || lower.includes("invest") || lower.includes("fintech") || lower.includes("bank")) return ChartNoAxesCombined;
+
+  // 1. Game & Interactive Media (must precede generic 'design')
+  if (lower.includes("game") || lower.includes("gaming") || lower.includes("interactive media") || lower.includes("gameplay")) return Gamepad2;
+
+  // 2. Animation & 3D Media (must precede generic 'design' or 'media')
+  if (lower.includes("animation") || lower.includes("3d media") || lower.includes("3d-media") || lower.includes("cgi") || lower.includes("vfx")) return Clapperboard;
+
+  // 3. Visual Brand & Spatial Design (must precede generic 'design')
+  if (lower.includes("brand") || lower.includes("spatial") || lower.includes("packaging") || lower.includes("visual brand") || lower.includes("visual communication")) return Brush;
+
+  // 4. UI/UX & Digital Product Design
+  if (lower.includes("ui") || lower.includes("ux") || lower.includes("product design") || lower.includes("user interface") || lower.includes("user experience") || lower.includes("interaction design")) return PanelsTopLeft;
+
+  // 5. Software & Development
+  if (lower.includes("software") || lower.includes("developer") || lower.includes("coding") || lower.includes("frontend") || lower.includes("backend") || lower.includes("fullstack") || lower.includes("full-stack")) return Code2;
+
+  // 6. Cybersecurity & Defense
+  if (lower.includes("security") || lower.includes("cyber") || lower.includes("infosec") || lower.includes("defense")) return ShieldCheck;
+
+  // 7. Cloud & Infrastructure
+  if (lower.includes("cloud") || lower.includes("devops") || lower.includes("infrastructure")) return Cloud;
+
+  // 8. Robotics & Automation
+  if (lower.includes("robot") || lower.includes("automation") || lower.includes("mechatronic")) return Bot;
+
+  // 9. IoT & Embedded Systems
+  if (lower.includes("iot") || lower.includes("connected system") || lower.includes("embedded") || lower.includes("firmware")) return Radio;
+
+  // 10. AI / Machine Learning & Data Science
+  if (lower.includes("ai") || lower.includes("intelligence") || lower.includes("machine learning") || lower.includes("deep learning") || lower.includes("data science")) return BrainCircuit;
+
+  // 11. Data Engineering & Platforms
+  if (lower.includes("data engineer") || lower.includes("database") || lower.includes("data platform") || lower.includes("lakehouse")) return Database;
+
+  // 12. Data Analytics & Business Intelligence
+  if (lower.includes("analytics") || lower.includes("business intelligence") || lower.includes("bi")) return BarChart3;
+
+  // 13. Finance & Quantitative Investment
+  if (lower.includes("finance") || lower.includes("invest") || lower.includes("fintech") || lower.includes("bank") || lower.includes("quant")) return ChartNoAxesCombined;
+
+  // 14. Entrepreneurship & Startups
   if (lower.includes("entrepreneur") || lower.includes("startup") || lower.includes("venture")) return Rocket;
-  if (lower.includes("product") || lower.includes("management")) return Target;
+
+  // 15. Strategic Management & Product Leadership
+  if (lower.includes("management") || lower.includes("product manager") || lower.includes("agile") || lower.includes("operations")) return Target;
+
+  // 16. Supply Chain & Logistics
   if (lower.includes("supply") || lower.includes("logistics")) return Truck;
-  if (lower.includes("medicine") || lower.includes("doctor") || lower.includes("health") || lower.includes("clinic")) return Stethoscope;
-  if (lower.includes("research") || lower.includes("science")) return FlaskConical;
+
+  // 17. Clinical Medicine & Healthcare
+  if (lower.includes("medicine") || lower.includes("doctor") || lower.includes("health") || lower.includes("clinic") || lower.includes("hospital")) return Stethoscope;
+
+  // 18. Scientific Research & Discovery
+  if (lower.includes("scientific") || lower.includes("research") || lower.includes("experiment") || lower.includes("physical science")) return FlaskConical;
+
+  // 19. Biotechnology & Pharmaceutical
   if (lower.includes("pharma") || lower.includes("biomedical") || lower.includes("biotech")) return Dna;
+
+  // 20. Public Health & Epidemiology
+  if (lower.includes("public health") || lower.includes("epidemiol")) return Activity;
+
+  // 21. Strategic Marketing & Brand Communications
   if (lower.includes("market") || lower.includes("pr") || lower.includes("advertising")) return Megaphone;
+
+  // 21b. Civil Services & Public Administration
+  if (lower.includes("civil service") || lower.includes("upsc") || lower.includes("ias") || lower.includes("ifs") || lower.includes("state psc") || lower.includes("district magistrate")) return Landmark;
+  if (lower.includes("ips") || lower.includes("police service") || lower.includes("law enforcement")) return ShieldCheck;
+  if (lower.includes("public policy") || lower.includes("governance") || lower.includes("legislative")) return ScrollText;
+  if (lower.includes("public administration") || lower.includes("public enterprise")) return Landmark;
+
+  // 22. Law & Public Policy
   if (lower.includes("law") || lower.includes("legal") || lower.includes("policy")) return Scale;
-  if (lower.includes("psychology") || lower.includes("behavior") || lower.includes("social")) return Users;
+
+  // 23. Psychological Sciences & Behavioral Health
+  if (lower.includes("psychology") || lower.includes("behavior") || lower.includes("counseling") || lower.includes("social")) return Users;
+
+  // 24. Journalism & Media Broadcasting
   if (lower.includes("journalism") || lower.includes("news") || lower.includes("broadcast")) return Newspaper;
+
+  // 25. Core Engineering (Mechanical, Electrical, Civil)
   if (lower.includes("engineer")) return Building2;
+
+  // 26. Generic design fallback only if no specific creative sub-field matched
+  if (lower.includes("design") || lower.includes("creative") || lower.includes("art")) return PanelsTopLeft;
 
   return Compass;
 }
@@ -616,24 +807,36 @@ export function getCareerIconName(identifier?: string | null): string {
   }
 
   const lower = identifier.toLowerCase();
-  if (lower.includes("software") || lower.includes("developer")) return "Code2";
+  if (lower.includes("game") || lower.includes("gaming") || lower.includes("interactive media")) return "Gamepad2";
+  if (lower.includes("animation") || lower.includes("3d media") || lower.includes("cgi") || lower.includes("vfx")) return "Clapperboard";
+  if (lower.includes("brand") || lower.includes("spatial") || lower.includes("packaging")) return "Brush";
+  if (lower.includes("ui") || lower.includes("ux") || lower.includes("product design") || lower.includes("interface")) return "PanelsTopLeft";
+  if (lower.includes("software") || lower.includes("developer") || lower.includes("coding")) return "Code2";
   if (lower.includes("security") || lower.includes("cyber")) return "ShieldCheck";
-  if (lower.includes("cloud")) return "Cloud";
-  if (lower.includes("robot")) return "Bot";
-  if (lower.includes("ai") || lower.includes("intelligence")) return "BrainCircuit";
-  if (lower.includes("data engineer")) return "Database";
-  if (lower.includes("data") || lower.includes("analytics")) return "BarChart3";
-  if (lower.includes("design") || lower.includes("ui") || lower.includes("ux")) return "Palette";
-  if (lower.includes("game")) return "Gamepad2";
-  if (lower.includes("animation")) return "Film";
-  if (lower.includes("finance") || lower.includes("invest")) return "ChartNoAxesCombined";
+  if (lower.includes("cloud") || lower.includes("devops")) return "Cloud";
+  if (lower.includes("robot") || lower.includes("automation")) return "Bot";
+  if (lower.includes("iot") || lower.includes("embedded")) return "Radio";
+  if (lower.includes("ai") || lower.includes("intelligence") || lower.includes("machine learning")) return "BrainCircuit";
+  if (lower.includes("data engineer") || lower.includes("database")) return "Database";
+  if (lower.includes("analytics") || lower.includes("bi")) return "BarChart3";
+  if (lower.includes("finance") || lower.includes("invest") || lower.includes("fintech")) return "ChartNoAxesCombined";
   if (lower.includes("entrepreneur") || lower.includes("startup")) return "Rocket";
-  if (lower.includes("product") || lower.includes("management")) return "Target";
+  if (lower.includes("management") || lower.includes("operations")) return "Target";
+  if (lower.includes("supply") || lower.includes("logistics")) return "Truck";
   if (lower.includes("medicine") || lower.includes("health")) return "Stethoscope";
   if (lower.includes("research") || lower.includes("science")) return "FlaskConical";
-  if (lower.includes("law") || lower.includes("legal")) return "Scale";
-  if (lower.includes("market")) return "Megaphone";
-  if (lower.includes("journalism")) return "Newspaper";
+  if (lower.includes("pharma") || lower.includes("biomedical")) return "Dna";
+  if (lower.includes("public health") || lower.includes("epidemiol")) return "Activity";
+  if (lower.includes("civil service") || lower.includes("upsc") || lower.includes("ias") || lower.includes("ifs") || lower.includes("state psc") || lower.includes("district magistrate")) return "Landmark";
+  if (lower.includes("ips") || lower.includes("police service") || lower.includes("law enforcement")) return "ShieldCheck";
+  if (lower.includes("public policy") || lower.includes("governance") || lower.includes("legislative")) return "ScrollText";
+  if (lower.includes("public administration") || lower.includes("public enterprise")) return "Landmark";
+  if (lower.includes("law") || lower.includes("legal") || lower.includes("policy")) return "Scale";
+  if (lower.includes("market") || lower.includes("pr") || lower.includes("advertising")) return "Megaphone";
+  if (lower.includes("psychology") || lower.includes("social")) return "Users";
+  if (lower.includes("journalism") || lower.includes("news")) return "Newspaper";
+  if (lower.includes("engineer")) return "Building2";
+  if (lower.includes("design") || lower.includes("creative")) return "PanelsTopLeft";
 
   return "Compass";
 }

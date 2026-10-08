@@ -149,3 +149,75 @@ class AuthResponse(BaseModel):
 class UserJourneyPayload(BaseModel):
     journey: dict = Field(..., description="Complete or partial journey data.")
 
+
+# ── Student Feedback Models ──────────────────────────────────────────
+
+class FeedbackSubmissionRequest(BaseModel):
+    session_id: str = Field(..., min_length=1, max_length=128, description="Session or assessment ID.")
+    profile_clarity_score: int = Field(..., ge=1, le=5, description="1-5 rating of profile clarity.")
+    career_relevance_score: int = Field(..., ge=1, le=5, description="1-5 rating of career relevance.")
+    strengths_understanding_score: int = Field(..., ge=1, le=5, description="1-5 rating of strengths understanding.")
+    career_exploration_usefulness_score: int = Field(..., ge=1, le=5, description="1-5 rating of career exploration usefulness.")
+    confidence_before: int = Field(..., ge=1, le=5, description="1-5 confidence before guidance.")
+    confidence_after: int = Field(..., ge=1, le=5, description="1-5 confidence after guidance.")
+    recommendation_explanation_score: int = Field(..., ge=1, le=5, description="1-5 rating of recommendation explainability.")
+    discovered_new_career: bool = Field(..., description="Whether a new career path was discovered.")
+    recommend_to_others: bool = Field(..., description="Whether student would recommend to peers.")
+    most_useful: str | None = Field(default=None, max_length=1000, description="Open text feedback on what was most useful.")
+    improvement_suggestion: str | None = Field(default=None, max_length=1000, description="Open text feedback on areas of improvement.")
+
+
+class FeedbackRecord(FeedbackSubmissionRequest):
+    id: str
+    user_id: str | None = None
+    submitted_at: int
+
+
+class FeedbackStatsResponse(BaseModel):
+    total_responses: int
+    avg_profile_clarity: float | None = None
+    avg_career_relevance: float | None = None
+    avg_strengths_understanding: float | None = None
+    avg_exploration_usefulness: float | None = None
+    avg_confidence_before: float | None = None
+    avg_confidence_after: float | None = None
+    confidence_improvement: float | None = None
+    discovery_rate_percent: float | None = None
+    recommend_rate_percent: float | None = None
+
+
+# ── Analytics Models ──────────────────────────────────────────────────
+
+class AnalyticsEventPayload(BaseModel):
+    event_name: str = Field(..., min_length=1, max_length=100, description="Canonical event name.")
+    session_id: str = Field(..., min_length=1, max_length=128, description="Client session ID.")
+    timestamp: int | None = Field(default=None, description="Unix timestamp (milliseconds or seconds).")
+    properties: dict = Field(default_factory=dict, description="Metadata key-value pairs.")
+
+
+class AnalyticsBatchRequest(BaseModel):
+    events: list[AnalyticsEventPayload] = Field(..., min_length=1, max_length=50)
+
+
+class ResearchMetricsResponse(BaseModel):
+    total_assessments_started: int
+    total_assessments_completed: int
+    assessment_completion_rate: float | None
+    total_students_evaluated: int
+    total_feedback_submissions: int
+    feedback_submission_rate: float | None
+    average_profile_clarity: float | None
+    average_career_relevance: float | None
+    average_usefulness: float | None
+    average_confidence_before: float | None
+    average_confidence_after: float | None
+    confidence_improvement: float | None
+    discovery_rate_percent: float | None
+    recommendation_rate_percent: float | None
+    average_careers_explored: float
+    total_events_tracked: int
+    career_exploration_funnel: dict[str, int]
+    top_explored_domains: list[dict]
+    top_explored_paths: list[dict]
+
+

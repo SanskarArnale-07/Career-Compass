@@ -135,7 +135,7 @@ describe("Career Directory Cluster Search & Roadmap Deep-linking", () => {
       const html = renderToStaticMarkup(<CareersDirectoryFilter />);
       expect(html).toContain("Search careers, roles, or areas");
       expect(html).toContain("Engineering &amp; Technology");
-      expect(html).toContain("All Paths (25)");
+      expect(html).toContain("All Paths (28)");
     });
 
     it("verifies grouped results structure for specific role produces role-first grouping with direct roadmap link", () => {
