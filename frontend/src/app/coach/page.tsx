@@ -114,6 +114,11 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
     setIsThinking(true);
 
     try {
+      const historyPayload = messages.slice(-6).map((m) => ({
+        role: m.role === "user" ? ("user" as const) : ("assistant" as const),
+        content: m.content,
+      }));
+
       // Try API route first, fallback gracefully to local generator
       let coachReply = "";
       try {
@@ -123,10 +128,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
           body: JSON.stringify({
             message: text,
             context,
-            history: messages.slice(-4).map((m) => ({
-              role: m.role === "user" ? "user" : "assistant",
-              content: m.content,
-            })),
+            history: historyPayload,
           }),
         });
 
@@ -139,7 +141,7 @@ Click any suggested question below or ask me about your roadmap, skill gaps, pro
       }
 
       if (!coachReply) {
-        coachReply = await generateLocalCoachResponse(text, context);
+        coachReply = await generateLocalCoachResponse(text, context, historyPayload);
       }
 
       const coachMsg: ChatMessage = {

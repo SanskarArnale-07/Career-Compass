@@ -3,32 +3,39 @@
  *
  * Provides journey-grounded, context-aware coaching advice.
  * Evaluates the student's actual Career Compass state:
- * - Career target & match %
- * - Assessment traits & skill gaps
- * - Roadmap phase & completed milestones
- * - Project portfolio readiness
- * - Study pace & timeline
+ * - Assessment traits & top career recommendations
+ * - Target career & match %
+ * - Multi-turn conversation history
+ * - Phased skills roadmaps across all 28 catalog pathways
+ * - UPSC & Indian Civil Services entry requirements
+ * - Project portfolio milestones & study pace
  *
- * Strictly adheres to Career Compass intelligence without hallucinating facts.
+ * Strictly adheres to verified Career Compass intelligence without hallucinating facts.
  */
 
 import type { CareerCoachContext } from "../career-details/career-context";
 import {
   resolveCareerIntelligence,
   getAllCareerIntelligence,
+  getCareerIntelligence,
   type CareerIntelligence,
 } from "../career-intelligence";
 
 export const SUGGESTED_QUESTIONS = [
-  "What should I learn next?",
-  "Why was this career recommended?",
-  "What skills am I missing?",
-  "What project should I build?",
-  "What should I focus on this month?",
-  "How does this career compare with AI & Data Science?",
-  "What should I do after completing this milestone?",
-  "Am I ready for internships?",
+  "What careers match my strengths?",
+  "How do I become a cybersecurity analyst?",
+  "What skills should I learn first?",
+  "How can I prepare for UPSC?",
+  "Compare software engineering and data analytics",
+  "Is UI/UX design a good career for me?",
+  "What should I do next in my current roadmap?",
+  "What should I study after 10th?",
 ];
+
+export interface ChatHistoryMessage {
+  role: "user" | "assistant" | "coach" | "companion" | "system";
+  content: string;
+}
 
 /**
  * Normalizes coach context with guaranteed safe defaults to prevent runtime exceptions.
@@ -90,6 +97,8 @@ export function normalizeCoachContext(context: CareerCoachContext): CareerCoachC
     primaryTraits: [],
     topTrait: "Analytical",
     assessmentSummary: "Assessment not yet completed.",
+    topCareers: [],
+    recommendedStream: undefined,
   };
   const assessmentInterpretation = context.assessmentInterpretation || {
     strengths: [],
@@ -136,83 +145,44 @@ export function formatStructuredCoachContext(
     nextAction,
   } = context;
 
-  void _progressReport; // used in generateLocalCoachResponse, not here
+  void _progressReport;
 
   // 1. USER CONTEXT
   const userContextLines = [
     "=== USER CONTEXT ===",
     `- Assessment Status: ${userProfile?.hasAssessment ? "Completed" : "Not completed (using default baseline)"}`,
     userProfile?.hasAssessment && userProfile.primaryTraits?.length
-      ? `- Primary Traits: ${userProfile.primaryTraits.map((t) => `${t.label} (${t.code}: ${t.score})`).join(", ")}`
+      ? `- Primary Traits: ${userProfile.primaryTraits.map((t) => `${t.label} (${t.code}: ${t.score}%)`).join(", ")}`
       : "- Primary Traits: Not yet assessed",
     `- Top Dominant Trait: ${userProfile?.topTrait || "Adaptability"}`,
+    `- Top Recommended Careers: ${userProfile?.topCareers?.length ? userProfile.topCareers.map((c) => `${c.career_name} (${Math.round(c.match_percentage)}%)`).join(", ") : "Not yet generated"}`,
+    `- Recommended Stream: ${userProfile?.recommendedStream || "Not yet determined"}`,
     `- Assessment Profile Summary: ${userProfile?.assessmentSummary || "General career explorer profile."}`,
-    `- Career Match Alignment: ${career?.matchPercentage !== undefined ? `${career.matchPercentage}%` : "Not yet assessed (Exploration Mode)"}`,
+    `- Current Career Match Alignment: ${career?.matchPercentage !== undefined ? `${career.matchPercentage}%` : "Not yet assessed (Exploration Mode)"}`,
     `- Why Career Matches User: ${assessmentInterpretation?.whyCareerMatches || `Aligned with interest in ${career?.category || "this career domain"}.`}`,
-    `- Identified Strengths: ${assessmentInterpretation?.strengths?.length ? assessmentInterpretation.strengths.map((s) => `${s.title} (${s.explanation})`).join("; ") : "Self-directed learning, core curiosity"}`,
-    `- Identified Skill Gaps: ${assessmentInterpretation?.gaps?.length ? assessmentInterpretation.gaps.map((g) => `${g.title} (${g.explanation})`).join("; ") : "Domain-specific project execution and portfolio proof"}`,
   ];
 
   // 2. CAREER DATA
   const careerDataLines = [
-    "=== CAREER DATA ===",
-    `- Targeted Career: ${career.title} (Slug: ${career.slug})`,
+    "=== ACTIVE CAREER CONTEXT ===",
+    `- Active Career: ${career.title} (Slug: ${career.slug})`,
     `- Domain Category: ${career.category}`,
     `- Tagline: ${career.tagline}`,
-    `- Overview: ${career.overview}`,
-    `- Entry Difficulty: ${career.difficultyToEnter}`,
-    `- Industry Growth Potential: ${career.growthPotential}`,
-    `- Core Responsibilities: ${career.responsibilities?.slice(0, 4).join("; ") || "Professional domain execution and industry practice"}`,
-    `- Recommended Academic Stream: ${career.educationPath?.recommendedStream || "Relevant degree or practical portfolio proof"}`,
-    `- Target Degrees: ${career.educationPath?.degrees?.join(", ") || "Bachelor's in relevant discipline"}`,
-    `- Essential Tools & Technologies: ${career.toolsTechnologies?.join(", ") || "Modern industry toolchain"}`,
-    `- Role Progression Ladder: ${career.roleProgression?.join(" → ") || "Junior → Mid-Level → Senior → Lead"}`,
+    `- Recommended Stream After 10th: ${career.educationPath?.recommendedStream || "Science stream"}`,
+    `- Recommended Degree: ${career.educationPath?.degrees?.join(", ") || "Bachelor's degree in a relevant discipline"}`,
+    `- Key Skills: ${career.toolsTechnologies?.slice(0, 5).join(", ") || "Core analytical & domain tools"}`,
   ];
 
-  // 3. ROADMAP DATA
-  const activeMilestone = roadmapPlan?.completionState?.nextMilestone?.title || roadmap.nextMilestone;
-  const activeStage = roadmapPlan?.completionState?.activePhaseStage || roadmap.activeStage || "foundation";
-
-  const roadmapDataLines = [
-    "=== ROADMAP DATA ===",
-    `- Total Roadmap Phases: ${roadmap.totalPhases}`,
-    `- Current Active Phase: Phase ${roadmap.currentPhaseNumber} — ${roadmap.currentPhaseTitle} (${roadmap.currentPhaseDuration})`,
-    `- Active Progression Stage: ${activeStage}`,
-    `- Active Milestone: ${activeMilestone}`,
-    `- Milestone Relevance: ${roadmapPlan?.completionState?.nextMilestone?.relevance?.reason || "Core curriculum competency"}`,
-    `- Milestone Estimated Effort: ${roadmapPlan?.completionState?.nextMilestone?.estimatedEffort ? `${roadmapPlan.completionState.nextMilestone.estimatedEffort.durationText} (${roadmapPlan.completionState.nextMilestone.estimatedEffort.hours}h)` : "Standard pace"}`,
-    `- Milestone Prerequisites: ${roadmapPlan?.completionState?.nextMilestone?.prerequisites?.length ? roadmapPlan.completionState.nextMilestone.prerequisites.join(", ") : "None"}`,
-    `- Completed Phases: [${roadmap.completedPhases.join(", ")}] (${roadmap.phaseProgressPercent}% phase progress)`,
-    `- Milestone Completion Count: ${roadmapPlan?.completionState?.completedMilestonesCount || 0} of ${roadmapPlan?.completionState?.totalMilestonesCount || 12} (${roadmapPlan?.completionState?.overallProgressPercent || 0}%)`,
+  // 3. ROADMAP & PROGRESS
+  const roadmapLines = [
+    "=== ACTIVE ROADMAP ===",
+    `- Current Phase: Phase ${roadmap.currentPhaseNumber}: ${roadmap.currentPhaseTitle}`,
+    `- Phase Duration: ${roadmap.currentPhaseDuration}`,
+    `- Next Milestone: ${roadmap.nextMilestone}`,
+    `- Next Recommended Action: ${nextAction.title} (${nextAction.reasoning})`,
   ];
 
-  // 4. PROGRESS DATA
-  const progressDataLines = [
-    "=== PROGRESS DATA ===",
-    `- Progress Level: Level ${readiness.tierLevel} (${readiness.tierName})`,
-    `- Next Tier Requirement: ${readiness.nextTierRequirement}`,
-    `- Mastered Skills: ${skills.mastered.length > 0 ? skills.mastered.join(", ") : "None yet verified"}`,
-    `- Priority Missing Skill Gaps: ${skills.priorityGaps.length > 0 ? skills.priorityGaps.map((g) => `${g.name} [${g.category}] (${g.whyItMatters})`).join("; ") : "No immediate gaps identified"}`,
-    `- Completed Projects: ${projects.completed.length > 0 ? projects.completed.join(", ") : "None yet built"} (${projects.completed.length} of ${projects.total})`,
-    `- Next Project to Build: ${projects.nextToBuild ? `"${projects.nextToBuild.title}" (${projects.nextToBuild.difficulty.toUpperCase()}: ${projects.nextToBuild.description})` : "All core portfolio projects completed"}`,
-    `- Internship Readiness: ${jobPrep.isInternshipReady ? "Qualified for entry-level internships" : "Still building required proof"}`,
-    `- Study Velocity: ${studyPace.weeklyHours} hours/week (~${studyPace.estimatedWeeksRemaining} weeks remaining until ${studyPace.targetMonthYear})`,
-    `- Immediate Priority Action: "${nextAction.title}" (${nextAction.estimatedTime}) - ${nextAction.reasoning}`,
-    recommendations ? `- Adaptive Recommendation: [${recommendations.primaryRecommendation.priority.toUpperCase()}] ${recommendations.primaryRecommendation.title} (Why: ${recommendations.primaryRecommendation.reason})` : "",
-  ].filter(Boolean);
-
-  const questionLines = query ? ["", "=== QUESTION ===", query.trim()] : [];
-
-  return [
-    userContextLines.join("\n"),
-    "",
-    careerDataLines.join("\n"),
-    "",
-    roadmapDataLines.join("\n"),
-    "",
-    progressDataLines.join("\n"),
-    ...questionLines,
-  ].join("\n");
+  return [...userContextLines, "", ...careerDataLines, "", ...roadmapLines].join("\n");
 }
 
 /**
@@ -246,94 +216,407 @@ export function buildCoachSystemPrompt(context: CareerCoachContext): string {
   const structuredContext = formatStructuredCoachContext(context);
   const matchPct = context.career.matchPercentage ? Math.round(context.career.matchPercentage) : 0;
 
-  return `You are Career Companion, a friendly, encouraging AI guide for Class 9–10 school students (ages 14–16).
-You have access to the student's journey in Career Compass:
+  return `You are Career Companion, a friendly, encouraging, and context-aware AI career guidance assistant for school students (Class 9–12, ages 14–18).
 
+You have access to the student's journey in Career Compass:
 ${structuredContext}
 
-CONVERSATIONAL BEHAVIOR & GUIDELINES:
-1. NATURAL CONVERSATION:
-   - For greetings ("hello", "hi", "hey"), acknowledgements ("thanks", "thank you", "cool", "ok"), or casual talk, respond naturally and briefly (1-2 sentences).
-   - Example greeting: "Hey! 👋 What can I help you with?"
-   - Example thanks: "You're welcome! Want to explore anything else?"
-   - NEVER generate a career report just because career context is available.
-2. CONTEXT SHOULD INFORM ANSWERS, NOT OVERRIDE:
-   - Use the student's current career (${context.career.title}) only when the question is relevant to it.
-   - Do NOT force every response into a career report.
-3. REMOVE REPORT-LIKE RESPONSE STYLE:
-   - Do NOT generate enterprise dashboard headings like "Career Compass Guidance for...", "Skill Gap Analysis", "Priority Missing Skills", "Immediate Bottlenecks", or "Transparent Skill Inventory".
-   - Keep answers conversational, warm, and easy to read.
-4. SIMPLIFY LANGUAGE FOR CLASS 9–10:
-   - Use student-friendly wording: use "Skills you can work on next" (not "Priority missing skills"), "Good areas to focus on" (not "Immediate bottlenecks").
-   - Avoid enterprise or corporate jargon like "transparent skill inventory", "verified progress", "readiness analysis".
-5. CONCISE LENGTH:
-   - Default responses should be 2–5 sentences, concise, easy to scan in a small 320px chat panel.
-   - Use short bullet lists (2–3 items) only when helpful.
-6. MATCH SCORE CONSISTENCY:
-   - If referencing career match, always use the rounded integer (${matchPct}% match). Never invent decimals (like 75.1%) or a conflicting readiness score.`;
+You also have comprehensive knowledge of the entire Career Compass catalog of 28 career pathways across Technology, Engineering, Design, Management, Sciences, Healthcare, Civil Services & Public Policy, Law, Finance, and Media.
+
+CRITICAL INSTRUCTIONS:
+1. ALWAYS ANSWER THE EXACT QUESTION ASKED:
+   - If the student asks about a specific career (e.g., Cybersecurity, UPSC, UI/UX Design, Data Analytics, Medicine, Law), answer specifically about THAT career.
+   - Do NOT force every response back to the active page career (${context.career.title}) unless the question is actually about it.
+2. MULTI-TURN CONVERSATION MEMORY:
+   - When a student asks a follow-up (e.g. "What should I learn first?"), use the conversation history to understand what career or topic was previously discussed.
+3. PERSONALIZATION WITH HONEST DATA:
+   - When asked what matches their strengths, reference their actual assessment results (${context.userProfile?.primaryTraits?.map((t) => `${t.label}: ${t.score}%`).join(", ") || "not yet taken"}).
+   - If they haven't taken the assessment, state that limitation honestly and explain how the assessment works without inventing numbers.
+4. STRUCTURE OF ANSWERS:
+   - 1. Direct answer.
+   - 2. Concrete explanation or details (short bullet points).
+   - 3. Actionable next step or practical advice for school students.
+5. CONCISE, STUDENT-FRIENDLY TONE:
+   - Keep answers between 2–4 short paragraphs or bullet lists.
+   - Avoid enterprise jargon like "transparent skill inventory" or "verified progress".`;
 }
 
 /**
- * Helper to resolve a comparison career from a query.
+ * Helper to match keywords as whole words or delimited boundaries.
+ * Prevents false positives where short keywords match inside longer words (e.g. "ca" inside "career").
  */
-function extractComparisonCareer(
+export function matchesKeyword(text: string, keyword: string): boolean {
+  if (!text || !keyword) return false;
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`(?:^|[^a-zA-Z0-9])${escaped}(?:[^a-zA-Z0-9]|$)`, "i");
+  return regex.test(text);
+}
+
+// ── Career Keyword Mappings for Intent Detection ──────────────────────
+interface CareerKeywordMap {
+  slug: string;
+  keywords: string[];
+}
+
+const CAREER_KEYWORDS: CareerKeywordMap[] = [
+  {
+    slug: "cybersecurity",
+    keywords: [
+      "cybersecurity",
+      "cyber security",
+      "cyber",
+      "security analyst",
+      "ethical hacker",
+      "ethical hacking",
+      "infosec",
+      "information security",
+      "penetration testing",
+      "pen tester",
+      "red team",
+      "blue team",
+      "soc analyst",
+      "cyber defense",
+    ],
+  },
+  {
+    slug: "upsc-civil-services",
+    keywords: [
+      "upsc",
+      "civil services",
+      "civil service",
+      "ias",
+      "ips",
+      "ifs",
+      "irs",
+      "district magistrate",
+      "dm",
+      "collector",
+      "upsc cse",
+      "civil servant",
+      "bureaucrat",
+      "bureaucracy",
+      "public administration",
+    ],
+  },
+  {
+    slug: "design-creative",
+    keywords: [
+      "ui/ux",
+      "ui ux",
+      "ui",
+      "ux",
+      "product design",
+      "product designer",
+      "user experience",
+      "user interface",
+      "interaction design",
+      "figma",
+      "ux design",
+      "ui design",
+      "graphic design",
+    ],
+  },
+  {
+    slug: "software-development",
+    keywords: [
+      "software engineering",
+      "software engineer",
+      "software development",
+      "software developer",
+      "developer",
+      "coding",
+      "programmer",
+      "programming",
+      "web developer",
+      "app developer",
+      "full stack",
+      "backend",
+      "frontend",
+    ],
+  },
+  {
+    slug: "data-analytics-bi",
+    keywords: [
+      "data analytics",
+      "data analyst",
+      "business intelligence",
+      "bi analyst",
+      "analytics",
+      "data analysis",
+      "business analyst",
+    ],
+  },
+  {
+    slug: "ai-ml-data-science",
+    keywords: [
+      "ai",
+      "machine learning",
+      "data science",
+      "data scientist",
+      "artificial intelligence",
+      "deep learning",
+      "ml engineer",
+      "nlp",
+    ],
+  },
+  {
+    slug: "management-product",
+    keywords: [
+      "product management",
+      "product manager",
+      "pm",
+      "tech management",
+      "associate product manager",
+      "apm",
+    ],
+  },
+  {
+    slug: "medicine-healthcare",
+    keywords: [
+      "medicine",
+      "doctor",
+      "healthcare",
+      "medical",
+      "neet",
+      "mbbs",
+      "physician",
+      "surgeon",
+    ],
+  },
+  {
+    slug: "engineering",
+    keywords: [
+      "engineering",
+      "engineer",
+      "mechanical engineering",
+      "electrical engineering",
+      "civil engineering",
+      "robotics",
+      "hardware engineering",
+    ],
+  },
+  {
+    slug: "law-policy",
+    keywords: [
+      "law",
+      "lawyer",
+      "legal",
+      "advocate",
+      "clat",
+      "corporate law",
+      "judiciary",
+      "public policy",
+    ],
+  },
+  {
+    slug: "finance-investment",
+    keywords: [
+      "finance",
+      "investment banking",
+      "investment banker",
+      "banking",
+      "financial analyst",
+      "fintech",
+      "chartered accountant",
+      "chartered accountancy",
+      "ca foundation",
+      "ca exam",
+      "ca course",
+      "c.a.",
+      "ca inter",
+      "ca final",
+      "stock market",
+    ],
+  },
+  {
+    slug: "marketing-media",
+    keywords: [
+      "marketing",
+      "digital marketing",
+      "seo",
+      "branding",
+      "social media marketing",
+      "content creation",
+    ],
+  },
+  {
+    slug: "cloud-infrastructure",
+    keywords: [
+      "cloud",
+      "cloud engineer",
+      "devops",
+      "aws",
+      "azure",
+      "cloud computing",
+      "infrastructure",
+    ],
+  },
+  {
+    slug: "scientific-research",
+    keywords: [
+      "scientific research",
+      "research scientist",
+      "scientist",
+      "scientific discovery",
+      "laboratory",
+      "phd",
+      "researcher",
+    ],
+  },
+  {
+    slug: "psychology-social",
+    keywords: [
+      "psychology",
+      "psychologist",
+      "counselor",
+      "behavioral science",
+      "mental health",
+      "counseling",
+    ],
+  },
+  {
+    slug: "entrepreneurship",
+    keywords: [
+      "entrepreneur",
+      "startup",
+      "founder",
+      "entrepreneurship",
+      "building a company",
+    ],
+  },
+];
+
+/**
+ * Detects whether the query or previous conversation history mentions a specific career.
+ * Solves the critical multi-turn follow-up problem.
+ */
+export function detectCareerFromQueryOrHistory(
   query: string,
-  currentSlug: string
+  history?: ChatHistoryMessage[],
+  defaultSlug?: string
 ): CareerIntelligence | undefined {
-  const all = getAllCareerIntelligence();
+  const q = query.toLowerCase();
 
-  // Keyword to slug mapping for conversational fuzzy matching
-  const comparisons: { keywords: string[]; slug: string }[] = [
-    { keywords: ["ai", "machine learning", "data science", "data scientist", "ml"], slug: "ai-ml-data-science" },
-    { keywords: ["software", "developer", "web dev", "app dev", "full stack", "programmer"], slug: "software-development" },
-    { keywords: ["finance", "fintech", "investment", "banking", "financial"], slug: "finance-investment" },
-    { keywords: ["product management", "product manager", "management", "pm"], slug: "management-product" },
-    { keywords: ["design", "ux", "ui", "ui/ux", "graphic", "creative"], slug: "design-creative" },
-    { keywords: ["marketing", "digital marketing", "media", "seo", "branding"], slug: "marketing-media" },
-    { keywords: ["hardware", "engineering", "mechanical", "electrical", "civil"], slug: "engineering" },
-    { keywords: ["medicine", "healthcare", "medical", "doctor", "biotech"], slug: "medicine-healthcare" },
-    { keywords: ["scientific", "research", "scientist", "phd", "lab"], slug: "scientific-research" },
-    { keywords: ["entrepreneur", "startup", "founder", "business"], slug: "entrepreneurship" },
-    { keywords: ["law", "legal", "policy", "lawyer"], slug: "law-policy" },
-    { keywords: ["psychology", "mental health", "counseling", "social"], slug: "psychology-social" },
-  ];
-
-  for (const c of comparisons) {
-    if (c.slug !== currentSlug && c.keywords.some((k) => query.includes(k))) {
-      return resolveCareerIntelligence(c.slug);
+  // 1. Direct match in query using keyword dictionary (word boundary safe)
+  for (const item of CAREER_KEYWORDS) {
+    if (item.keywords.some((k) => matchesKeyword(q, k))) {
+      const match = resolveCareerIntelligence(item.slug);
+      if (match) return match;
     }
   }
 
-  // Fallback to related career if not explicitly named
-  const fallbackSlug = currentSlug === "software-development" ? "ai-ml-data-science" : "software-development";
-  return resolveCareerIntelligence(fallbackSlug) || all.find((c) => c.slug !== currentSlug);
+  // 2. Direct match in query using all catalog career titles/slugs
+  const allIntel = getAllCareerIntelligence();
+  for (const intel of allIntel) {
+    const slugName = intel.slug.toLowerCase().replace(/-/g, " ");
+    if (
+      matchesKeyword(q, intel.title.toLowerCase()) ||
+      matchesKeyword(q, intel.careerName.toLowerCase()) ||
+      matchesKeyword(q, slugName)
+    ) {
+      return intel;
+    }
+  }
+
+  // 3. Multi-turn context resolution: Inspect recent conversation history
+  if (history && history.length > 0) {
+    const recent = [...history].reverse().slice(0, 6);
+    for (const msg of recent) {
+      const text = msg.content.toLowerCase();
+      for (const item of CAREER_KEYWORDS) {
+        if (item.keywords.some((k) => matchesKeyword(text, k))) {
+          const match = resolveCareerIntelligence(item.slug);
+          if (match) return match;
+        }
+      }
+      for (const intel of allIntel) {
+        const slugName = intel.slug.toLowerCase().replace(/-/g, " ");
+        if (
+          matchesKeyword(text, intel.title.toLowerCase()) ||
+          matchesKeyword(text, intel.careerName.toLowerCase()) ||
+          matchesKeyword(text, slugName)
+        ) {
+          return intel;
+        }
+      }
+    }
+  }
+
+  // 4. Fallback to active target career if available
+  if (defaultSlug) {
+    return resolveCareerIntelligence(defaultSlug);
+  }
+
+  return undefined;
+}
+
+/**
+ * Extracts two distinct careers for comparison queries (e.g. "compare software engineering and data analytics").
+ */
+export function extractTwoCareersForComparison(
+  query: string,
+  currentSlug: string
+): { careerA: CareerIntelligence; careerB: CareerIntelligence } | undefined {
+  const q = query.toLowerCase();
+  const matchedSlugs: string[] = [];
+
+  for (const item of CAREER_KEYWORDS) {
+    if (item.keywords.some((k) => matchesKeyword(q, k)) && !matchedSlugs.includes(item.slug)) {
+      matchedSlugs.push(item.slug);
+    }
+  }
+
+  if (matchedSlugs.length >= 2) {
+    const careerA = resolveCareerIntelligence(matchedSlugs[0]);
+    const careerB = resolveCareerIntelligence(matchedSlugs[1]);
+    if (careerA && careerB) {
+      return { careerA, careerB };
+    }
+  }
+
+  if (matchedSlugs.length === 1) {
+    const careerA = resolveCareerIntelligence(currentSlug) || getAllCareerIntelligence()[0];
+    const careerB = resolveCareerIntelligence(matchedSlugs[0]);
+    if (careerA && careerB && careerA.slug !== careerB.slug) {
+      return { careerA, careerB };
+    }
+  }
+
+  // Fallback defaults for comparison
+  const fallbackB = currentSlug === "software-development" ? "data-analytics-bi" : "software-development";
+  const careerA = resolveCareerIntelligence(currentSlug) || getAllCareerIntelligence()[0];
+  const careerB = resolveCareerIntelligence(fallbackB);
+  if (careerA && careerB) {
+    return { careerA, careerB };
+  }
+
+  return undefined;
 }
 
 /**
  * Generate a grounded coach response deterministically.
  * Guarantees zero hallucinations and 100% reliable advice without external dependencies.
- * Tailored specifically for Class 9–10 students: conversational, concise, and supportive.
+ * Tailored specifically for Class 9–12 students: conversational, concise, context-aware, and actionable.
  */
 export async function generateLocalCoachResponse(
   userQuery: string,
-  rawContext: CareerCoachContext
+  rawContext: CareerCoachContext,
+  history?: ChatHistoryMessage[]
 ): Promise<string> {
   const query = userQuery.trim().toLowerCase();
   const context = normalizeCoachContext(rawContext);
   const {
-    career,
+    career: activeCareer,
     roadmap,
-    roadmapPlan,
     skills,
     projects,
     studyPace,
     nextAction,
-    recommendations,
     userProfile,
     assessmentInterpretation,
   } = context;
 
-  // ── 0. Natural Conversation (Greetings, Thanks, Acknowledgements, Casual) ─
+  // ── 0. Natural Fast-Path Conversation (Greetings, Thanks, Farewell) ─────
   if (isGreeting(userQuery)) {
     return "Hey! 👋 What can I help you with?";
   }
@@ -351,10 +634,202 @@ export async function generateLocalCoachResponse(
   }
 
   if (query.includes("who are you") || query.includes("what are you")) {
-    return "I'm your Career Companion! I help Class 9–10 students explore careers, understand what skills they need, and plan what to study after 10th. What would you like to know?";
+    return "I'm your Career Companion! I help school students explore careers, understand what skills they need, and plan what to study after 10th. What would you like to know?";
   }
 
-  // ── 1. "What does this career involve?" ──────────────────────────────
+  // Off-topic / general web search questions
+  if (
+    query.includes("weather") ||
+    query.includes("capital of") ||
+    query.includes("tell me a joke") ||
+    query.includes("write a poem") ||
+    query.includes("recipe") ||
+    query.includes("who is the president") ||
+    query.includes("who won")
+  ) {
+    return "I'm your Career Companion, so my superpower is helping you discover career paths, plan school subjects, and learn skills! For general web searches or trivia, check an encyclopedia or search engine. Can I help you with any career questions or roadmaps today?";
+  }
+
+  // ── 1. "What careers match my strengths?" / Recommendation Inquiry ──────
+  if (
+    query.includes("what careers match my strengths") ||
+    query.includes("which careers match my strengths") ||
+    query.includes("what careers match me") ||
+    query.includes("what careers fit me") ||
+    query.includes("careers that match my strengths") ||
+    query.includes("careers for me") ||
+    query.includes("recommend careers") ||
+    query.includes("my career matches") ||
+    query.includes("match my strengths") ||
+    query.includes("what career suits me") ||
+    query.includes("best careers for me")
+  ) {
+    if (!userProfile.hasAssessment || !userProfile.primaryTraits?.length) {
+      return `You haven't completed the Career Compass assessment yet, so I don't have your personalized trait profile.\n\nTaking our short 5-minute psychometric assessment will calculate your exact match percentages across 28 career pathways based on your cognitive strengths!\n\nIn the meantime, what subjects or activities do you naturally enjoy most?`;
+    }
+
+    const topTraitsStr = userProfile.primaryTraits
+      .slice(0, 2)
+      .map((t) => `**${t.label}** (${t.score}%)`)
+      .join(" and ");
+
+    const matches = userProfile.topCareers?.slice(0, 3) || [];
+
+    if (matches.length > 0) {
+      let res = `Based on your assessment, your strongest traits are ${topTraitsStr}.\n\nHere are your top matching career pathways:\n\n`;
+      matches.forEach((m) => {
+        const intel = resolveCareerIntelligence(m.career_name);
+        const name = intel?.title || m.career_name;
+        res += `- **${name}** (${Math.round(m.match_percentage)}% match): ${m.explanation || intel?.tagline || "High cognitive synergy with your problem-solving style."}\n`;
+      });
+      res += `\nWould you like to explore the step-by-step roadmap for any of these, or compare two of them?`;
+      return res.trim();
+    }
+
+    return `Your assessment highlights strong aptitudes in ${topTraitsStr}.\n\nYour profile aligns well with analytical and problem-solving fields like **Software Development**, **AI & Data Science**, and **Product Management**.\n\nWhich of these would you like to dive into?`;
+  }
+
+  // ── 2. UPSC & Indian Civil Services Guidance ────────────────────────────
+  if (
+    query.includes("upsc") ||
+    query.includes("civil services") ||
+    query.includes("civil service") ||
+    query.includes("ias") ||
+    query.includes("ips") ||
+    query.includes("upsc cse") ||
+    query.includes("collector") ||
+    query.includes("district magistrate")
+  ) {
+    const upscIntel = resolveCareerIntelligence("upsc-civil-services");
+    const title = upscIntel?.title || "UPSC Civil Services";
+
+    return `To prepare for **${title}** (IAS, IPS, IFS), here is the essential roadmap:\n\n1. **Eligibility & Stream**: You can choose **any academic stream** (Arts, Science, or Commerce) in Class 11–12 and pursue any recognized Bachelor's degree. UPSC eligibility requires graduation in any discipline and a minimum age of 21.\n2. **Exam Architecture**: The UPSC Civil Services Examination (CSE) has 3 stages: **Preliminary Exam** (General Studies + CSAT), **Main Written Exam** (9 papers including essay and optional subject), and the **Personality Test (Interview)**.\n3. **What to do in School (Class 9–12)**:\n   - Build strong foundations by reading standard NCERT textbooks (History, Geography, Polity, Economics).\n   - Cultivate a daily newspaper habit (*The Hindu* or *Indian Express*) to understand current affairs.\n   - Practice clear, analytical essay writing.\n\nWould you like to know what subjects to pick for Class 11–12, or explore the UPSC roadmap?`;
+  }
+
+  // ── 3. Career Comparison ("Compare A and B") ─────────────────────────────
+  if (
+    query.includes("compare") ||
+    query.includes("difference between") ||
+    query.includes(" vs ") ||
+    query.includes("versus")
+  ) {
+    const pair = extractTwoCareersForComparison(query, activeCareer.slug);
+    if (pair) {
+      const { careerA, careerB } = pair;
+      const toolsA = careerA.toolsTechnologies?.slice(0, 3).join(", ") || "core technical tools";
+      const toolsB = careerB.toolsTechnologies?.slice(0, 3).join(", ") || "specialized tools";
+
+      return `Here is how **${careerA.title}** compares with **${careerB.title}**:\n\n- **${careerA.title}**: Focuses on ${careerA.tagline.toLowerCase().replace(/\.$/, "")}. Daily work emphasizes building solutions using tools like ${toolsA}.\n- **${careerB.title}**: Focuses on ${careerB.tagline.toLowerCase().replace(/\.$/, "")}. Daily work emphasizes tools like ${toolsB}.\n\n**How to choose**:\nIf you enjoy creating and building systems from scratch, ${careerA.title} is an ideal fit. If you prefer investigating trends, data, and business impact, ${careerB.title} is a great choice!\n\nWhich of these two problems sounds more interesting to you?`;
+    }
+  }
+
+  // Detect subject career from query or recent history (supports multi-turn context)
+  const resolvedTarget = detectCareerFromQueryOrHistory(query, history, activeCareer.slug);
+  const targetCareer: CareerIntelligence =
+    resolvedTarget ||
+    resolveCareerIntelligence(activeCareer.slug) ||
+    getAllCareerIntelligence()[0];
+
+  const isTargetActive = targetCareer.slug === activeCareer.slug;
+  let targetMatchPct: number | undefined = undefined;
+  if (isTargetActive && activeCareer.matchPercentage !== undefined) {
+    targetMatchPct = Math.round(activeCareer.matchPercentage);
+  } else if (userProfile.topCareers?.length) {
+    const matched = userProfile.topCareers.find(
+      (c) =>
+        c.career_name.toLowerCase() === targetCareer.title.toLowerCase() ||
+        c.career_name.toLowerCase() === targetCareer.careerName.toLowerCase() ||
+        resolveCareerIntelligence(c.career_name)?.slug === targetCareer.slug
+    );
+    if (matched) {
+      targetMatchPct = Math.round(matched.match_percentage);
+    }
+  }
+
+  // ── 4. "Is [career] a good career for me?" / Fit Evaluation ─────────────
+  if (
+    query.includes("good career for me") ||
+    query.includes("right career for me") ||
+    query.includes("good for me") ||
+    query.includes("right for me") ||
+    query.includes("would i be good at") ||
+    query.includes("can i do") ||
+    query.includes("suitability for") ||
+    query.includes("is it good for me")
+  ) {
+    if (userProfile.hasAssessment && targetMatchPct !== undefined && targetMatchPct > 0) {
+      return `**${targetCareer.title}** currently has a **${targetMatchPct}% match** based on your assessment results!\n\nYour natural strengths in **${userProfile.topTrait}** align well with this field's problem-solving requirements. Students in this pathway thrive by ${targetCareer.tagline.toLowerCase()}.\n\nWould you like to see what subjects to study after 10th or what skills to start practicing?`;
+    }
+
+    if (userProfile.hasAssessment && userProfile.primaryTraits?.length) {
+      const topT = userProfile.primaryTraits[0]?.label || "Analytical Thinking";
+      return `**${targetCareer.title}** is a great field if you enjoy ${targetCareer.tagline.toLowerCase()}.\n\nYour assessment highlights strengths in **${topT}**. This provides a solid cognitive foundation, especially when combined with structured hands-on project practice.\n\nWould you like to explore the core skills needed for this path?`;
+    }
+
+    return `**${targetCareer.title}** is an exciting, high-growth career focused on ${targetCareer.tagline.toLowerCase()}.\n\nIt is especially well-suited for students who enjoy problem-solving, structured learning, and practical projects. Once you complete the 5-minute Career Compass assessment, I can calculate your exact personalized match score for this path!`;
+  }
+
+  // ── 5. "What skills should I learn first?" / Beginner Priorities ────────
+  if (
+    query.includes("what skills should i learn first") ||
+    query.includes("what should i learn first") ||
+    query.includes("learn first") ||
+    query.includes("what to learn first") ||
+    query.includes("skills to learn first") ||
+    query.includes("where should i start") ||
+    query.includes("what should i start with") ||
+    query.includes("first skills") ||
+    query.includes("start learning") ||
+    query.includes("how to start")
+  ) {
+    const phase1 = targetCareer.roadmap?.[0];
+    const starterSkills: string[] = phase1?.skills?.slice(0, 3) || targetCareer.skills?.slice(0, 3).map((s: { name: string }) => s.name) || [
+      "Core problem solving",
+      "Foundational tools",
+    ];
+
+    let res = `To get started in **${targetCareer.title}**, here are the three foundational skills to learn first:\n\n`;
+    starterSkills.forEach((s: string, idx: number) => {
+      res += `${idx + 1}. **${s}**: Builds the conceptual bedrock needed before advancing to specialized tools.\n`;
+    });
+    res += `\nIn Class 9–10, you don't need to master everything immediately. Spending 1–2 hours a week on basic exercises or beginner projects is the best way to start!\n\nWould you like some beginner project ideas or recommended resources for these skills?`;
+    return res.trim();
+  }
+
+  // ── 6. "How do I become [career]?" / Career Pathway Overview ───────────
+  if (
+    query.includes("how do i become") ||
+    query.includes("how to become") ||
+    query.includes("how to get into") ||
+    query.includes("how to be a") ||
+    query.includes("how to be an") ||
+    query.includes("steps to become") ||
+    query.includes("path to become")
+  ) {
+    const stream = targetCareer.educationPath?.recommendedStream || "Science stream";
+    const degrees = targetCareer.educationPath?.degrees?.slice(0, 2).join(" or ") || "a relevant Bachelor's degree";
+    const starterSkills = targetCareer.roadmap?.[0]?.skills?.slice(0, 2).join(" and ") || "core fundamentals";
+
+    return `Here is the step-by-step pathway to become a **${targetCareer.title}**:\n\n1. **Class 11–12 Stream**: Take the **${stream}** to build the necessary mathematics, science, or analytical base.\n2. **College Education**: Pursue **${degrees}** followed by practical internships or specialized portfolio work.\n3. **Practical Skills in School**: Start learning **${starterSkills}** through hands-on practice and self-paced projects.\n\nWould you like to see what daily work in this career looks like, or what skills you should focus on first?`;
+  }
+
+  // ── 7. "What should I do next in my current roadmap?" ───────────────────
+  if (
+    query.includes("current roadmap") ||
+    query.includes("what should i do next in my current roadmap") ||
+    query.includes("what should i do next") ||
+    query.includes("what to do next") ||
+    query.includes("next in roadmap") ||
+    query.includes("my next step") ||
+    query.includes("my next milestone")
+  ) {
+    const milestoneTitle = roadmap.nextMilestone || nextAction.title;
+    const phaseName = `Phase ${roadmap.currentPhaseNumber}: ${roadmap.currentPhaseTitle}`;
+
+    return `In your active roadmap for **${activeCareer.title}**, you are currently on **${phaseName}**.\n\n**Your immediate next milestone**: **${milestoneTitle}**\n\n${nextAction.reasoning || "Focus on completing this milestone to build steady momentum toward career readiness."}\n\nTry dedicating 1–2 focused sessions this week to work on this milestone, then mark it complete on your dashboard!`;
+  }
+
+  // ── 8. "What does this career involve?" ────────────────────────────────
   if (
     query.includes("what does this career involve") ||
     query.includes("career involve") ||
@@ -362,15 +837,16 @@ export async function generateLocalCoachResponse(
     query.includes("what does this career do") ||
     query.includes("what do they do") ||
     query.includes("day to day") ||
-    query.includes("responsibilities")
+    query.includes("responsibilities") ||
+    query.includes("what is this career")
   ) {
-    const responsibilities = career.responsibilities || [];
+    const responsibilities = targetCareer.responsibilities || [];
     const coreTasks = responsibilities.slice(0, 3);
-    const summary = career.overview
-      ? career.overview.split(".")[0].trim() + "."
-      : career.tagline;
+    const summary = targetCareer.description
+      ? targetCareer.description.split(".")[0].trim() + "."
+      : targetCareer.tagline;
 
-    let response = `As a **${career.title}**, you ${summary.toLowerCase().startsWith("as a") ? summary : summary.charAt(0).toLowerCase() + summary.slice(1)}`;
+    let response = `As a **${targetCareer.title}**, you ${summary.toLowerCase().startsWith("as a") ? summary : summary.charAt(0).toLowerCase() + summary.slice(1)}`;
     if (!response.endsWith(".")) response += ".";
 
     if (coreTasks.length > 0) {
@@ -382,7 +858,7 @@ export async function generateLocalCoachResponse(
     return response.trim();
   }
 
-  // ── 2. "Why did I get this career?" / "Why was this career recommended?" ─
+  // ── 9. "Why was this career recommended?" / Match Explanation ──────────
   if (
     query.includes("why did i get this career") ||
     query.includes("why did i get") ||
@@ -393,20 +869,18 @@ export async function generateLocalCoachResponse(
     query.includes("why did i match") ||
     query.includes("why am i matched")
   ) {
-    const matchPct = career.matchPercentage !== undefined ? Math.round(career.matchPercentage) : undefined;
-
-    if (!userProfile?.hasAssessment || matchPct === undefined || matchPct === 0) {
-      return `You're currently exploring **${career.title}** in discovery mode.\n\nThis pathway is great for students who enjoy problem-solving, science experiments, and analytical thinking. If you take the short Career Compass assessment, I can show you your personalized match percentage and strength breakdown!`;
+    if (!userProfile?.hasAssessment || targetMatchPct === undefined || targetMatchPct === 0) {
+      return `You're currently exploring **${targetCareer.title}** in discovery mode.\n\nThis pathway is great for students who enjoy problem-solving, structured learning, and analytical thinking. If you take the short Career Compass assessment, I can show you your personalized match percentage and strength breakdown!`;
     }
 
     const dominantTrait = userProfile.topTrait || "analytical thinking";
     const strengths = assessmentInterpretation.strengths?.slice(0, 2).map((s) => s.title) || [];
     const strengthsMention = strengths.length > 0 ? ` and ${strengths.join(", ").toLowerCase()}` : "";
 
-    return `**${career.title}** was recommended with a **${matchPct}% match** based on your assessment results.\n\nYour profile showed strong strengths in **${dominantTrait}**${strengthsMention}. You naturally enjoy asking how things work, testing ideas, and finding evidence — which is the core mindset of a researcher!\n\nWould you like to see what subjects you should take in Class 11–12 for this?`;
+    return `**${targetCareer.title}** was recommended with a **${targetMatchPct}% match** based on your assessment results.\n\nYour profile showed strong strengths in **${dominantTrait}**${strengthsMention}. You naturally enjoy asking how things work, testing ideas, and finding evidence — which aligns directly with this career!\n\nWould you like to see what subjects you should take in Class 11–12 for this?`;
   }
 
-  // ── 3. "What should I study after 10th?" / "What subjects should I focus on?" ──
+  // ── 10. "What should I study after 10th?" / Stream Guidance ────────────
   if (
     query.includes("after 10th") ||
     query.includes("what should i study after 10th") ||
@@ -421,14 +895,14 @@ export async function generateLocalCoachResponse(
     query.includes("subjects to focus on") ||
     query.includes("subjects")
   ) {
-    const stream = career.educationPath?.recommendedStream || "Science stream";
-    const degrees = career.educationPath?.degrees || [];
+    const stream = targetCareer.educationPath?.recommendedStream || "Science stream";
+    const degrees = targetCareer.educationPath?.degrees || [];
     const targetDegree = degrees[0] || "a Bachelor's degree in science or a related discipline";
 
-    return `After 10th, the best route for **${career.title}** is taking the **${stream}** in Class 11–12.\n\nFocus on building strong conceptual understanding in math and science fundamentals rather than just memorizing formulas. Later on, you'll typically pursue ${targetDegree.includes("Bachelor") || targetDegree.includes("B.Sc") ? targetDegree : `a ${targetDegree}`} followed by specialized higher studies.\n\nWant to know what hands-on skills or projects you can start exploring right now?`;
+    return `After 10th, the best route for **${targetCareer.title}** is taking the **${stream}** in Class 11–12.\n\nFocus on building strong conceptual understanding in math and science fundamentals rather than just memorizing formulas. Later on, you'll typically pursue ${targetDegree.includes("Bachelor") || targetDegree.includes("B.Sc") ? targetDegree : `a ${targetDegree}`} followed by specialized higher studies.\n\nWant to know what hands-on skills or projects you can start exploring right now?`;
   }
 
-  // ── 4. "What skills do I need?" / "What skills does this career need?" ────
+  // ── 11. "What skills do I need?" / Missing Skills ──────────────────────
   if (
     query.includes("what skills do i need") ||
     query.includes("what skills are needed") ||
@@ -444,10 +918,11 @@ export async function generateLocalCoachResponse(
     query.includes("my gaps") ||
     query.includes("skills")
   ) {
-    const gaps = skills.priorityGaps.slice(0, 3);
-    const mastered = skills.mastered.slice(0, 3);
+    const isTargetActive = targetCareer.slug === activeCareer.slug;
+    const gaps = isTargetActive ? skills.priorityGaps.slice(0, 3) : [];
+    const mastered = isTargetActive ? skills.mastered.slice(0, 3) : [];
 
-    let response = `To build a strong foundation for **${career.title}**, here are key skills to focus on:\n\n`;
+    let response = `To build a strong foundation for **${targetCareer.title}**, here are key skills to focus on:\n\n`;
 
     if (gaps.length > 0) {
       response += `**Skills you can work on next:**\n`;
@@ -455,9 +930,9 @@ export async function generateLocalCoachResponse(
         .map((g) => `- **${g.name}**: ${g.whyItMatters || "Helps build core problem-solving capability."}`)
         .join("\n");
     } else {
-      const topSkills = career.toolsTechnologies?.slice(0, 3) || [];
+      const topSkills = targetCareer.toolsTechnologies?.slice(0, 3) || targetCareer.roadmap?.[0]?.skills?.slice(0, 3) || [];
       response += `**Good areas to focus on:**\n`;
-      response += topSkills.map((s) => `- **${s}**`).join("\n");
+      response += topSkills.map((s: string) => `- **${s}**`).join("\n");
     }
 
     if (mastered.length > 0) {
@@ -468,7 +943,7 @@ export async function generateLocalCoachResponse(
     return response.trim();
   }
 
-  // ── 5. "What should I learn next?" ───────────────────────────────────
+  // ── 12. "What should I learn next?" ────────────────────────────────────
   if (
     query.includes("what should i learn next") ||
     query.includes("what to learn next") ||
@@ -476,29 +951,27 @@ export async function generateLocalCoachResponse(
     query.includes("what should i study next") ||
     query.includes("next skill")
   ) {
-    const primaryRec = recommendations?.primaryRecommendation;
     const topGap = skills.priorityGaps[0];
-    const nextMilestone = roadmapPlan?.completionState.nextMilestone;
-
-    const targetTitle = primaryRec?.title || (topGap ? topGap.name : nextMilestone?.title || nextAction.title);
-    const reasonText = primaryRec?.reason || (topGap ? topGap.whyItMatters : nextAction.reasoning);
+    const targetTitle = topGap ? topGap.name : nextAction.title;
+    const reasonText = topGap ? topGap.whyItMatters : nextAction.reasoning;
 
     return `Right now in **Phase ${roadmap.currentPhaseNumber}: ${roadmap.currentPhaseTitle}**, your best next step is to focus on **${targetTitle}**.\n\n${reasonText}\n\nTry working through a small hands-on exercise or school experiment to practice it. Once you feel confident, you can mark it complete on your roadmap!`;
   }
 
-  // ── 6. "What project should I build?" ─────────────────────────────────
+  // ── 13. "What project should I build?" ──────────────────────────────────
   if (
     query.includes("what project should i build") ||
     query.includes("which project") ||
     query.includes("project to build") ||
     query.includes("what project") ||
     query.includes("portfolio project") ||
-    query.includes("build project")
+    query.includes("build project") ||
+    query.includes("project ideas")
   ) {
     const proj = projects.nextToBuild;
 
     if (!proj) {
-      return `You've already built all the recommended milestone projects for **${career.title}**! 🎉\n\nA great next step is to polish your project notes, create a simple poster or summary, and share what you discovered with your teachers or classmates.`;
+      return `You've already built all the recommended milestone projects for **${targetCareer.title}**! 🎉\n\nA great next step is to polish your project notes, create a simple summary, and share what you discovered with your teachers or classmates.`;
     }
 
     const featureHighlights = proj.features.slice(0, 3).map((f) => `- ${f}`).join("\n");
@@ -506,47 +979,22 @@ export async function generateLocalCoachResponse(
     return `A great project to start with is **${proj.title}** (${proj.difficulty} level).\n\n${proj.description}\n\n**Key things to include:**\n${featureHighlights}\n\nBuilding this gives you real hands-on proof of how science works! Would you like help planning the first step?`;
   }
 
-  // ── 7. "What should I focus on this month?" / "What should I do today?" ─
+  // ── 14. "What tools and technologies should I learn?" ──────────────────
   if (
-    query.includes("what should i focus on this month") ||
-    query.includes("focus this month") ||
-    query.includes("month focus") ||
-    query.includes("monthly plan") ||
-    query.includes("this month") ||
-    query.includes("what should i do today") ||
-    query.includes("what to do today") ||
-    query.includes("today")
+    query.includes("tool") ||
+    query.includes("technology") ||
+    query.includes("technologies") ||
+    query.includes("tech stack")
   ) {
-    const weeklyHours = studyPace.weeklyHours || 10;
-    const topGap = skills.priorityGaps[0]?.name || "core fundamentals";
-    const projName = projects.nextToBuild?.title || "a hands-on project";
-
-    return `At your pace of about **${weeklyHours} hours per week**, here's a simple focus plan:\n\n1. **First 2 weeks**: Focus on understanding **${topGap}** through quick daily study sessions.\n2. **Next 2 weeks**: Apply what you learned by starting **${projName}**.\n\nSpending just 1–2 hours consistently a few days a week is the best way to make steady progress!`;
-  }
-
-  // ── 8. "How does this career compare with another career?" ────────────
-  if (
-    query.includes("compare with") ||
-    query.includes("compared to") ||
-    query.includes("compare to") ||
-    query.includes("how does this compare") ||
-    query.includes("difference between") ||
-    query.includes("vs") ||
-    query.includes("compare")
-  ) {
-    const comparisonCareer = extractComparisonCareer(query, career.slug);
-
-    if (!comparisonCareer) {
-      return `You're currently exploring **${career.title}** (${career.category}).\n\nTo compare with another path, ask me something like:\n- *"How does this career compare with AI & Data Science?"*\n- *"How does Software Development compare with Product Management?"*`;
+    const tools = targetCareer.toolsTechnologies?.slice(0, 4) || [];
+    if (tools.length === 0) {
+      return `For **${targetCareer.title}**, you'll typically use specialized tools for observation, data recording, and analysis. In school, getting comfortable with spreadsheets and basic computer tools is a great first step!`;
     }
 
-    const compTools = comparisonCareer.toolsTechnologies?.slice(0, 3).join(", ") || "specialized tools";
-    const currentTools = career.toolsTechnologies?.slice(0, 3).join(", ") || "domain tools";
-
-    return `Here is how **${career.title}** compares with **${comparisonCareer.title}**:\n\n- **${career.title}**: Focuses on ${career.tagline.toLowerCase().replace(/\.$/, "")}, using tools like ${currentTools}.\n- **${comparisonCareer.title}**: Focuses on ${comparisonCareer.tagline.toLowerCase().replace(/\.$/, "")}, using tools like ${compTools}.\n\nBoth are exciting paths with great growth! Which of these two areas sparks your curiosity more?`;
+    return `For **${targetCareer.title}**, here are some of the most useful tools to get familiar with:\n\n${tools.map((t) => `- **${t}**`).join("\n")}\n\nIn Class 9–10, you don't need to master all of them right away — just exploring beginner tutorials or spreadsheets is a great way to start!`;
   }
 
-  // ── 9. "Am I ready for internships / jobs?" ───────────────────────────
+  // ── 15. "Am I ready for internships / jobs?" ───────────────────────────
   if (
     query.includes("ready for internship") ||
     query.includes("internship") ||
@@ -555,59 +1003,24 @@ export async function generateLocalCoachResponse(
     return `Since you're currently in school, you don't need to worry about formal internships or jobs just yet! 😊\n\nAt this stage, the best way to prepare is participating in school science exhibitions, competitions (like Olympiads), and hands-on projects. Those experiences build real confidence and look amazing on college applications later on.`;
   }
 
-  // ── 10. "What tools and technologies should I learn?" ─────────────────
-  if (
-    query.includes("tool") ||
-    query.includes("technology") ||
-    query.includes("technologies") ||
-    query.includes("tech stack")
-  ) {
-    const tools = career.toolsTechnologies?.slice(0, 4) || [];
-    if (tools.length === 0) {
-      return `For **${career.title}**, you'll typically use specialized tools for observation, data recording, and analysis. In school, getting comfortable with spreadsheets and basic computer tools is a great first step!`;
-    }
-
-    return `For **${career.title}**, here are some of the most useful tools to get familiar with:\n\n${tools.map((t) => `- **${t}**`).join("\n")}\n\nIn Class 9–10, you don't need to master all of them right away — just exploring beginner tutorials or spreadsheets is a great way to start!`;
+  // ── 16. Platform & Assessment Questions ────────────────────────────────
+  if (query.includes("assessment") && (query.includes("work") || query.includes("how does"))) {
+    return `The Career Compass assessment presents 28 scenarios that measure your natural cognitive styles across 8 core dimensions (like Technical, Analytical, Creative, and Leadership). There are no right or wrong answers — your choices identify which careers match your natural problem-solving flow!`;
   }
 
-  // ── 11. "After completing this milestone?" ────────────────────────────
-  if (
-    query.includes("after completing this milestone") ||
-    query.includes("after this milestone") ||
-    query.includes("completed milestone") ||
-    query.includes("finished milestone") ||
-    query.includes("next milestone")
-  ) {
-    const plan = roadmapPlan;
-    const currentMilestoneTitle = plan?.completionState.nextMilestone?.title || roadmap.nextMilestone;
-    const allMilestones = plan?.milestones || [];
-    const currentIndex = allMilestones.findIndex((m) => m.title === currentMilestoneTitle);
-    const nextMilestoneInSeq = currentIndex >= 0 && currentIndex < allMilestones.length - 1
-      ? allMilestones[currentIndex + 1]
-      : null;
-    const nextTitle = nextMilestoneInSeq?.title || `Phase ${roadmap.currentPhaseNumber + 1} Specialization`;
-
-    return `Once you complete **${currentMilestoneTitle}**, make sure to toggle it as done on your roadmap to track your progress!\n\nYour next milestone after that will be **${nextTitle}**. Take a short break, review what you learned, and then dive into the next phase when you're ready!`;
+  if (query.includes("retake") || query.includes("take again")) {
+    return `Yes! You can retake the assessment anytime from the Assessment tab. Retaking recalculates your match percentages across all 28 career tracks.`;
   }
 
-  // ── 12. "How to improve skills / readiness?" ──────────────────────────
-  if (
-    query.includes("improve my readiness") ||
-    query.includes("readiness score") ||
-    query.includes("increase score") ||
-    query.includes("improve my skills") ||
-    query.includes("strengthen my profile")
-  ) {
-    const topGap = skills.priorityGaps[0]?.name || "foundation skills";
-    const proj = projects.nextToBuild?.title || "your next hands-on project";
-
-    return `Here are the top two ways to build your skills right now:\n\n1. **Practice Key Skills**: Work on **${topGap}** using exercises from your current roadmap phase.\n2. **Build Hands-On Projects**: Start working on **${proj}** to put what you've learned into practice.\n\nCompleting hands-on projects is the single best way to prove your abilities!`;
+  if (query.includes("career compass") || query.includes("what is this")) {
+    return `Career Compass helps school students discover careers matching their natural strengths and provides step-by-step learning roadmaps with projects and study planning.`;
   }
 
-  // ── 13. General Conversational Fallback ───────────────────────────────
-  const matchStr = career.matchPercentage && career.matchPercentage > 0
-    ? ` (${Math.round(career.matchPercentage)}% match)`
+  // ── 17. Intelligent Contextual Fallback ─────────────────────────────────
+  // Responds with specific details about the detected career rather than a generic prompt
+  const matchStr = targetMatchPct !== undefined && targetMatchPct > 0
+    ? ` (${targetMatchPct}% match)`
     : "";
 
-  return `Since you're exploring **${career.title}**${matchStr}, I can help you understand what this career involves, what skills you need, or what to study after 10th.\n\nWhat specifically would you like to explore?`;
+  return `Regarding **${targetCareer.title}**${matchStr}:\n\nThis field focuses on ${targetCareer.tagline.toLowerCase()}.\n\nI can help you explore:\n- **What skills to learn first**\n- **What stream to choose after 10th**\n- **What daily work looks like**\n\nWhat specifically would you like to know?`;
 }

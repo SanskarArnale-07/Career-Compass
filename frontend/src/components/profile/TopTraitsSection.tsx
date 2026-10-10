@@ -2,23 +2,126 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { BrainCircuit, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import {
+  BrainCircuit,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Code2,
+  FlaskConical,
+  Briefcase,
+  Palette,
+  Users,
+  Award,
+  Compass,
+} from "lucide-react";
 import type { ScoredTrait } from "@/lib/profile/profile-utils";
+
+export function getTraitIcon(code: string) {
+  switch (code.toUpperCase()) {
+    case "TE":
+      return Code2;
+    case "AN":
+      return BrainCircuit;
+    case "SC":
+      return FlaskConical;
+    case "BU":
+      return Briefcase;
+    case "CR":
+      return Palette;
+    case "SO":
+      return Users;
+    case "LE":
+      return Award;
+    case "EX":
+      return Compass;
+    default:
+      return BrainCircuit;
+  }
+}
 
 interface TopTraitsSectionProps {
   topStrengths: ScoredTrait[];
   allTraits: ScoredTrait[];
   limit?: number;
+  minimal?: boolean;
 }
 
 export function TopTraitsSection({
   topStrengths,
   allTraits,
   limit = 3,
+  minimal = false,
 }: TopTraitsSectionProps) {
   const [showAll, setShowAll] = useState(false);
   const initialStrengths = topStrengths.slice(0, limit);
   const displayedTraits = showAll ? allTraits : initialStrengths;
+
+  if (minimal) {
+    return (
+      <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6 space-y-4">
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-lg bg-primary/10 border border-primary/25 text-primary">
+              <BrainCircuit className="h-4 w-4" />
+            </div>
+            <div>
+              <h2 className="font-heading text-lg font-bold text-foreground">
+                Your Top Strengths
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                {showAll
+                  ? "Complete 8-dimension psychometric profile"
+                  : `The 3 strongest traits supported by your assessment`}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowAll((prev) => !prev)}
+            className="inline-flex items-center gap-1.5 text-xs font-mono text-primary hover:text-primary-hover font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+          >
+            <span>{showAll ? "Show Top 3 Strengths" : "View All 8 Dimensions"}</span>
+            {showAll ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+          </button>
+        </div>
+
+        {/* Minimal 3-Item Strengths Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          {displayedTraits.map((trait) => {
+            const TraitIcon = getTraitIcon(trait.code);
+            return (
+              <div
+                key={trait.code}
+                className="p-4 rounded-xl border border-border/70 bg-[#0B0E12]/80 hover:border-primary/40 transition-colors flex flex-col justify-between gap-3"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center text-primary shrink-0">
+                    <TraitIcon className="h-4 w-4" />
+                  </div>
+                  <span className="text-xs font-mono font-bold text-primary tabular-nums">
+                    {trait.score}%
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="font-heading font-semibold text-sm sm:text-base text-foreground leading-snug">
+                    {trait.label}
+                  </h3>
+                  <div className="mt-1.5 flex items-center gap-1.5">
+                    <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-mono border ${trait.badgeClass}`}>
+                      {trait.tier}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6 space-y-5">

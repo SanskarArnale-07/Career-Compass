@@ -22,6 +22,11 @@ import type {
 import { HANDCRAFTED_PATH_ROADMAPS } from "./tracks/handcrafted-paths";
 import { SYNTHESIZED_PATH_ROADMAPS } from "./tracks/synthesized-paths";
 import {
+  UPSC_CIVIL_SERVICES_ROADMAP,
+  STATE_PSC_ROADMAP,
+  PUBLIC_POLICY_ROADMAP,
+} from "./tracks/civil-services-path";
+import {
   getRoleHierarchy,
   getSpecializationHierarchy,
   getCareerHierarchy,
@@ -33,6 +38,13 @@ import {
 export const ALL_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = {
   ...HANDCRAFTED_PATH_ROADMAPS,
   ...SYNTHESIZED_PATH_ROADMAPS,
+};
+
+// ── Dedicated Public Governance / Civil Services Roadmaps ──────────────────
+export const SPECIAL_DOMAIN_ROADMAPS: Record<string, PathRoadmapDefinition> = {
+  "upsc-civil-services": UPSC_CIVIL_SERVICES_ROADMAP,
+  "state-public-service-commissions": STATE_PSC_ROADMAP,
+  "public-policy-governance-path": PUBLIC_POLICY_ROADMAP,
 };
 
 // ── Known Role ID Aliases ──────────────────────────────────────────────────
@@ -136,7 +148,7 @@ export function resolveRoleRoadmap({
   if (resolvedRoleId) {
     const roleHierarchy = getRoleHierarchy(resolvedRoleId);
     if (roleHierarchy) {
-      if (!resolvedPathSlug || !ALL_PATH_ROADMAPS[resolvedPathSlug]) {
+      if (!resolvedPathSlug || (!ALL_PATH_ROADMAPS[resolvedPathSlug] && !SPECIAL_DOMAIN_ROADMAPS[resolvedPathSlug])) {
         resolvedPathSlug = roleHierarchy.path.slug;
       }
       if (!resolvedSpecId) {
@@ -148,7 +160,7 @@ export function resolveRoleRoadmap({
       for (const a of aliases) {
         const h = getRoleHierarchy(a);
         if (h) {
-          if (!resolvedPathSlug || !ALL_PATH_ROADMAPS[resolvedPathSlug]) {
+          if (!resolvedPathSlug || (!ALL_PATH_ROADMAPS[resolvedPathSlug] && !SPECIAL_DOMAIN_ROADMAPS[resolvedPathSlug])) {
             resolvedPathSlug = h.path.slug;
           }
           if (!resolvedSpecId) {
@@ -161,7 +173,7 @@ export function resolveRoleRoadmap({
   }
 
   // 2. If specId is provided and pathSlug is still missing, infer pathSlug from spec
-  if (resolvedSpecId && (!resolvedPathSlug || !ALL_PATH_ROADMAPS[resolvedPathSlug])) {
+  if (resolvedSpecId && (!resolvedPathSlug || (!ALL_PATH_ROADMAPS[resolvedPathSlug] && !SPECIAL_DOMAIN_ROADMAPS[resolvedPathSlug]))) {
     const specHierarchy = getSpecializationHierarchy(resolvedSpecId);
     if (specHierarchy) {
       resolvedPathSlug = specHierarchy.path.slug;
@@ -169,9 +181,9 @@ export function resolveRoleRoadmap({
   }
 
   // 3. Fallback pathSlug resolution using path registry lookup
-  if (!ALL_PATH_ROADMAPS[resolvedPathSlug]) {
+  if (!ALL_PATH_ROADMAPS[resolvedPathSlug] && !SPECIAL_DOMAIN_ROADMAPS[resolvedPathSlug]) {
     const careerHierarchy = getCareerHierarchy(resolvedPathSlug);
-    if (careerHierarchy && ALL_PATH_ROADMAPS[careerHierarchy.path.slug]) {
+    if (careerHierarchy && (ALL_PATH_ROADMAPS[careerHierarchy.path.slug] || SPECIAL_DOMAIN_ROADMAPS[careerHierarchy.path.slug])) {
       resolvedPathSlug = careerHierarchy.path.slug;
     } else {
       // Default to software-development if completely unrecognized
@@ -179,7 +191,10 @@ export function resolveRoleRoadmap({
     }
   }
 
-  const pathDef = ALL_PATH_ROADMAPS[resolvedPathSlug] || ALL_PATH_ROADMAPS["software-development"];
+  const pathDef =
+    SPECIAL_DOMAIN_ROADMAPS[resolvedPathSlug] ||
+    ALL_PATH_ROADMAPS[resolvedPathSlug] ||
+    ALL_PATH_ROADMAPS["software-development"];
 
   // 4. Resolve Specialization Track
   let selectedSpecTrack: SpecializationTrack | undefined;

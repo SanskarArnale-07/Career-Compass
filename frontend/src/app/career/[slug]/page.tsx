@@ -54,6 +54,7 @@ import JobPreparation from "@/components/career/JobPreparation";
 import AlternativeCareers from "@/components/career/AlternativeCareers";
 import CareerConstellation from "@/components/career/CareerConstellation";
 import { CareerPathAreas } from "@/components/career/CareerPathAreas";
+import { CivilServicesBriefing } from "@/components/career/CivilServicesBriefing";
 
 const emptySubscribe = () => () => {};
 function useIsClient() {
@@ -509,13 +510,22 @@ function CareerDetailContent() {
           {/* Overview Tab Content */}
           {(activeTab === "overview" || activeTab === "all") && (
             <div className="space-y-16 sm:space-y-20">
-              {/* Progressive Specialization & Role Exploration */}
-              <CareerPathAreas career={career} onSelectRole={handleSelectRole} />
-
+              {/* 1. Essentials First: What the career is, entry degrees, and working snapshot */}
               <section id="snapshot">
                 <CareerSnapshot items={career.snapshot} />
               </section>
 
+              {/* Civil Services Pathways, Suitability vs Exam, and Verified Official Portals */}
+              {(career.slug === "upsc-civil-services" ||
+                career.category === "Civil Services & Public Administration" ||
+                career.slug === "state-public-service-commissions" ||
+                career.slug === "public-policy-governance-path") && (
+                <section id="civil-services-briefing">
+                  <CivilServicesBriefing careerSlug={career.slug} />
+                </section>
+              )}
+
+              {/* 2. Cognitive Fit & Personalized Strengths */}
               <section id="why-this-career">
                 <WhyThisCareer
                   summary={summary}
@@ -524,6 +534,10 @@ function CareerDetailContent() {
                 />
               </section>
 
+              {/* 3. Progressive Specialization & Role Exploration */}
+              <CareerPathAreas career={career} onSelectRole={handleSelectRole} />
+
+              {/* 4. Related Disciplines */}
               <section id="constellation">
                 <CareerConstellation career={career} relatedCareers={relatedList} />
               </section>

@@ -46,6 +46,16 @@ export interface LearningResource {
   url: string;
 }
 
+// ── Roadmap task (granular skill task with dedicated objectives) ───
+export interface RoadmapTask {
+  id: string;
+  skillName: string;
+  objective: string;
+  learnItems: string[];
+  practiceTask: string;
+  resources: LearningResource[];
+}
+
 // ── Roadmap phase ──────────────────────────────────────────────────
 export interface RoadmapPhase {
   id: string;
@@ -58,6 +68,8 @@ export interface RoadmapPhase {
   practice: string[];
   build: string;
   resources: LearningResource[];
+  /** Optional granular, pre-computed or explicit tasks per skill */
+  tasks?: RoadmapTask[];
 }
 
 // ── Project idea ───────────────────────────────────────────────────

@@ -188,7 +188,7 @@ export async function POST(request: Request) {
     }
 
     // 7. Grounded Deterministic Coach Engine (instant, zero external dependency, 100% data-grounded)
-    const localResponse = await generateLocalCoachResponse(cleanMessage, context);
+    const localResponse = await generateLocalCoachResponse(cleanMessage, context, sanitizedHistory);
 
     return NextResponse.json({
       response: localResponse,

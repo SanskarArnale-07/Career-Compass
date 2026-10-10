@@ -19,11 +19,12 @@ interface ProfileHeaderProps {
     email: string;
   };
   persona: StudentPersona;
-  displayHierarchy: CareerHierarchyMatch | null | undefined;
+  displayHierarchy?: CareerHierarchyMatch | null;
   topMatchScore?: number;
   startedAt?: number;
   selectedSlug?: string;
   careerTitle?: string;
+  minimal?: boolean;
 }
 
 function getInitials(name: string): string {
@@ -51,7 +52,64 @@ export function ProfileHeader({
   startedAt,
   selectedSlug = "software-development",
   careerTitle,
+  minimal = false,
 }: ProfileHeaderProps) {
+  if (minimal) {
+    return (
+      <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-black/20">
+        <div className="relative flex flex-col sm:flex-row items-start gap-5 sm:gap-6">
+          {/* Avatar with cyan accent ring */}
+          <div className="relative shrink-0">
+            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-[#10141A] border-2 border-primary/40 flex items-center justify-center text-primary font-heading text-2xl sm:text-3xl font-bold shadow-lg shadow-primary/10">
+              {getInitials(user.name)}
+            </div>
+            <span
+              className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-[#10141A] border border-primary/40 text-primary shadow-xs"
+              title="Verified Assessment Profile"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+            </span>
+          </div>
+
+          {/* Student Identity + Element A: Career Snapshot */}
+          <div className="flex-1 min-w-0 space-y-3.5">
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                  {user.name}
+                </h1>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[11px] font-mono font-medium text-emerald-400">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Verified Profile
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground font-mono">
+                {user.email}
+              </p>
+            </div>
+
+            {/* Persona Archetype Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-xs font-mono">
+              <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="text-muted-foreground">Archetype:</span>
+              <span className="font-semibold text-primary">{persona.archetype}</span>
+            </div>
+
+            {/* Element A: Your Career Snapshot */}
+            <div className="p-4 sm:p-5 rounded-xl bg-[#0B0E12]/90 border border-border/80 text-xs sm:text-sm text-secondary-foreground leading-relaxed space-y-1.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-mono text-primary font-semibold uppercase tracking-wider">
+                <Sparkles className="h-3 w-3" />
+                <span>Career Snapshot</span>
+              </div>
+              <p className="text-slate-200 leading-relaxed font-sans text-sm sm:text-base">
+                {persona.executiveSummary}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-black/20">
       {/* Subtle radial ambient highlight */}

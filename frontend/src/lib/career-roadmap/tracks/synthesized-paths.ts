@@ -240,42 +240,6 @@ export const SYNTHESIZED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
           }
               ]
             }
-          },
-          "penetration-tester": {
-            "roleId": "penetration-tester",
-            "roleTitle": "Penetration Tester (Ethical Hacker)",
-            "capstonePhase": {
-              "id": "pentest-capstone",
-              "title": "Ethical Hacking Capstone: Comprehensive Penetration Test & Audit Report",
-              "description": "Execute a full-scope simulated network and web application penetration test following the PTES standard and present findings to leadership.",
-              "estimatedDuration": "Weeks 19–24",
-              "skills": [
-                "Full-Scope Penetration Testing",
-                "PTES Standards",
-                "CVSS v3.1 Scoring",
-                "Executive Presentation"
-              ],
-              "learn": [
-                "Penetration Testing Execution Standard (PTES): Pre-engagement interactions, intelligence gathering, threat modeling, and exploitation",
-                "Scoring vulnerabilities using Common Vulnerability Scoring System (CVSS v3.1) metrics",
-                "Authoring executive vs. technical remediation roadmaps prioritizing high-risk systemic flaws",
-                "Client debriefing and live demonstration of critical findings to C-suite and security leadership"
-              ],
-              "practice": [
-                "Perform an end-to-end multi-target penetration test in an isolated cyber lab without automated vulnerability tools",
-                "Draft an executive summary translating severe technical exploits into quantifiable financial and operational risk"
-              ],
-              "build": "A client-ready Penetration Testing Engagement Report containing executive summary, methodology, CVSS v3.1 matrix, proof-of-concept exploits, and step-by-step remediation plans.",
-              "resources": [
-                {
-            "name": "NIST SP 800-115: Technical Guide to Information Security Testing",
-            "type": "documentation",
-            "difficulty": "advanced",
-            "estimatedTime": "4 weeks",
-            "url": "https://csrc.nist.gov/pubs/sp/800/115/final"
-          }
-              ]
-            }
           }
         }
       },
@@ -568,42 +532,6 @@ export const SYNTHESIZED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
           }
               ]
             }
-          },
-          "dfir-investigator": {
-            "roleId": "dfir-investigator",
-            "roleTitle": "Digital Forensics Investigator",
-            "capstonePhase": {
-              "id": "dfir-capstone",
-              "title": "Digital Forensics Capstone: Forensic Case Investigation & Expert Witness Report",
-              "description": "Conduct an end-to-end forensic investigation of a simulated corporate espionage breach, preserve evidence, and author an expert witness report.",
-              "estimatedDuration": "Weeks 19–24",
-              "skills": [
-                "Forensic Timeline Synthesis",
-                "Chain of Custody Legal Rigor",
-                "Expert Witness Report",
-                "Evidence Admissibility"
-              ],
-              "learn": [
-                "Compiling super-timelines combining filesystem timestamps (MACB), registry modifications, and event logs using Plaso / log2timeline",
-                "Documenting complete anti-forensics identification (timestamp tampering, log clearing, file wiping)",
-                "Authoring court-admissible forensic witness reports detailing scope, findings, technical methodology, and conclusions",
-                "Preparing for expert witness depositions and cross-examinations regarding forensic chain of custody"
-              ],
-              "practice": [
-                "Reconstruct a minute-by-minute timeline of unauthorized data exfiltration across multiple compromised disk and memory images",
-                "Draft a formal 15-page forensic witness report adhering to international digital forensics standards"
-              ],
-              "build": "A court-admissible Digital Forensics Case Report complete with verified evidence hashes, full forensic timeline, artifact exhibits, and technical witness testimony.",
-              "resources": [
-                {
-            "name": "NIST SP 800-86: Guide to Integrating Forensic Techniques into Incident Response",
-            "type": "documentation",
-            "difficulty": "advanced",
-            "estimatedTime": "3 weeks",
-            "url": "https://csrc.nist.gov/pubs/sp/800/86/final"
-          }
-              ]
-            }
           }
         }
       },
@@ -681,42 +609,6 @@ export const SYNTHESIZED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
         "roleOverrides": {
           "security-grc-analyst": {
             "roleId": "security-grc-analyst",
-            "roleTitle": "Cybersecurity GRC Analyst",
-            "capstonePhase": {
-              "id": "grc-capstone",
-              "title": "GRC Capstone: Enterprise SOC 2 / ISO 27001 Audit Readiness Package",
-              "description": "Build an end-to-end enterprise compliance readiness package, author security policies, document control matrices, and present to audit stakeholders.",
-              "estimatedDuration": "Weeks 19–24",
-              "skills": [
-                "Audit Readiness Coordination",
-                "Security Policy Suite Authoring",
-                "Control Evidence Collection",
-                "Board Risk Presentation"
-              ],
-              "learn": [
-                "Drafting a comprehensive Information Security Policy (ISP) suite: Access Control, Data Classification, Disaster Recovery, Acceptable Use",
-                "Establishing continuous automated evidence collection workflows for auditor review",
-                "Remediating non-conformities and authoring Corrective Action Plans (CAP)",
-                "Synthesizing enterprise compliance progress into executive dashboard reporting for the Board of Directors"
-              ],
-              "practice": [
-                "Compile complete auditor evidence packages for 15 critical SOC 2 Type II trust service controls",
-                "Present an enterprise cybersecurity risk and compliance posture briefing to a simulated Board of Directors audit committee"
-              ],
-              "build": "A full enterprise GRC readiness package: master security policy suite, statement of applicability, risk register, and executive board presentation.",
-              "resources": [
-                {
-            "name": "ISO/IEC 27001: Information Security Management Systems Overview",
-            "type": "documentation",
-            "difficulty": "advanced",
-            "estimatedTime": "4 weeks",
-            "url": "https://www.iso.org/standard/27001"
-          }
-              ]
-            }
-          },
-          "grc-analyst": {
-            "roleId": "grc-analyst",
             "roleTitle": "Cybersecurity GRC Analyst",
             "capstonePhase": {
               "id": "grc-capstone",
@@ -1803,42 +1695,6 @@ export const SYNTHESIZED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
           }
               ]
             }
-          },
-          "clinical-trials-manager": {
-            "roleId": "clinical-trials-manager",
-            "roleTitle": "Clinical Trial Coordinator",
-            "capstonePhase": {
-              "id": "clinical-coordinator-capstone",
-              "title": "Clinical Trial Capstone: GCP Trial Management Dossier & IRB Package",
-              "description": "Coordinate an end-to-end clinical trial study startup package: protocol operationalization, IRB submission, adverse event management, and audit readiness.",
-              "estimatedDuration": "Weeks 19–24",
-              "skills": [
-                "Trial Startup Operations",
-                "IRB Regulatory Dossier",
-                "Adverse Event (AE) Reporting",
-                "GCP Audit Readiness"
-              ],
-              "learn": [
-                "Operationalizing clinical protocols into clinical site standard operating procedures (SOPs)",
-                "Managing investigator regulatory binders: FDA Form 1572, financial disclosures, and curriculum vitae verification",
-                "Serious Adverse Event (SAE) reporting workflows and expedited safety notifications to regulatory bodies",
-                "Electronic Data Capture (EDC) systems and preparing clinical sites for FDA sponsor audit inspections"
-              ],
-              "practice": [
-                "Assemble an audit-ready Trial Master File (TMF) and site regulatory binder for a multi-center clinical study",
-                "Execute a simulated Serious Adverse Event (SAE) expedited notification within mandatory 24-hour reporting deadlines"
-              ],
-              "build": "A complete Clinical Trial Site Operations and Regulatory Dossier: approved protocol operations manual, IRB submission package, informed consent documents, and SAE management workflow.",
-              "resources": [
-                {
-            "name": "ClinicalTrials.gov: Study Basics & Clinical Research Fundamentals",
-            "type": "documentation",
-            "difficulty": "advanced",
-            "estimatedTime": "4 weeks",
-            "url": "https://clinicaltrials.gov/study-basics"
-          }
-              ]
-            }
           }
         }
       },
@@ -2114,42 +1970,6 @@ export const SYNTHESIZED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
             "roleTitle": "Cloud Solutions Architect",
             "capstonePhase": {
               "id": "cloud-arch-capstone",
-              "title": "Cloud Architecture Capstone: Enterprise Multi-Region Resilient Platform Blueprint",
-              "description": "Architect and defend an enterprise-scale multi-region cloud architecture supporting 99.999% SLA, zero-data-loss failover, and audited FinOps optimization.",
-              "estimatedDuration": "Weeks 19–24",
-              "skills": [
-                "Enterprise Cloud Blueprint",
-                "Zero-Downtime DR Drills",
-                "Cost Optimization Modeling",
-                "Executive Architecture Defense"
-              ],
-              "learn": [
-                "Designing global distributed systems with sub-second RTO and zero RPO disaster recovery guarantees",
-                "Advanced multi-tenant isolation, enterprise data classification, and automated security governance",
-                "Translating complex business requirements into high-level system architecture and total cost of ownership models",
-                "Defending architectural trade-offs before executive review boards and enterprise risk committees"
-              ],
-              "practice": [
-                "Execute a simulated complete regional blackout failover exercise in an enterprise sandbox",
-                "Present a complete cloud migration and architecture proposal to a simulated CTO and executive committee"
-              ],
-              "build": "A client-ready Enterprise Cloud Architecture Dossier: full Terraform infrastructure code, multi-region architecture diagrams, disaster recovery SOPs, and FinOps cost model.",
-              "resources": [
-                {
-                  "name": "Google Cloud Architecture Framework",
-                  "type": "documentation",
-                  "difficulty": "advanced",
-                  "estimatedTime": "3 weeks",
-                  "url": "https://cloud.google.com/architecture/framework"
-                }
-              ]
-            }
-          },
-          "cloud-systems-architect": {
-            "roleId": "cloud-systems-architect",
-            "roleTitle": "Cloud Solutions Architect",
-            "capstonePhase": {
-              "id": "cloud-arch-capstone-alias",
               "title": "Cloud Architecture Capstone: Enterprise Multi-Region Resilient Platform Blueprint",
               "description": "Architect and defend an enterprise-scale multi-region cloud architecture supporting 99.999% SLA, zero-data-loss failover, and audited FinOps optimization.",
               "estimatedDuration": "Weeks 19–24",
@@ -4356,12 +4176,19 @@ export const SYNTHESIZED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
             "build": "An enterprise global distribution network master plan: mathematical facility placement models, multi-echelon inventory allocations, and geopolitical risk mitigation strategies.",
             "resources": [
               {
-            "name": "OpenStax: Principles of Management",
-            "type": "book",
-            "difficulty": "intermediate",
-            "estimatedTime": "6 weeks",
-            "url": "https://openstax.org/details/books/principles-management"
-          }
+                "name": "Council of Supply Chain Management Professionals (CSCMP): Global Network Design & Resiliency",
+                "type": "documentation",
+                "difficulty": "advanced",
+                "estimatedTime": "4 weeks",
+                "url": "https://cscmp.org/"
+              },
+              {
+                "name": "MIT Center for Transportation & Logistics: Supply Chain Resiliency Principles",
+                "type": "documentation",
+                "difficulty": "intermediate",
+                "estimatedTime": "3 weeks",
+                "url": "https://ctl.mit.edu/"
+              }
             ]
           }
         ],
@@ -5076,12 +4903,19 @@ export const SYNTHESIZED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
             "build": "An investigative public records dossier compiling government audit findings, court filings, FOIA responses, and financial disclosure contradictions.",
             "resources": [
               {
-            "name": "The Data Journalism Handbook: Investigative Research Methods",
-            "type": "documentation",
-            "difficulty": "intermediate",
-            "estimatedTime": "4 weeks",
-            "url": "https://datajournalism.com/"
-          }
+                "name": "Reporters Committee for Freedom of the Press: Open Government Guide (FOIA & Public Records)",
+                "type": "documentation",
+                "difficulty": "intermediate",
+                "estimatedTime": "3 weeks",
+                "url": "https://www.rcfp.org/open-government-guide/"
+              },
+              {
+                "name": "Global Investigative Journalism Network (GIJN): Researching Public Records & Corporate Filings",
+                "type": "documentation",
+                "difficulty": "intermediate",
+                "estimatedTime": "3 weeks",
+                "url": "https://gijn.org/"
+              }
             ]
           },
           {
@@ -5109,12 +4943,19 @@ export const SYNTHESIZED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
             "build": "A major publication-grade investigative exposé: a 3,000-word reported investigative story, primary document appendices, fact-checking bible, and right-of-reply log.",
             "resources": [
               {
-            "name": "The Data Journalism Handbook: Data Gathering & Verification",
-            "type": "documentation",
-            "difficulty": "intermediate",
-            "estimatedTime": "4 weeks",
-            "url": "https://datajournalism.com/"
-          }
+                "name": "International Consortium of Investigative Journalists (ICIJ): Investigative Methodologies & Source Protection",
+                "type": "documentation",
+                "difficulty": "advanced",
+                "estimatedTime": "4 weeks",
+                "url": "https://www.icij.org/inside-icij/"
+              },
+              {
+                "name": "ProPublica: Investigative Journalism Standards & Ethical Guidelines",
+                "type": "documentation",
+                "difficulty": "intermediate",
+                "estimatedTime": "3 weeks",
+                "url": "https://www.propublica.org/"
+              }
             ]
           }
         ],

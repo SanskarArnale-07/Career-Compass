@@ -13,7 +13,8 @@ import {
   ArrowRight,
   Lock,
 } from "lucide-react";
-import type { RoadmapPhase, LearningResource } from "@/lib/career-details/types";
+import type { RoadmapPhase, LearningResource, RoadmapTask } from "@/lib/career-details/types";
+import { resolvePhaseTasks } from "@/lib/career-roadmap/task-resolution";
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -102,6 +103,7 @@ function formatDuration(duration: string): string {
 // ── Skill Drawer ──────────────────────────────────────────────────────
 
 interface SkillDrawerProps {
+  task: RoadmapTask;
   skillName: string;
   sid: string;
   phaseLearn: string[];
@@ -109,11 +111,13 @@ interface SkillDrawerProps {
   phaseResources: LearningResource[];
   isCompleted: boolean;
   isOpen: boolean;
+  isNextUp?: boolean;
   onToggleOpen: () => void;
   onToggleMastery: () => void;
 }
 
 function SkillDrawer({
+  task,
   skillName,
   sid,
   phaseLearn,
@@ -121,14 +125,20 @@ function SkillDrawer({
   phaseResources,
   isCompleted,
   isOpen,
+  isNextUp,
   onToggleOpen,
   onToggleMastery,
 }: SkillDrawerProps) {
-  const resources = getSkillResources(skillName, phaseResources);
+  const [showAllResources, setShowAllResources] = useState(false);
+  const resources =
+    task.resources && task.resources.length > 0
+      ? task.resources
+      : getSkillResources(skillName, phaseResources);
+  const displayedResources = showAllResources ? resources : resources.slice(0, 2);
 
-  // Derive 2-3 contextual "learn" tasks from the phase's learn array
-  const learnTasks = phaseLearn.slice(0, 3);
-  const practiceTasks = phasePractice.slice(0, 2);
+  // Use dedicated, non-overlapping learn items and practice task
+  const learnTasks = task.learnItems && task.learnItems.length > 0 ? task.learnItems : phaseLearn.slice(0, 3);
+  const practiceTasks = task.practiceTask ? [task.practiceTask] : phasePractice.slice(0, 2);
 
   const typeStyle = RESOURCE_TYPE_STYLE["course"]; // default fallback
 
@@ -139,6 +149,8 @@ function SkillDrawer({
           ? "border-border/70 bg-[#10141A]"
           : isOpen
           ? "border-primary/35 bg-[#141920]"
+          : isNextUp
+          ? "border-primary/30 bg-[#121622] hover:border-primary/50"
           : "border-border/60 bg-[#10141A] hover:border-primary/25 hover:bg-[#141920]"
       }`}
     >
@@ -175,6 +187,12 @@ function SkillDrawer({
           >
             {skillName}
           </span>
+
+          {isNextUp && !isCompleted && (
+            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-primary/20 text-primary uppercase tracking-wider shrink-0">
+              Start Here
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -251,16 +269,29 @@ function SkillDrawer({
               {/* Step 3: RESOURCES */}
               {resources.length > 0 && (
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-indigo-500/15 text-[10px] font-mono font-bold text-indigo-400">
-                      3
-                    </span>
-                    <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-indigo-400">
-                      Curated Resources
-                    </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-indigo-500/15 text-[10px] font-mono font-bold text-indigo-400">
+                        3
+                      </span>
+                      <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-indigo-400">
+                        Curated Resources
+                      </p>
+                    </div>
+                    {resources.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllResources(!showAllResources)}
+                        className="text-[10px] font-mono text-primary hover:underline cursor-pointer"
+                      >
+                        {showAllResources
+                          ? "Show fewer"
+                          : `+${resources.length - 2} more`}
+                      </button>
+                    )}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-6 border-l border-indigo-500/20 ml-2">
-                    {resources.map((res) => {
+                    {displayedResources.map((res) => {
                       const style =
                         RESOURCE_TYPE_STYLE[res.type] || typeStyle;
                       return (
@@ -476,25 +507,33 @@ export default function RoadmapStagePanel({
                   </div>
 
                   <div className="space-y-2.5">
-                    {phase.skills.map((skillName) => {
-                      const sid = skillId(phase.title, skillName);
-                      return (
-                        <SkillDrawer
-                          key={sid}
-                          skillName={skillName}
-                          sid={sid}
-                          phaseLearn={phase.learn}
-                          phasePractice={phase.practice}
-                          phaseResources={phase.resources}
-                          isCompleted={completedSkills.has(sid)}
-                          isOpen={expandedSkillId === sid}
-                          onToggleOpen={() =>
-                            setExpandedSkillId((prev) => (prev === sid ? null : sid))
-                          }
-                          onToggleMastery={() => onToggleSkill(sid)}
-                        />
+                    {(() => {
+                      const tasks = resolvePhaseTasks(phase);
+                      const firstIncompleteSkill = tasks.find(
+                        (t) => !completedSkills.has(skillId(phase.title, t.skillName))
                       );
-                    })}
+                      return tasks.map((task) => {
+                        const sid = skillId(phase.title, task.skillName);
+                        return (
+                          <SkillDrawer
+                            key={sid}
+                            task={task}
+                            skillName={task.skillName}
+                            sid={sid}
+                            phaseLearn={phase.learn}
+                            phasePractice={phase.practice}
+                            phaseResources={phase.resources}
+                            isCompleted={completedSkills.has(sid)}
+                            isOpen={expandedSkillId === sid}
+                            isNextUp={task.skillName === firstIncompleteSkill?.skillName}
+                            onToggleOpen={() =>
+                              setExpandedSkillId((prev) => (prev === sid ? null : sid))
+                            }
+                            onToggleMastery={() => onToggleSkill(sid)}
+                          />
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
               )}

@@ -148,11 +148,6 @@ export function AssessmentWizard() {
       setTimeout(() => {
         setCompletionStep(3);
       }, 600);
-
-      // Transition to results promptly
-      setTimeout(() => {
-        router.push("/results");
-      }, 900);
     } else {
       setDirection(1);
       setCurrentStepIndex((prev) => prev + 1);
@@ -238,10 +233,12 @@ export function AssessmentWizard() {
               Assessment Complete
             </span>
             <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-              Your answers are being mapped.
+              {completionStep >= 3 ? "Your Direction is Ready" : "Your answers are being mapped."}
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground font-sans max-w-md mx-auto">
-              Synthesizing your cognitive strengths, work style, and aspirations...
+              {completionStep >= 3
+                ? `All ${assessmentQuestions.length} questions completed across 8 cognitive dimensions.`
+                : "Synthesizing your cognitive strengths, work style, and aspirations..."}
             </p>
           </div>
 
@@ -309,6 +306,23 @@ export function AssessmentWizard() {
                 Personalized career trajectories resolved
               </span>
             </div>
+          </div>
+
+          {/* Obvious Primary Action to View Profile */}
+          <div className="pt-2 flex flex-col items-center gap-3">
+            <Link
+              href="/profile"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-bold text-sm shadow-xl shadow-primary/25 transition-all cursor-pointer"
+            >
+              <span>View Your Profile</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/results"
+              className="text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Or explore detailed match results →
+            </Link>
           </div>
         </motion.div>
       </div>

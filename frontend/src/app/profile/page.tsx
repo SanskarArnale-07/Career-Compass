@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore, useMemo } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import * as LucideIcons from "lucide-react";
 import {
   Compass,
   ArrowRight,
@@ -21,44 +22,26 @@ import {
   LogOut,
   LayoutDashboard,
   ClipboardCheck,
-  MessageSquare,
-  FolderArchive,
-  BarChart3,
+  GitBranch,
 } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
 import {
   loadCareerJourney,
-  saveAssessmentResult,
   type CareerJourneySourceData,
 } from "@/lib/persistence";
 import {
   getCareerIntelligence,
+  getAllCareerIntelligence,
 } from "@/lib/career-intelligence";
 import { getCareerHierarchy } from "@/lib/career-hierarchy";
-import { getTieredCareerMatches } from "@/lib/constants/matching";
-import type { CareerMatch, TraitProfile } from "@/lib/types/assessment";
+import { getCareerIcon } from "@/lib/career-icons";
 import {
-  deriveStudentPersona,
-  deriveStreamSuitability,
-  deriveWhyFitReasoning,
-  deriveWorkLearningStyle,
-  deriveNextSteps,
-} from "@/lib/profile/profile-utils";
-import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { ProfileMetricsRow } from "@/components/profile/ProfileMetricsRow";
-import { TopTraitsSection } from "@/components/profile/TopTraitsSection";
-import { StreamSuitabilitySection } from "@/components/profile/StreamSuitabilitySection";
-import { WorkLearningStyleSection } from "@/components/profile/WorkLearningStyleSection";
-import { WhyFitSection } from "@/components/profile/WhyFitSection";
-import { GroupedCareerMatchesSection } from "@/components/profile/GroupedCareerMatchesSection";
-import { NextStepsSection } from "@/components/profile/NextStepsSection";
-import { RoadmapMomentumSection } from "@/components/profile/RoadmapMomentumSection";
-import { TopCareerDirectionsSection } from "@/components/profile/TopCareerDirectionsSection";
-import { NextStepCTA } from "@/components/profile/NextStepCTA";
-import { ProgressiveInsightsDisclosure } from "@/components/profile/ProgressiveInsightsDisclosure";
-import { StudentFeedbackModal } from "@/components/feedback/StudentFeedbackModal";
-import { trackProfileViewed } from "@/lib/analytics/tracker";
+  CAREER_MATCH_THRESHOLD,
+  getRecommendedCareers,
+  getTieredCareerMatches,
+} from "@/lib/constants/matching";
+import type { CareerMatch } from "@/lib/types/assessment";
 
 // ── SSR-safe hooks ───────────────────────────────────────────────────
 const emptySubscribe = () => () => {};
@@ -78,6 +61,15 @@ function getInitials(name: string): string {
     .map((w) => w[0]?.toUpperCase() ?? "")
     .slice(0, 2)
     .join("");
+}
+
+// ── Helper: format relative date ────────────────────────────────────
+function formatStartedDate(ts: number): string {
+  return new Date(ts).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // ── Skill ID helper (mirrors RoadmapStagePanel) ───────────────────────
@@ -141,7 +133,7 @@ function ProgressBar({
       {sublabel && (
         <p className="text-[10px] text-muted-foreground">{sublabel}</p>
       )}
-      <div className="h-1.5 w-full rounded-full bg-[#10141A] overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-[#1E1A16] overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${clamped}%` }}
@@ -165,8 +157,6 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "roadmap" | "skills" | "activity"
   >("overview");
-  const [isDeepDiveOpen, setIsDeepDiveOpen] = useState(false);
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   // Auth guard
   useEffect(() => {
@@ -175,30 +165,11 @@ export default function ProfilePage() {
     }
   }, [isLoading, isAuthenticated, router]);
 
-  // Load journey data with safe fallback to session/local storage
+  // Load journey data
   useEffect(() => {
     if (isLoading || !isAuthenticated) return;
     try {
-      const j = loadCareerJourney();
-      if (!j.assessment?.results && typeof window !== "undefined") {
-        const stored =
-          sessionStorage.getItem("careerCompassResults") ||
-          localStorage.getItem("careerCompassResults");
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            if (parsed && (parsed.trait_profile || parsed.top_careers)) {
-              j.assessment.completed = true;
-              j.assessment.results = parsed;
-              j.assessment.traitProfile = parsed.trait_profile || null;
-              saveAssessmentResult(parsed);
-            }
-          } catch {
-            // ignore
-          }
-        }
-      }
-      setJourney(j);
+      setJourney(loadCareerJourney());
     } catch {
       setJourney(null);
     }
@@ -210,7 +181,7 @@ export default function ProfilePage() {
       <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
-          <p className="text-xs text-muted-foreground animate-pulse font-mono">
+          <p className="text-xs text-muted-foreground animate-pulse">
             Loading your profile...
           </p>
         </div>
@@ -232,56 +203,13 @@ export default function ProfilePage() {
   const progress = journey?.progress;
   const completedPhasesSet = new Set(progress?.completedPhases ?? []);
   const completedSkillsSet = new Set(progress?.completedSkills ?? []);
+  const completedTasksSet = new Set(progress?.completedTasks ?? []);
+  const completedProjectsSet = new Set(progress?.completedProjects ?? []);
 
-  // Career matches (tiered by threshold: Strong >= 60% or highest tier, Exploration >= 40%)
+  // Career matches (tiered by threshold: Strong >= 40%, Exploring >= 25%)
   const rawMatches: CareerMatch[] = results?.top_careers ?? [];
-  const { strongMatches, explorationMatches, allVisibleMatches } =
-    getTieredCareerMatches(rawMatches);
-
-  // Top career match for profile context
-  const topMatch = allVisibleMatches[0] || rawMatches[0] || null;
-  const topCareerIntel = topMatch
-    ? getCareerIntelligence(topMatch.career_name)
-    : null;
-  const displayHierarchy = topCareerIntel
-    ? getCareerHierarchy(topCareerIntel.slug)
-    : hierarchy;
-
-  // Personalization data
-  const traits = (assessment?.traitProfile ||
-    results?.trait_profile ||
-    null) as TraitProfile | null;
-
-  const persona = deriveStudentPersona(
-    traits,
-    topCareerIntel?.title || career?.title
-  );
-
-  const streamSuitability = deriveStreamSuitability(
-    results?.streams,
-    traits
-  );
-
-  const whyFitReasoning = deriveWhyFitReasoning(
-    traits,
-    topCareerIntel?.title || career?.title
-  );
-
-  const workLearningStyle = deriveWorkLearningStyle(traits);
-  const nextSteps = deriveNextSteps(
-    persona,
-    topCareerIntel?.title || career?.title,
-    selectedSlug
-  );
-
-  useEffect(() => {
-    if (assessmentDone && persona?.archetype) {
-      trackProfileViewed(
-        persona.archetype,
-        topCareerIntel?.title || career?.title
-      );
-    }
-  }, [assessmentDone, persona?.archetype]);
+  const { allVisibleMatches } = getTieredCareerMatches(rawMatches);
+  const qualifiedMatches = allVisibleMatches;
 
   // Roadmap progress
   const totalPhases = career?.roadmap?.length ?? 0;
@@ -306,38 +234,42 @@ export default function ProfilePage() {
   const overallPercent = Math.round((phasePercent + skillPercent) / 2);
 
   // Current active phase (first incomplete)
-  const currentPhase =
-    career?.roadmap.find((p) => !completedPhasesSet.has(p.phase)) ||
-    career?.roadmap[0];
-
-  const nextMilestone = currentPhase?.skills?.[0]
-    ? `Master ${currentPhase.skills[0]}`
-    : "Continue active phase coursework";
+  const currentPhase = career?.roadmap.find(
+    (p) => !completedPhasesSet.has(p.phase)
+  );
 
   // Tasks done (preparation items)
+  const totalPrep = career?.preparation?.length ?? 0;
   const completedPrep = (progress?.completedTasks ?? []).filter((id) =>
     career?.preparation?.some((p) => p.id === id)
   ).length;
 
-  // Per-phase skill progress for the skills tab
-  const phaseSkillProgress =
-    career?.roadmap.map((phase) => {
-      const phaseSkillIds = phase.skills.map((s) => skillId(phase.title, s));
-      const done = phaseSkillIds.filter((id) =>
-        completedSkillsSet.has(id)
-      ).length;
-      return {
-        phase,
-        total: phaseSkillIds.length,
-        done,
-        percent:
-          phaseSkillIds.length > 0
-            ? (done / phaseSkillIds.length) * 100
-            : 0,
-      };
-    }) ?? [];
+  // Projects
+  const totalProjects = career?.projects?.length ?? 0;
+  const completedProjectsCount = completedProjectsSet.size;
 
-  // Streak / activity state
+  // Top career match (for profile header)
+  const topMatch = qualifiedMatches[0];
+  const topCareerIntel = topMatch
+    ? getCareerIntelligence(topMatch.career_name)
+    : null;
+  const displayHierarchy = topCareerIntel
+    ? getCareerHierarchy(topCareerIntel.slug)
+    : hierarchy;
+
+  // Per-phase skill progress for the skills tab
+  const phaseSkillProgress = career?.roadmap.map((phase) => {
+    const phaseSkillIds = phase.skills.map((s) => skillId(phase.title, s));
+    const done = phaseSkillIds.filter((id) => completedSkillsSet.has(id)).length;
+    return {
+      phase,
+      total: phaseSkillIds.length,
+      done,
+      percent: phaseSkillIds.length > 0 ? (done / phaseSkillIds.length) * 100 : 0,
+    };
+  }) ?? [];
+
+  // Streak / activity — no per-event timestamps, show honest state
   const hasAnyActivity =
     completedPhases > 0 || masteredSkills > 0 || completedPrep > 0;
 
@@ -348,31 +280,32 @@ export default function ProfilePage() {
         <ProfileTopBar user={user} onLogout={logout} />
         <div className="container mx-auto px-4 max-w-2xl pt-20 pb-12 text-center">
           <div className="mb-8 flex justify-center">
-            <div className="h-20 w-20 rounded-2xl bg-primary/10 border-2 border-primary/30 flex items-center justify-center text-primary text-3xl font-bold font-heading shadow-lg shadow-primary/10">
+            <div className="h-20 w-20 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary text-3xl font-bold font-heading">
               {getInitials(user.name)}
             </div>
           </div>
           <h1 className="font-heading text-2xl font-bold text-foreground mb-2">
             {user.name}
           </h1>
-          <p className="text-sm text-muted-foreground font-mono mb-8">{user.email}</p>
+          <p className="text-sm text-muted-foreground mb-10">{user.email}</p>
 
-          <div className="p-8 rounded-2xl border border-border bg-card space-y-5 shadow-xl shadow-black/20">
+          <div className="p-8 rounded-2xl border border-border bg-card space-y-4">
             <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mx-auto">
               <Compass className="h-6 w-6" />
             </div>
             <h2 className="font-heading text-xl font-bold text-foreground">
               Your Career Journey Hasn&apos;t Started Yet
             </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-              Complete our 5-minute psychometric assessment to generate your personalized career profile, discover your cognitive archetype, evaluate academic stream suitability, and unlock your adaptive learning roadmap.
+            <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+              Complete the 5-minute assessment to discover your career direction,
+              get personalized match scores, and unlock your adaptive roadmap.
             </p>
             <Link
               href="/assessment"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary-hover shadow-md shadow-primary/20 transition-all mt-2"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-hover shadow-md shadow-primary/20 transition-all mt-2"
             >
               <Sparkles className="h-4 w-4" />
-              <span>Take the Assessment</span>
+              Take the Assessment
             </Link>
           </div>
         </div>
@@ -380,32 +313,147 @@ export default function ProfilePage() {
     );
   }
 
-  // ── FULL POLISHED PROFILE ─────────────────────────────────────────
+  // ── FULL PROFILE ─────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
-      <ProfileTopBar
-        user={user}
-        onLogout={logout}
-        onOpenFeedback={() => setIsFeedbackOpen(true)}
-      />
+      <ProfileTopBar user={user} onLogout={logout} />
 
       <div className="container mx-auto px-4 max-w-5xl pt-8 space-y-6">
-        {/* 1. Stronger Profile Header: Student Identity + Persona + Concise Summary */}
-        <ProfileHeader
-          user={user}
-          persona={persona}
-          displayHierarchy={displayHierarchy}
-          topMatchScore={topMatch?.match_percentage}
-          startedAt={journey?.selectedCareer?.startedAt}
-          selectedSlug={selectedSlug}
-          careerTitle={topCareerIntel?.title || career?.title}
-        />
 
-        {/* 2. Tab Navigation */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#10141A] border border-border/70 w-full sm:w-auto">
+        {/* ── PROFILE HEADER ─────────────────────────────────── */}
+        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-5">
+            {/* Avatar */}
+            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading text-2xl font-bold shrink-0">
+              {getInitials(user.name)}
+            </div>
+
+            {/* Identity */}
+            <div className="flex-1 min-w-0">
+              <h1 className="font-heading text-2xl sm:text-3xl font-bold text-foreground leading-tight">
+                {user.name}
+              </h1>
+              <p className="text-sm text-muted-foreground mt-0.5">{user.email}</p>
+
+              {/* Career Direction */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {displayHierarchy && (
+                  <>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161412] border border-border text-xs font-mono text-muted-foreground">
+                      <Layers className="h-3 w-3 text-primary/70" />
+                      {displayHierarchy.domain.name}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/25 text-xs font-mono text-primary font-semibold">
+                      {displayHierarchy.path.name}
+                    </span>
+                  </>
+                )}
+                {topMatch && (
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono font-semibold text-emerald-400">
+                    <CheckCircle2 className="h-3 w-3" />
+                    {topMatch.match_percentage}% match
+                  </span>
+                )}
+              </div>
+
+              {/* Started date */}
+              {journey?.selectedCareer?.startedAt && (
+                <p className="text-[11px] text-muted-foreground/70 font-mono mt-3">
+                  Journey started{" "}
+                  {formatStartedDate(journey.selectedCareer.startedAt)}
+                </p>
+              )}
+            </div>
+
+            {/* Quick actions */}
+            <div className="flex flex-row sm:flex-col gap-2 shrink-0">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-primary/30 bg-primary/10 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors"
+              >
+                <LayoutDashboard className="h-3.5 w-3.5" />
+                My Roadmap
+              </Link>
+              <Link
+                href="/results"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+              >
+                <ClipboardCheck className="h-3.5 w-3.5" />
+                Results
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* ── OVERALL PROGRESS BANNER ────────────────────────── */}
+        <div className="rounded-2xl border border-primary/25 bg-card p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+            <div>
+              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                Roadmap Progress
+              </p>
+              <div className="flex items-baseline gap-2">
+                <span className="font-heading text-4xl font-bold text-primary tabular-nums">
+                  {overallPercent}%
+                </span>
+                <span className="text-sm text-muted-foreground font-light">
+                  overall completion
+                </span>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground font-mono">
+                {completedPhases} / {totalPhases} stages
+              </p>
+              <p className="text-xs text-muted-foreground font-mono">
+                {masteredSkills} / {totalSkills} skills mastered
+              </p>
+              {currentPhase && (
+                <p className="text-[10px] text-primary font-mono mt-1">
+                  Current: {currentPhase.title}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="h-2 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${overallPercent}%` }}
+              transition={{ duration: 0.9, ease: "easeOut" }}
+              className="h-full rounded-full bg-primary"
+            />
+          </div>
+        </div>
+
+        {/* ── STATS ROW ──────────────────────────────────────── */}
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+          <StatCard
+            value={completedPhases}
+            label="Stages Done"
+            accent={completedPhases > 0}
+          />
+          <StatCard
+            value={masteredSkills}
+            label="Skills Mastered"
+            accent={masteredSkills > 0}
+          />
+          <StatCard value={completedPrep} label="Tasks Done" />
+          <StatCard
+            value={currentPhase ? `S${currentPhase.phase}` : "—"}
+            label="Active Stage"
+            accent
+          />
+          <StatCard
+            value={`${progress?.weeklyPaceHours ?? 10}h`}
+            label="Weekly Pace"
+          />
+        </div>
+
+        {/* ── TAB NAVIGATION ─────────────────────────────────── */}
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#141210] border border-border/70 w-full sm:w-auto">
           {(
             [
-              { id: "overview", label: "Snapshot", icon: User },
+              { id: "overview", label: "Overview", icon: User },
               { id: "roadmap", label: "Journey", icon: Map },
               { id: "skills", label: "Skills", icon: Layers },
               { id: "activity", label: "Activity", icon: Flame },
@@ -416,106 +464,242 @@ export default function ProfilePage() {
               onClick={() => setActiveTab(id)}
               className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer ${
                 activeTab === id
-                  ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                  ? "bg-primary text-white shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
-              <span>{label}</span>
+              <span className="hidden sm:inline">{label}</span>
             </button>
           ))}
         </div>
 
         {/* ══════════════════════════════════════════════════════ */}
-        {/* TAB: SNAPSHOT & OVERVIEW (Minimal-First Approach)     */}
+        {/* TAB: OVERVIEW                                         */}
         {/* ══════════════════════════════════════════════════════ */}
         {activeTab === "overview" && (
-          <div className="space-y-6">
-            {/* 1. Career Snapshot is established in ProfileHeader (Who am I?) */}
+          <div className="space-y-5">
+            {/* Career Direction detail */}
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+                  Career Direction
+                </p>
+                {topMatch && (
+                  <span className="px-2 py-0.5 rounded-full bg-primary/15 border border-primary/25 text-xs font-mono font-bold text-primary">
+                    {Math.round(topMatch.match_percentage)}% Match
+                  </span>
+                )}
+              </div>
 
-            {/* 2. Top Strengths: strictly top 3 traits with short interpretations (What am I strongest at?) */}
-            <TopTraitsSection
-              topStrengths={persona.topStrengths}
-              allTraits={persona.allTraits}
-              limit={3}
-            />
+              {displayHierarchy ? (
+                <div className="space-y-4">
+                  {/* Visual Hierarchy Trail */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3.5 rounded-xl bg-[#141210] border border-border/80">
+                    <Link
+                      href={`/career-map?domain=${displayHierarchy.domain.id}`}
+                      className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5"
+                    >
+                      <Layers className="h-3 w-3 text-primary" />
+                      <span>{displayHierarchy.domain.name}</span>
+                    </Link>
 
-            {/* 3. Top Career Directions: strictly 3-5 strongest pathways (What career directions should I explore?) */}
-            <TopCareerDirectionsSection
-              matches={allVisibleMatches}
-              limit={4}
-              exploreAllHref="/results"
-              onExploreAll={() => setIsDeepDiveOpen(true)}
-            />
+                    <span className="text-muted-foreground/40 text-xs hidden sm:inline">↓</span>
 
-            {/* 4. Next Step: Prominent CTA to explore career matches */}
-            <NextStepCTA
-              exploreMatchesHref="/results"
-              roadmapHref="/dashboard"
-              activeCareerTitle={topCareerIntel?.title || career?.title}
-              isDeepDiveOpen={isDeepDiveOpen}
-              onToggleDeepDive={() => setIsDeepDiveOpen((prev) => !prev)}
-            />
+                    <Link
+                      href={`/career/${displayHierarchy.path.slug}`}
+                      className="text-xs font-bold text-foreground hover:text-primary transition-colors flex items-center gap-1.5"
+                    >
+                      <GitBranch className="h-3 w-3 text-primary" />
+                      <span>{displayHierarchy.path.name}</span>
+                    </Link>
 
-            {/* 5. Progressive Disclosure: Full In-Depth Intelligence on Demand */}
-            <ProgressiveInsightsDisclosure
-              isOpen={isDeepDiveOpen}
-              onToggle={() => setIsDeepDiveOpen((prev) => !prev)}
-              overallPercent={overallPercent}
-              topCareerName={topCareerIntel?.title || career?.title || "Software Development"}
-              topCareerScore={topMatch?.match_percentage}
-              topTraitLabel={persona.topStrengths[0]?.label || "Technical Aptitude"}
-              topTraitScore={persona.topStrengths[0]?.score}
-              primaryStream={streamSuitability.primaryRecommendation}
-              weeklyPaceHours={progress?.weeklyPaceHours ?? 10}
-              rankedStreams={streamSuitability.rankedStreams}
-              whyFitReasoning={whyFitReasoning}
-              workLearningStyle={workLearningStyle}
-              strongMatches={strongMatches}
-              explorationMatches={explorationMatches}
-              allVisibleMatches={allVisibleMatches}
-              career={career}
-              completedPhases={completedPhases}
-              totalPhases={totalPhases}
-              masteredSkills={masteredSkills}
-              totalSkills={totalSkills}
-              currentPhaseTitle={
-                currentPhase
-                  ? `Stage ${currentPhase.phase}: ${currentPhase.title}`
-                  : undefined
-              }
-              nextMilestone={nextMilestone}
-              selectedSlug={selectedSlug}
-            />
+                    {displayHierarchy.primarySpecialization && (
+                      <>
+                        <span className="text-muted-foreground/40 text-xs hidden sm:inline">↓</span>
+                        <Link
+                          href={`/career-map?domain=${displayHierarchy.domain.id}&path=${displayHierarchy.path.slug}&spec=${displayHierarchy.primarySpecialization.id}`}
+                          className="text-xs font-medium text-primary hover:underline flex items-center gap-1"
+                        >
+                          <Circle className="h-1.5 w-1.5 fill-primary text-primary" />
+                          <span>{displayHierarchy.primarySpecialization.name}</span>
+                        </Link>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Roadmap and Tree Actions */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-mono text-muted-foreground">
+                        Roadmap Progress:
+                      </span>
+                      <span className="text-xs font-mono font-bold text-primary">
+                        {overallPercent}%
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/career-map?domain=${displayHierarchy.domain.id}&path=${displayHierarchy.path.slug}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-[#181512] text-xs font-mono text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+                      >
+                        <GitBranch className="h-3 w-3" />
+                        <span>Explore in Tree</span>
+                      </Link>
+                      <Link
+                        href={`/career/${displayHierarchy.path.slug}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors"
+                      >
+                        <span>Continue Roadmap</span>
+                        <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Assessment completed — career direction loading...
+                </p>
+              )}
+            </div>
+
+            {/* Career matches */}
+            {qualifiedMatches.length > 0 && (
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+                    Your Career Matches
+                  </p>
+                  <span className="text-[10px] font-mono text-muted-foreground/60">
+                    Top career trajectories
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {qualifiedMatches.slice(0, 5).map((m) => {
+                    const intel = getCareerIntelligence(m.career_name);
+                    const IconComp = intel
+                      ? getCareerIcon(intel.careerName)
+                      : Compass;
+                    return (
+                      <div
+                        key={m.career_name}
+                        className="flex items-center gap-3"
+                      >
+                        <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                          <IconComp className="h-3.5 w-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium text-foreground truncate">
+                              {intel?.title ?? m.career_name}
+                            </span>
+                            <span className="text-xs font-mono font-semibold text-primary ml-2 shrink-0">
+                              {m.match_percentage}%
+                            </span>
+                          </div>
+                          <div className="h-1 w-full rounded-full bg-[#1E1A16] overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{
+                                width: `${m.match_percentage}%`,
+                              }}
+                              transition={{ duration: 0.6, ease: "easeOut" }}
+                              className="h-full rounded-full bg-primary/80"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <Link
+                  href="/results"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                >
+                  View full assessment results
+                  <ExternalLink className="h-3 w-3" />
+                </Link>
+              </div>
+            )}
+
+            {/* Quick links */}
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+                Navigate
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {[
+                  {
+                    href: "/dashboard",
+                    icon: LayoutDashboard,
+                    label: "My Roadmap Dashboard",
+                    sub: "Full stage → skill → task journey",
+                  },
+                  {
+                    href: "/results",
+                    icon: ClipboardCheck,
+                    label: "Assessment Results",
+                    sub: "Trait profile & match scores",
+                  },
+                  {
+                    href: `/career/${selectedSlug}`,
+                    icon: BookOpen,
+                    label: "Career Guide",
+                    sub: career?.title ?? "Full career deep-dive",
+                  },
+                  {
+                    href: "/coach",
+                    icon: Sparkles,
+                    label: "Career Coach AI",
+                    sub: "Ask questions about your path",
+                  },
+                ].map(({ href, icon: Icon, label, sub }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-[#141210] hover:border-primary/30 hover:bg-[#1A1612] transition-all group"
+                  >
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                        {label}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground truncate">
+                        {sub}
+                      </p>
+                    </div>
+                    <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary ml-auto shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
         {/* ══════════════════════════════════════════════════════ */}
-        {/* TAB: ROADMAP (Journey Summary)                         */}
+        {/* TAB: ROADMAP (journey summary)                        */}
         {/* ══════════════════════════════════════════════════════ */}
         {activeTab === "roadmap" && (
           <div className="space-y-4">
             <div className="rounded-2xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h3 className="font-heading text-base font-bold text-foreground">
-                    Career Journey — {career?.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Stage-by-stage progression toward career readiness
-                  </p>
-                </div>
+                <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+                  Career Journey — {career?.title}
+                </p>
                 <Link
                   href="/dashboard"
                   className="inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline"
                 >
-                  <span>Open full dashboard</span>
+                  Open full roadmap
                   <ExternalLink className="h-3 w-3" />
                 </Link>
               </div>
 
               {career && totalPhases > 0 ? (
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   {career.roadmap.map((phase, idx) => {
                     const isComplete = completedPhasesSet.has(phase.phase);
                     const isActive =
@@ -542,20 +726,20 @@ export default function ProfilePage() {
                         key={phase.phase}
                         className={`flex items-center gap-4 p-3.5 rounded-xl border transition-colors ${
                           isComplete
-                            ? "border-border/70 bg-[#10141A]"
+                            ? "border-emerald-500/20 bg-emerald-500/5"
                             : isActive
-                            ? "border-primary/40 bg-primary/10 shadow-xs shadow-primary/10"
-                            : "border-border/40 bg-[#0B0E12]"
+                            ? "border-primary/30 bg-primary/5"
+                            : "border-border/50 bg-[#141210]"
                         }`}
                       >
                         {/* Stage indicator */}
                         <div
-                          className={`h-8 w-8 rounded-lg flex items-center justify-center text-xs font-mono font-bold shrink-0 ${
+                          className={`h-7 w-7 rounded-lg flex items-center justify-center text-[10px] font-mono font-bold shrink-0 ${
                             isComplete
-                              ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400"
+                              ? "bg-emerald-500/20 text-emerald-400"
                               : isActive
-                              ? "bg-primary/20 border border-primary/40 text-primary"
-                              : "bg-[#141920] border border-border/60 text-muted-foreground/60"
+                              ? "bg-primary/20 text-primary"
+                              : "bg-[#1E1A16] text-muted-foreground"
                           }`}
                         >
                           {isComplete ? (
@@ -571,9 +755,9 @@ export default function ProfilePage() {
                             <span
                               className={`text-xs font-medium truncate ${
                                 isComplete
-                                  ? "text-muted-foreground/80 line-through"
+                                  ? "text-emerald-300/70 line-through"
                                   : isActive
-                                  ? "text-foreground font-semibold"
+                                  ? "text-foreground"
                                   : "text-muted-foreground"
                               }`}
                             >
@@ -582,16 +766,16 @@ export default function ProfilePage() {
                             <span
                               className={`text-[10px] font-mono ml-2 shrink-0 ${
                                 isComplete
-                                  ? "text-emerald-400 font-semibold"
+                                  ? "text-emerald-400"
                                   : isActive
-                                  ? "text-primary font-bold"
+                                  ? "text-primary"
                                   : "text-muted-foreground/60"
                               }`}
                             >
-                              {isComplete ? "Completed" : `${pct}%`}
+                              {isComplete ? "Done" : `${pct}%`}
                             </span>
                           </div>
-                          <div className="h-1.5 w-full rounded-full bg-[#10141A] overflow-hidden">
+                          <div className="h-1 w-full rounded-full bg-[#1E1A16] overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all ${
                                 isComplete
@@ -616,7 +800,7 @@ export default function ProfilePage() {
               ) : (
                 <EmptyState
                   title="Roadmap not started"
-                  sub="Your personalized roadmap is ready to explore."
+                  sub="Your personalized roadmap is ready."
                   cta="Open Roadmap"
                   href="/dashboard"
                 />
@@ -642,7 +826,7 @@ export default function ProfilePage() {
                       key={phase.phase}
                       label={phase.title}
                       percent={percent}
-                      sublabel={`${done} / ${total} skills mastered · ${phase.estimatedDuration}`}
+                      sublabel={`${done} / ${total} skills · ${phase.estimatedDuration}`}
                       accent={done > 0}
                     />
                   ))}
@@ -661,7 +845,7 @@ export default function ProfilePage() {
             {totalSkills > 0 && (
               <div className="rounded-2xl border border-border bg-card p-5">
                 <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-                  Skill Mastery Summary
+                  Skill Summary
                 </p>
                 <div className="grid grid-cols-3 gap-3">
                   <StatCard value={masteredSkills} label="Mastered" accent />
@@ -685,7 +869,7 @@ export default function ProfilePage() {
         {/* ══════════════════════════════════════════════════════ */}
         {activeTab === "activity" && (
           <div className="space-y-4">
-            {/* Streaks */}
+            {/* Streak */}
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-2xl border border-border bg-card p-5 flex flex-col items-center gap-2">
                 <Flame className="h-6 w-6 text-primary" />
@@ -696,7 +880,7 @@ export default function ProfilePage() {
                   Current Streak
                 </p>
                 <p className="text-[10px] text-muted-foreground/60 text-center">
-                  days active
+                  days
                 </p>
               </div>
               <div className="rounded-2xl border border-border bg-card p-5 flex flex-col items-center gap-2">
@@ -708,64 +892,60 @@ export default function ProfilePage() {
                   Longest Streak
                 </p>
                 <p className="text-[10px] text-muted-foreground/60 text-center">
-                  days active
+                  days
                 </p>
               </div>
             </div>
 
-            {/* Learning Activity */}
+            {/* Activity heatmap — honest empty state */}
             <div className="rounded-2xl border border-border bg-card p-5">
               <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-4">
                 Learning Activity
               </p>
 
               {hasAnyActivity ? (
+                /* Partial info state — activity exists but no per-event timestamps */
                 <div className="space-y-4">
                   <ActivityGrid />
                   <p className="text-[10px] text-muted-foreground/60 font-mono text-center">
-                    Detailed daily activity tracking records as you complete roadmap milestones and master skills.
+                    Detailed daily activity tracking will be available in a
+                    future update. Complete more roadmap tasks to build your
+                    history.
                   </p>
                 </div>
               ) : (
                 <div className="py-10 text-center space-y-3">
-                  <div className="h-10 w-10 rounded-xl bg-[#10141A] border border-border flex items-center justify-center text-muted-foreground/40 mx-auto">
+                  <div className="h-10 w-10 rounded-xl bg-[#1E1A16] border border-border flex items-center justify-center text-muted-foreground/40 mx-auto">
                     <Target className="h-5 w-5" />
                   </div>
                   <p className="text-sm font-medium text-foreground">
                     No learning activity yet
                   </p>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
-                    Complete roadmap tasks, mark skills as mastered, or finish stages to build your learning record.
+                    Complete roadmap tasks, mark skills as mastered, or finish
+                    stages to build your activity history.
                   </p>
                   <Link
                     href="/dashboard"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-colors"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors"
                   >
-                    <span>Start Learning</span>
+                    Start Learning
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* Recent activity timeline */}
+            {/* Recent activity — what we CAN derive */}
             <div className="rounded-2xl border border-border bg-card p-5">
               <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-                Recent Journey Events
+                Recent Activity
               </p>
               <RecentActivity journey={journey} career={career} />
             </div>
           </div>
         )}
       </div>
-
-      {/* Student Feedback Modal */}
-      <StudentFeedbackModal
-        isOpen={isFeedbackOpen}
-        onClose={() => setIsFeedbackOpen(false)}
-        sessionId={`session-${user?.id || "anon"}`}
-        sourceContext="profile"
-      />
     </div>
   );
 }
@@ -775,11 +955,9 @@ export default function ProfilePage() {
 function ProfileTopBar({
   user,
   onLogout,
-  onOpenFeedback,
 }: {
   user: { name: string; email: string };
   onLogout: () => void;
-  onOpenFeedback?: () => void;
 }) {
   return (
     <div className="sticky top-14 z-30 border-b border-border/80 bg-background/80 backdrop-blur-md">
@@ -794,24 +972,13 @@ function ProfileTopBar({
             {user.name}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          {onOpenFeedback && (
-            <button
-              onClick={onOpenFeedback}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-secondary/10 border border-secondary/25 text-xs font-mono text-secondary hover:bg-secondary/20 transition-colors cursor-pointer"
-            >
-              <MessageSquare className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Give Feedback</span>
-            </button>
-          )}
-          <button
-            onClick={onLogout}
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-400 font-mono transition-colors cursor-pointer"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Log Out</span>
-          </button>
-        </div>
+        <button
+          onClick={onLogout}
+          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-400 font-mono transition-colors cursor-pointer"
+        >
+          <LogOut className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Log Out</span>
+        </button>
       </div>
     </div>
   );
@@ -836,17 +1003,18 @@ function EmptyState({
       </p>
       <Link
         href={href}
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-colors"
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover transition-colors"
       >
-        <span>{cta}</span>
+        {cta}
         <ArrowRight className="h-3.5 w-3.5" />
       </Link>
     </div>
   );
 }
 
-/** Visual heatmap grid */
+/** Placeholder visual heatmap grid when user has some activity but no timestamps */
 function ActivityGrid() {
+  // 15 weeks × 7 days = 105 cells, all empty (honest)
   const weeks = 15;
   return (
     <div className="overflow-x-auto pb-1">
@@ -859,8 +1027,8 @@ function ActivityGrid() {
             {Array.from({ length: 7 }).map((_, day) => (
               <div
                 key={day}
-                className="h-3 w-3 rounded-sm bg-[#10141A] border border-border/20"
-                title="Activity cell"
+                className="h-3 w-3 rounded-sm bg-[#1E1A16] border border-border/20"
+                title="No activity data yet"
               />
             ))}
           </div>
@@ -868,7 +1036,7 @@ function ActivityGrid() {
       </div>
       <div className="flex items-center gap-2 mt-2 justify-end">
         <span className="text-[10px] text-muted-foreground/50 font-mono">Less</span>
-        {["bg-[#10141A]", "bg-primary/20", "bg-primary/50", "bg-primary/80", "bg-primary"].map(
+        {["bg-[#1E1A16]", "bg-primary/20", "bg-primary/50", "bg-primary/80", "bg-primary"].map(
           (cls, i) => (
             <div key={i} className={`h-3 w-3 rounded-sm ${cls}`} />
           )
@@ -925,8 +1093,8 @@ function RecentActivity({
 
   if (items.length === 0) {
     return (
-      <p className="text-xs text-muted-foreground text-center py-4 font-mono">
-        No recorded activity yet. Start your roadmap to build your history.
+      <p className="text-xs text-muted-foreground text-center py-4">
+        No recorded activity yet. Start your roadmap to build history.
       </p>
     );
   }
@@ -937,9 +1105,11 @@ function RecentActivity({
         <div key={i} className="flex items-start gap-3">
           <div
             className={`mt-0.5 h-5 w-5 rounded-full flex items-center justify-center shrink-0 ${
-              item.type === "assessment" || item.type === "complete"
+              item.type === "assessment"
+                ? "bg-emerald-500/20 text-emerald-400"
+                : item.type === "complete"
                 ? "bg-primary/20 text-primary"
-                : "bg-[#141920] text-muted-foreground"
+                : "bg-[#1E1A16] text-muted-foreground"
             }`}
           >
             {item.type === "assessment" || item.type === "complete" ? (

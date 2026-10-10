@@ -666,14 +666,21 @@ export const HANDCRAFTED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
           "Visual hierarchy principles: scale, contrast, proximity, alignment, and focal points",
           "Typography fundamentals: font pairing, modular type scales, line heights, and readability",
           "Color systems: 60-30-10 rule, HSL tailored palettes, contrast ratios, and dark mode dynamics",
-          "Layout grids: 8pt grid system, column alignments, responsive breakpoints, and white space usage",
+          "Design thinking methodology: empathy mapping, problem framing, ideation, and rapid user feedback loops",
         ],
         practice: [
-          "Deconstruct 10 industry-leading digital interfaces to reverse-engineer their layout and typography grids",
-          "Create cohesive color palettes with WCAG AA/AAA compliant contrast ratios",
+          "Audit 5 landing pages and redesign their visual hierarchy by optimizing scale, contrast, and focal points",
+          "Establish a modular typographic scale (1.25 Major Third) and style a complete article layout with optimal line length and vertical rhythm",
+          "Generate an accessible design system palette using the 60-30-10 rule with verified WCAG 2.2 AA contrast ratios",
+          "Execute a rapid Design Thinking empathy mapping and problem reframing exercise for a mobile onboarding friction point",
         ],
         build: "A comprehensive visual design style guide featuring type scales, color tokens, and layout guidelines.",
-        resources: [{ name: "Refactoring UI (Adam Wathan & Steve Schoger)", type: "book", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://www.refactoringui.com" }],
+        resources: [
+          { name: "Refactoring UI (Adam Wathan & Steve Schoger)", type: "book", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://www.refactoringui.com" },
+          { name: "Butterick's Practical Typography: Core Rules", type: "book", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://practicaltypography.com/" },
+          { name: "W3C Web Accessibility: WCAG 2.2 Color Contrast Guidelines", type: "documentation", difficulty: "beginner", estimatedTime: "1 week", url: "https://www.w3.org/WAI/WCAG22/quickref/#contrast-minimum" },
+          { name: "Stanford d.school: An Introduction to Design Thinking", type: "documentation", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://dschool.stanford.edu/resources/getting-started-with-design-thinking" },
+        ],
       },
       {
         id: "design-found-2",
@@ -683,17 +690,24 @@ export const HANDCRAFTED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
         estimatedDuration: "Weeks 5–8",
         skills: ["Figma Mastery", "Auto-Layout", "Design Tokens & Components", "Interactive Prototyping"],
         learn: [
-          "Advanced Auto-Layout: padding, gap, alignment, wrapping, and minimum/maximum constraints",
-          "Component architectures: variants, component properties (boolean, text, instance swap), and slots",
-          "Figma variables: color, number, string, and boolean tokens for multi-brand and dark mode switching",
+          "Advanced Figma canvas navigation, vector networks, selection shortcuts, and frame nesting",
+          "Auto-Layout properties: direction, padding, gap, alignment, wrapping, and min/max responsive constraints",
+          "Component architectures: variants, component properties (boolean, text, instance swap), and atomic design",
           "Interactive prototyping: smart animate transitions, interactive component states, and micro-interactions",
         ],
         practice: [
-          "Construct a modular UI card component with 10+ responsive variant configurations",
-          "Build an interactive clickable mobile prototype demonstrating screen transitions and state changes",
+          "Master Figma vector networks and pen tool to create 8 custom pixel-aligned UI icons",
+          "Build a fully responsive navigation bar and card grid utilizing nested Auto-Layout with wrap and min/max constraints",
+          "Architect a modular design system button set featuring 12 variant combinations, hover/active states, and icon slots",
+          "Wireframe and prototype an interactive mobile checkout flow with realistic Smart Animate micro-interactions",
         ],
         build: "A responsive, tokenized component library in Figma complete with interactive states and design variables.",
-        resources: [{ name: "Figma Design Systems Official Guide", type: "documentation", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://help.figma.com/hc/en-us/articles/360038662654-Guide-to-design-systems-in-Figma" }],
+        resources: [
+          { name: "Figma Official: Getting Started with Design Tools", type: "documentation", difficulty: "beginner", estimatedTime: "2 weeks", url: "https://help.figma.com/hc/en-us/categories/360002051613-Get-started" },
+          { name: "Figma Official Guide: Auto Layout Properties & Constraints", type: "documentation", difficulty: "intermediate", estimatedTime: "1 week", url: "https://help.figma.com/hc/en-us/articles/360040451373-Explore-auto-layout-properties" },
+          { name: "Figma Design Systems Official Guide", type: "documentation", difficulty: "intermediate", estimatedTime: "2 weeks", url: "https://help.figma.com/hc/en-us/articles/360038662654-Guide-to-design-systems-in-Figma" },
+          { name: "Figma Prototyping: Smart Animate & Micro-Interactions", type: "documentation", difficulty: "intermediate", estimatedTime: "1 week", url: "https://help.figma.com/hc/en-us/articles/360040314193-Guide-to-prototyping-in-Figma" },
+        ],
       },
     ],
     defaultAdvancedPhases: [
@@ -704,10 +718,21 @@ export const HANDCRAFTED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
         description: "Conduct user interviews, usability audits, wireframing, and user journey mapping.",
         estimatedDuration: "Weeks 9–14",
         skills: ["UX Research", "Wireframing", "Usability Testing"],
-        learn: ["User research methodologies, heuristic evaluations, user journey mapping", "Information architecture, sitemaps, and low-fidelity wireframing", "Usability testing protocols, qualitative note-taking, and affinity mapping"],
-        practice: ["Conduct 5 moderated usability test sessions", "Create end-to-end user journey flows from onboarding to task completion"],
+        learn: [
+          "User research methodologies, qualitative interviewing, heuristic evaluations, and user journey mapping",
+          "Information architecture, user flows, sitemaps, and low-fidelity wireframing",
+          "Usability testing protocols, qualitative note-taking, cognitive walkthroughs, and affinity mapping",
+        ],
+        practice: [
+          "Conduct 5 moderated usability test sessions evaluating onboarding friction points",
+          "Draft low-fidelity wireframe flows in Figma testing 3 alternative navigation architectures",
+          "Create end-to-end user journey flows from onboarding to task completion",
+        ],
         build: "A validated UX case study detailing problem discovery, wireframe iterations, and user testing outcomes.",
-        resources: [{ name: "Nielsen Norman Group UX Research Articles", type: "documentation", difficulty: "intermediate", estimatedTime: "3 weeks", url: "https://www.nngroup.com/articles/" }],
+        resources: [
+          { name: "Nielsen Norman Group UX Research Articles", type: "documentation", difficulty: "intermediate", estimatedTime: "3 weeks", url: "https://www.nngroup.com/articles/" },
+          { name: "Interaction Design Foundation: Usability Testing Guidelines", type: "documentation", difficulty: "intermediate", estimatedTime: "2 weeks", url: "https://www.interaction-design.org/literature/topics/usability-testing" },
+        ],
       },
       {
         id: "design-adv-2",
@@ -716,10 +741,21 @@ export const HANDCRAFTED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
         description: "Build scalable design systems, animate micro-interactions, and present high-impact case studies.",
         estimatedDuration: "Weeks 15–20",
         skills: ["Design Systems", "Motion Design", "Portfolio Presentation"],
-        learn: ["Design system governance, cross-functional engineering handoff, tokens", "UI micro-interactions, spring physics animations, and easing curves", "Structuring design portfolio case studies to communicate business impact"],
-        practice: ["Document component handoff specifications for engineering implementation", "Animate key UI transitions with Framer / Principle / After Effects"],
+        learn: [
+          "Design system governance, cross-functional engineering handoff, token naming taxonomies, and multi-brand scaling",
+          "UI micro-interactions, spring physics animations, easing curves, and choreographing screen transitions",
+          "Structuring design portfolio case studies to communicate business metrics, user empathy, and measurable impact",
+        ],
+        practice: [
+          "Document component handoff specifications with tokens for engineering implementation",
+          "Animate key UI transitions demonstrating spring physics and interactive easing curves",
+          "Structure a 4-part case study deck communicating business metrics, research insights, and final UI prototypes",
+        ],
         build: "A polished digital product case study showcasing research, UI design, interactive prototyping, and design system governance.",
-        resources: [{ name: "Design Systems Handbook (DesignBetter)", type: "book", difficulty: "intermediate", estimatedTime: "3 weeks", url: "https://www.designbetter.co/design-systems-handbook" }],
+        resources: [
+          { name: "Design Systems Handbook (DesignBetter)", type: "book", difficulty: "intermediate", estimatedTime: "3 weeks", url: "https://www.designbetter.co/design-systems-handbook" },
+          { name: "Laws of UX: Behavioral Psychology for Product Designers", type: "documentation", difficulty: "intermediate", estimatedTime: "2 weeks", url: "https://lawsofux.com/" },
+        ],
       },
     ],
     specializationTracks: {
@@ -1549,7 +1585,10 @@ export const HANDCRAFTED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
               "Map out full-funnel RevOps conversion metrics from Marketing Qualified Lead (MQL) to Closed-Won Opportunity",
             ],
             build: "An end-to-end commercial Go-To-Market playbook featuring CRM data schemas, competitive battlecards, compensation models, and expansion strategies.",
-            resources: [{ name: "OpenStax: Principles of Management (Operations & GTM)", type: "book", difficulty: "intermediate", estimatedTime: "5 weeks", url: "https://openstax.org/details/books/principles-management" }],
+            resources: [
+              { name: "HubSpot Academy: Revenue Operations (RevOps) Certification", type: "course", difficulty: "intermediate", estimatedTime: "3 weeks", url: "https://academy.hubspot.com/courses/revenue-operations" },
+              { name: "Winning by Design: SaaS Revenue Architecture & Go-To-Market", type: "documentation", difficulty: "intermediate", estimatedTime: "2 weeks", url: "https://winningbydesign.com/" },
+            ],
           },
         ],
       },
@@ -2927,3 +2966,4 @@ export const HANDCRAFTED_PATH_ROADMAPS: Record<string, PathRoadmapDefinition> = 
     },
   },
 };
+

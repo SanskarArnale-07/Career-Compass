@@ -302,6 +302,11 @@ export default function CareerCompanion() {
         } else if (isGoodbye(text)) {
           reply = "Bye! Come back anytime you want to explore more careers. 👋";
         } else {
+          const historyPayload = messages.slice(-6).map((m) => ({
+            role: m.role === "user" ? ("user" as const) : ("assistant" as const),
+            content: m.content,
+          }));
+
           // Try API first
           try {
             const res = await fetch("/api/coach", {
@@ -310,26 +315,25 @@ export default function CareerCompanion() {
               body: JSON.stringify({
                 message: text,
                 context,
-                history: messages.slice(-4).map((m) => ({
-                  role: m.role === "user" ? "user" : "assistant",
-                  content: m.content,
-                })),
+                history: historyPayload,
               }),
             });
             if (res.ok) {
               const data = await res.json();
-              reply = data.response;
+              if (data.response && typeof data.response === "string") {
+                reply = data.response;
+              }
             }
           } catch {
             // API unavailable — use local engine
           }
 
           if (!reply && context) {
-            reply = await generateLocalCoachResponse(text, context);
+            reply = await generateLocalCoachResponse(text, context, historyPayload);
           }
 
           if (!reply) {
-            reply = getFallbackResponse(text, pageCtx);
+            reply = "I ran into a temporary issue retrieving career data. Please try asking your question again.";
           }
         }
 

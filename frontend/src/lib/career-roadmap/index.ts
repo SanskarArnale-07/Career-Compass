@@ -7,5 +7,6 @@
 
 export * from "./types";
 export * from "./resolver";
+export * from "./task-resolution";
 export { HANDCRAFTED_PATH_ROADMAPS } from "./tracks/handcrafted-paths";
 export { SYNTHESIZED_PATH_ROADMAPS } from "./tracks/synthesized-paths";

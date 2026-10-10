@@ -1428,6 +1428,33 @@ export default function DashboardPage() {
               </div>
             </div>
 
+            {/* ── YOUR NEXT STEP Action Card (Requirement 3) ── */}
+            {nextBestAction && (
+              <div className="p-5 sm:p-6 rounded-2xl border border-primary/30 bg-gradient-to-br from-[#10141D] via-[#0D1117] to-[#0A0D12] shadow-lg shadow-primary/5 relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1.5 max-w-2xl">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-primary/15 border border-primary/25 text-[11px] font-mono font-bold uppercase tracking-wider text-primary">
+                      <Sparkles className="h-3 w-3" />
+                      <span>Your Next Step</span>
+                    </div>
+                    <h3 className="font-heading text-lg sm:text-xl font-bold text-foreground">
+                      {nextBestAction.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-secondary-foreground leading-relaxed">
+                      {nextBestAction.subtitle}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleActionClick(nextBestAction.targetType, nextBestAction.targetId)}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-semibold text-xs sm:text-sm transition-all shadow-md shadow-primary/20 shrink-0 cursor-pointer self-start sm:self-center"
+                  >
+                    <span>Start Task</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Subtle 3-stage progression sequence */}
             <div className="flex items-center gap-2 p-1.5 rounded-xl bg-[#10141A] border border-border/60 overflow-x-auto text-xs">
               {career.roadmap.map((p, i) => {

@@ -421,6 +421,23 @@ export default function ResultsPage() {
             </p>
           )}
 
+          {/* Primary Action to View Student Profile */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/profile"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 px-6 text-sm font-bold text-slate-950 shadow-md shadow-cyan-400/20 transition-all cursor-pointer"
+            >
+              <span>View Your Profile</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href={`/career/${currentSlug}#roadmap`}
+              className="inline-flex h-11 items-center justify-center rounded-xl border border-cyan-500/30 bg-[#10141A] hover:bg-[#141920] px-5 text-xs sm:text-sm font-semibold text-slate-200 transition-colors"
+            >
+              <span>View Roadmap</span>
+            </Link>
+          </div>
+
           {/* Connector filament to Meaning section */}
           <div className="w-px h-6 bg-linear-to-b from-cyan-400/40 to-transparent mt-4 pointer-events-none" />
         </section>

@@ -5,9 +5,9 @@
  * Path Foundation -> Specialization Track -> Optional Role Capstone
  */
 
-import type { RoadmapPhase, LearningResource } from "../career-details/types";
+import type { RoadmapPhase, LearningResource, RoadmapTask } from "../career-details/types";
 
-export type { RoadmapPhase, LearningResource };
+export type { RoadmapPhase, LearningResource, RoadmapTask };
 
 /**
  * Role-level capstone or milestone customization.

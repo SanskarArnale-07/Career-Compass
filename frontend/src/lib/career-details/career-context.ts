@@ -71,6 +71,8 @@ export interface CareerCoachContext {
     primaryTraits: { code: string; label: string; score: number }[];
     topTrait: string;
     assessmentSummary: string;
+    topCareers?: { career_name: string; match_percentage: number; explanation?: string }[];
+    recommendedStream?: string;
   };
   career: {
     slug: string;
@@ -414,6 +416,10 @@ export function buildCareerContext(
       primaryTraits: primaryTraitsList.slice(0, 4),
       topTrait,
       assessmentSummary: strengthsGaps.summary,
+      topCareers: storedResults?.top_careers || [],
+      recommendedStream:
+        (storedResults as any)?.recommended_stream ||
+        (storedResults?.streams ? Object.keys(storedResults.streams)[0] : undefined),
     },
     career: {
       slug: career.slug,

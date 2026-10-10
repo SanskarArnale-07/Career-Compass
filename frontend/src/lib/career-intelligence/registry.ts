@@ -18,6 +18,7 @@ import { marketingMedia } from "../career-details/careers/marketing-media";
 import { designCreative } from "../career-details/careers/design-creative";
 import { lawPolicy } from "../career-details/careers/law-policy";
 import { psychologySocial } from "../career-details/careers/psychology-social";
+import { upscCivilServices } from "../career-details/careers/upsc-civil-services";
 
 import type {
   CareerDetail,
@@ -935,6 +936,78 @@ const psychologySocialIntel = createCareerIntelligence(psychologySocial, {
   },
 });
 
+// ── 13. UPSC Civil Services & Public Administration ───────────────────────
+const upscCivilServicesIntel = createCareerIntelligence(upscCivilServices, {
+  responsibilities: [
+    "Administer sub-divisional and district governance, law and order, and land revenue adjudication",
+    "Formulate statewide and national public policies, ministerial guidelines, and legislative bills",
+    "Coordinate inter-departmental welfare scheme delivery across health, education, and infrastructure",
+    "Direct emergency crisis operations, disaster management authorities, and civil relief deployment",
+    "Ensure constitutional probity, citizen grievance redressal, and transparent regulatory oversight",
+  ],
+  educationPath: {
+    recommendedStream: "Any Stream (Humanities, Science, or Commerce with Graduation)",
+    degrees: [
+      "Bachelor's Degree in any recognized discipline (B.A., B.Sc., B.Tech, B.Com, MBBS)",
+      "Optional Masters or Law degree (M.A., M.Sc., LL.B., MPP) for deeper specialization",
+    ],
+    keySubjects: [
+      "Indian Polity & Constitutional Law",
+      "Modern Indian & World History",
+      "Economic Development & Public Finance",
+      "Ethics, Integrity & Administrative Aptitude",
+    ],
+    certifications: [
+      "UPSC Civil Services Examination (CSE) Clearance",
+      "LBSNAA Foundation & Phase-I Professional Training",
+    ],
+  },
+  beginnerSkills: [
+    "Constitutional Articles & Fundamental Rights Comprehension",
+    "NCERT Grounding in History, Geography, Polity & Economics",
+    "Daily Current Affairs & PIB Synthesis",
+    "Preliminary Exam MCQs Speed & Negative Marking Accuracy",
+  ],
+  intermediateSkills: [
+    "Structured 250-Word General Studies Answer Writing",
+    "Administrative Ethics Case Study Resolution",
+    "Multi-Sectoral Public Policy & Scheme Evaluation",
+    "Optional Subject Theoretical & Applied Depth",
+  ],
+  advancedSkills: [
+    "Crisis Management & Inter-Agency Coordination",
+    "District Regulatory & Law Enforcement Command",
+    "Secretariat Cabinet Note & Legislative Drafting",
+    "Apex Institutional Leadership & Public Integrity",
+  ],
+  toolsTechnologies: [
+    "UPSC Official Digital Portal (upsc.gov.in)",
+    "PRS Legislative Research & Bill Tracking",
+    "Press Information Bureau (PIB) Digital Releases",
+    "NITI Aayog Best Practices Portal",
+    "Direct Benefit Transfer (DBT) & e-Governance Systems",
+  ],
+  roleProgression: [
+    "Sub-Divisional Magistrate (SDM) / Assistant SP",
+    "District Magistrate & Collector (DM) / Superintendent of Police (SP)",
+    "Special Secretary / DIG of Police / Director in Ministry",
+    "Principal Secretary / Additional Director General (ADG)",
+    "Chief Secretary of State / Union Cabinet Secretary",
+  ],
+  industryInfo: {
+    sectors: [
+      "All-India Services (IAS, IPS, IFoS)",
+      "Central Civil Services (IFS, IRS, IAAS, IDAS)",
+      "State Administrative & Police Services (State PSCs)",
+      "Union & State Government Secretariats",
+      "Public Enterprises & Statutory Regulatory Commissions",
+    ],
+    workEnvironment: "District collectorates, police headquarters, state secretariats, central ministries, and field postings across India",
+    difficultyToEnter: "Extremely Competitive — ~0.1% selection rate through nationwide 3-stage UPSC Civil Services Examination",
+    growthPotential: "Apex constitutional leadership — directing public governance, policy execution, and law enforcement for the nation",
+  },
+});
+
 // ── Path Intelligence Synthesizer for Expanded Paths ────────────────────────
 
 function synthesizePathIntelligence(path: CareerPath): CareerIntelligence {
@@ -1181,6 +1254,7 @@ const BASE_CAREER_INTELLIGENCE: Record<string, CareerIntelligence> = {
   "design-creative": designCreativeIntel,
   "law-policy": lawPolicyIntel,
   "psychology-social": psychologySocialIntel,
+  "upsc-civil-services": upscCivilServicesIntel,
 };
 
 export const CAREER_INTELLIGENCE_REGISTRY: Record<string, CareerIntelligence> = {
@@ -1256,16 +1330,16 @@ export const CAREER_NAME_TO_ID: Record<string, string> = {
   "animation": "animation-3d-media",
   "supply-chain": "supply-chain-operations",
   "public-health": "public-health-epidemiology",
-  "Civil Services & Public Administration": "law-policy",
-  "UPSC Civil Services": "law-policy",
-  "Union Public Service Commission (UPSC) Civil Services": "law-policy",
-  "State Public Service Commissions": "law-policy",
-  "State Civil Services": "law-policy",
-  "Public Administration & Policy Pathways": "law-policy",
-  "Public Administration, Policy Analysis & Governance": "law-policy",
-  "Public Policy & Administration": "law-policy",
-  "civil-services-public-admin": "law-policy",
-  "upsc-civil-services": "law-policy",
-  "state-public-service-commissions": "law-policy",
-  "public-policy-governance-path": "law-policy",
+  "Civil Services & Public Administration": "upsc-civil-services",
+  "UPSC Civil Services": "upsc-civil-services",
+  "Union Public Service Commission (UPSC) Civil Services": "upsc-civil-services",
+  "State Public Service Commissions": "state-public-service-commissions",
+  "State Civil Services": "state-public-service-commissions",
+  "Public Administration & Policy Pathways": "public-policy-governance-path",
+  "Public Administration, Policy Analysis & Governance": "public-policy-governance-path",
+  "Public Policy & Administration": "public-policy-governance-path",
+  "civil-services-public-admin": "upsc-civil-services",
+  "upsc-civil-services": "upsc-civil-services",
+  "state-public-service-commissions": "state-public-service-commissions",
+  "public-policy-governance-path": "public-policy-governance-path",
 };
