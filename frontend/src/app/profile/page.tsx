@@ -23,8 +23,10 @@ import {
   LayoutDashboard,
   ClipboardCheck,
   GitBranch,
+  MessageSquare,
 } from "lucide-react";
 
+import { StudentFeedbackModal } from "@/components/feedback/StudentFeedbackModal";
 import { useAuth } from "@/context/AuthContext";
 import {
   loadCareerJourney,
@@ -154,6 +156,7 @@ export default function ProfilePage() {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
 
   const [journey, setJourney] = useState<CareerJourneySourceData | null>(null);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "overview" | "roadmap" | "skills" | "activity"
   >("overview");
@@ -277,7 +280,11 @@ export default function ProfilePage() {
   if (!assessmentDone) {
     return (
       <div className="min-h-screen bg-background text-foreground pb-20">
-        <ProfileTopBar user={user} onLogout={logout} />
+        <ProfileTopBar
+          user={user}
+          onLogout={logout}
+          onOpenFeedback={() => setIsFeedbackOpen(true)}
+        />
         <div className="container mx-auto px-4 max-w-2xl pt-20 pb-12 text-center">
           <div className="mb-8 flex justify-center">
             <div className="h-20 w-20 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary text-3xl font-bold font-heading">
@@ -309,6 +316,14 @@ export default function ProfilePage() {
             </Link>
           </div>
         </div>
+
+        {/* Student Feedback Modal */}
+        <StudentFeedbackModal
+          isOpen={isFeedbackOpen}
+          onClose={() => setIsFeedbackOpen(false)}
+          sessionId={`session-${user?.id || "anon"}`}
+          sourceContext="profile"
+        />
       </div>
     );
   }
@@ -316,7 +331,11 @@ export default function ProfilePage() {
   // ── FULL PROFILE ─────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
-      <ProfileTopBar user={user} onLogout={logout} />
+      <ProfileTopBar
+        user={user}
+        onLogout={logout}
+        onOpenFeedback={() => setIsFeedbackOpen(true)}
+      />
 
       <div className="container mx-auto px-4 max-w-5xl pt-8 space-y-6">
 
@@ -946,6 +965,14 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
+
+      {/* Student Feedback Modal */}
+      <StudentFeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        sessionId={`session-${user?.id || "anon"}`}
+        sourceContext="profile"
+      />
     </div>
   );
 }
@@ -955,9 +982,11 @@ export default function ProfilePage() {
 function ProfileTopBar({
   user,
   onLogout,
+  onOpenFeedback,
 }: {
   user: { name: string; email: string };
   onLogout: () => void;
+  onOpenFeedback?: () => void;
 }) {
   return (
     <div className="sticky top-14 z-30 border-b border-border/80 bg-background/80 backdrop-blur-md">
@@ -972,13 +1001,25 @@ function ProfileTopBar({
             {user.name}
           </span>
         </div>
-        <button
-          onClick={onLogout}
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-400 font-mono transition-colors cursor-pointer"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Log Out</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {onOpenFeedback && (
+            <button
+              type="button"
+              onClick={onOpenFeedback}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary/10 border border-secondary/25 text-xs font-mono text-secondary hover:bg-secondary/20 transition-colors cursor-pointer"
+            >
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span>Give Feedback</span>
+            </button>
+          )}
+          <button
+            onClick={onLogout}
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-400 font-mono transition-colors cursor-pointer"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Log Out</span>
+          </button>
+        </div>
       </div>
     </div>
   );

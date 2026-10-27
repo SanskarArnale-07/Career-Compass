@@ -53,6 +53,16 @@ export function StudentFeedbackModal({
 
   if (!isOpen) return null;
 
+  const handleClose = () => {
+    onClose();
+    if (step === 3) {
+      setTimeout(() => {
+        setStep(1);
+        setErrorMsg(null);
+      }, 200);
+    }
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setErrorMsg(null);
@@ -121,7 +131,7 @@ export function StudentFeedbackModal({
       <div className="relative w-full max-w-xl rounded-2xl border border-border/80 bg-card p-6 shadow-2xl shadow-black/60 max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-[#141920] transition-colors cursor-pointer"
           aria-label="Close"
         >
@@ -415,7 +425,7 @@ export function StudentFeedbackModal({
             <div className="pt-3">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={handleClose}
                 className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover shadow-md shadow-primary/20 transition-all cursor-pointer"
               >
                 Return to Profile

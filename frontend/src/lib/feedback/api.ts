@@ -34,13 +34,13 @@ export async function submitStudentFeedback(
       return {
         success: true,
         message: data.message || "Feedback submitted successfully.",
-        feedback_id: data.feedback_id,
+        feedback_id: data.feedback_id || data.id,
       };
     }
 
     const errData = await res.json().catch(() => ({}));
     throw new Error(errData.detail || `Server returned ${res.status}`);
-  } catch (error) {
+  } catch (_error) {
     // Offline/Fallback: Queue locally so no student evaluation is lost
     if (typeof window !== "undefined") {
       try {

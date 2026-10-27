@@ -261,7 +261,7 @@ export default function ResearchPage() {
                 Collecting Initial Cohort Feedback
               </p>
               <p className="text-xs text-muted-foreground max-w-md mx-auto">
-                No student feedback forms have been submitted yet. Complete an assessment and submit your evaluation on the Profile or Guide page to populate live ratings.
+                No student feedback forms have been submitted yet. Complete an assessment and submit your evaluation on the Profile page to populate live ratings.
               </p>
               <Link
                 href="/assessment"
